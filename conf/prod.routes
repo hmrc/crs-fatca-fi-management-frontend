@@ -1,5 +1,5 @@
 # Add all the application routes to the app.routes file
-->         /crs-fatca-fi-management-frontend                    app.Routes
+->         /manage-your-crs-and-fatca-financial-institutions                    app.Routes
 ->         /                          health.Routes
 
 GET        /admin/metrics             @com.kenshoo.play.metrics.MetricsController.metrics
