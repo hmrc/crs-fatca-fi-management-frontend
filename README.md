@@ -7,7 +7,7 @@ This is a placeholder README.md for a new repository
 
 Service manager: CRS_FATCA_ALL
 
-Port: 10030
+Port: 10033
 
 Link: http://localhost:10030/crs-fatca-fi-management-frontend
 
