@@ -21,13 +21,14 @@ final case class UserAnswers(
     val updatedData = data.setObject(page.path, Json.toJson(value)) match {
       case JsSuccess(jsValue, _) =>
         Success(jsValue)
-      case JsError(errors)       =>
+      case JsError(errors) =>
         Failure(JsResultException(errors))
     }
 
-    updatedData.flatMap { d =>
-      val updatedAnswers = copy(data = d)
-      page.cleanup(Some(value), updatedAnswers)
+    updatedData.flatMap {
+      d =>
+        val updatedAnswers = copy(data = d)
+        page.cleanup(Some(value), updatedAnswers)
     }
   }
 
@@ -36,15 +37,17 @@ final case class UserAnswers(
     val updatedData = data.removeObject(page.path) match {
       case JsSuccess(jsValue, _) =>
         Success(jsValue)
-      case JsError(_)            =>
+      case JsError(_) =>
         Success(data)
     }
 
-    updatedData.flatMap { d =>
-      val updatedAnswers = copy(data = d)
-      page.cleanup(None, updatedAnswers)
+    updatedData.flatMap {
+      d =>
+        val updatedAnswers = copy(data = d)
+        page.cleanup(None, updatedAnswers)
     }
   }
+
 }
 
 object UserAnswers {

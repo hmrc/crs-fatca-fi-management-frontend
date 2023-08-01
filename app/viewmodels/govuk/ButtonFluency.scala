@@ -14,6 +14,7 @@ trait ButtonFluency {
         element = Some("button"),
         content = content
       )
+
   }
 
   implicit class FluentButton(button: Button) {
@@ -53,5 +54,7 @@ trait ButtonFluency {
 
     def asWarningButton(): Button =
       withCssClass("govuk-button--warning")
+
   }
+
 }

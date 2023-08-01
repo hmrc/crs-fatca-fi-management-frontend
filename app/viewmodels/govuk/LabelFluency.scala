@@ -12,6 +12,7 @@ trait LabelFluency {
 
     def apply(content: Content): Label =
       Label(content = content)
+
   }
 
   implicit class FluentLabel(label: Label) {
@@ -29,5 +30,7 @@ trait LabelFluency {
 
     def forAttr(attr: String): Label =
       label.copy(forAttr = Some(attr))
+
   }
+
 }

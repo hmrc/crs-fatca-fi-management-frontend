@@ -16,4 +16,5 @@ class FakeIdentifierAction @Inject() (bodyParsers: PlayBodyParsers) extends Iden
 
   override protected def executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global
+
 }

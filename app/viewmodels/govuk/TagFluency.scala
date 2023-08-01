@@ -11,6 +11,7 @@ trait TagFluency {
 
     def apply(content: Content): Tag =
       Tag(content = content)
+
   }
 
   implicit class FluentTag(tag: Tag) {
@@ -47,5 +48,7 @@ trait TagFluency {
 
     def yellow(): Tag =
       withCssClass("govuk-tag--yellow")
+
   }
+
 }

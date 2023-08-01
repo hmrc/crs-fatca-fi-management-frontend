@@ -13,9 +13,7 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait IdentifierAction
-    extends ActionBuilder[IdentifierRequest, AnyContent]
-    with ActionFunction[Request, IdentifierRequest]
+trait IdentifierAction extends ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
 
 class AuthenticatedIdentifierAction @Inject() (
   override val authConnector: AuthConnector,
@@ -30,16 +28,18 @@ class AuthenticatedIdentifierAction @Inject() (
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     authorised().retrieve(Retrievals.internalId) {
-      _.map { internalId =>
-        block(IdentifierRequest(request, internalId))
+      _.map {
+        internalId =>
+          block(IdentifierRequest(request, internalId))
       }.getOrElse(throw new UnauthorizedException("Unable to retrieve internal Id"))
     } recover {
-      case _: NoActiveSession        =>
+      case _: NoActiveSession =>
         Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
       case _: AuthorisationException =>
         Redirect(routes.UnauthorisedController.onPageLoad)
     }
   }
+
 }
 
 class SessionIdentifierAction @Inject() (
@@ -54,8 +54,9 @@ class SessionIdentifierAction @Inject() (
     hc.sessionId match {
       case Some(session) =>
         block(IdentifierRequest(request, session.value))
-      case None          =>
+      case None =>
         Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
     }
   }
+
 }

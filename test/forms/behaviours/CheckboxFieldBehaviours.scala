@@ -9,7 +9,7 @@ trait CheckboxFieldBehaviours extends FormSpec {
     for {
       (value, i) <- validValues.zipWithIndex
     } yield s"binds `$value` successfully" in {
-      val data   = Map(
+      val data = Map(
         s"$fieldName[$i]" -> value.toString
       )
       val result = form.bind(data)
@@ -39,4 +39,5 @@ trait CheckboxFieldBehaviours extends FormSpec {
       form.bind(data).errors must contain(FormError(s"$fieldName[0]", requiredKey))
     }
   }
+
 }

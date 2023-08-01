@@ -18,7 +18,11 @@ import scala.concurrent.{ExecutionContext, Future}
 class AuthActionSpec extends SpecBase {
 
   class Harness(authAction: IdentifierAction) {
-    def onPageLoad() = authAction(_ => Results.Ok)
+
+    def onPageLoad() = authAction(
+      _ => Results.Ok
+    )
+
   }
 
   "Auth Action" - {
@@ -191,6 +195,7 @@ class AuthActionSpec extends SpecBase {
       }
     }
   }
+
 }
 
 class FakeFailingAuthConnector @Inject() (exceptionToReturn: Throwable) extends AuthConnector {
@@ -201,4 +206,5 @@ class FakeFailingAuthConnector @Inject() (exceptionToReturn: Throwable) extends 
     ec: ExecutionContext
   ): Future[A] =
     Future.failed(exceptionToReturn)
+
 }

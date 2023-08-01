@@ -18,4 +18,5 @@ class ErrorHandler @Inject() (
     rh: Request[_]
   ): Html =
     view(pageTitle, heading, message)
+
 }

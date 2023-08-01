@@ -16,6 +16,7 @@ class DataRetrievalActionImpl @Inject() (
     sessionRepository.get(request.userId).map {
       OptionalDataRequest(request.request, request.userId, _)
     }
+
 }
 
 trait DataRetrievalAction extends ActionTransformer[IdentifierRequest, OptionalDataRequest]

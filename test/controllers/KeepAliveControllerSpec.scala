@@ -79,4 +79,5 @@ class KeepAliveControllerSpec extends SpecBase with MockitoSugar {
       }
     }
   }
+
 }

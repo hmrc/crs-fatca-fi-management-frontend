@@ -39,16 +39,23 @@ trait CheckboxFluency {
         fieldset = Some(fieldset),
         name = name,
         errorMessage = errorMessage(form(name)),
-        items = items.map { item =>
-          item.copy(checked = form.data.exists(data => data._2 == item.value))
+        items = items.map {
+          item =>
+            item.copy(checked =
+              form.data.exists(
+                data => data._2 == item.value
+              )
+            )
         }
       )
+
   }
 
   implicit class FluentCheckboxes(checkboxes: Checkboxes) {
 
     def describedBy(value: String): Checkboxes =
       checkboxes.copy(describedBy = Some(value))
+
   }
 
   object CheckboxItemViewModel {
@@ -65,6 +72,7 @@ trait CheckboxFluency {
         name = Some(s"$fieldId[$index]"),
         value = value
       )
+
   }
 
   implicit class FluentCheckboxItem(item: CheckboxItem) {
@@ -83,5 +91,7 @@ trait CheckboxFluency {
 
     def withAttribute(attribute: (String, String)): CheckboxItem =
       item.copy(attributes = item.attributes + attribute)
+
   }
+
 }

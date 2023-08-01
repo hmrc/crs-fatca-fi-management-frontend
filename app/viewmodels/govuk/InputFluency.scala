@@ -24,6 +24,7 @@ trait InputFluency {
         label = label,
         errorMessage = errorMessage(field)
       )
+
   }
 
   implicit class FluentInput(input: Input) {
@@ -80,5 +81,7 @@ trait InputFluency {
 
     def withWidth(inputWidth: InputWidth): Input =
       input.withCssClass(inputWidth.toString)
+
   }
+
 }

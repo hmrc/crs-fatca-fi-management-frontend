@@ -20,7 +20,7 @@ trait Generators extends ModelGenerators {
     } yield seq1.toSeq.zip(seq2).foldLeft("") {
       case (acc, (n, Some(v))) =>
         acc + n + v
-      case (acc, (n, _))       =>
+      case (acc, (n, _)) =>
         acc + n
     }
   }
@@ -31,10 +31,14 @@ trait Generators extends ModelGenerators {
   }
 
   def intsLargerThanMaxValue: Gen[BigInt] =
-    arbitrary[BigInt] suchThat (x => x > Int.MaxValue)
+    arbitrary[BigInt] suchThat (
+      x => x > Int.MaxValue
+    )
 
   def intsSmallerThanMinValue: Gen[BigInt] =
-    arbitrary[BigInt] suchThat (x => x < Int.MinValue)
+    arbitrary[BigInt] suchThat (
+      x => x < Int.MinValue
+    )
 
   def nonNumerics: Gen[String] =
     alphaStr suchThat (_.size > 0)
@@ -52,7 +56,9 @@ trait Generators extends ModelGenerators {
     arbitrary[Int] suchThat (_ > value)
 
   def intsOutsideRange(min: Int, max: Int): Gen[Int] =
-    arbitrary[Int] suchThat (x => x < min || x > max)
+    arbitrary[Int] suchThat (
+      x => x < min || x > max
+    )
 
   def nonBooleans: Gen[String] =
     arbitrary[String]
@@ -91,8 +97,10 @@ trait Generators extends ModelGenerators {
     def toMillis(date: LocalDate): Long =
       date.atStartOfDay.atZone(ZoneOffset.UTC).toInstant.toEpochMilli
 
-    Gen.choose(toMillis(min), toMillis(max)).map { millis =>
-      Instant.ofEpochMilli(millis).atOffset(ZoneOffset.UTC).toLocalDate
+    Gen.choose(toMillis(min), toMillis(max)).map {
+      millis =>
+        Instant.ofEpochMilli(millis).atOffset(ZoneOffset.UTC).toLocalDate
     }
   }
+
 }

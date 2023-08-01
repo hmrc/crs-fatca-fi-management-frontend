@@ -187,4 +187,5 @@ trait FormBehaviours extends FormSpec {
       checkForError(form, data, expectedError)
     }
   }
+
 }
