@@ -3,7 +3,7 @@ package viewmodels
 package object govuk {
 
   object all
-    extends ImplicitConversions
+      extends ImplicitConversions
       with BackLinkFluency
       with ButtonFluency
       with CheckboxFluency
@@ -16,4 +16,5 @@ package object govuk {
       with RadiosFluency
       with SummaryListFluency
       with TagFluency
+
 }

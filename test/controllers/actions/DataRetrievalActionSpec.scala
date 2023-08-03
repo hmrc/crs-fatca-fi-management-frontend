@@ -47,4 +47,5 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
       }
     }
   }
+
 }
