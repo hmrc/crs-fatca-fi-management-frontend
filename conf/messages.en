@@ -55,3 +55,11 @@ signedOut.guidance = We did not save your answers.
 
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
+
+contactName.title = What is the name of the person or team we should contact at {0}?
+contactName.heading = What is the name of the person or team we should contact at {0}?
+contactName.checkYourAnswersLabel = What is the name of the person or team we should contact
+contactName.error.required = Enter a name for the first contact
+contactName.error.length = The name must be 35 characters or less
+contactName.error.invalid = The name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, backslashes, carets (^), grave accents (`), hyphens and spaces
+contactName.change.hidden = ContactName
