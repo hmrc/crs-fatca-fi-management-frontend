@@ -22,7 +22,6 @@ object AppDependencies {
     "org.mockito"             %% "mockito-scala"           % "1.16.42",
     "org.scalacheck"          %% "scalacheck"              % "1.15.4",
     "org.pegdown"             %  "pegdown"                 % "1.6.0",
-    "io.github.wolfendale"    %%  "scalacheck-gen-regexp"   % "1.1.0",
     "org.jsoup"               %  "jsoup"                   % "1.14.3",
     "com.vladsch.flexmark"    %  "flexmark-all"            % "0.62.2"
   ).map(_ % "test, it")
