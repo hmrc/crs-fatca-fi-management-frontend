@@ -14,8 +14,26 @@
  * limitations under the License.
  */
 
-package models.requests
+package forms
 
-import play.api.mvc.{Request, WrappedRequest}
+import javax.inject.Inject
+import forms.mappings.Mappings
+import play.api.data.Form
+import utils.RegexConstants
 
-case class IdentifierRequest[A](request: Request[A], userId: String) extends WrappedRequest[A](request)
+class ContactNameFormProvider @Inject() extends Mappings with RegexConstants {
+
+  val maxLength: Int = 35
+
+  def apply(): Form[String] =
+    Form(
+      "value" -> validatedText(
+        "contactName.error.required",
+        "contactName.error.invalid",
+        "contactName.error.length",
+        orgNameRegex,
+        maxLength
+      )
+    )
+
+}
