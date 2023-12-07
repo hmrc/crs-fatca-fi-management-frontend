@@ -14,23 +14,36 @@
  * limitations under the License.
  *@
 
+@import viewmodels.InputWidth._
+
 @this(
     layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    govukInput: GovukInput,
     govukButton: GovukButton
 )
 
-@(continueUrl: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("journeyRecovery.continue.title"))) {
+@layout(pageTitle = title(form, messages("contactName.title"))) {
 
-    <h1 class="govuk-heading-xl">@messages("journeyRecovery.continue.heading")</h1>
+    @formHelper(action = routes.ContactNameController.onSubmit(mode)) {
 
-    <p class="govuk-body">@messages("journeyRecovery.continue.guidance")</p>
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
 
-    <p class="govuk-body">
+        @govukInput(
+            InputViewModel(
+                field = form("value"),
+                label = LabelViewModel(messages("contactName.heading")).asPageHeading()
+            )
+            .withWidth(Full)
+        )
+
         @govukButton(
             ButtonViewModel(messages("site.continue"))
-                .asLink(continueUrl)
         )
-    </p>
+    }
 }
