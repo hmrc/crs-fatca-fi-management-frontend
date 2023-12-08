@@ -19,3 +19,8 @@ GET         /account/sign-out                            controllers.auth.AuthCo
 GET         /account/signed-out                          controllers.auth.SignedOutController.onPageLoad
 
 GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad
+
+GET        /email                                        controllers.WhatIsContactEmailController.onPageLoad(mode: Mode = NormalMode)
+POST       /email                                        controllers.WhatIsContactEmailController.onSubmit(mode: Mode = NormalMode)
+GET        /change-email                                 controllers.WhatIsContactEmailController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-email                                 controllers.WhatIsContactEmailController.onSubmit(mode: Mode = CheckMode)

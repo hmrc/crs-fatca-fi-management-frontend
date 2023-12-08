@@ -55,3 +55,10 @@ signedOut.guidance = We did not save your answers.
 
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
+
+whatIsContactEmail.title = whatIsContactEmail
+whatIsContactEmail.heading = whatIsContactEmail
+whatIsContactEmail.checkYourAnswersLabel = whatIsContactEmail
+whatIsContactEmail.error.required = Enter whatIsContactEmail
+whatIsContactEmail.error.length = WhatIsContactEmail must be 100 characters or less
+whatIsContactEmail.change.hidden = WhatIsContactEmail
