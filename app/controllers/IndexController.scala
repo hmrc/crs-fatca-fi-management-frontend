@@ -17,22 +17,28 @@
 package controllers
 
 import controllers.actions.IdentifierAction
+import forms.WhatIsContactEmailFormProvider
+import models.NormalMode
+
 import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.IndexView
+import views.html.{IndexView, WhatIsContactEmailView}
 
 class IndexController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify: IdentifierAction,
-  view: IndexView
+  view: WhatIsContactEmailView,
+  formProvider: WhatIsContactEmailFormProvider
 ) extends FrontendBaseController
     with I18nSupport {
 
+  val form = formProvider()
+
   def onPageLoad: Action[AnyContent] = identify {
     implicit request =>
-      Ok(view())
+      Ok(view(form, NormalMode))
   }
 
 }

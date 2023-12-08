@@ -44,7 +44,7 @@ checkYourAnswers.heading = Check Your Answers
 
 journeyRecovery.continue.title = Sorry, there is a problem with the service
 journeyRecovery.continue.heading = Sorry, there is a problem with the service
-journeyRecovery.continue.guidance = [Add content to explain how to proceed.]
+journeyRecovery.continue.guidancegst = [Add content to explain how to proceed.]
 journeyRecovery.startAgain.title = Sorry, there is a problem with the service
 journeyRecovery.startAgain.heading = Sorry, there is a problem with the service
 journeyRecovery.startAgain.guidance = [Add content to explain why the user needs to start again.]
@@ -56,9 +56,10 @@ signedOut.guidance = We did not save your answers.
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 
-whatIsContactEmail.title = whatIsContactEmail
-whatIsContactEmail.heading = whatIsContactEmail
-whatIsContactEmail.checkYourAnswersLabel = whatIsContactEmail
-whatIsContactEmail.error.required = Enter whatIsContactEmail
+whatIsContactEmail.title = What is the email address for {0}?
+whatIsContactEmail.heading = What is the email address for {0}?
+whatIsContactEmail.p1 = We will use this email address to send confirmation of reports for {0} or if we have any questions about them.
+whatIsContactEmail.checkYourAnswersLabel = Financial institution contact email
+whatIsContactEmail.error.required = Enter email
 whatIsContactEmail.error.length = WhatIsContactEmail must be 100 characters or less
-whatIsContactEmail.change.hidden = WhatIsContactEmail
+whatIsContactEmail.change.hidden = Change email for financial institution contact
