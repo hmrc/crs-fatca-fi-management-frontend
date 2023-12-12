@@ -35,12 +35,12 @@ import scala.concurrent.Future
 
 class FirstContactEmailControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = Call("GET", "/foo")
+  private def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new FirstContactEmailFormProvider()
-  val form         = formProvider()
+  private val form         = formProvider()
 
-  lazy val firstContactEmailRoute = routes.FirstContactEmailController.onPageLoad(NormalMode).url
+  private lazy val firstContactEmailRoute = routes.FirstContactEmailController.onPageLoad(NormalMode).url
 
   "FirstContactEmail Controller" - {
 
@@ -95,7 +95,7 @@ class FirstContactEmailControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, firstContactEmailRoute)
-            .withFormUrlEncodedBody(("value", "answer"))
+            .withFormUrlEncodedBody(("value", "some@email.com"))
 
         val result = route(application, request).value
 
