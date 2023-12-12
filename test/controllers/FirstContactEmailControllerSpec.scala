@@ -38,7 +38,7 @@ class FirstContactEmailControllerSpec extends SpecBase with MockitoSugar {
   private def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new FirstContactEmailFormProvider()
-  private val form         = formProvider()
+  private val form = formProvider()
 
   private lazy val firstContactEmailRoute = routes.FirstContactEmailController.onPageLoad(NormalMode).url
 
