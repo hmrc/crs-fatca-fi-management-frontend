@@ -17,29 +17,29 @@
 package controllers
 
 import controllers.actions._
-import forms.WhatIsContactEmailFormProvider
-import javax.inject.Inject
+import forms.FirstContactEmailFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.WhatIsContactEmailPage
+import pages.FirstContactEmailPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.WhatIsContactEmailView
+import views.html.FirstContactEmailView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class WhatIsContactEmailController @Inject() (
+class FirstContactEmailController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
-  formProvider: WhatIsContactEmailFormProvider,
+  formProvider: FirstContactEmailFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: WhatIsContactEmailView
+  view: FirstContactEmailView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
@@ -48,7 +48,7 @@ class WhatIsContactEmailController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.get(WhatIsContactEmailPage) match {
+      val preparedForm = request.userAnswers.get(FirstContactEmailPage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -64,9 +64,9 @@ class WhatIsContactEmailController @Inject() (
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsContactEmailPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(FirstContactEmailPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(WhatIsContactEmailPage, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(FirstContactEmailPage, mode, updatedAnswers))
         )
   }
 

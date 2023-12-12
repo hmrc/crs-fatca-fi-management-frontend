@@ -18,24 +18,24 @@ package viewmodels.checkAnswers
 
 import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.WhatIsContactEmailPage
+import pages.FirstContactEmailPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object WhatIsContactEmailSummary {
+object FirstContactEmailSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(WhatIsContactEmailPage).map {
+    answers.get(FirstContactEmailPage).map {
       answer =>
         SummaryListRowViewModel(
-          key = "whatIsContactEmail.checkYourAnswersLabel",
+          key = "firstContactEmail.checkYourAnswersLabel",
           value = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.WhatIsContactEmailController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("whatIsContactEmail.change.hidden"))
+            ActionItemViewModel("site.change", routes.FirstContactEmailController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("firstContactEmail.change.hidden"))
           )
         )
     }

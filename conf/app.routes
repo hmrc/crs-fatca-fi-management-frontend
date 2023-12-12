@@ -20,7 +20,7 @@ GET         /account/signed-out                          controllers.auth.Signed
 
 GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad
 
-GET        /email                                        controllers.WhatIsContactEmailController.onPageLoad(mode: Mode = NormalMode)
-POST       /email                                        controllers.WhatIsContactEmailController.onSubmit(mode: Mode = NormalMode)
-GET        /change-email                                 controllers.WhatIsContactEmailController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-email                                 controllers.WhatIsContactEmailController.onSubmit(mode: Mode = CheckMode)
+GET        /email                                        controllers.FirstContactEmailController.onPageLoad(mode: Mode = NormalMode)
+POST       /email                                        controllers.FirstContactEmailController.onSubmit(mode: Mode = NormalMode)
+GET        /change-email                                 controllers.FirstContactEmailController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-email                                 controllers.FirstContactEmailController.onSubmit(mode: Mode = CheckMode)

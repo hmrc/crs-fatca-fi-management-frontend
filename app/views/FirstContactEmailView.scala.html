@@ -26,11 +26,11 @@
 
 @(form: Form[_], mode: Mode, name: String = "[SOME BLOKE]")(implicit request: Request[_], messages: Messages)
 
-@paraContent = {@messages("whatIsContactEmail.p1", name)}
+@paraContent = {@messages("firstContactEmail.p1", name)}
 
-@layout(pageTitle = title(form, messages("whatIsContactEmail.title", name))) {
+@layout(pageTitle = title(form, messages("firstContactEmail.title", name))) {
 
-    @formHelper(action = routes.WhatIsContactEmailController.onSubmit(mode)) {
+    @formHelper(action = routes.FirstContactEmailController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
@@ -39,7 +39,7 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("whatIsContactEmail.heading", name)).asPageHeading()
+                label = LabelViewModel(messages("firstContactEmail.heading", name)).asPageHeading()
             )
             .withWidth(Full)
             .withHint(Hint(content = HtmlContent(paraContent)))

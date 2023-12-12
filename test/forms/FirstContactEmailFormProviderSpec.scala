@@ -19,13 +19,13 @@ package forms
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
-class WhatIsContactEmailFormProviderSpec extends StringFieldBehaviours {
+class FirstContactEmailFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "whatIsContactEmail.error.required"
-  val lengthKey   = "whatIsContactEmail.error.length"
+  val requiredKey = "firstContactEmail.error.required"
+  val lengthKey   = "firstContactEmail.error.length"
   val maxLength   = 100
 
-  val form = new WhatIsContactEmailFormProvider()()
+  val form = new FirstContactEmailFormProvider()()
 
   ".value" - {
 

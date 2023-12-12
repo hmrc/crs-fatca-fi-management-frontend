@@ -56,10 +56,10 @@ signedOut.guidance = We did not save your answers.
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 
-whatIsContactEmail.title = What is the email address for {0}?
-whatIsContactEmail.heading = What is the email address for {0}?
-whatIsContactEmail.p1 = We will use this email address to send confirmation of reports for {0} or if we have any questions about them.
-whatIsContactEmail.checkYourAnswersLabel = Financial institution contact email
-whatIsContactEmail.error.required = Enter email
-whatIsContactEmail.error.length = WhatIsContactEmail must be 100 characters or less
-whatIsContactEmail.change.hidden = Change email for financial institution contact
+firstContactEmail.title = What is the email address for {0}?
+firstContactEmail.heading = What is the email address for {0}?
+firstContactEmail.p1 = We will use this email address to send confirmation of reports for {0} or if we have any questions about them.
+firstContactEmail.checkYourAnswersLabel = Financial institution contact email
+firstContactEmail.error.required = Enter email
+firstContactEmail.error.length = firstContactEmail must be 100 characters or less
+firstContactEmail.change.hidden = Change email for financial institution contact

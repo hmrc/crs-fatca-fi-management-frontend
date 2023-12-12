@@ -16,17 +16,17 @@
 
 package forms
 
-import javax.inject.Inject
-
 import forms.mappings.Mappings
 import play.api.data.Form
 
-class WhatIsContactEmailFormProvider @Inject() extends Mappings {
+import javax.inject.Inject
+
+class FirstContactEmailFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      "value" -> text("whatIsContactEmail.error.required")
-        .verifying(maxLength(100, "whatIsContactEmail.error.length"))
+      "value" -> text("firstContactEmail.error.required")
+        .verifying(maxLength(100, "firstContactEmail.error.length"))
     )
 
 }
