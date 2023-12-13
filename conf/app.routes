@@ -60,7 +60,7 @@ POST        /secondContactPhoneNumber                    controllers.SecondConta
 GET         /changeSecondContactPhoneNumber              controllers.SecondContactPhoneNumberController.onPageLoad(mode: Mode = CheckMode)
 POST        /changeSecondContactPhoneNumber              controllers.SecondContactPhoneNumberController.onSubmit(mode: Mode = CheckMode)
 
-GET        /fi/contact-name                              controllers.ContactNameController.onPageLoad(mode: Mode = NormalMode)
-POST       /fi/contact-name                              controllers.ContactNameController.onSubmit(mode: Mode = NormalMode)
-GET        /change/fi/contact-name                       controllers.ContactNameController.onPageLoad(mode: Mode = CheckMode)
-POST       /change/fi/contact-name                       controllers.ContactNameController.onSubmit(mode: Mode = CheckMode)
+GET        /contact-name                              controllers.ContactNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /contact-name                              controllers.ContactNameController.onSubmit(mode: Mode = NormalMode)
+GET        /change/contact-name                       controllers.ContactNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /change/contact-name                       controllers.ContactNameController.onSubmit(mode: Mode = CheckMode)
