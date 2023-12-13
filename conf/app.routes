@@ -20,7 +20,7 @@ GET         /account/signed-out                          controllers.auth.Signed
 
 GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad
 
-GET         /fi/contact-name                             controllers.ContactNameController.onPageLoad(mode: Mode = NormalMode)
-POST        /fi/contact-name                             controllers.ContactNameController.onSubmit(mode: Mode = NormalMode)
-GET         /fi/change-contact-name                      controllers.ContactNameController.onPageLoad(mode: Mode = CheckMode)
-POST        /fi/change-contact-name                      controllers.ContactNameController.onSubmit(mode: Mode = CheckMode)
+GET         /contact-name                                controllers.ContactNameController.onPageLoad(mode: Mode = NormalMode)
+POST        /contact-name                                controllers.ContactNameController.onSubmit(mode: Mode = NormalMode)
+GET         /change-contact-name                         controllers.ContactNameController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-contact-name                         controllers.ContactNameController.onSubmit(mode: Mode = CheckMode)
