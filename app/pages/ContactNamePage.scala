@@ -14,26 +14,13 @@
  * limitations under the License.
  */
 
-package controllers
+package pages
 
-import controllers.actions.IdentifierAction
+import play.api.libs.json.JsPath
 
-import javax.inject.Inject
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.IndexView
+case object ContactNamePage extends QuestionPage[String] {
 
-class IndexController @Inject() (
-  val controllerComponents: MessagesControllerComponents,
-  identify: IdentifierAction,
-  view: IndexView
-) extends FrontendBaseController
-    with I18nSupport {
+  override def path: JsPath = JsPath \ toString
 
-  def onPageLoad: Action[AnyContent] = identify {
-    implicit request =>
-      Ok(view())
-  }
-
+  override def toString: String = "contactName"
 }

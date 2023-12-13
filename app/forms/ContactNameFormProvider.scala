@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package controllers
-
-import controllers.actions.IdentifierAction
+package forms
 
 import javax.inject.Inject
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.IndexView
+import forms.mappings.Mappings
+import play.api.data.Form
+import utils.RegexConstants
 
-class IndexController @Inject() (
-  val controllerComponents: MessagesControllerComponents,
-  identify: IdentifierAction,
-  view: IndexView
-) extends FrontendBaseController
-    with I18nSupport {
+class ContactNameFormProvider @Inject() extends Mappings with RegexConstants {
 
-  def onPageLoad: Action[AnyContent] = identify {
-    implicit request =>
-      Ok(view())
-  }
+  val maxLength: Int = 35
+
+  def apply(): Form[String] =
+    Form(
+      "value" -> validatedText(
+        "contactName.error.required",
+        "contactName.error.invalid",
+        "contactName.error.length",
+        orgNameRegex,
+        maxLength
+      )
+    )
 
 }
