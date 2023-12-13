@@ -18,10 +18,13 @@ package controllers
 
 import controllers.actions._
 import forms.ContactNameFormProvider
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.ContactNamePage
+import play.api.data.Form
+import play.api.http.Writeable.wByteArray
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -36,7 +39,6 @@ class ContactNameController @Inject() (
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
   formProvider: ContactNameFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: ContactNameView
@@ -48,17 +50,24 @@ class ContactNameController @Inject() (
 
   // TODO: Pass name of financial institution to view H1 when implemented
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
     implicit request =>
-      val preparedForm = request.userAnswers.get(ContactNamePage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
+      val preparedForm: Form[_] =
+        request.userAnswers
+          .getOrElse(
+            UserAnswers(
+              id = request.userId
+            )
+          )
+          .get(ContactNamePage) match {
+          case None        => form
+          case Some(value) => form.fill(value)
+        }
 
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -66,8 +75,17 @@ class ContactNameController @Inject() (
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactNamePage, value))
-              _              <- sessionRepository.set(updatedAnswers)
+              updatedAnswers <- Future.fromTry(
+                request.userAnswers
+                  .getOrElse(
+                    UserAnswers(
+                      id = request.userId
+                    )
+                  )
+                  .set(ContactNamePage, value)
+              )
+              _ <- sessionRepository.set(updatedAnswers)
+
             } yield Redirect(navigator.nextPage(ContactNamePage, mode, updatedAnswers))
         )
   }
