@@ -16,7 +16,8 @@
 
 package controllers
 
-import controllers.actions.IdentifierAction
+import controllers.actions.{DataInitializeAction, DataRetrievalAction, IdentifierAction}
+
 import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -26,11 +27,13 @@ import views.html.IndexView
 class IndexController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify: IdentifierAction,
-  view: IndexView
+  view: IndexView,
+  getData: DataRetrievalAction,
+  initializeData: DataInitializeAction
 ) extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = identify {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen initializeData) {
     implicit request =>
       Ok(view())
   }

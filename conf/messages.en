@@ -108,3 +108,11 @@ secondContactPhoneNumber.checkYourAnswersLabel = secondContactPhoneNumber
 secondContactPhoneNumber.error.required = Enter secondContactPhoneNumber
 secondContactPhoneNumber.error.length = SecondContactPhoneNumber must be 100 characters or less
 secondContactPhoneNumber.change.hidden = SecondContactPhoneNumber
+
+contactName.title = What is the name of the person or team we should contact?
+contactName.heading = What is the name of the person or team we should contact at {0}?
+contactName.hint = For example, ‘Ashley Smith’ or ‘Tax team’.
+contactName.checkYourAnswersLabel = What is the name of the person or team we should contact?
+contactName.error.required = Enter contactName
+contactName.error.length = ContactName must be 100 characters or less
+contactName.change.hidden = ContactName
