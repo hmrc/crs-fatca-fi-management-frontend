@@ -16,36 +16,24 @@
 
 package forms
 
-import forms.behaviours.StringFieldBehaviours
+import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
-import utils.RegexConstants
-import wolfendale.scalacheck.regexp.RegexpGen
 
-class ContactNameFormProviderSpec extends StringFieldBehaviours with RegexConstants {
+class SecondContactExistsFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "contactName.error.required"
-  val lengthKey   = "contactName.error.length"
-  val invalidKey  = "contactName.error.invalid"
-  val maxLength   = 35
+  val requiredKey = "secondContactExists.error.required"
+  val invalidKey  = "error.boolean"
 
-  val form = new ContactNameFormProvider()()
+  val form = new SecondContactExistsFormProvider()()
 
   ".value" - {
 
     val fieldName = "value"
 
-    behave like fieldThatBindsValidDataWithoutInvalidError(
+    behave like booleanField(
       form,
       fieldName,
-      RegexpGen.from(orgNameRegex),
-      invalidKey
-    )
-
-    behave like fieldWithMaxLengthAlpha(
-      form,
-      fieldName,
-      maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey)
+      invalidError = FormError(fieldName, invalidKey)
     )
 
     behave like mandatoryField(
