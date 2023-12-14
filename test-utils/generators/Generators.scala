@@ -21,6 +21,7 @@ import java.time.{Instant, LocalDate, ZoneOffset}
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen._
 import org.scalacheck.{Gen, Shrink}
+import wolfendale.scalacheck.regexp.RegexpGen
 
 trait Generators extends ModelGenerators {
 
@@ -40,6 +41,20 @@ trait Generators extends ModelGenerators {
         acc + n
     }
   }
+
+  def stringsLongerThanAlpha(minLength: Int): Gen[String] = for {
+    maxLength <- (minLength * 2).max(100)
+    length    <- Gen.chooseNum(minLength + 1, maxLength)
+    chars     <- listOfN(length, Gen.alphaChar)
+  } yield chars.mkString
+
+  def stringMatchingRegexAndLength(regex: String, length: Int): Gen[String] =
+    RegexpGen
+      .from(regex)
+      .suchThat(
+        value => value.trim.nonEmpty
+      )
+      .map(_.take(length))
 
   def intsInRangeWithCommas(min: Int, max: Int): Gen[String] = {
     val numberGen = choose[Int](min, max).map(_.toString)

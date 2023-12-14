@@ -1,4 +1,5 @@
 service.name = crs-fatca-fi-management-frontend
+service.title.suffix = Send a CRS or FATCA report
 
 site.back = Back
 site.remove = Remove
@@ -108,3 +109,12 @@ secondContactPhoneNumber.checkYourAnswersLabel = secondContactPhoneNumber
 secondContactPhoneNumber.error.required = Enter secondContactPhoneNumber
 secondContactPhoneNumber.error.length = SecondContactPhoneNumber must be 100 characters or less
 secondContactPhoneNumber.change.hidden = SecondContactPhoneNumber
+
+contactName.title = What is the name of the person or team we should contact?
+contactName.heading = What is the name of the person or team we should contact at {0}?
+contactName.hint = For example, ‘Ashley Smith’ or ‘Tax team’.
+contactName.checkYourAnswersLabel = What is the name of the person or team we should contact?
+contactName.error.required = Enter a name for the first contact
+contactName.error.invalid = The name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, backslashes, carets (^), grave accents (`), hyphens and spaces
+contactName.error.length = The name must be 35 characters or less
+contactName.change.hidden = ContactName

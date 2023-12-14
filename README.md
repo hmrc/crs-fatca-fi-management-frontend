@@ -9,7 +9,7 @@ Service manager: CRS_FATCA_ALL
 
 Port: 10033
 
-Link: http://localhost:10030/crs-fatca-fi-management-frontend
+Link: http://localhost:10033/manage-your-crs-and-fatca-financial-institutions
 
  ---
 
