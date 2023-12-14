@@ -27,6 +27,9 @@ import models._
 class Navigator @Inject() () {
 
   private val normalRoutes: Page => UserAnswers => Call = {
+
+    case ContactNamePage =>
+      _ => routes.FirstContactEmailController.onPageLoad(NormalMode)
     case _ =>
       _ => routes.IndexController.onPageLoad
   }

@@ -34,6 +34,11 @@ class NavigatorSpec extends SpecBase {
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
       }
+      "must go from ContactName page to FirstContactEmail" in {
+        navigator.nextPage(ContactNamePage, NormalMode, UserAnswers("id")) mustBe
+          routes.FirstContactEmailController.onPageLoad(NormalMode)
+      }
+
     }
 
     "in Check mode" - {
