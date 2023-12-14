@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.FirstContactEmailFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.FirstContactEmailPage
+import pages.{ContactNamePage, FirstContactEmailPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -48,26 +48,38 @@ class FirstContactEmailController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.get(FirstContactEmailPage) match {
+      val ua = request.userAnswers
+
+      val preparedForm = ua.get(FirstContactEmailPage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode))
+      ua.get(ContactNamePage) match {
+        case None       => Redirect(routes.IndexController.onPageLoad)
+        case Some(name) => Ok(view(preparedForm, mode, name))
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(FirstContactEmailPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(FirstContactEmailPage, mode, updatedAnswers))
-        )
+      request.userAnswers
+        .get(ContactNamePage)
+        .fold {
+          Future.successful(Redirect(routes.IndexController.onPageLoad))
+        } {
+          name =>
+            form
+              .bindFromRequest()
+              .fold(
+                formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, name))),
+                value =>
+                  for {
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(FirstContactEmailPage, value))
+                    _              <- sessionRepository.set(updatedAnswers)
+                  } yield Redirect(navigator.nextPage(FirstContactEmailPage, mode, updatedAnswers))
+              )
+        }
   }
 
 }
