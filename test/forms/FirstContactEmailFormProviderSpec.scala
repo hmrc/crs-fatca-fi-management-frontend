@@ -23,7 +23,8 @@ class FirstContactEmailFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "firstContactEmail.error.required"
   val lengthKey   = "firstContactEmail.error.length"
-  val maxLength   = 100
+  val formatError = "firstContactEmail.error.format"
+  val maxLength   = 132
 
   val form = new FirstContactEmailFormProvider()()
 
@@ -31,10 +32,11 @@ class FirstContactEmailFormProviderSpec extends StringFieldBehaviours {
 
     val fieldName = "value"
 
-    behave like fieldThatBindsValidData(
+    behave like emailAddressField(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      maxLength,
+      invalidError = FormError(fieldName, formatError)
     )
 
     behave like fieldWithMaxLength(

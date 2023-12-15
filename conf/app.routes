@@ -20,10 +20,15 @@ GET         /account/signed-out                          controllers.auth.Signed
 
 GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad
 
-GET         /firstContactEmail                           controllers.FirstContactEmailController.onPageLoad(mode: Mode = NormalMode)
-POST        /firstContactEmail                           controllers.FirstContactEmailController.onSubmit(mode: Mode = NormalMode)
-GET         /changeFirstContactEmail                     controllers.FirstContactEmailController.onPageLoad(mode: Mode = CheckMode)
-POST        /changeFirstContactEmail                     controllers.FirstContactEmailController.onSubmit(mode: Mode = CheckMode)
+GET         /contact-name                                controllers.ContactNameController.onPageLoad(mode: Mode = NormalMode)
+POST        /contact-name                                controllers.ContactNameController.onSubmit(mode: Mode = NormalMode)
+GET         /change/contact-name                         controllers.ContactNameController.onPageLoad(mode: Mode = CheckMode)
+POST        /change/contact-name                         controllers.ContactNameController.onSubmit(mode: Mode = CheckMode)
+
+GET         /email                                       controllers.FirstContactEmailController.onPageLoad(mode: Mode = NormalMode)
+POST        /email                                       controllers.FirstContactEmailController.onSubmit(mode: Mode = NormalMode)
+GET         /change-email                                controllers.FirstContactEmailController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-email                                controllers.FirstContactEmailController.onSubmit(mode: Mode = CheckMode)
 
 GET         /firstContactCanWePhone                      controllers.FirstContactCanWePhoneController.onPageLoad(mode: Mode = NormalMode)
 POST        /firstContactCanWePhone                      controllers.FirstContactCanWePhoneController.onSubmit(mode: Mode = NormalMode)
@@ -59,8 +64,3 @@ GET         /secondContactPhoneNumber                    controllers.SecondConta
 POST        /secondContactPhoneNumber                    controllers.SecondContactPhoneNumberController.onSubmit(mode: Mode = NormalMode)
 GET         /changeSecondContactPhoneNumber              controllers.SecondContactPhoneNumberController.onPageLoad(mode: Mode = CheckMode)
 POST        /changeSecondContactPhoneNumber              controllers.SecondContactPhoneNumberController.onSubmit(mode: Mode = CheckMode)
-
-GET        /contact-name                              controllers.ContactNameController.onPageLoad(mode: Mode = NormalMode)
-POST       /contact-name                              controllers.ContactNameController.onSubmit(mode: Mode = NormalMode)
-GET        /change/contact-name                       controllers.ContactNameController.onPageLoad(mode: Mode = CheckMode)
-POST       /change/contact-name                       controllers.ContactNameController.onSubmit(mode: Mode = CheckMode)
