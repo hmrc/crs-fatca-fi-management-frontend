@@ -27,8 +27,7 @@ class FirstContactEmailFormProvider @Inject() extends Mappings {
   def apply(): Form[String] =
     Form(
       "value" -> text("firstContactEmail.error.required")
-        .verifying(maxLength(132, "firstContactEmail.error.length"))
-        .verifying(Constraints.emailAddress(errorMessage = "firstContactEmail.error.format"))
+        .verifying(firstError(Constraints.emailAddress(errorMessage = "firstContactEmail.error.format"), maxLength(132, "firstContactEmail.error.length")))
     )
 
 }
