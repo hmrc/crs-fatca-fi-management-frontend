@@ -45,6 +45,7 @@ class FirstContactEmailController @Inject() (
     with I18nSupport {
 
   val form = formProvider()
+  val fi   = "Placeholder Financial Institution" // todo: pull in this when available
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -54,10 +55,10 @@ class FirstContactEmailController @Inject() (
         case None        => form
         case Some(value) => form.fill(value)
       }
-
-      ua.get(ContactNamePage) match {
+      val contactName = ua.get(ContactNamePage)
+      contactName match {
         case None       => Redirect(routes.IndexController.onPageLoad)
-        case Some(name) => Ok(view(preparedForm, mode, name))
+        case Some(name) => Ok(view(preparedForm, mode, fi, name))
       }
   }
 
@@ -72,7 +73,7 @@ class FirstContactEmailController @Inject() (
             form
               .bindFromRequest()
               .fold(
-                formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, name))),
+                formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, fi, name))),
                 value =>
                   for {
                     updatedAnswers <- Future.fromTry(request.userAnswers.set(FirstContactEmailPage, value))
