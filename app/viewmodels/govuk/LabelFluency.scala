@@ -47,6 +47,9 @@ trait LabelFluency {
     def forAttr(attr: String): Label =
       label.copy(forAttr = Some(attr))
 
+    def visuallyHidden(): Label =
+      label.withCssClass("govuk-visually-hidden")
+
   }
 
 }

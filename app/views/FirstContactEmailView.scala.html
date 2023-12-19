@@ -44,7 +44,7 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("firstContactEmail.heading", name))
+                label = LabelViewModel(messages("firstContactEmail.heading", name)).visuallyHidden()
             )
             .withWidth(Full)
             .asEmail()
