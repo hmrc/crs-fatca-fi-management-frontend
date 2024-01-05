@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,7 +86,7 @@ trait RadiosFluency {
         field = field,
         fieldset = fieldset,
         items = items
-      ).inline()
+      )
     }
 
   }
@@ -107,9 +107,6 @@ trait RadiosFluency {
 
     def withAttribute(attribute: (String, String)): Radios =
       radios.copy(attributes = radios.attributes + attribute)
-
-    def inline(): Radios =
-      radios.withCssClass("govuk-radios--inline")
 
   }
 
