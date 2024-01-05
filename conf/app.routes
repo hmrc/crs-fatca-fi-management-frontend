@@ -64,3 +64,8 @@ GET         /secondContactPhoneNumber                    controllers.SecondConta
 POST        /secondContactPhoneNumber                    controllers.SecondContactPhoneNumberController.onSubmit(mode: Mode = NormalMode)
 GET         /changeSecondContactPhoneNumber              controllers.SecondContactPhoneNumberController.onPageLoad(mode: Mode = CheckMode)
 POST        /changeSecondContactPhoneNumber              controllers.SecondContactPhoneNumberController.onSubmit(mode: Mode = CheckMode)
+
+GET        /have-phone                          controllers.ContactHavePhoneController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /have-phone                          controllers.ContactHavePhoneController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /change-have-phone                   controllers.ContactHavePhoneController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /change-have-phone                   controllers.ContactHavePhoneController.onSubmit(mode: models.Mode = models.CheckMode)
