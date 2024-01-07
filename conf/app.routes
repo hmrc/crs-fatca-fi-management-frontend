@@ -64,3 +64,18 @@ GET         /secondContactPhoneNumber                    controllers.SecondConta
 POST        /secondContactPhoneNumber                    controllers.SecondContactPhoneNumberController.onSubmit(mode: Mode = NormalMode)
 GET         /changeSecondContactPhoneNumber              controllers.SecondContactPhoneNumberController.onPageLoad(mode: Mode = CheckMode)
 POST        /changeSecondContactPhoneNumber              controllers.SecondContactPhoneNumberController.onSubmit(mode: Mode = CheckMode)
+
+GET        /haveUniqueTaxpayerReference                        controllers.HaveUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = NormalMode)
+POST       /haveUniqueTaxpayerReference                        controllers.HaveUniqueTaxpayerReferenceController.onSubmit(mode: Mode = NormalMode)
+GET        /changeHaveUniqueTaxpayerReference                  controllers.HaveUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeHaveUniqueTaxpayerReference                  controllers.HaveUniqueTaxpayerReferenceController.onSubmit(mode: Mode = CheckMode)
+
+GET        /nameOfFinancialInstitution                        controllers.NameOfFinancialInstitutionController.onPageLoad(mode: Mode = NormalMode)
+POST       /nameOfFinancialInstitution                        controllers.NameOfFinancialInstitutionController.onSubmit(mode: Mode = NormalMode)
+GET        /changeNameOfFinancialInstitution                  controllers.NameOfFinancialInstitutionController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeNameOfFinancialInstitution                  controllers.NameOfFinancialInstitutionController.onSubmit(mode: Mode = CheckMode)
+
+GET        /whatIsUniqueTaxpayerReference                        controllers.WhatIsUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = NormalMode)
+POST       /whatIsUniqueTaxpayerReference                        controllers.WhatIsUniqueTaxpayerReferenceController.onSubmit(mode: Mode = NormalMode)
+GET        /changeWhatIsUniqueTaxpayerReference                  controllers.WhatIsUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeWhatIsUniqueTaxpayerReference                  controllers.WhatIsUniqueTaxpayerReferenceController.onSubmit(mode: Mode = CheckMode)

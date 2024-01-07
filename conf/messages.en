@@ -120,3 +120,23 @@ contactName.error.required = Enter a name for the first contact
 contactName.error.invalid = The name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, backslashes, carets (^), grave accents (`), hyphens and spaces
 contactName.error.length = The name must be 35 characters or less
 contactName.change.hidden = ContactName
+
+haveUniqueTaxpayerReference.title = haveUniqueTaxpayerReference
+haveUniqueTaxpayerReference.heading = haveUniqueTaxpayerReference
+haveUniqueTaxpayerReference.checkYourAnswersLabel = haveUniqueTaxpayerReference
+haveUniqueTaxpayerReference.error.required = Select yes if haveUniqueTaxpayerReference
+haveUniqueTaxpayerReference.change.hidden = HaveUniqueTaxpayerReference
+
+nameOfFinancialInstitution.title = nameOfFinancialInstitution
+nameOfFinancialInstitution.heading = nameOfFinancialInstitution
+nameOfFinancialInstitution.checkYourAnswersLabel = nameOfFinancialInstitution
+nameOfFinancialInstitution.error.required = Enter nameOfFinancialInstitution
+nameOfFinancialInstitution.error.length = NameOfFinancialInstitution must be 100 characters or less
+nameOfFinancialInstitution.change.hidden = NameOfFinancialInstitution
+
+whatIsUniqueTaxpayerReference.title = whatIsUniqueTaxpayerReference
+whatIsUniqueTaxpayerReference.heading = whatIsUniqueTaxpayerReference
+whatIsUniqueTaxpayerReference.checkYourAnswersLabel = whatIsUniqueTaxpayerReference
+whatIsUniqueTaxpayerReference.error.required = Enter whatIsUniqueTaxpayerReference
+whatIsUniqueTaxpayerReference.error.length = WhatIsUniqueTaxpayerReference must be 100 characters or less
+whatIsUniqueTaxpayerReference.change.hidden = WhatIsUniqueTaxpayerReference
