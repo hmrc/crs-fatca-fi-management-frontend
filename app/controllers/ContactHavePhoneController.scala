@@ -46,14 +46,21 @@ class ContactHavePhoneController @Inject() (
     with I18nSupport {
 
   val form = formProvider()
+  val fi   = "Placeholder Financial Institution" // todo: pull in this when available
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
+      val ua = request.userAnswers
       val preparedForm = request.userAnswers.get(ContactHavePhonePage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
-      Ok(view(preparedForm, getFirstContactName(request.userAnswers), mode))
+      val contactName = ua.get(ContactNamePage)
+      contactName match {
+        case None              => Redirect(routes.IndexController.onPageLoad)
+        case Some(contactName) => Ok(view(preparedForm, mode, fi, contactName))
+
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -61,7 +68,7 @@ class ContactHavePhoneController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, getFirstContactName(request.userAnswers), mode))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, fi, getFirstContactName(request.userAnswers)))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactHavePhonePage, value))

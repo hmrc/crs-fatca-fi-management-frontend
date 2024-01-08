@@ -22,7 +22,7 @@
     govukButton: GovukButton
 )
 
-@(form: Form[_], contactName: String,mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode , finInstitution: String , contactName: String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("contactHavePhone.title.business"))) {
 
@@ -33,7 +33,7 @@
         }
 
       <h1 class="govuk-heading-l">@messages(messages(s"contactHavePhone.heading.business" , contactName))</h1>
-      <p class="govuk-body">@messages("contactHavePhone.p1" , contactName)</p>
+      <p class="govuk-body">@messages("contactHavePhone.p1" , finInstitution)</p>
 
      @govukRadios(
          RadiosViewModel.yesNo(
