@@ -85,3 +85,48 @@ POST       /whatIsUniqueTaxpayerReference                        controllers.Wha
 GET        /changeWhatIsUniqueTaxpayerReference                  controllers.WhatIsUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeWhatIsUniqueTaxpayerReference                  controllers.WhatIsUniqueTaxpayerReferenceController.onSubmit(mode: Mode = CheckMode)
 
+
+GET        /haveGIIN                        controllers.HaveGIINController.onPageLoad(mode: Mode = NormalMode)
+POST       /haveGIIN                        controllers.HaveGIINController.onSubmit(mode: Mode = NormalMode)
+GET        /changeHaveGIIN                  controllers.HaveGIINController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeHaveGIIN                  controllers.HaveGIINController.onSubmit(mode: Mode = CheckMode)
+
+GET        /institutionLocation                        controllers.InstitutionLocationController.onPageLoad(mode: Mode = NormalMode)
+POST       /institutionLocation                        controllers.InstitutionLocationController.onSubmit(mode: Mode = NormalMode)
+GET        /changeInstitutionLocation                  controllers.InstitutionLocationController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeInstitutionLocation                  controllers.InstitutionLocationController.onSubmit(mode: Mode = CheckMode)
+
+GET        /institutionPostcode                        controllers.InstitutionPostcodeController.onPageLoad(mode: Mode = NormalMode)
+POST       /institutionPostcode                        controllers.InstitutionPostcodeController.onSubmit(mode: Mode = NormalMode)
+GET        /changeInstitutionPostcode                  controllers.InstitutionPostcodeController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeInstitutionPostcode                  controllers.InstitutionPostcodeController.onSubmit(mode: Mode = CheckMode)
+
+GET        /institutionSelectAddress                        controllers.InstitutionSelectAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /institutionSelectAddress                        controllers.InstitutionSelectAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /changeInstitutionSelectAddress                  controllers.InstitutionSelectAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeInstitutionSelectAddress                  controllers.InstitutionSelectAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET        /institutionSelectNonUkAddress                        controllers.InstitutionSelectNonUkAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /institutionSelectNonUkAddress                        controllers.InstitutionSelectNonUkAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /changeInstitutionSelectNonUkAddress                  controllers.InstitutionSelectNonUkAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeInstitutionSelectNonUkAddress                  controllers.InstitutionSelectNonUkAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET        /institutionSelectUkAddress                        controllers.InstitutionSelectUkAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /institutionSelectUkAddress                        controllers.InstitutionSelectUkAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /changeInstitutionSelectUkAddress                  controllers.InstitutionSelectUkAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeInstitutionSelectUkAddress                  controllers.InstitutionSelectUkAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET        /isThisInstitutionAddress                        controllers.IsThisInstitutionAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /isThisInstitutionAddress                        controllers.IsThisInstitutionAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /changeIsThisInstitutionAddress                  controllers.IsThisInstitutionAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeIsThisInstitutionAddress                  controllers.IsThisInstitutionAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET        /sendReports                        controllers.SendReportsController.onPageLoad(mode: Mode = NormalMode)
+POST       /sendReports                        controllers.SendReportsController.onSubmit(mode: Mode = NormalMode)
+GET        /changeSendReports                  controllers.SendReportsController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeSendReports                  controllers.SendReportsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /whatIsGIIN                        controllers.WhatIsGIINController.onPageLoad(mode: Mode = NormalMode)
+POST       /whatIsGIIN                        controllers.WhatIsGIINController.onSubmit(mode: Mode = NormalMode)
+GET        /changeWhatIsGIIN                  controllers.WhatIsGIINController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeWhatIsGIIN                  controllers.WhatIsGIINController.onSubmit(mode: Mode = CheckMode)
