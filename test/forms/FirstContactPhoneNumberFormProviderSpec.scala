@@ -35,7 +35,7 @@ class FirstContactPhoneNumberFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      validPhoneNumberWithinLength(maxLength)
+      validPhoneNumber(maxLength)
     )
 
     behave like fieldWithMaxLengthPhoneNumber(

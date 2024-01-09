@@ -91,10 +91,10 @@ trait Generators extends RegexConstants {
       x => x < min || x > max
     )
 
-  def validPhoneNumberWithinLength(maxlength: Int): Gen[String] = RegexpGen.from(phoneRegex) retryUntil
-    (
-      phoneNumber => phoneNumber.length < maxlength
-    )
+  def validPhoneNumber(ln: Int): Gen[String] = for {
+    length <- Gen.chooseNum(1, ln - 1)
+    chars  <- listOfN(length, Gen.chooseNum(0, 9))
+  } yield "+" + chars.mkString
 
   def nonBooleans: Gen[String] =
     arbitrary[String]
