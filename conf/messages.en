@@ -121,7 +121,7 @@ contactName.error.invalid = The name must only include letters a to z, numbers 0
 contactName.error.length = The name must be 35 characters or less
 contactName.change.hidden = ContactName
 
-contactHavePhone.title.business = Can we contact your first contact by telephone?
+contactHavePhone.title.business = Can we contact the first contact by telephone?
 contactHavePhone.heading.business = Can we contact {0} by telephone?
 contactHavePhone.title.individual = Can we contact you by telephone?
 contactHavePhone.heading.individual = Can we contact you by telephone?
