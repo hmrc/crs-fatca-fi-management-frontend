@@ -128,3 +128,24 @@ contactHavePhone.heading.individual = Can we contact you by telephone?
 contactHavePhone.p1 = We will call if we have any questions about reports for {0}.
 contactHavePhone.error.required.individual = Select yes if we can contact you by telephone
 contactHavePhone.error.required.business = Select yes if they can be contacted by telephone
+
+haveUniqueTaxpayerReference.title = haveUniqueTaxpayerReference
+haveUniqueTaxpayerReference.heading = haveUniqueTaxpayerReference
+haveUniqueTaxpayerReference.checkYourAnswersLabel = haveUniqueTaxpayerReference
+haveUniqueTaxpayerReference.error.required = Select yes if haveUniqueTaxpayerReference
+haveUniqueTaxpayerReference.change.hidden = HaveUniqueTaxpayerReference
+
+nameOfFinancialInstitution.title = nameOfFinancialInstitution
+nameOfFinancialInstitution.heading = nameOfFinancialInstitution
+nameOfFinancialInstitution.checkYourAnswersLabel = nameOfFinancialInstitution
+nameOfFinancialInstitution.error.required = Enter nameOfFinancialInstitution
+nameOfFinancialInstitution.error.length = NameOfFinancialInstitution must be 100 characters or less
+nameOfFinancialInstitution.change.hidden = NameOfFinancialInstitution
+
+whatIsUniqueTaxpayerReference.title = whatIsUniqueTaxpayerReference
+whatIsUniqueTaxpayerReference.heading = whatIsUniqueTaxpayerReference
+whatIsUniqueTaxpayerReference.checkYourAnswersLabel = whatIsUniqueTaxpayerReference
+whatIsUniqueTaxpayerReference.error.required = Enter whatIsUniqueTaxpayerReference
+whatIsUniqueTaxpayerReference.error.length = WhatIsUniqueTaxpayerReference must be 100 characters or less
+whatIsUniqueTaxpayerReference.change.hidden = WhatIsUniqueTaxpayerReference
+
