@@ -149,3 +149,63 @@ whatIsUniqueTaxpayerReference.error.required = Enter whatIsUniqueTaxpayerReferen
 whatIsUniqueTaxpayerReference.error.length = WhatIsUniqueTaxpayerReference must be 100 characters or less
 whatIsUniqueTaxpayerReference.change.hidden = WhatIsUniqueTaxpayerReference
 
+
+haveGIIN.title = haveGIIN
+haveGIIN.heading = haveGIIN
+haveGIIN.checkYourAnswersLabel = haveGIIN
+haveGIIN.error.required = Select yes if haveGIIN
+haveGIIN.change.hidden = HaveGIIN
+
+institutionLocation.title = institutionLocation
+institutionLocation.heading = institutionLocation
+institutionLocation.checkYourAnswersLabel = institutionLocation
+institutionLocation.error.required = Select yes if institutionLocation
+institutionLocation.change.hidden = InstitutionLocation
+
+institutionPostcode.title = institutionPostcode
+institutionPostcode.heading = institutionPostcode
+institutionPostcode.checkYourAnswersLabel = institutionPostcode
+institutionPostcode.error.required = Enter institutionPostcode
+institutionPostcode.error.length = InstitutionPostcode must be 10 characters or less
+institutionPostcode.change.hidden = InstitutionPostcode
+
+institutionSelectAddress.title = address1
+institutionSelectAddress.heading = address1
+institutionSelectAddress.address1 = address1
+institutionSelectAddress.address2 = address2
+institutionSelectAddress.checkYourAnswersLabel = address1
+institutionSelectAddress.error.required = Select institutionSelectAddress
+institutionSelectAddress.change.hidden = InstitutionSelectAddress
+
+institutionSelectNonUkAddress.title = institutionSelectNonUkAddress
+institutionSelectNonUkAddress.heading = institutionSelectNonUkAddress
+institutionSelectNonUkAddress.checkYourAnswersLabel = institutionSelectNonUkAddress
+institutionSelectNonUkAddress.error.required = Enter institutionSelectNonUkAddress
+institutionSelectNonUkAddress.error.length = InstitutionSelectNonUkAddress must be 100 characters or less
+institutionSelectNonUkAddress.change.hidden = InstitutionSelectNonUkAddress
+
+institutionSelectUkAddress.title = institutionSelectUkAddress
+institutionSelectUkAddress.heading = institutionSelectUkAddress
+institutionSelectUkAddress.checkYourAnswersLabel = institutionSelectUkAddress
+institutionSelectUkAddress.error.required = Enter institutionSelectUkAddress
+institutionSelectUkAddress.error.length = InstitutionSelectUkAddress must be 100 characters or less
+institutionSelectUkAddress.change.hidden = InstitutionSelectUkAddress
+
+isThisInstitutionAddress.title = isThisInstitutionAddress
+isThisInstitutionAddress.heading = isThisInstitutionAddress
+isThisInstitutionAddress.checkYourAnswersLabel = isThisInstitutionAddress
+isThisInstitutionAddress.error.required = Select yes if isThisInstitutionAddress
+isThisInstitutionAddress.change.hidden = IsThisInstitutionAddress
+
+sendReports.title = sendReports
+sendReports.heading = sendReports
+sendReports.checkYourAnswersLabel = sendReports
+sendReports.error.required = Select yes if sendReports
+sendReports.change.hidden = SendReports
+
+whatIsGIIN.title = whatIsGIIN
+whatIsGIIN.heading = whatIsGIIN
+whatIsGIIN.checkYourAnswersLabel = whatIsGIIN
+whatIsGIIN.error.required = Enter whatIsGIIN
+whatIsGIIN.error.length = WhatIsGIIN must be 100 characters or less
+whatIsGIIN.change.hidden = WhatIsGIIN
