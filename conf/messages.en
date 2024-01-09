@@ -129,3 +129,24 @@ contactPhone.checkYourAnswersLabel.hiddenText = Change telephone number
 contactPhone.error.required = Enter a telephone number for the first contact
 contactPhone.error.invalid = The telephone number must only include numbers 0 to 9 and a plus sign, like 01632 960 001, 07700 900 982 or +44 808 157 0192
 contactPhone.error.length = The telephone number must be 24 characters or less
+
+haveUniqueTaxpayerReference.title = haveUniqueTaxpayerReference
+haveUniqueTaxpayerReference.heading = haveUniqueTaxpayerReference
+haveUniqueTaxpayerReference.checkYourAnswersLabel = haveUniqueTaxpayerReference
+haveUniqueTaxpayerReference.error.required = Select yes if haveUniqueTaxpayerReference
+haveUniqueTaxpayerReference.change.hidden = HaveUniqueTaxpayerReference
+
+nameOfFinancialInstitution.title = nameOfFinancialInstitution
+nameOfFinancialInstitution.heading = nameOfFinancialInstitution
+nameOfFinancialInstitution.checkYourAnswersLabel = nameOfFinancialInstitution
+nameOfFinancialInstitution.error.required = Enter nameOfFinancialInstitution
+nameOfFinancialInstitution.error.length = NameOfFinancialInstitution must be 100 characters or less
+nameOfFinancialInstitution.change.hidden = NameOfFinancialInstitution
+
+whatIsUniqueTaxpayerReference.title = whatIsUniqueTaxpayerReference
+whatIsUniqueTaxpayerReference.heading = whatIsUniqueTaxpayerReference
+whatIsUniqueTaxpayerReference.checkYourAnswersLabel = whatIsUniqueTaxpayerReference
+whatIsUniqueTaxpayerReference.error.required = Enter whatIsUniqueTaxpayerReference
+whatIsUniqueTaxpayerReference.error.length = WhatIsUniqueTaxpayerReference must be 100 characters or less
+whatIsUniqueTaxpayerReference.change.hidden = WhatIsUniqueTaxpayerReference
+

@@ -23,7 +23,7 @@ import org.scalacheck.Gen._
 import org.scalacheck.{Gen, Shrink}
 import wolfendale.scalacheck.regexp.RegexpGen
 
-trait Generators extends ModelGenerators {
+trait Generators {
 
   implicit val dontShrink: Shrink[String] = Shrink.shrinkAny
 
