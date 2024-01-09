@@ -23,7 +23,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.FirstContactPhoneNumberPage
+import pages.{ContactNamePage, FirstContactPhoneNumberPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -39,6 +39,10 @@ class FirstContactPhoneNumberControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new FirstContactPhoneNumberFormProvider()
   val form         = formProvider()
+  val defaultName  = "your first contact"
+  val name         = "Firstname Lastname"
+
+  val userAnswers = emptyUserAnswers.set(ContactNamePage, name).success.value
 
   lazy val firstContactPhoneNumberRoute = routes.FirstContactPhoneNumberController.onPageLoad(NormalMode).url
 
@@ -46,7 +50,7 @@ class FirstContactPhoneNumberControllerSpec extends SpecBase with MockitoSugar {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, firstContactPhoneNumberRoute)
@@ -56,7 +60,7 @@ class FirstContactPhoneNumberControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[FirstContactPhoneNumberView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, name, NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -74,7 +78,7 @@ class FirstContactPhoneNumberControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill("answer"), defaultName, NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -95,7 +99,7 @@ class FirstContactPhoneNumberControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, firstContactPhoneNumberRoute)
-            .withFormUrlEncodedBody(("value", "answer"))
+            .withFormUrlEncodedBody(("value", "0928273"))
 
         val result = route(application, request).value
 
@@ -120,7 +124,7 @@ class FirstContactPhoneNumberControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, defaultName, NormalMode)(request, messages(application)).toString
       }
     }
 

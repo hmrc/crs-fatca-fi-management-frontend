@@ -59,5 +59,5 @@ trait RegexConstants {
   final val arrangementIDRegex = "[A-Z]{2}[A]([2]\\d{3}(0[1-9]|1[0-2])(0[1-9]|[12]\\d|3[01]))([A-Z0-9]{6})"
   final val disclosureIDRegex  = "[A-Z]{2}[D]([2]\\d{3}(0[1-9]|1[0-2])(0[1-9]|[12]\\d|3[01]))([A-Z0-9]{6})"
 
-  final val phoneRegex = """^[A-Z0-9 )/(\-*#+]*$""".stripMargin
+  final val phoneRegex = """^[0-9 )/(\-*#+]*$""".stripMargin
 }
