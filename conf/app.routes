@@ -65,6 +65,11 @@ POST        /secondContactPhoneNumber                    controllers.SecondConta
 GET         /changeSecondContactPhoneNumber              controllers.SecondContactPhoneNumberController.onPageLoad(mode: Mode = CheckMode)
 POST        /changeSecondContactPhoneNumber              controllers.SecondContactPhoneNumberController.onSubmit(mode: Mode = CheckMode)
 
+GET        /have-phone                          controllers.ContactHavePhoneController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /have-phone                          controllers.ContactHavePhoneController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /change-have-phone                   controllers.ContactHavePhoneController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /change-have-phone                   controllers.ContactHavePhoneController.onSubmit(mode: models.Mode = models.CheckMode)
+
 GET        /haveUniqueTaxpayerReference                        controllers.HaveUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = NormalMode)
 POST       /haveUniqueTaxpayerReference                        controllers.HaveUniqueTaxpayerReferenceController.onSubmit(mode: Mode = NormalMode)
 GET        /changeHaveUniqueTaxpayerReference                  controllers.HaveUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = CheckMode)
@@ -79,3 +84,4 @@ GET        /whatIsUniqueTaxpayerReference                        controllers.Wha
 POST       /whatIsUniqueTaxpayerReference                        controllers.WhatIsUniqueTaxpayerReferenceController.onSubmit(mode: Mode = NormalMode)
 GET        /changeWhatIsUniqueTaxpayerReference                  controllers.WhatIsUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeWhatIsUniqueTaxpayerReference                  controllers.WhatIsUniqueTaxpayerReferenceController.onSubmit(mode: Mode = CheckMode)
+
