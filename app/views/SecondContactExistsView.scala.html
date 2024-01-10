@@ -22,7 +22,7 @@
     govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], contactName: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("secondContactExists.title"))) {
 
@@ -32,15 +32,18 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @govukRadios(
-            RadiosViewModel.yesNo(
-                field = form("value"),
-                legend = LegendViewModel(messages("secondContactExists.heading")).asPageHeading()
-            )
-        )
+       <h1 class="govuk-heading-l">@messages("secondContact.heading", contactName)</h1>
+       <p class="govuk-body">@messages("secondContact.p1")</p>
 
-        @govukButton(
-            ButtonViewModel(messages("site.continue"))
-        )
+       @govukRadios(
+          RadiosViewModel.yesNo(
+           field = form("value"),
+           legend = LegendViewModel(messages("secondContact.heading", contactName)).withCssClass("govuk-visually-hidden")
+         )
+       )
+
+     @govukButton(
+         ButtonViewModel(messages("site.continue")).withAttribute("id" -> "submit")
+     )
     }
 }
