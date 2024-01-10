@@ -96,12 +96,6 @@ secondContactEmail.error.required = Enter secondContactEmail
 secondContactEmail.error.length = SecondContactEmail must be 100 characters or less
 secondContactEmail.change.hidden = SecondContactEmail
 
-secondContactExists.title = secondContactExists
-secondContactExists.heading = secondContactExists
-secondContactExists.checkYourAnswersLabel = secondContactExists
-secondContactExists.error.required = Select yes if secondContactExists
-secondContactExists.change.hidden = SecondContactExists
-
 secondContactName.title = secondContactName
 secondContactName.heading = secondContactName
 secondContactName.checkYourAnswersLabel = secondContactName
@@ -213,3 +207,10 @@ whatIsGIIN.checkYourAnswersLabel = whatIsGIIN
 whatIsGIIN.error.required = Enter whatIsGIIN
 whatIsGIIN.error.length = WhatIsGIIN must be 100 characters or less
 whatIsGIIN.change.hidden = WhatIsGIIN
+
+secondContact.title = Is there someone else we can contact if your first contact is not available?
+secondContact.heading = Is there someone else we can contact if {0} is not available?
+secondContact.p1 = This can be a team mailbox or another contact.
+secondContact.checkYourAnswersLabel = Do you have a second contact?
+secondContact.checkYourAnswersLabel.hiddenText = Change if you have a second contact
+secondContact.error.required = Select yes if there is someone else we can contact

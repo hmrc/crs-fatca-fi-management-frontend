@@ -32,11 +32,11 @@ object SecondContactExistsSummary {
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key = "secondContactExists.checkYourAnswersLabel",
+          key = "secondContact.checkYourAnswersLabel",
           value = ValueViewModel(value),
           actions = Seq(
             ActionItemViewModel("site.change", routes.SecondContactExistsController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("secondContactExists.change.hidden"))
+              .withVisuallyHiddenText(messages("secondContact.checkYourAnswersLabel.hiddenText"))
           )
         )
     }

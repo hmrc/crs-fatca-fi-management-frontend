@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package forms
+package utils
 
-import javax.inject.Inject
+import models.UserAnswers
+import pages.ContactNamePage
+import play.api.i18n.Messages
 
-import forms.mappings.Mappings
-import play.api.data.Form
+trait ContactHelper {
 
-class SecondContactExistsFormProvider @Inject() extends Mappings {
-
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("secondContact.error.required")
-    )
+  def getFirstContactName(userAnswers: UserAnswers)(implicit messages: Messages): String =
+    userAnswers
+      .get(ContactNamePage)
+      .fold(messages("default.firstContact.name"))(
+        contactName => contactName
+      )
 
 }
