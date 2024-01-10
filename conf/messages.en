@@ -96,12 +96,6 @@ secondContactEmail.error.required = Enter secondContactEmail
 secondContactEmail.error.length = SecondContactEmail must be 100 characters or less
 secondContactEmail.change.hidden = SecondContactEmail
 
-secondContactExists.title = secondContactExists
-secondContactExists.heading = secondContactExists
-secondContactExists.checkYourAnswersLabel = secondContactExists
-secondContactExists.error.required = Select yes if secondContactExists
-secondContactExists.change.hidden = SecondContactExists
-
 secondContactName.title = secondContactName
 secondContactName.heading = secondContactName
 secondContactName.checkYourAnswersLabel = secondContactName
