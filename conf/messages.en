@@ -72,12 +72,16 @@ firstContactEmail.error.length = The email address must be 132 characters or les
 firstContactEmail.error.format = Enter an email address in the right format, like yourname@example.com
 firstContactEmail.change.hidden = Change email for financial institution contact
 
-firstContactPhoneNumber.title = firstContactPhoneNumber
-firstContactPhoneNumber.heading = firstContactPhoneNumber
-firstContactPhoneNumber.checkYourAnswersLabel = firstContactPhoneNumber
-firstContactPhoneNumber.error.required = Enter firstContactPhoneNumber
-firstContactPhoneNumber.error.length = FirstContactPhoneNumber must be 100 characters or less
-firstContactPhoneNumber.change.hidden = FirstContactPhoneNumber
+default.firstContact.name = your first contact
+
+firstContactPhoneNumber.checkYourAnswersLabel = First contact telephone number
+firstContactPhoneNumber.title = What is the telephone number for the first contact?
+firstContactPhoneNumber.heading = What is the telephone number for {0}?
+firstContactPhoneNumber.hint = For international numbers, include the country code.
+firstContactPhoneNumber.error.required = Enter a telephone number for the first contact
+firstContactPhoneNumber.error.invalid = The telephone number must only include numbers 0 to 9 and a plus sign, like 01632 960 001, 07700 900 982 or +44 808 157 0192
+firstContactPhoneNumber.error.length = The telephone number must be 24 characters or less
+firstContactPhoneNumber.change.hidden = Change first contact telephone number
 
 secondContactCanWePhone.title = secondContactCanWePhone
 secondContactCanWePhone.heading = secondContactCanWePhone

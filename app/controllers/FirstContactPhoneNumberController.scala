@@ -18,11 +18,12 @@ package controllers
 
 import controllers.actions._
 import forms.FirstContactPhoneNumberFormProvider
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.FirstContactPhoneNumberPage
-import play.api.i18n.{I18nSupport, MessagesApi}
+import pages.{ContactNamePage, FirstContactPhoneNumberPage}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -53,7 +54,7 @@ class FirstContactPhoneNumberController @Inject() (
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode))
+      Ok(view(preparedForm, getFirstContactName(request.userAnswers), mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -61,7 +62,7 @@ class FirstContactPhoneNumberController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, getFirstContactName(request.userAnswers), mode))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(FirstContactPhoneNumberPage, value))
@@ -69,5 +70,12 @@ class FirstContactPhoneNumberController @Inject() (
             } yield Redirect(navigator.nextPage(FirstContactPhoneNumberPage, mode, updatedAnswers))
         )
   }
+
+  def getFirstContactName(userAnswers: UserAnswers)(implicit messages: Messages): String =
+    userAnswers
+      .get(ContactNamePage)
+      .fold(messages("default.firstContact.name"))(
+        contactName => contactName
+      )
 
 }

@@ -35,10 +35,10 @@ POST        /firstContactCanWePhone                      controllers.FirstContac
 GET         /changeFirstContactCanWePhone                controllers.FirstContactCanWePhoneController.onPageLoad(mode: Mode = CheckMode)
 POST        /changeFirstContactCanWePhone                controllers.FirstContactCanWePhoneController.onSubmit(mode: Mode = CheckMode)
 
-GET         /firstContactPhoneNumber                     controllers.FirstContactPhoneNumberController.onPageLoad(mode: Mode = NormalMode)
-POST        /firstContactPhoneNumber                     controllers.FirstContactPhoneNumberController.onSubmit(mode: Mode = NormalMode)
-GET         /changeFirstContactPhoneNumber               controllers.FirstContactPhoneNumberController.onPageLoad(mode: Mode = CheckMode)
-POST        /changeFirstContactPhoneNumber               controllers.FirstContactPhoneNumberController.onSubmit(mode: Mode = CheckMode)
+GET         /phone                                       controllers.FirstContactPhoneNumberController.onPageLoad(mode: Mode = NormalMode)
+POST        /phone                                       controllers.FirstContactPhoneNumberController.onSubmit(mode: Mode = NormalMode)
+GET         /change-phone                                controllers.FirstContactPhoneNumberController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-phone                                controllers.FirstContactPhoneNumberController.onSubmit(mode: Mode = CheckMode)
 
 GET         /secondContactExists                         controllers.SecondContactExistsController.onPageLoad(mode: Mode = NormalMode)
 POST        /secondContactExists                         controllers.SecondContactExistsController.onSubmit(mode: Mode = NormalMode)
