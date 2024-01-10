@@ -27,6 +27,7 @@ import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.ContactHelper
 import views.html.FirstContactPhoneNumberView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,7 +44,8 @@ class FirstContactPhoneNumberController @Inject() (
   view: FirstContactPhoneNumberView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with ContactHelper {
 
   val form = formProvider()
 
@@ -70,12 +72,5 @@ class FirstContactPhoneNumberController @Inject() (
             } yield Redirect(navigator.nextPage(FirstContactPhoneNumberPage, mode, updatedAnswers))
         )
   }
-
-  def getFirstContactName(userAnswers: UserAnswers)(implicit messages: Messages): String =
-    userAnswers
-      .get(ContactNamePage)
-      .fold(messages("default.firstContact.name"))(
-        contactName => contactName
-      )
 
 }
