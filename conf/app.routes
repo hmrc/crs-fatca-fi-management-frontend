@@ -50,10 +50,10 @@ POST        /second-contact-name                          controllers.SecondCont
 GET         /change-second-contact-name                     controllers.SecondContactNameController.onPageLoad(mode: Mode = CheckMode)
 POST        /change-second-contact-name                     controllers.SecondContactNameController.onSubmit(mode: Mode = CheckMode)
 
-GET         /secondContactEmail                          controllers.SecondContactEmailController.onPageLoad(mode: Mode = NormalMode)
-POST        /secondContactEmail                          controllers.SecondContactEmailController.onSubmit(mode: Mode = NormalMode)
-GET         /changeSecondContactEmail                    controllers.SecondContactEmailController.onPageLoad(mode: Mode = CheckMode)
-POST        /changeSecondContactEmail                    controllers.SecondContactEmailController.onSubmit(mode: Mode = CheckMode)
+GET         /second-contact-email                        controllers.SecondContactEmailController.onPageLoad(mode: Mode = NormalMode)
+POST        /second-contact-email                        controllers.SecondContactEmailController.onSubmit(mode: Mode = NormalMode)
+GET         /change-second-contact-email                 controllers.SecondContactEmailController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-second-contact-email                 controllers.SecondContactEmailController.onSubmit(mode: Mode = CheckMode)
 
 GET         /secondContactCanWePhone                     controllers.SecondContactCanWePhoneController.onPageLoad(mode: Mode = NormalMode)
 POST        /secondContactCanWePhone                     controllers.SecondContactCanWePhoneController.onSubmit(mode: Mode = NormalMode)

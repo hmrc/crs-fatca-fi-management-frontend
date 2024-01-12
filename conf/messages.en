@@ -215,6 +215,15 @@ secondContact.checkYourAnswersLabel = Do you have a second contact?
 secondContact.checkYourAnswersLabel.hiddenText = Change if you have a second contact
 secondContact.error.required = Select yes if there is someone else we can contact
 
+secondContactEmail.title = What is the email address for the second contact?
+secondContactEmail.heading = What is the email address for {0}?
+secondContactEmail.p1 =We will use this email address to send confirmation of reports for {0} or if we have any questions about them.
+secondContactEmail.checkYourAnswersLabel = Second contact email address
+secondContactEmail.checkYourAnswersLabel.hiddenText = Change second contact email address
+secondContactEmail.error.required = Enter an email address for the second contact
+secondContactEmail.error.length = The email address must be 132 characters or less
+secondContactEmail.error.invalid = Enter an email address in the right format, like yourname@example.com
+
 secondContactName.title = What is the name of the person or team we should contact?
 secondContactName.heading = What is the name of the person or team we should contact at {0}?
 secondContactName.p1 = For example, '‘Ashley Smith’' or '‘Tax team’'.
@@ -223,3 +232,4 @@ secondContactName.checkYourAnswersLabel.hiddenText = Change second contact name
 secondContactName.error.required = Enter a name for the second contact
 secondContactName.error.invalid = The name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, backslashes, carets (^), grave accents (`), hyphens and spaces
 secondContactName.error.length = The name must be 35 characters or less
+
