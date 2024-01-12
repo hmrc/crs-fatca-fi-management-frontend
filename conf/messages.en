@@ -216,7 +216,7 @@ secondContact.checkYourAnswersLabel.hiddenText = Change if you have a second con
 secondContact.error.required = Select yes if there is someone else we can contact
 
 secondContactName.title = What is the name of the person or team we should contact?
-secondContactName.heading = What is the name of the person or team we should contact at {0} ?
+secondContactName.heading = What is the name of the person or team we should contact at {0}?
 secondContactName.p1 = For example, '‘Ashley Smith’' or '‘Tax team’'.
 secondContactName.checkYourAnswersLabel = Second contact name
 secondContactName.checkYourAnswersLabel.hiddenText = Change second contact name
