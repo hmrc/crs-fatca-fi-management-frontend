@@ -23,7 +23,7 @@ class SecondContactEmailFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "secondContactEmail.error.required"
   val lengthKey   = "secondContactEmail.error.length"
-  val formatError = "secondContactEmail.error.format"
+  val formatError = "secondContactEmail.error.invalid"
   val maxLength   = 132
 
   val form = new SecondContactEmailFormProvider()()

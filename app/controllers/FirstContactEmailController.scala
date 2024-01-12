@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.FirstContactEmailFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.{ContactNamePage, FirstContactEmailPage, SecondContactNamePage}
+import pages.{ContactNamePage, FirstContactEmailPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -65,7 +65,7 @@ class FirstContactEmailController @Inject() (
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       request.userAnswers
-        .get(SecondContactNamePage)
+        .get(ContactNamePage)
         .fold {
           Future.successful(Redirect(routes.IndexController.onPageLoad))
         } {
