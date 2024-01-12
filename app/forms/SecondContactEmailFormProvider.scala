@@ -17,16 +17,21 @@
 package forms
 
 import javax.inject.Inject
-
 import forms.mappings.Mappings
 import play.api.data.Form
+import play.api.data.validation.Constraints
 
 class SecondContactEmailFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
       "value" -> text("secondContactEmail.error.required")
-        .verifying(maxLength(100, "secondContactEmail.error.length"))
+        .verifying(
+          firstError(
+            maxLength(132, "secondContactEmail.error.length"),
+            Constraints.emailAddress(errorMessage = "secondContactEmail.error.invalid")
+          )
+        )
     )
 
 }

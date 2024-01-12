@@ -23,7 +23,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.SecondContactEmailPage
+import pages.{ContactNamePage, SecondContactEmailPage, SecondContactNamePage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -37,8 +37,11 @@ class SecondContactEmailControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new SecondContactEmailFormProvider()
-  val form         = formProvider()
+  val formProvider         = new SecondContactEmailFormProvider()
+  val form                 = formProvider()
+  val contactName          = "Mr Test"
+  val financialInstitution = "Placeholder Financial Institution"
+  private val ua           = emptyUserAnswers.set(SecondContactNamePage, contactName).get
 
   lazy val secondContactEmailRoute = routes.SecondContactEmailController.onPageLoad(NormalMode).url
 
@@ -56,7 +59,7 @@ class SecondContactEmailControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[SecondContactEmailView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, financialInstitution, contactName)(request, messages(application)).toString
       }
     }
 
@@ -74,7 +77,7 @@ class SecondContactEmailControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode, financialInstitution, contactName)(request, messages(application)).toString
       }
     }
 
@@ -120,7 +123,7 @@ class SecondContactEmailControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, financialInstitution, contactName)(request, messages(application)).toString
       }
     }
 
