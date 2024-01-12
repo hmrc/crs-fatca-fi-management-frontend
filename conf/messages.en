@@ -223,3 +223,13 @@ secondContactEmail.checkYourAnswersLabel.hiddenText = Change second contact emai
 secondContactEmail.error.required = Enter an email address for the second contact
 secondContactEmail.error.length = The email address must be 132 characters or less
 secondContactEmail.error.invalid = Enter an email address in the right format, like yourname@example.com
+
+secondContactName.title = What is the name of the person or team we should contact?
+secondContactName.heading = What is the name of the person or team we should contact at {0}?
+secondContactName.p1 = For example, '‘Ashley Smith’' or '‘Tax team’'.
+secondContactName.checkYourAnswersLabel = Second contact name
+secondContactName.checkYourAnswersLabel.hiddenText = Change second contact name
+secondContactName.error.required = Enter a name for the second contact
+secondContactName.error.invalid = The name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, backslashes, carets (^), grave accents (`), hyphens and spaces
+secondContactName.error.length = The name must be 35 characters or less
+

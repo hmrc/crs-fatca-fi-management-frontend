@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,14 @@ package forms
 
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
+import wolfendale.scalacheck.regexp.RegexpGen
 
 class SecondContactNameFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "secondContactName.error.required"
   val lengthKey   = "secondContactName.error.length"
-  val maxLength   = 100
+  val invalidKey  = "secondContactName.error.invalid"
+  val maxLength   = 35
 
   val form = new SecondContactNameFormProvider()()
 
@@ -31,23 +33,37 @@ class SecondContactNameFormProviderSpec extends StringFieldBehaviours {
 
     val fieldName = "value"
 
-    behave like fieldThatBindsValidData(
+    behave like fieldThatBindsValidDataWithoutInvalidError(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      RegexpGen.from(orgNameRegex),
+      invalidKey
     )
 
-    behave like fieldWithMaxLength(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      lengthError = FormError(fieldName, lengthKey)
     )
 
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithNonEmptyWhitespace(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidKey)
     )
   }
 

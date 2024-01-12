@@ -37,9 +37,9 @@ class SecondContactNameControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new SecondContactNameFormProvider()
-  val form         = formProvider()
-
+  val formProvider                = new SecondContactNameFormProvider()
+  val form                        = formProvider()
+  val financialInstitution        = "Placeholder Financial Institution"
   lazy val secondContactNameRoute = routes.SecondContactNameController.onPageLoad(NormalMode).url
 
   "SecondContactName Controller" - {
@@ -56,7 +56,7 @@ class SecondContactNameControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[SecondContactNameView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, financialInstitution, NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -74,7 +74,7 @@ class SecondContactNameControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill("answer"), financialInstitution, NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -120,7 +120,7 @@ class SecondContactNameControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, financialInstitution, NormalMode)(request, messages(application)).toString
       }
     }
 
