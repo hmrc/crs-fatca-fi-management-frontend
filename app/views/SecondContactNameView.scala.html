@@ -15,16 +15,19 @@
  *@
 
 @import viewmodels.InputWidth._
+@import components._
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    paragraph: Paragraph,
+    heading: Heading
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], finInstitution: String , mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("secondContactName.title"))) {
 
@@ -34,10 +37,14 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
+        @heading(messages("secondContactName.heading", finInstitution))
+
+        @paragraph(Html(messages("secondContactName.p1")))
+
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("secondContactName.heading")).asPageHeading()
+                label = LabelViewModel(messages("secondContactName.heading")).visuallyHidden()
             )
             .withWidth(Full)
         )

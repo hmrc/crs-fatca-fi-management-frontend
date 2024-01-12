@@ -214,3 +214,12 @@ secondContact.p1 = This can be a team mailbox or another contact.
 secondContact.checkYourAnswersLabel = Do you have a second contact?
 secondContact.checkYourAnswersLabel.hiddenText = Change if you have a second contact
 secondContact.error.required = Select yes if there is someone else we can contact
+
+secondContactName.title = What is the name of the person or team we should contact?
+secondContactName.heading = What is the name of the person or team we should contact at {0} ?
+secondContactName.p1 = For example, '‘Ashley Smith’' or '‘Tax team’'.
+secondContactName.checkYourAnswersLabel = Second contact name
+secondContactName.checkYourAnswersLabel.hiddenText = Change second contact name
+secondContactName.error.required = Enter a name for the second contact
+secondContactName.error.invalid = The name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, backslashes, carets (^), grave accents (`), hyphens and spaces
+secondContactName.error.length = The name must be 35 characters or less
