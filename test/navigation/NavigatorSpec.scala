@@ -43,6 +43,18 @@ class NavigatorSpec extends SpecBase {
           routes.CheckYourAnswersController.onPageLoad
       }
 
+      "must go from SecondContactCanWePhonePage to SecondContactPhoneNumberPage when user answers yes" in {
+        val userAnswers = emptyUserAnswers.withPage(SecondContactCanWePhonePage, true)
+        navigator.nextPage(SecondContactCanWePhonePage, NormalMode, userAnswers) mustBe
+          routes.SecondContactPhoneNumberController.onPageLoad(NormalMode)
+      }
+
+      "must go from SecondContactCanWePhonePage to CheckYourAnswersPage when user answers no" in {
+        val userAnswers = emptyUserAnswers.withPage(SecondContactCanWePhonePage, false)
+        navigator.nextPage(SecondContactCanWePhonePage, NormalMode, userAnswers) mustBe
+          routes.CheckYourAnswersController.onPageLoad
+      }
+
     }
 
     "in Check mode" - {
