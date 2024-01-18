@@ -55,10 +55,10 @@ POST        /second-contact-email                        controllers.SecondConta
 GET         /change-second-contact-email                 controllers.SecondContactEmailController.onPageLoad(mode: Mode = CheckMode)
 POST        /change-second-contact-email                 controllers.SecondContactEmailController.onSubmit(mode: Mode = CheckMode)
 
-GET         /secondContactCanWePhone                     controllers.SecondContactCanWePhoneController.onPageLoad(mode: Mode = NormalMode)
-POST        /secondContactCanWePhone                     controllers.SecondContactCanWePhoneController.onSubmit(mode: Mode = NormalMode)
-GET         /changeSecondContactCanWePhone               controllers.SecondContactCanWePhoneController.onPageLoad(mode: Mode = CheckMode)
-POST        /changeSecondContactCanWePhone               controllers.SecondContactCanWePhoneController.onSubmit(mode: Mode = CheckMode)
+GET         /second-contact-have-phone                   controllers.SecondContactCanWePhoneController.onPageLoad(mode: Mode = NormalMode)
+POST        /second-contact-have-phone                   controllers.SecondContactCanWePhoneController.onSubmit(mode: Mode = NormalMode)
+GET         /change-second-contact-have-phone            controllers.SecondContactCanWePhoneController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-second-contact-have-phone            controllers.SecondContactCanWePhoneController.onSubmit(mode: Mode = CheckMode)
 
 GET         /second-contact-phone                        controllers.SecondContactPhoneNumberController.onPageLoad(mode: Mode = NormalMode)
 POST        /second-contact-phone                        controllers.SecondContactPhoneNumberController.onSubmit(mode: Mode = NormalMode)

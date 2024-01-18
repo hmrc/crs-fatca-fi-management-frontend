@@ -23,7 +23,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.SecondContactCanWePhonePage
+import pages.{NameOfFinancialInstitutionPage, SecondContactCanWePhonePage, SecondContactNamePage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -34,6 +34,9 @@ import views.html.SecondContactCanWePhoneView
 import scala.concurrent.Future
 
 class SecondContactCanWePhoneControllerSpec extends SpecBase with MockitoSugar {
+
+  val FinancialInstitutionName = "Foo Financial Institution"
+  val SecondContactName        = "Fred Flintstone"
 
   def onwardRoute = Call("GET", "/foo")
 
@@ -46,7 +49,11 @@ class SecondContactCanWePhoneControllerSpec extends SpecBase with MockitoSugar {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers = emptyUserAnswers
+        .withPage(NameOfFinancialInstitutionPage, FinancialInstitutionName)
+        .withPage(SecondContactNamePage, SecondContactName)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, secondContactCanWePhoneRoute)
@@ -56,13 +63,16 @@ class SecondContactCanWePhoneControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[SecondContactCanWePhoneView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, FinancialInstitutionName, SecondContactName)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(SecondContactCanWePhonePage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .withPage(NameOfFinancialInstitutionPage, FinancialInstitutionName)
+        .withPage(SecondContactNamePage, SecondContactName)
+        .withPage(SecondContactCanWePhonePage, true)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -74,7 +84,12 @@ class SecondContactCanWePhoneControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(
+          form.fill(true),
+          NormalMode,
+          FinancialInstitutionName,
+          SecondContactName
+        )(request, messages(application)).toString
       }
     }
 
@@ -106,7 +121,11 @@ class SecondContactCanWePhoneControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers = emptyUserAnswers
+        .withPage(NameOfFinancialInstitutionPage, FinancialInstitutionName)
+        .withPage(SecondContactNamePage, SecondContactName)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request =
@@ -120,13 +139,29 @@ class SecondContactCanWePhoneControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, FinancialInstitutionName, SecondContactName)(request, messages(application)).toString
       }
     }
 
     "must redirect to Journey Recovery for a GET if no existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val request = FakeRequest(GET, secondContactCanWePhoneRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must redirect to Journey Recovery for a GET if no NameOfFinancialInstitution is found" in {
+
+      val userAnswers = emptyUserAnswers.withPage(SecondContactNamePage, SecondContactName)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, secondContactCanWePhoneRoute)
@@ -146,6 +181,24 @@ class SecondContactCanWePhoneControllerSpec extends SpecBase with MockitoSugar {
         val request =
           FakeRequest(POST, secondContactCanWePhoneRoute)
             .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must redirect to Journey Recovery for a POST with invalid answer if no NameOfFinancialInstitution is found" in {
+
+      val userAnswers = emptyUserAnswers.withPage(SecondContactNamePage, SecondContactName)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, secondContactCanWePhoneRoute)
+            .withFormUrlEncodedBody(("value", ""))
 
         val result = route(application, request).value
 

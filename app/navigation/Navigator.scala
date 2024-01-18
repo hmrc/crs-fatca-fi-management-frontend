@@ -30,6 +30,18 @@ class Navigator @Inject() () {
 
     case ContactNamePage =>
       _ => routes.FirstContactEmailController.onPageLoad(NormalMode)
+    case NameOfFinancialInstitutionPage =>
+      _ => routes.HaveUniqueTaxpayerReferenceController.onPageLoad(NormalMode)
+    case SecondContactNamePage =>
+      _ => routes.SecondContactEmailController.onPageLoad(NormalMode)
+    case SecondContactCanWePhonePage =>
+      userAnswers =>
+        yesNoPage(
+          userAnswers,
+          SecondContactCanWePhonePage,
+          routes.SecondContactPhoneNumberController.onPageLoad(NormalMode),
+          routes.CheckYourAnswersController.onPageLoad
+        )
     case SecondContactPhoneNumberPage => _ => routes.CheckYourAnswersController.onPageLoad
     case _ =>
       _ => routes.IndexController.onPageLoad
@@ -39,6 +51,11 @@ class Navigator @Inject() () {
     case _ =>
       _ => routes.CheckYourAnswersController.onPageLoad
   }
+
+  private def yesNoPage(ua: UserAnswers, fromPage: QuestionPage[Boolean], yesCall: => Call, noCall: => Call): Call =
+    ua.get(fromPage)
+      .map(if (_) yesCall else noCall)
+      .getOrElse(controllers.routes.JourneyRecoveryController.onPageLoad())
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>

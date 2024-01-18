@@ -43,6 +43,9 @@ index.guidance = Welcome to your new frontend. Please see the README file for a 
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
 
+default.firstContact.name = your first contact
+default.secondContact.name = your second contact
+
 journeyRecovery.continue.title = Sorry, there is a problem with the service
 journeyRecovery.continue.heading = Sorry, there is a problem with the service
 journeyRecovery.continue.guidance = [Add content to explain how to proceed.]
@@ -72,8 +75,6 @@ firstContactEmail.error.length = The email address must be 132 characters or les
 firstContactEmail.error.format = Enter an email address in the right format, like yourname@example.com
 firstContactEmail.change.hidden = Change email for financial institution contact
 
-default.firstContact.name = your first contact
-
 firstContactPhoneNumber.checkYourAnswersLabel = First contact telephone number
 firstContactPhoneNumber.title = What is the telephone number for the first contact?
 firstContactPhoneNumber.heading = What is the telephone number for {0}?
@@ -83,11 +84,12 @@ firstContactPhoneNumber.error.invalid = The telephone number must only include n
 firstContactPhoneNumber.error.length = The telephone number must be 24 characters or less
 firstContactPhoneNumber.change.hidden = Change first contact telephone number
 
-secondContactCanWePhone.title = secondContactCanWePhone
-secondContactCanWePhone.heading = secondContactCanWePhone
-secondContactCanWePhone.checkYourAnswersLabel = secondContactCanWePhone
-secondContactCanWePhone.error.required = Select yes if secondContactCanWePhone
-secondContactCanWePhone.change.hidden = SecondContactCanWePhone
+secondContactCanWePhone.title = Can we contact the second contact by telephone?
+secondContactCanWePhone.heading = Can we contact {0} by telephone?
+secondContactCanWePhone.p1 = We will call if we have any questions about reports for {0}.
+secondContactCanWePhone.checkYourAnswersLabel = Can we contact {0} by telephone?
+secondContactCanWePhone.error.required = Select yes if they can be contacted by telephone
+secondContactCanWePhone.change.hidden = Change can we contact {0} by telephone?
 
 secondContactEmail.title = secondContactEmail
 secondContactEmail.heading = secondContactEmail

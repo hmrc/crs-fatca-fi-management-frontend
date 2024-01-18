@@ -18,16 +18,19 @@ package controllers
 
 import controllers.actions._
 import forms.SecondContactCanWePhoneFormProvider
-import javax.inject.Inject
 import models.Mode
+import models.requests.DataRequest
 import navigation.Navigator
-import pages.SecondContactCanWePhonePage
+import pages.{NameOfFinancialInstitutionPage, SecondContactCanWePhonePage}
+import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.ContactHelper
 import views.html.SecondContactCanWePhoneView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SecondContactCanWePhoneController @Inject() (
@@ -42,6 +45,8 @@ class SecondContactCanWePhoneController @Inject() (
   view: SecondContactCanWePhoneView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
+    with ContactHelper
+    with Logging
     with I18nSupport {
 
   val form = formProvider()
@@ -53,7 +58,9 @@ class SecondContactCanWePhoneController @Inject() (
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode))
+      createResponse(
+        (fiName, secondContactName) => Ok(view(preparedForm, mode, fiName, secondContactName))
+      )
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -61,7 +68,12 @@ class SecondContactCanWePhoneController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          formWithErrors =>
+            Future.successful(
+              createResponse(
+                (fiName, secondContactName) => BadRequest(view(formWithErrors, mode, fiName, secondContactName))
+              )
+            ),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondContactCanWePhonePage, value))
@@ -69,5 +81,13 @@ class SecondContactCanWePhoneController @Inject() (
             } yield Redirect(navigator.nextPage(SecondContactCanWePhonePage, mode, updatedAnswers))
         )
   }
+
+  private def createResponse(resultFunction: (String, String) => Result)(implicit request: DataRequest[AnyContent]): Result =
+    request.userAnswers.get(NameOfFinancialInstitutionPage) match {
+      case Some(financialInstitutionName) => resultFunction(financialInstitutionName, getSecondContactName(request.userAnswers))
+      case None =>
+        logger.error("Failed to get name of financial institution")
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+    }
 
 }
