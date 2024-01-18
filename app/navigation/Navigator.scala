@@ -28,9 +28,40 @@ class Navigator @Inject() () {
 
   private val normalRoutes: Page => UserAnswers => Call = {
 
+    case NameOfFinancialInstitutionPage =>
+      _ => routes.HaveUniqueTaxpayerReferenceController.onPageLoad(NormalMode)
     case ContactNamePage =>
       _ => routes.FirstContactEmailController.onPageLoad(NormalMode)
+    case FirstContactEmailPage => _ => routes.ContactHavePhoneController.onPageLoad(NormalMode)
+    case ContactHavePhonePage =>
+      userAnswers =>
+        yesNoPage(
+          userAnswers,
+          ContactHavePhonePage,
+          routes.FirstContactPhoneNumberController.onPageLoad(NormalMode),
+          routes.SecondContactExistsController.onPageLoad(NormalMode)
+        )
+    case SecondContactExistsPage =>
+      userAnswers =>
+        yesNoPage(
+          userAnswers,
+          SecondContactExistsPage,
+          routes.SecondContactNameController.onPageLoad(NormalMode),
+          routes.CheckYourAnswersController.onPageLoad
+        )
+    case SecondContactNamePage =>
+      _ => routes.SecondContactEmailController.onPageLoad(NormalMode)
+    case SecondContactEmailPage =>
+      _ => routes.SecondContactCanWePhoneController.onPageLoad(NormalMode)
     case SecondContactPhoneNumberPage => _ => routes.CheckYourAnswersController.onPageLoad
+    case SecondContactCanWePhonePage =>
+      userAnswers =>
+        yesNoPage(
+          userAnswers,
+          SecondContactCanWePhonePage,
+          routes.SecondContactPhoneNumberController.onPageLoad(NormalMode),
+          routes.CheckYourAnswersController.onPageLoad
+        )
     case _ =>
       _ => routes.IndexController.onPageLoad
   }
@@ -46,5 +77,10 @@ class Navigator @Inject() () {
     case CheckMode =>
       checkRouteMap(page)(userAnswers)
   }
+
+  private def yesNoPage(ua: UserAnswers, fromPage: QuestionPage[Boolean], yesCall: => Call, noCall: => Call): Call =
+    ua.get(fromPage)
+      .map(if (_) yesCall else noCall)
+      .getOrElse(controllers.routes.JourneyRecoveryController.onPageLoad())
 
 }
