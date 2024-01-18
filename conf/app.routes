@@ -60,10 +60,10 @@ POST        /secondContactCanWePhone                     controllers.SecondConta
 GET         /changeSecondContactCanWePhone               controllers.SecondContactCanWePhoneController.onPageLoad(mode: Mode = CheckMode)
 POST        /changeSecondContactCanWePhone               controllers.SecondContactCanWePhoneController.onSubmit(mode: Mode = CheckMode)
 
-GET         /secondContactPhoneNumber                    controllers.SecondContactPhoneNumberController.onPageLoad(mode: Mode = NormalMode)
-POST        /secondContactPhoneNumber                    controllers.SecondContactPhoneNumberController.onSubmit(mode: Mode = NormalMode)
-GET         /changeSecondContactPhoneNumber              controllers.SecondContactPhoneNumberController.onPageLoad(mode: Mode = CheckMode)
-POST        /changeSecondContactPhoneNumber              controllers.SecondContactPhoneNumberController.onSubmit(mode: Mode = CheckMode)
+GET         /second-contact-phone                        controllers.SecondContactPhoneNumberController.onPageLoad(mode: Mode = NormalMode)
+POST        /second-contact-phone                        controllers.SecondContactPhoneNumberController.onSubmit(mode: Mode = NormalMode)
+GET         /change-second-contact-phone                 controllers.SecondContactPhoneNumberController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-second-contact-phone                 controllers.SecondContactPhoneNumberController.onSubmit(mode: Mode = CheckMode)
 
 GET        /have-phone                          controllers.ContactHavePhoneController.onPageLoad(mode: models.Mode = models.NormalMode)
 POST       /have-phone                          controllers.ContactHavePhoneController.onSubmit(mode: models.Mode = models.NormalMode)

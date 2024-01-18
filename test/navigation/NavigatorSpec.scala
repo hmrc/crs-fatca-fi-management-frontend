@@ -38,6 +38,10 @@ class NavigatorSpec extends SpecBase {
         navigator.nextPage(ContactNamePage, NormalMode, UserAnswers("id")) mustBe
           routes.FirstContactEmailController.onPageLoad(NormalMode)
       }
+      "must go from SecondContactPhoneNumber to CheckYourAnswers" in {
+        navigator.nextPage(SecondContactPhoneNumberPage, NormalMode, UserAnswers("id")) mustBe
+          routes.CheckYourAnswersController.onPageLoad
+      }
 
     }
 

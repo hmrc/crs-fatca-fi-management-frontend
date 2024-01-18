@@ -30,6 +30,7 @@ class Navigator @Inject() () {
 
     case ContactNamePage =>
       _ => routes.FirstContactEmailController.onPageLoad(NormalMode)
+    case SecondContactPhoneNumberPage => _ => routes.CheckYourAnswersController.onPageLoad
     case _ =>
       _ => routes.IndexController.onPageLoad
   }

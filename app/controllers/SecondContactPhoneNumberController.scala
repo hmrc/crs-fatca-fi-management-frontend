@@ -18,10 +18,11 @@ package controllers
 
 import controllers.actions._
 import forms.SecondContactPhoneNumberFormProvider
+
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.SecondContactPhoneNumberPage
+import pages.{SecondContactNamePage, SecondContactPhoneNumberPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -48,20 +49,23 @@ class SecondContactPhoneNumberController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
+      val contactName = request.userAnswers.get(SecondContactNamePage).getOrElse("the second contact")
+      // should it kick out if therre is a problem getting SecondContactNamePage?
       val preparedForm = request.userAnswers.get(SecondContactPhoneNumberPage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode))
+      Ok(view(contactName, preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+      val contactName = request.userAnswers.get(SecondContactNamePage).getOrElse("Second Contact")
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          formWithErrors => Future.successful(BadRequest(view(contactName, formWithErrors, mode))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondContactPhoneNumberPage, value))
