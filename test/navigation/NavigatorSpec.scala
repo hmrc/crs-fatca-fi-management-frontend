@@ -53,6 +53,10 @@ class NavigatorSpec extends SpecBase {
             routes.SecondContactExistsController.onPageLoad(NormalMode)
         }
       }
+      "must go from FirstContactPhoneNumber to SecondContactExists" in {
+        navigator.nextPage(FirstContactPhoneNumberPage, NormalMode, UserAnswers("id")) mustBe
+          routes.SecondContactExistsController.onPageLoad(NormalMode)
+      }
       "must go from SecondContactExists" - {
         " to SecondContactName if Yes" in {
           val userAnswers = emptyUserAnswers.set(SecondContactExistsPage, true).get
@@ -89,6 +93,18 @@ class NavigatorSpec extends SpecBase {
       }
       "must go from SecondContactPhoneNumber to CheckYourAnswers" in {
         navigator.nextPage(SecondContactPhoneNumberPage, NormalMode, UserAnswers("id")) mustBe
+          routes.CheckYourAnswersController.onPageLoad
+      }
+
+      "must go from SecondContactCanWePhonePage to SecondContactPhoneNumberPage when user answers yes" in {
+        val userAnswers = emptyUserAnswers.withPage(SecondContactCanWePhonePage, true)
+        navigator.nextPage(SecondContactCanWePhonePage, NormalMode, userAnswers) mustBe
+          routes.SecondContactPhoneNumberController.onPageLoad(NormalMode)
+      }
+
+      "must go from SecondContactCanWePhonePage to CheckYourAnswersPage when user answers no" in {
+        val userAnswers = emptyUserAnswers.withPage(SecondContactCanWePhonePage, false)
+        navigator.nextPage(SecondContactCanWePhonePage, NormalMode, userAnswers) mustBe
           routes.CheckYourAnswersController.onPageLoad
       }
 
