@@ -30,13 +30,66 @@ class NavigatorSpec extends SpecBase {
     "in Normal mode" - {
 
       "must go from a page that doesn't exist in the route map to Index" in {
-
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
       }
       "must go from ContactName page to FirstContactEmail" in {
         navigator.nextPage(ContactNamePage, NormalMode, UserAnswers("id")) mustBe
           routes.FirstContactEmailController.onPageLoad(NormalMode)
+      }
+      "must go from FirstContactEmail page to FirstContactCanWePhone" in {
+        navigator.nextPage(FirstContactEmailPage, NormalMode, UserAnswers("id")) mustBe
+          routes.ContactHavePhoneController.onPageLoad(NormalMode)
+      }
+      "must go from FirstContactCanWePhone" - {
+        " to FirstContactPhone if Yes" in {
+          val userAnswers = emptyUserAnswers.set(ContactHavePhonePage, true).get
+          navigator.nextPage(ContactHavePhonePage, NormalMode, userAnswers) mustBe
+            routes.FirstContactPhoneNumberController.onPageLoad(NormalMode)
+        }
+        " to SecondContactExists if No" in {
+          val userAnswers = emptyUserAnswers.set(ContactHavePhonePage, false).get
+          navigator.nextPage(ContactHavePhonePage, NormalMode, userAnswers) mustBe
+            routes.SecondContactExistsController.onPageLoad(NormalMode)
+        }
+      }
+      "must go from FirstContactPhoneNumber to SecondContactExists" in {
+        navigator.nextPage(FirstContactPhoneNumberPage, NormalMode, UserAnswers("id")) mustBe
+          routes.SecondContactExistsController.onPageLoad(NormalMode)
+      }
+      "must go from SecondContactExists" - {
+        " to SecondContactName if Yes" in {
+          val userAnswers = emptyUserAnswers.set(SecondContactExistsPage, true).get
+          navigator.nextPage(SecondContactExistsPage, NormalMode, userAnswers) mustBe
+            routes.SecondContactNameController.onPageLoad(NormalMode)
+        }
+        " to CheckYourAnswers if No" in {
+          val userAnswers = emptyUserAnswers.set(SecondContactExistsPage, false).get
+          navigator.nextPage(SecondContactExistsPage, NormalMode, userAnswers) mustBe
+            routes.CheckYourAnswersController.onPageLoad
+        }
+      }
+      "must go from SecondContactName to SecondContactEmail" in {
+        navigator.nextPage(SecondContactNamePage, NormalMode, UserAnswers("id")) mustBe
+          routes.SecondContactEmailController.onPageLoad(NormalMode)
+      }
+      "must go from SecondContactEmail to SecondContactCanWePhone" in {
+        navigator.nextPage(SecondContactEmailPage, NormalMode, UserAnswers("id")) mustBe
+          routes.SecondContactCanWePhoneController.onPageLoad(NormalMode)
+      }
+
+      "must go from SecondContactCanWePhonePage" - {
+        "SecondContactPhoneNumberPage when Yes" in {
+          val userAnswers = emptyUserAnswers.set(SecondContactCanWePhonePage, true).get
+          navigator.nextPage(SecondContactCanWePhonePage, NormalMode, userAnswers) mustBe
+            routes.SecondContactPhoneNumberController.onPageLoad(NormalMode)
+        }
+
+        "to CheckYourAnswersPage when No" in {
+          val userAnswers = emptyUserAnswers.set(SecondContactCanWePhonePage, false).get
+          navigator.nextPage(SecondContactCanWePhonePage, NormalMode, userAnswers) mustBe
+            routes.CheckYourAnswersController.onPageLoad
+        }
       }
       "must go from SecondContactPhoneNumber to CheckYourAnswers" in {
         navigator.nextPage(SecondContactPhoneNumberPage, NormalMode, UserAnswers("id")) mustBe

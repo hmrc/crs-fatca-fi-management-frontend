@@ -28,12 +28,32 @@ class Navigator @Inject() () {
 
   private val normalRoutes: Page => UserAnswers => Call = {
 
-    case ContactNamePage =>
-      _ => routes.FirstContactEmailController.onPageLoad(NormalMode)
     case NameOfFinancialInstitutionPage =>
       _ => routes.HaveUniqueTaxpayerReferenceController.onPageLoad(NormalMode)
+    case ContactNamePage =>
+      _ => routes.FirstContactEmailController.onPageLoad(NormalMode)
+    case FirstContactEmailPage => _ => routes.ContactHavePhoneController.onPageLoad(NormalMode)
+    case ContactHavePhonePage =>
+      userAnswers =>
+        yesNoPage(
+          userAnswers,
+          ContactHavePhonePage,
+          routes.FirstContactPhoneNumberController.onPageLoad(NormalMode),
+          routes.SecondContactExistsController.onPageLoad(NormalMode)
+        )
+    case FirstContactPhoneNumberPage => _ => routes.SecondContactExistsController.onPageLoad(NormalMode)
+    case SecondContactExistsPage =>
+      userAnswers =>
+        yesNoPage(
+          userAnswers,
+          SecondContactExistsPage,
+          routes.SecondContactNameController.onPageLoad(NormalMode),
+          routes.CheckYourAnswersController.onPageLoad
+        )
     case SecondContactNamePage =>
       _ => routes.SecondContactEmailController.onPageLoad(NormalMode)
+    case SecondContactEmailPage =>
+      _ => routes.SecondContactCanWePhoneController.onPageLoad(NormalMode)
     case SecondContactCanWePhonePage =>
       userAnswers =>
         yesNoPage(
