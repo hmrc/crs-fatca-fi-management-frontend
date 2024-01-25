@@ -130,3 +130,20 @@ GET        /whatIsGIIN                        controllers.WhatIsGIINController.o
 POST       /whatIsGIIN                        controllers.WhatIsGIINController.onSubmit(mode: Mode = NormalMode)
 GET        /changeWhatIsGIIN                  controllers.WhatIsGIINController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeWhatIsGIIN                  controllers.WhatIsGIINController.onSubmit(mode: Mode = CheckMode)
+
+GET        /individualChangeContactDetails                       controllers.changeContactDetails.IndividualChangeContactDetailsController.onPageLoad()
+
+GET        /individualEmail                        controllers.changeContactDetails.IndividualEmailController.onPageLoad(mode: Mode = NormalMode)
+POST       /individualEmail                        controllers.changeContactDetails.IndividualEmailController.onSubmit(mode: Mode = NormalMode)
+GET        /changeIndividualEmail                  controllers.changeContactDetails.IndividualEmailController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeIndividualEmail                  controllers.changeContactDetails.IndividualEmailController.onSubmit(mode: Mode = CheckMode)
+
+GET        /individualHavePhone                        controllers.changeContactDetails.IndividualHavePhoneController.onPageLoad(mode: Mode = NormalMode)
+POST       /individualHavePhone                        controllers.changeContactDetails.IndividualHavePhoneController.onSubmit(mode: Mode = NormalMode)
+GET        /changeIndividualHavePhone                  controllers.changeContactDetails.IndividualHavePhoneController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeIndividualHavePhone                  controllers.changeContactDetails.IndividualHavePhoneController.onSubmit(mode: Mode = CheckMode)
+
+GET        /individualPhone                        controllers.changeContactDetails.IndividualPhoneController.onPageLoad(mode: Mode = NormalMode)
+POST       /individualPhone                        controllers.changeContactDetails.IndividualPhoneController.onSubmit(mode: Mode = NormalMode)
+GET        /changeIndividualPhone                  controllers.changeContactDetails.IndividualPhoneController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeIndividualPhone                  controllers.changeContactDetails.IndividualPhoneController.onSubmit(mode: Mode = CheckMode)
