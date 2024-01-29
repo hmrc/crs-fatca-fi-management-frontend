@@ -23,6 +23,7 @@ class IndividualEmailFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "individualEmail.error.required"
   val lengthKey   = "individualEmail.error.length"
+  val formatKey   = "individualEmail.error.invalid"
   val maxLength   = 132
 
   val form = new IndividualEmailFormProvider()()
@@ -31,10 +32,11 @@ class IndividualEmailFormProviderSpec extends StringFieldBehaviours {
 
     val fieldName = "value"
 
-    behave like fieldThatBindsValidData(
+    behave like emailAddressField(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      maxLength,
+      invalidError = FormError(fieldName, formatKey)
     )
 
     behave like fieldWithMaxLength(

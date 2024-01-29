@@ -18,15 +18,23 @@ package forms.changeContactDetails
 
 import forms.mappings.Mappings
 import play.api.data.Form
+import utils.RegexConstants
 
 import javax.inject.Inject
 
-class IndividualPhoneFormProvider @Inject() extends Mappings {
+class IndividualPhoneFormProvider @Inject() extends Mappings with RegexConstants {
+
+  private val maxLength = 24
 
   def apply(): Form[String] =
     Form(
-      "value" -> text("individualPhone.error.required")
-        .verifying(maxLength(24, "individualPhone.error.length"))
+      "value" -> validatedText(
+        "individualPhone.error.required",
+        "individualPhone.error.invalid",
+        "individualPhone.error.length",
+        phoneRegex,
+        maxLength
+      )
     )
 
 }
