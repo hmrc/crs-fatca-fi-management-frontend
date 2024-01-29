@@ -18,18 +18,17 @@ package controllers
 
 import controllers.actions._
 import forms.FirstContactPhoneNumberFormProvider
-
-import javax.inject.Inject
-import models.{Mode, UserAnswers}
+import models.Mode
 import navigation.Navigator
-import pages.{ContactNamePage, FirstContactPhoneNumberPage}
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import pages.FirstContactPhoneNumberPage
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ContactHelper
 import views.html.FirstContactPhoneNumberView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class FirstContactPhoneNumberController @Inject() (
