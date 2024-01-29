@@ -17,17 +17,20 @@
 package navigation
 
 import javax.inject.{Inject, Singleton}
-
 import play.api.mvc.Call
 import controllers.routes
 import pages._
 import models._
+import pages.changeContactDetails.{IndividualEmailPage, IndividualHavePhonePage, IndividualPhonePage}
 
 @Singleton
 class Navigator @Inject() () {
 
   private val normalRoutes: Page => UserAnswers => Call = {
 
+    case IndividualEmailPage     => _ => controllers.changeContactDetails.routes.IndividualHavePhoneController.onPageLoad(NormalMode)
+    case IndividualHavePhonePage => _ => controllers.changeContactDetails.routes.IndividualPhoneController.onPageLoad(NormalMode)
+    case IndividualPhonePage     => _ => controllers.changeContactDetails.routes.IndividualChangeContactDetailsController.onPageLoad()
     case NameOfFinancialInstitutionPage =>
       _ => routes.HaveUniqueTaxpayerReferenceController.onPageLoad(NormalMode)
     case ContactNamePage =>
