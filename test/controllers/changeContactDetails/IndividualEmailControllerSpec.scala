@@ -96,7 +96,7 @@ class IndividualEmailControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, individualEmailRoute)
-            .withFormUrlEncodedBody(("value", "answer"))
+            .withFormUrlEncodedBody(("value", "some@email.com"))
 
         val result = route(application, request).value
 

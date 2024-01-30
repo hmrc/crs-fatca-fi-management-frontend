@@ -14,12 +14,16 @@
  * limitations under the License.
  *@
 
+@import components._
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    paragraph: Paragraph,
+    heading: Heading
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
@@ -32,10 +36,14 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
+        @heading(messages("individualHavePhone.heading"))
+
+        @paragraph(Html(messages("individualHavePhone.p1")))
+
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("individualHavePhone.heading")).asPageHeading()
+                legend = LegendViewModel(messages("individualHavePhone.heading")).withCssClass("govuk-visually-hidden")
             )
         )
 

@@ -18,6 +18,7 @@ package forms.changeContactDetails
 
 import forms.mappings.Mappings
 import play.api.data.Form
+import play.api.data.validation.Constraints
 
 import javax.inject.Inject
 
@@ -26,7 +27,12 @@ class IndividualEmailFormProvider @Inject() extends Mappings {
   def apply(): Form[String] =
     Form(
       "value" -> text("individualEmail.error.required")
-        .verifying(maxLength(132, "individualEmail.error.length"))
+        .verifying(
+          firstError(
+            maxLength(132, "individualEmail.error.length"),
+            Constraints.emailAddress(errorMessage = "individualEmail.error.invalid")
+          )
+        )
     )
 
 }
