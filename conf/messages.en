@@ -1,4 +1,4 @@
-service.name = crs-fatca-fi-management-frontend
+service.name = Send a CRS or FATCA report
 service.title.suffix = Send a CRS or FATCA report
 
 site.back = Back
