@@ -18,8 +18,6 @@ package controllers
 
 import controllers.actions._
 import forms.SecondContactNameFormProvider
-
-import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
 import pages.{NameOfFinancialInstitutionPage, SecondContactNamePage}
@@ -29,6 +27,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.SecondContactNameView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SecondContactNameController @Inject() (
@@ -65,7 +64,7 @@ class SecondContactNameController @Inject() (
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       request.userAnswers
-        .get(SecondContactNamePage)
+        .get(NameOfFinancialInstitutionPage)
         .fold {
           Future.successful(Redirect(routes.IndexController.onPageLoad))
         } {

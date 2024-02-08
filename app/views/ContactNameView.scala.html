@@ -24,7 +24,7 @@
     govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode, name: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, fiName: String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("contactName.title"))) {
 
@@ -37,7 +37,7 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("contactName.heading", name)).asPageHeading()
+                label = LabelViewModel(messages("contactName.heading", fiName)).asPageHeading()
             ).withHint(HintViewModel(Text(messages("contactName.hint"))))
             .withWidth(ThreeQuarters)
         )

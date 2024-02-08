@@ -18,18 +18,16 @@ package controllers
 
 import controllers.actions._
 import forms.ContactNameFormProvider
-
-import javax.inject.Inject
-import models.{Mode, UserAnswers}
+import models.Mode
 import navigation.Navigator
-import pages.{ContactNamePage, FirstContactEmailPage, NameOfFinancialInstitutionPage}
-import play.api.data.Form
+import pages.{ContactNamePage, NameOfFinancialInstitutionPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ContactNameView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ContactNameController @Inject() (
@@ -47,8 +45,6 @@ class ContactNameController @Inject() (
     with I18nSupport {
 
   val form = formProvider()
-
-  // TODO: Pass name of financial institution to view H1 when implemented
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>

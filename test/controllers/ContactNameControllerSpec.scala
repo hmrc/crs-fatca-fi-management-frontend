@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import forms.ContactNameFormProvider
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -37,13 +37,11 @@ class ContactNameControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new ContactNameFormProvider()
-  val form         = formProvider()
-
+  val formProvider          = new ContactNameFormProvider()
+  val form                  = formProvider()
   lazy val contactNameRoute = routes.ContactNameController.onPageLoad(NormalMode).url
-
-  val fiName     = "FI name"
-  private val ua = emptyUserAnswers.set(NameOfFinancialInstitutionPage, fiName).get
+  val fiName                = "FI name"
+  private val ua            = emptyUserAnswers.set(NameOfFinancialInstitutionPage, fiName).get
 
   private val mockSessionRepository = mock[SessionRepository]
   when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
