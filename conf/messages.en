@@ -137,12 +137,12 @@ haveUniqueTaxpayerReference.checkYourAnswersLabel = haveUniqueTaxpayerReference
 haveUniqueTaxpayerReference.error.required = Select yes if haveUniqueTaxpayerReference
 haveUniqueTaxpayerReference.change.hidden = HaveUniqueTaxpayerReference
 
-nameOfFinancialInstitution.title = nameOfFinancialInstitution
-nameOfFinancialInstitution.heading = nameOfFinancialInstitution
-nameOfFinancialInstitution.checkYourAnswersLabel = nameOfFinancialInstitution
-nameOfFinancialInstitution.error.required = Enter nameOfFinancialInstitution
-nameOfFinancialInstitution.error.length = NameOfFinancialInstitution must be 100 characters or less
-nameOfFinancialInstitution.change.hidden = NameOfFinancialInstitution
+nameOfFinancialInstitution.title = What is the name of the financial institution?
+nameOfFinancialInstitution.heading = What is the name of the financial institution?
+nameOfFinancialInstitution.checkYourAnswersLabel = What is the name of the financial institution?
+nameOfFinancialInstitution.error.required = Enter the name of the financial institution
+nameOfFinancialInstitution.error.length = Financial institution name must be 105 characters or less
+nameOfFinancialInstitution.error.invalid = Financial institution name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, backslashes, carets (^), grave accents (`), hyphens and spaces
 
 whatIsUniqueTaxpayerReference.title = whatIsUniqueTaxpayerReference
 whatIsUniqueTaxpayerReference.heading = whatIsUniqueTaxpayerReference
@@ -236,10 +236,3 @@ secondContactName.checkYourAnswersLabel.hiddenText = Change second contact name
 secondContactName.error.required = Enter a name for the second contact
 secondContactName.error.invalid = The name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, backslashes, carets (^), grave accents (`), hyphens and spaces
 secondContactName.error.length = The name must be 35 characters or less
-
-nameOfFI.title = What is the name of the financial institution?
-nameOfFI.heading = What is the name of the financial institution?
-nameOfFI.checkYourAnswersLabel = What is the name of the financial institution?
-nameOfFI.error.required = Enter the name of the financial institution
-nameOfFI.error.length = Financial institution name must be 105 characters or less
-nameOfFI.error.invalid = Financial institution name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, backslashes, carets (^), grave accents (`), hyphens and spaces

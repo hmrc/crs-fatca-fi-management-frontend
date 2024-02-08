@@ -75,10 +75,10 @@ POST       /haveUniqueTaxpayerReference                        controllers.HaveU
 GET        /changeHaveUniqueTaxpayerReference                  controllers.HaveUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeHaveUniqueTaxpayerReference                  controllers.HaveUniqueTaxpayerReferenceController.onSubmit(mode: Mode = CheckMode)
 
-GET        /nameOfFinancialInstitution                        controllers.NameOfFinancialInstitutionController.onPageLoad(mode: Mode = NormalMode)
-POST       /nameOfFinancialInstitution                        controllers.NameOfFinancialInstitutionController.onSubmit(mode: Mode = NormalMode)
-GET        /changeNameOfFinancialInstitution                  controllers.NameOfFinancialInstitutionController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeNameOfFinancialInstitution                  controllers.NameOfFinancialInstitutionController.onSubmit(mode: Mode = CheckMode)
+GET        /name                        controllers.NameOfFinancialInstitutionController.onPageLoad(mode: Mode = NormalMode)
+POST       /name                        controllers.NameOfFinancialInstitutionController.onSubmit(mode: Mode = NormalMode)
+GET        /change-name                  controllers.NameOfFinancialInstitutionController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-name                  controllers.NameOfFinancialInstitutionController.onSubmit(mode: Mode = CheckMode)
 
 GET        /whatIsUniqueTaxpayerReference                        controllers.WhatIsUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = NormalMode)
 POST       /whatIsUniqueTaxpayerReference                        controllers.WhatIsUniqueTaxpayerReferenceController.onSubmit(mode: Mode = NormalMode)
@@ -130,9 +130,3 @@ GET        /whatIsGIIN                        controllers.WhatIsGIINController.o
 POST       /whatIsGIIN                        controllers.WhatIsGIINController.onSubmit(mode: Mode = NormalMode)
 GET        /changeWhatIsGIIN                  controllers.WhatIsGIINController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeWhatIsGIIN                  controllers.WhatIsGIINController.onSubmit(mode: Mode = CheckMode)
-
-
-GET        /name                        controllers.NameOfFIController.onPageLoad(mode: Mode = NormalMode)
-POST       /name                        controllers.NameOfFIController.onSubmit(mode: Mode = NormalMode)
-GET        /change-name                  controllers.NameOfFIController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-name                  controllers.NameOfFIController.onSubmit(mode: Mode = CheckMode)
