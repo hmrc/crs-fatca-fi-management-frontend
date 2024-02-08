@@ -131,11 +131,12 @@ contactHavePhone.p1 = We will call if we have any questions about reports for {0
 contactHavePhone.error.required.individual = Select yes if we can contact you by telephone
 contactHavePhone.error.required.business = Select yes if they can be contacted by telephone
 
-haveUniqueTaxpayerReference.title = haveUniqueTaxpayerReference
-haveUniqueTaxpayerReference.heading = haveUniqueTaxpayerReference
-haveUniqueTaxpayerReference.checkYourAnswersLabel = haveUniqueTaxpayerReference
-haveUniqueTaxpayerReference.error.required = Select yes if haveUniqueTaxpayerReference
-haveUniqueTaxpayerReference.change.hidden = HaveUniqueTaxpayerReference
+haveUniqueTaxpayerReference.title = Is there a Unique Taxpayer Reference (UTR)
+haveUniqueTaxpayerReference.heading = Does {0} have a Unique Taxpayer Reference (UTR)?
+haveUniqueTaxpayerReference.hint = This is 10 numbers, for example 1234567890. It will be on tax returns and other letters about Corporation Tax. It may be called ‘reference’, ‘UTR’ or ‘official use’.
+haveUniqueTaxpayerReference.checkYourAnswersLabel = Is there a Unique Taxpayer Reference (UTR)
+haveUniqueTaxpayerReference.error.required = Select yes if the financial institution has a Unique Taxpayer Reference
+haveUniqueTaxpayerReference.change.hidden = Change if there a Unique Taxpayer Reference (UTR)
 
 nameOfFinancialInstitution.title = nameOfFinancialInstitution
 nameOfFinancialInstitution.heading = nameOfFinancialInstitution

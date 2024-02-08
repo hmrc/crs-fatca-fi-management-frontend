@@ -22,7 +22,7 @@
     govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, fiName: String = "SOME FI")(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("haveUniqueTaxpayerReference.title"))) {
 
@@ -35,8 +35,9 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("haveUniqueTaxpayerReference.heading")).asPageHeading()
+                legend = LegendViewModel(messages("haveUniqueTaxpayerReference.heading", fiName)).asPageHeading()
             )
+            .withHint(HintViewModel(HtmlContent(messages("haveUniqueTaxpayerReference.hint"))))
         )
 
         @govukButton(
