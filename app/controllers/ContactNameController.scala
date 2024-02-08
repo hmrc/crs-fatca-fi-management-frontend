@@ -22,7 +22,7 @@ import forms.ContactNameFormProvider
 import javax.inject.Inject
 import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.ContactNamePage
+import pages.{ContactNamePage, FirstContactEmailPage, NameOfFinancialInstitutionPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -50,44 +50,40 @@ class ContactNameController @Inject() (
 
   // TODO: Pass name of financial institution to view H1 when implemented
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm: Form[_] =
-        request.userAnswers
-          .getOrElse(
-            UserAnswers(
-              id = request.userId
-            )
-          )
-          .get(ContactNamePage) match {
-          case None        => form
-          case Some(value) => form.fill(value)
-        }
+      val ua = request.userAnswers
 
-      Ok(view(preparedForm, mode))
+      val preparedForm = ua.get(ContactNamePage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
+      }
+      val fiName = ua.get(NameOfFinancialInstitutionPage)
+      fiName match {
+        case None       => Redirect(routes.IndexController.onPageLoad)
+        case Some(name) => Ok(view(preparedForm, mode, name))
+      }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(
-                request.userAnswers
-                  .getOrElse(
-                    UserAnswers(
-                      id = request.userId
-                    )
-                  )
-                  .set(ContactNamePage, value)
+      request.userAnswers
+        .get(NameOfFinancialInstitutionPage)
+        .fold {
+          Future.successful(Redirect(routes.IndexController.onPageLoad))
+        } {
+          name =>
+            form
+              .bindFromRequest()
+              .fold(
+                formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, name))),
+                value =>
+                  for {
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactNamePage, value))
+                    _              <- sessionRepository.set(updatedAnswers)
+                  } yield Redirect(navigator.nextPage(ContactNamePage, mode, updatedAnswers))
               )
-              _ <- sessionRepository.set(updatedAnswers)
-
-            } yield Redirect(navigator.nextPage(ContactNamePage, mode, updatedAnswers))
-        )
+        }
   }
 
 }

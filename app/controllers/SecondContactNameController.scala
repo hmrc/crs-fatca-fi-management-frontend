@@ -18,10 +18,11 @@ package controllers
 
 import controllers.actions._
 import forms.SecondContactNameFormProvider
+
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.SecondContactNamePage
+import pages.{NameOfFinancialInstitutionPage, SecondContactNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -45,30 +46,41 @@ class SecondContactNameController @Inject() (
     with I18nSupport {
 
   val form = formProvider()
-  val fi   = "Placeholder Financial Institution" // todo: pull in this when available
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.get(SecondContactNamePage) match {
+      val ua = request.userAnswers
+
+      val preparedForm = ua.get(SecondContactNamePage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
-
-      Ok(view(preparedForm, fi, mode))
+      val fiName = ua.get(NameOfFinancialInstitutionPage)
+      fiName match {
+        case None       => Redirect(routes.IndexController.onPageLoad)
+        case Some(name) => Ok(view(preparedForm, name, mode))
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, fi, mode))),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondContactNamePage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(SecondContactNamePage, mode, updatedAnswers))
-        )
+      request.userAnswers
+        .get(SecondContactNamePage)
+        .fold {
+          Future.successful(Redirect(routes.IndexController.onPageLoad))
+        } {
+          name =>
+            form
+              .bindFromRequest()
+              .fold(
+                formWithErrors => Future.successful(BadRequest(view(formWithErrors, name, mode))),
+                value =>
+                  for {
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondContactNamePage, value))
+                    _              <- sessionRepository.set(updatedAnswers)
+                  } yield Redirect(navigator.nextPage(SecondContactNamePage, mode, updatedAnswers))
+              )
+        }
   }
 
 }
