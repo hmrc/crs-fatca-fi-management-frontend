@@ -131,3 +131,8 @@ POST       /whatIsGIIN                        controllers.WhatIsGIINController.o
 GET        /changeWhatIsGIIN                  controllers.WhatIsGIINController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeWhatIsGIIN                  controllers.WhatIsGIINController.onSubmit(mode: Mode = CheckMode)
 
+
+GET        /name                        controllers.NameOfFIController.onPageLoad(mode: Mode = NormalMode)
+POST       /name                        controllers.NameOfFIController.onSubmit(mode: Mode = NormalMode)
+GET        /change-name                  controllers.NameOfFIController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-name                  controllers.NameOfFIController.onSubmit(mode: Mode = CheckMode)
