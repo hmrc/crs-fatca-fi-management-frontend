@@ -18,10 +18,12 @@ package controllers
 
 import controllers.actions._
 import forms.NameOfFinancialInstitutionFormProvider
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.NameOfFinancialInstitutionPage
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -36,7 +38,6 @@ class NameOfFinancialInstitutionController @Inject() (
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
   formProvider: NameOfFinancialInstitutionFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: NameOfFinancialInstitutionView
@@ -46,17 +47,24 @@ class NameOfFinancialInstitutionController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
     implicit request =>
-      val preparedForm = request.userAnswers.get(NameOfFinancialInstitutionPage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
+      val preparedForm: Form[_] =
+        request.userAnswers
+          .getOrElse(
+            UserAnswers(
+              id = request.userId
+            )
+          )
+          .get(NameOfFinancialInstitutionPage) match {
+          case None        => form
+          case Some(value) => form.fill(value)
+        }
 
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -64,8 +72,16 @@ class NameOfFinancialInstitutionController @Inject() (
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(NameOfFinancialInstitutionPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
+              updatedAnswers <- Future.fromTry(
+                request.userAnswers
+                  .getOrElse(
+                    UserAnswers(
+                      id = request.userId
+                    )
+                  )
+                  .set(NameOfFinancialInstitutionPage, value)
+              )
+              _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(NameOfFinancialInstitutionPage, mode, updatedAnswers))
         )
   }

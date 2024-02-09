@@ -37,12 +37,11 @@ class ContactNameControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider          = new ContactNameFormProvider()
-  val form                  = formProvider()
-  lazy val contactNameRoute = routes.ContactNameController.onPageLoad(NormalMode).url
-  val fiName                = "FI name"
-  private val ua            = emptyUserAnswers.set(NameOfFinancialInstitutionPage, fiName).get
-
+  val formProvider                  = new ContactNameFormProvider()
+  val form                          = formProvider()
+  lazy val contactNameRoute         = routes.ContactNameController.onPageLoad(NormalMode).url
+  val fiName                        = "FI name"
+  private val ua                    = emptyUserAnswers.set(NameOfFinancialInstitutionPage, fiName).get
   private val mockSessionRepository = mock[SessionRepository]
   when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
@@ -124,7 +123,7 @@ class ContactNameControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must initiate userAnswers for a GET if no existing data is found" in {
+    "must redirect to Journey Recovery for a GET if no existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 
@@ -133,18 +132,14 @@ class ContactNameControllerSpec extends SpecBase with MockitoSugar {
 
         val result = route(application, request).value
 
-        status(result) mustEqual OK
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 
-    "must initiate userAnswers for a POST if no existing data is found" in {
+    "must redirect to Journey Recovery for a POST if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(
-          bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-          bind[SessionRepository].toInstance(mockSessionRepository)
-        )
-        .build()
+      val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
         val request =
@@ -154,7 +149,7 @@ class ContactNameControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
   }
