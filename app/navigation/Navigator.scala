@@ -31,11 +31,12 @@ class Navigator @Inject() () {
       _ => routes.HaveUniqueTaxpayerReferenceController.onPageLoad(NormalMode)
     case HaveUniqueTaxpayerReferencePage =>
       userAnswers =>
-        yesNoPage(userAnswers,
-                  HaveUniqueTaxpayerReferencePage,
-                  routes.IndexController.onPageLoad, // todo what is UTR page
-                  routes.IndexController.onPageLoad
-        ) // todo does FR need to send reports
+        yesNoPage(
+          userAnswers,
+          HaveUniqueTaxpayerReferencePage,
+          routes.IndexController.onPageLoad, // todo what is UTR page
+          routes.IndexController.onPageLoad // todo does FR need to send reports
+        )
     case ContactNamePage =>
       _ => routes.FirstContactEmailController.onPageLoad(NormalMode)
     case FirstContactEmailPage => _ => routes.ContactHavePhoneController.onPageLoad(NormalMode)
