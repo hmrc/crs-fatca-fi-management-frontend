@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package pages
+package models
 
-import models.UniqueTaxpayerReference
-import play.api.libs.json.JsPath
+import play.api.libs.json._
 
-case object WhatIsUniqueTaxpayerReferencePage extends QuestionPage[UniqueTaxpayerReference] {
+case class UniqueTaxpayerReference(uniqueTaxPayerReference: String)
 
-  override def path: JsPath = JsPath \ toString
+object UniqueTaxpayerReference {
+  implicit val format = Json.format[UniqueTaxpayerReference]
 
-  override def toString: String = "whatIsUniqueTaxpayerReference"
 }

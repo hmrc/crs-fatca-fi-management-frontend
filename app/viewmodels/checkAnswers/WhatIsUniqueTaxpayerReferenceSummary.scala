@@ -32,7 +32,7 @@ object WhatIsUniqueTaxpayerReferenceSummary {
       answer =>
         SummaryListRowViewModel(
           key = "whatIsUniqueTaxpayerReference.checkYourAnswersLabel",
-          value = ValueViewModel(HtmlFormat.escape(answer).toString),
+          value = ValueViewModel(HtmlFormat.escape(answer.uniqueTaxPayerReference).toString),
           actions = Seq(
             ActionItemViewModel("site.change", routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("whatIsUniqueTaxpayerReference.change.hidden"))

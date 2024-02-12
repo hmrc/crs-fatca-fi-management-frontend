@@ -146,12 +146,14 @@ nameOfFinancialInstitution.error.required = Enter the name of the financial inst
 nameOfFinancialInstitution.error.length = Financial institution name must be 105 characters or less
 nameOfFinancialInstitution.error.invalid = Financial institution name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, backslashes, carets (^), grave accents (`), hyphens and spaces
 
-whatIsUniqueTaxpayerReference.title = whatIsUniqueTaxpayerReference
-whatIsUniqueTaxpayerReference.heading = whatIsUniqueTaxpayerReference
-whatIsUniqueTaxpayerReference.checkYourAnswersLabel = whatIsUniqueTaxpayerReference
-whatIsUniqueTaxpayerReference.error.required = Enter whatIsUniqueTaxpayerReference
-whatIsUniqueTaxpayerReference.error.length = WhatIsUniqueTaxpayerReference must be 100 characters or less
-whatIsUniqueTaxpayerReference.change.hidden = WhatIsUniqueTaxpayerReference
+whatIsUniqueTaxpayerReference.title = What is the Corporation Tax Unique Taxpayer Reference (UTR)?
+whatIsUniqueTaxpayerReference.heading = What is the Corporation Tax Unique Taxpayer Reference (UTR) for {0}?
+whatIsUniqueTaxpayerReference.checkYourAnswersLabel = What is the Corporation Tax Unique Taxpayer Reference (UTR)?
+whatIsUniqueTaxpayerReference.error.required = Enter the financial institution’s Unique Taxpayer Reference
+whatIsUniqueTaxpayerReference.error.invalid = Unique Taxpayer Reference must only include numbers 0 to 9
+whatIsUniqueTaxpayerReference.error.invalidFormat = Unique Taxpayer Reference must include 10 numbers, for example 1234567890
+whatIsUniqueTaxpayerReference.p1 = You can
+whatIsUniqueTaxpayerReference.p1.link = find a lost UTR
 
 
 haveGIIN.title = haveGIIN
