@@ -27,7 +27,7 @@
     heading: Heading
 )
 
-@(form: Form[_], finInstitution: String , mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], fiName: String , mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("secondContactName.title"))) {
 
@@ -37,7 +37,7 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @heading(messages("secondContactName.heading", finInstitution))
+        @heading(messages("secondContactName.heading", fiName))
 
         @paragraph(Html(messages("secondContactName.p1")))
 

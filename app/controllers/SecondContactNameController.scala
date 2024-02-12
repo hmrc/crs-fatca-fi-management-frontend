@@ -18,7 +18,6 @@ package controllers
 
 import controllers.actions._
 import forms.SecondContactNameFormProvider
-import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
 import pages.SecondContactNamePage
@@ -26,8 +25,10 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.ContactHelper
 import views.html.SecondContactNameView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SecondContactNameController @Inject() (
@@ -42,19 +43,20 @@ class SecondContactNameController @Inject() (
   view: SecondContactNameView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with ContactHelper {
 
   val form = formProvider()
-  val fi   = "Placeholder Financial Institution" // todo: pull in this when available
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.get(SecondContactNamePage) match {
+      val ua = request.userAnswers
+
+      val preparedForm = ua.get(SecondContactNamePage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
-
-      Ok(view(preparedForm, fi, mode))
+      Ok(view(preparedForm, getFinancialInstitutionName(ua), mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -62,7 +64,7 @@ class SecondContactNameController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, fi, mode))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, getFinancialInstitutionName(request.userAnswers), mode))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondContactNamePage, value))

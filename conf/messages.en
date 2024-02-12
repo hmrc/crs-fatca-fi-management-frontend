@@ -45,6 +45,7 @@ checkYourAnswers.heading = Check Your Answers
 
 default.firstContact.name = your first contact
 default.secondContact.name = your second contact
+default.FI.name = the financial institution
 
 journeyRecovery.continue.title = Sorry, there is a problem with the service
 journeyRecovery.continue.heading = Sorry, there is a problem with the service
@@ -137,12 +138,12 @@ haveUniqueTaxpayerReference.checkYourAnswersLabel = haveUniqueTaxpayerReference
 haveUniqueTaxpayerReference.error.required = Select yes if haveUniqueTaxpayerReference
 haveUniqueTaxpayerReference.change.hidden = HaveUniqueTaxpayerReference
 
-nameOfFinancialInstitution.title = nameOfFinancialInstitution
-nameOfFinancialInstitution.heading = nameOfFinancialInstitution
-nameOfFinancialInstitution.checkYourAnswersLabel = nameOfFinancialInstitution
-nameOfFinancialInstitution.error.required = Enter nameOfFinancialInstitution
-nameOfFinancialInstitution.error.length = NameOfFinancialInstitution must be 100 characters or less
-nameOfFinancialInstitution.change.hidden = NameOfFinancialInstitution
+nameOfFinancialInstitution.title = What is the name of the financial institution?
+nameOfFinancialInstitution.heading = What is the name of the financial institution?
+nameOfFinancialInstitution.checkYourAnswersLabel = What is the name of the financial institution?
+nameOfFinancialInstitution.error.required = Enter the name of the financial institution
+nameOfFinancialInstitution.error.length = Financial institution name must be 105 characters or less
+nameOfFinancialInstitution.error.invalid = Financial institution name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, backslashes, carets (^), grave accents (`), hyphens and spaces
 
 whatIsUniqueTaxpayerReference.title = whatIsUniqueTaxpayerReference
 whatIsUniqueTaxpayerReference.heading = whatIsUniqueTaxpayerReference

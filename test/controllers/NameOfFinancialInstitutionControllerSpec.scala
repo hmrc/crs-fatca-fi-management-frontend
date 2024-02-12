@@ -41,6 +41,8 @@ class NameOfFinancialInstitutionControllerSpec extends SpecBase with MockitoSuga
   val form         = formProvider()
 
   lazy val nameOfFinancialInstitutionRoute = routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url
+  private val mockSessionRepository        = mock[SessionRepository]
+  when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
   "NameOfFinancialInstitution Controller" - {
 
@@ -124,7 +126,7 @@ class NameOfFinancialInstitutionControllerSpec extends SpecBase with MockitoSuga
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
+    "must initiate userAnswers for a GET if no existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 
@@ -133,14 +135,18 @@ class NameOfFinancialInstitutionControllerSpec extends SpecBase with MockitoSuga
 
         val result = route(application, request).value
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        status(result) mustEqual OK
       }
     }
 
-    "must redirect to Journey Recovery for a POST if no existing data is found" in {
+    "must initiate userAnswers for a POST if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(
+          bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+          bind[SessionRepository].toInstance(mockSessionRepository)
+        )
+        .build()
 
       running(application) {
         val request =
@@ -150,9 +156,10 @@ class NameOfFinancialInstitutionControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
+
   }
 
 }

@@ -18,18 +18,17 @@ package controllers
 
 import controllers.actions._
 import forms.ContactNameFormProvider
-
-import javax.inject.Inject
-import models.{Mode, UserAnswers}
+import models.Mode
 import navigation.Navigator
 import pages.ContactNamePage
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.ContactHelper
 import views.html.ContactNameView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ContactNameController @Inject() (
@@ -44,45 +43,33 @@ class ContactNameController @Inject() (
   view: ContactNameView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with ContactHelper {
 
   val form = formProvider()
 
-  // TODO: Pass name of financial institution to view H1 when implemented
-
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm: Form[_] =
-        request.userAnswers
-          .getOrElse(
-            UserAnswers(
-              id = request.userId
-            )
-          )
-          .get(ContactNamePage) match {
-          case None        => form
-          case Some(value) => form.fill(value)
-        }
+      val ua = request.userAnswers
 
-      Ok(view(preparedForm, mode))
+      val preparedForm = ua.get(ContactNamePage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
+      }
+      Ok(view(preparedForm, mode, getFinancialInstitutionName(ua)))
+
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, getFinancialInstitutionName(request.userAnswers)))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(
-                request.userAnswers
-                  .getOrElse(
-                    UserAnswers(
-                      id = request.userId
-                    )
-                  )
-                  .set(ContactNamePage, value)
+                request.userAnswers.set(ContactNamePage, value)
               )
               _ <- sessionRepository.set(updatedAnswers)
 
