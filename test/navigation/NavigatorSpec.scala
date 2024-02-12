@@ -108,6 +108,13 @@ class NavigatorSpec extends SpecBase {
           routes.CheckYourAnswersController.onPageLoad
       }
 
+      "must go from NameOfFinancialInstitutionPage to HaveUniqueTaxpayerReferencePage" in {
+        val userAnswers = emptyUserAnswers.withPage(NameOfFinancialInstitutionPage, "FI")
+        navigator.nextPage(NameOfFinancialInstitutionPage, NormalMode, userAnswers) mustBe
+          routes.HaveUniqueTaxpayerReferenceController.onPageLoad(NormalMode)
+
+      }
+
     }
 
     "in Check mode" - {

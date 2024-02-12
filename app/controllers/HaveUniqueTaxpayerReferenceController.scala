@@ -18,7 +18,6 @@ package controllers
 
 import controllers.actions._
 import forms.HaveUniqueTaxpayerReferenceFormProvider
-import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
 import pages.HaveUniqueTaxpayerReferencePage
@@ -26,8 +25,10 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.ContactHelper
 import views.html.HaveUniqueTaxpayerReferenceView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class HaveUniqueTaxpayerReferenceController @Inject() (
@@ -42,7 +43,8 @@ class HaveUniqueTaxpayerReferenceController @Inject() (
   view: HaveUniqueTaxpayerReferenceView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with ContactHelper {
 
   val form = formProvider()
 
@@ -53,7 +55,7 @@ class HaveUniqueTaxpayerReferenceController @Inject() (
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode))
+      Ok(view(preparedForm, mode, getFinancialInstitutionName(request.userAnswers)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -61,7 +63,7 @@ class HaveUniqueTaxpayerReferenceController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, getFinancialInstitutionName(request.userAnswers)))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(HaveUniqueTaxpayerReferencePage, value))

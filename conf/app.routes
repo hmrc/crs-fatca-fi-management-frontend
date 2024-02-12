@@ -70,10 +70,10 @@ POST       /have-phone                          controllers.ContactHavePhoneCont
 GET        /change-have-phone                   controllers.ContactHavePhoneController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /change-have-phone                   controllers.ContactHavePhoneController.onSubmit(mode: models.Mode = models.CheckMode)
 
-GET        /haveUniqueTaxpayerReference                        controllers.HaveUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = NormalMode)
-POST       /haveUniqueTaxpayerReference                        controllers.HaveUniqueTaxpayerReferenceController.onSubmit(mode: Mode = NormalMode)
-GET        /changeHaveUniqueTaxpayerReference                  controllers.HaveUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeHaveUniqueTaxpayerReference                  controllers.HaveUniqueTaxpayerReferenceController.onSubmit(mode: Mode = CheckMode)
+GET        /have-utr                              controllers.HaveUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = NormalMode)
+POST       /have-utr                              controllers.HaveUniqueTaxpayerReferenceController.onSubmit(mode: Mode = NormalMode)
+GET        /change-have-utr                       controllers.HaveUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-have-utr                       controllers.HaveUniqueTaxpayerReferenceController.onSubmit(mode: Mode = CheckMode)
 
 GET        /name                        controllers.NameOfFinancialInstitutionController.onPageLoad(mode: Mode = NormalMode)
 POST       /name                        controllers.NameOfFinancialInstitutionController.onSubmit(mode: Mode = NormalMode)
