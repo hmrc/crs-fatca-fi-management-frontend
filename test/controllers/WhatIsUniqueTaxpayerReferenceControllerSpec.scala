@@ -95,7 +95,7 @@ class WhatIsUniqueTaxpayerReferenceControllerSpec extends SpecBase with MockitoS
       running(application) {
         val request =
           FakeRequest(POST, whatIsUniqueTaxpayerReferenceRoute)
-            .withFormUrlEncodedBody(("value", UniqueTaxpayerReference("answer")))
+            .withFormUrlEncodedBody(("value", "1234567890"))
 
         val result = route(application, request).value
 
