@@ -80,10 +80,10 @@ POST       /name                        controllers.NameOfFinancialInstitutionCo
 GET        /change-name                  controllers.NameOfFinancialInstitutionController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-name                  controllers.NameOfFinancialInstitutionController.onSubmit(mode: Mode = CheckMode)
 
-GET        /whatIsUniqueTaxpayerReference                        controllers.WhatIsUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = NormalMode)
-POST       /whatIsUniqueTaxpayerReference                        controllers.WhatIsUniqueTaxpayerReferenceController.onSubmit(mode: Mode = NormalMode)
-GET        /changeWhatIsUniqueTaxpayerReference                  controllers.WhatIsUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeWhatIsUniqueTaxpayerReference                  controllers.WhatIsUniqueTaxpayerReferenceController.onSubmit(mode: Mode = CheckMode)
+GET        /utr                        controllers.WhatIsUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = NormalMode)
+POST       /utr                        controllers.WhatIsUniqueTaxpayerReferenceController.onSubmit(mode: Mode = NormalMode)
+GET        /change-utr                  controllers.WhatIsUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-utr                  controllers.WhatIsUniqueTaxpayerReferenceController.onSubmit(mode: Mode = CheckMode)
 
 
 GET        /haveGIIN                        controllers.HaveGIINController.onPageLoad(mode: Mode = NormalMode)

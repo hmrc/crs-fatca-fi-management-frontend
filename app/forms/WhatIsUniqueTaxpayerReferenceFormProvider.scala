@@ -17,16 +17,28 @@
 package forms
 
 import javax.inject.Inject
-
 import forms.mappings.Mappings
+import models.UniqueTaxpayerReference
 import play.api.data.Form
+import play.api.data.Forms.mapping
+import utils.RegexConstants
 
-class WhatIsUniqueTaxpayerReferenceFormProvider @Inject() extends Mappings {
+class WhatIsUniqueTaxpayerReferenceFormProvider @Inject() extends Mappings with RegexConstants {
 
-  def apply(): Form[String] =
+  def apply(): Form[UniqueTaxpayerReference] =
     Form(
-      "value" -> text("whatIsUniqueTaxpayerReference.error.required")
-        .verifying(maxLength(100, "whatIsUniqueTaxpayerReference.error.length"))
+      mapping(
+        "value" -> validatedUTR(
+          "whatIsUniqueTaxpayerReference.error.required",
+          "whatIsUniqueTaxpayerReference.error.invalid",
+          "whatIsUniqueTaxpayerReference.error.invalidFormat",
+          utrRegex
+        )
+      )(
+        UniqueTaxpayerReference.apply
+      )(
+        UniqueTaxpayerReference.unapply
+      )
     )
 
 }

@@ -18,12 +18,12 @@ package controllers
 
 import base.SpecBase
 import forms.WhatIsUniqueTaxpayerReferenceFormProvider
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UniqueTaxpayerReference}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.WhatIsUniqueTaxpayerReferencePage
+import pages.{NameOfFinancialInstitutionPage, WhatIsUniqueTaxpayerReferencePage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -37,8 +37,12 @@ class WhatIsUniqueTaxpayerReferenceControllerSpec extends SpecBase with MockitoS
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new WhatIsUniqueTaxpayerReferenceFormProvider()
-  val form         = formProvider()
+  val formProvider          = new WhatIsUniqueTaxpayerReferenceFormProvider()
+  val form                  = formProvider()
+  val fiName                = "FI name"
+  private val ua            = emptyUserAnswers.set(NameOfFinancialInstitutionPage, fiName).get
+  val mockSessionRepository = mock[SessionRepository]
+  when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
   lazy val whatIsUniqueTaxpayerReferenceRoute = routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(NormalMode).url
 
@@ -46,7 +50,7 @@ class WhatIsUniqueTaxpayerReferenceControllerSpec extends SpecBase with MockitoS
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, whatIsUniqueTaxpayerReferenceRoute)
@@ -56,13 +60,13 @@ class WhatIsUniqueTaxpayerReferenceControllerSpec extends SpecBase with MockitoS
         val view = application.injector.instanceOf[WhatIsUniqueTaxpayerReferenceView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, "FI name")(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(WhatIsUniqueTaxpayerReferencePage, "answer").success.value
+      val userAnswers = ua.set(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference("answer")).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -74,18 +78,14 @@ class WhatIsUniqueTaxpayerReferenceControllerSpec extends SpecBase with MockitoS
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(UniqueTaxpayerReference("answer")), NormalMode, "FI name")(request, messages(application)).toString
       }
     }
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(ua))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
@@ -95,7 +95,7 @@ class WhatIsUniqueTaxpayerReferenceControllerSpec extends SpecBase with MockitoS
       running(application) {
         val request =
           FakeRequest(POST, whatIsUniqueTaxpayerReferenceRoute)
-            .withFormUrlEncodedBody(("value", "answer"))
+            .withFormUrlEncodedBody(("value", "1234567890"))
 
         val result = route(application, request).value
 
@@ -106,7 +106,7 @@ class WhatIsUniqueTaxpayerReferenceControllerSpec extends SpecBase with MockitoS
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
         val request =
@@ -120,7 +120,7 @@ class WhatIsUniqueTaxpayerReferenceControllerSpec extends SpecBase with MockitoS
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "FI name")(request, messages(application)).toString
       }
     }
 
