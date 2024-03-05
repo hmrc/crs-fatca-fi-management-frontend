@@ -18,24 +18,24 @@ package viewmodels.checkAnswers
 
 import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.InstitutionSelectNonUkAddressPage
+import pages.InstitutionNonUkAddressPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object InstitutionSelectNonUkAddressSummary {
+object InstitutionNonUkAddressSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(InstitutionSelectNonUkAddressPage).map {
+    answers.get(InstitutionNonUkAddressPage).map {
       answer =>
         SummaryListRowViewModel(
-          key = "institutionSelectNonUkAddress.checkYourAnswersLabel",
+          key = "institutionNonUkAddress.checkYourAnswersLabel",
           value = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.InstitutionSelectNonUkAddressController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("institutionSelectNonUkAddress.change.hidden"))
+            ActionItemViewModel("site.change", routes.InstitutionNonUkAddressController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("institutionNonUkAddress.change.hidden"))
           )
         )
     }

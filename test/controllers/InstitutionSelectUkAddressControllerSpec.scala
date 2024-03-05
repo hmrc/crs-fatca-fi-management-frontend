@@ -17,43 +17,43 @@
 package controllers
 
 import base.SpecBase
-import forms.InstitutionSelectUkAddressFormProvider
+import forms.InstitutionUkAddressFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.InstitutionSelectUkAddressPage
+import pages.InstitutionUkAddressPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import views.html.InstitutionSelectUkAddressView
+import views.html.InstitutionUkAddressView
 
 import scala.concurrent.Future
 
-class InstitutionSelectUkAddressControllerSpec extends SpecBase with MockitoSugar {
+class InstitutionUkAddressControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new InstitutionSelectUkAddressFormProvider()
+  val formProvider = new InstitutionUkAddressFormProvider()
   val form         = formProvider()
 
-  lazy val institutionSelectUkAddressRoute = routes.InstitutionSelectUkAddressController.onPageLoad(NormalMode).url
+  lazy val institutionUkAddressRoute = routes.InstitutionUkAddressController.onPageLoad(NormalMode).url
 
-  "InstitutionSelectUkAddress Controller" - {
+  "InstitutionUkAddress Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, institutionSelectUkAddressRoute)
+        val request = FakeRequest(GET, institutionUkAddressRoute)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[InstitutionSelectUkAddressView]
+        val view = application.injector.instanceOf[InstitutionUkAddressView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
@@ -62,14 +62,14 @@ class InstitutionSelectUkAddressControllerSpec extends SpecBase with MockitoSuga
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(InstitutionSelectUkAddressPage, "answer").success.value
+      val userAnswers = UserAnswers(userAnswersId).set(InstitutionUkAddressPage, "answer").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, institutionSelectUkAddressRoute)
+        val request = FakeRequest(GET, institutionUkAddressRoute)
 
-        val view = application.injector.instanceOf[InstitutionSelectUkAddressView]
+        val view = application.injector.instanceOf[InstitutionUkAddressView]
 
         val result = route(application, request).value
 
@@ -94,7 +94,7 @@ class InstitutionSelectUkAddressControllerSpec extends SpecBase with MockitoSuga
 
       running(application) {
         val request =
-          FakeRequest(POST, institutionSelectUkAddressRoute)
+          FakeRequest(POST, institutionUkAddressRoute)
             .withFormUrlEncodedBody(("value", "answer"))
 
         val result = route(application, request).value
@@ -110,12 +110,12 @@ class InstitutionSelectUkAddressControllerSpec extends SpecBase with MockitoSuga
 
       running(application) {
         val request =
-          FakeRequest(POST, institutionSelectUkAddressRoute)
+          FakeRequest(POST, institutionUkAddressRoute)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[InstitutionSelectUkAddressView]
+        val view = application.injector.instanceOf[InstitutionUkAddressView]
 
         val result = route(application, request).value
 
@@ -129,7 +129,7 @@ class InstitutionSelectUkAddressControllerSpec extends SpecBase with MockitoSuga
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, institutionSelectUkAddressRoute)
+        val request = FakeRequest(GET, institutionUkAddressRoute)
 
         val result = route(application, request).value
 
@@ -144,7 +144,7 @@ class InstitutionSelectUkAddressControllerSpec extends SpecBase with MockitoSuga
 
       running(application) {
         val request =
-          FakeRequest(POST, institutionSelectUkAddressRoute)
+          FakeRequest(POST, institutionUkAddressRoute)
             .withFormUrlEncodedBody(("value", "answer"))
 
         val result = route(application, request).value
