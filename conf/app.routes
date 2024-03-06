@@ -106,15 +106,15 @@ POST       /institutionSelectAddress                        controllers.Institut
 GET        /changeInstitutionSelectAddress                  controllers.InstitutionSelectAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeInstitutionSelectAddress                  controllers.InstitutionSelectAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET        /institutionSelectNonUkAddress                        controllers.InstitutionSelectNonUkAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /institutionSelectNonUkAddress                        controllers.InstitutionSelectNonUkAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /changeInstitutionSelectNonUkAddress                  controllers.InstitutionSelectNonUkAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeInstitutionSelectNonUkAddress                  controllers.InstitutionSelectNonUkAddressController.onSubmit(mode: Mode = CheckMode)
+GET        /institutionNonUkAddress                        controllers.InstitutionNonUkAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /institutionNonUkAddress                        controllers.InstitutionNonUkAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /changeInstitutionNonUkAddress                  controllers.InstitutionNonUkAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeInstitutionNonUkAddress                  controllers.InstitutionNonUkAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET        /institutionSelectUkAddress                        controllers.InstitutionSelectUkAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /institutionSelectUkAddress                        controllers.InstitutionSelectUkAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /changeInstitutionSelectUkAddress                  controllers.InstitutionSelectUkAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeInstitutionSelectUkAddress                  controllers.InstitutionSelectUkAddressController.onSubmit(mode: Mode = CheckMode)
+GET        /institutionUkAddress                        controllers.InstitutionUkAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /institutionUkAddress                        controllers.InstitutionUkAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /changeInstitutionUkAddress                  controllers.InstitutionUkAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeInstitutionUkAddress                  controllers.InstitutionUkAddressController.onSubmit(mode: Mode = CheckMode)
 
 GET        /isThisInstitutionAddress                        controllers.IsThisInstitutionAddressController.onPageLoad(mode: Mode = NormalMode)
 POST       /isThisInstitutionAddress                        controllers.IsThisInstitutionAddressController.onSubmit(mode: Mode = NormalMode)

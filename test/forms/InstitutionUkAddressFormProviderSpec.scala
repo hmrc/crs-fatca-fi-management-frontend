@@ -19,13 +19,13 @@ package forms
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
-class InstitutionSelectUkAddressFormProviderSpec extends StringFieldBehaviours {
+class InstitutionUkAddressFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "institutionSelectUkAddress.error.required"
-  val lengthKey   = "institutionSelectUkAddress.error.length"
+  val requiredKey = "institutionUkAddress.error.required"
+  val lengthKey   = "institutionUkAddress.error.length"
   val maxLength   = 100
 
-  val form = new InstitutionSelectUkAddressFormProvider()()
+  val form = new InstitutionUkAddressFormProvider()()
 
   ".value" - {
 

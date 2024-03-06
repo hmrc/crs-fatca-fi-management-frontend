@@ -183,19 +183,19 @@ institutionSelectAddress.checkYourAnswersLabel = address1
 institutionSelectAddress.error.required = Select institutionSelectAddress
 institutionSelectAddress.change.hidden = InstitutionSelectAddress
 
-institutionSelectNonUkAddress.title = institutionSelectNonUkAddress
-institutionSelectNonUkAddress.heading = institutionSelectNonUkAddress
-institutionSelectNonUkAddress.checkYourAnswersLabel = institutionSelectNonUkAddress
-institutionSelectNonUkAddress.error.required = Enter institutionSelectNonUkAddress
-institutionSelectNonUkAddress.error.length = InstitutionSelectNonUkAddress must be 100 characters or less
-institutionSelectNonUkAddress.change.hidden = InstitutionSelectNonUkAddress
+institutionNonUkAddress.title = institutionSelectNonUkAddress
+institutionNonUkAddress.heading = institutionSelectNonUkAddress
+institutionNonUkAddress.checkYourAnswersLabel = institutionSelectNonUkAddress
+institutionNonUkAddress.error.required = Enter institutionSelectNonUkAddress
+institutionNonUkAddress.error.length = InstitutionSelectNonUkAddress must be 100 characters or less
+institutionNonUkAddress.change.hidden = InstitutionSelectNonUkAddress
 
-institutionSelectUkAddress.title = institutionSelectUkAddress
-institutionSelectUkAddress.heading = institutionSelectUkAddress
-institutionSelectUkAddress.checkYourAnswersLabel = institutionSelectUkAddress
-institutionSelectUkAddress.error.required = Enter institutionSelectUkAddress
-institutionSelectUkAddress.error.length = InstitutionSelectUkAddress must be 100 characters or less
-institutionSelectUkAddress.change.hidden = InstitutionSelectUkAddress
+institutionUkAddress.title = institutionSelectUkAddress
+institutionUkAddress.heading = institutionSelectUkAddress
+institutionUkAddress.checkYourAnswersLabel = institutionSelectUkAddress
+institutionUkAddress.error.required = Enter institutionSelectUkAddress
+institutionUkAddress.error.length = InstitutionSelectUkAddress must be 100 characters or less
+institutionUkAddress.change.hidden = InstitutionSelectUkAddress
 
 isThisInstitutionAddress.title = isThisInstitutionAddress
 isThisInstitutionAddress.heading = isThisInstitutionAddress

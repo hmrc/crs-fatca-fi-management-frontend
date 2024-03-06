@@ -17,29 +17,29 @@
 package controllers
 
 import controllers.actions._
-import forms.InstitutionSelectUkAddressFormProvider
+import forms.InstitutionNonUkAddressFormProvider
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.InstitutionSelectUkAddressPage
+import pages.InstitutionNonUkAddressPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.InstitutionSelectUkAddressView
+import views.html.InstitutionNonUkAddressView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class InstitutionSelectUkAddressController @Inject() (
+class InstitutionNonUkAddressController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
-  formProvider: InstitutionSelectUkAddressFormProvider,
+  formProvider: InstitutionNonUkAddressFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: InstitutionSelectUkAddressView
+  view: InstitutionNonUkAddressView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
@@ -48,7 +48,7 @@ class InstitutionSelectUkAddressController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.get(InstitutionSelectUkAddressPage) match {
+      val preparedForm = request.userAnswers.get(InstitutionNonUkAddressPage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -64,9 +64,9 @@ class InstitutionSelectUkAddressController @Inject() (
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(InstitutionSelectUkAddressPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(InstitutionNonUkAddressPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(InstitutionSelectUkAddressPage, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(InstitutionNonUkAddressPage, mode, updatedAnswers))
         )
   }
 
