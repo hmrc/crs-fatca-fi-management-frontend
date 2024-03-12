@@ -14,9 +14,14 @@
  * limitations under the License.
  *@
 
+@import components._
+
 @this(
     layout: templates.Layout,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    heading: Heading,
+    para: Paragraph,
+    link: Link
 )
 
 @()(implicit request: Request[_], messages: Messages)
@@ -28,14 +33,9 @@
     showSignOut  = false
 ) {
 
-    <h1 class="govuk-heading-xl">@messages("signedOut.heading")</h1>
+    @heading(messages("signedOut.heading"))
 
-    <p class="govuk-body">@messages("signedOut.guidance")</p>
-
-    <p class="govuk-body">
-        @govukButton(
-            ButtonViewModel(messages("site.signIn"))
-                .asLink(routes.IndexController.onPageLoad.url)
-        )
-    </p>
+    @para(Html(messages("signedOut.guidance")))
+    <br>
+    @link(href = routes.IndexController.onPageLoad.url, key = "signedOut.link")
 }
