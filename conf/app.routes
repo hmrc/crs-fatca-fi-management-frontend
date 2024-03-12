@@ -129,5 +129,3 @@ GET        /whatIsGIIN                        controllers.WhatIsGIINController.o
 POST       /whatIsGIIN                        controllers.WhatIsGIINController.onSubmit(mode: Mode = NormalMode)
 GET        /changeWhatIsGIIN                  controllers.WhatIsGIINController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeWhatIsGIIN                  controllers.WhatIsGIINController.onSubmit(mode: Mode = CheckMode)
-
-GET        /problem/page-not-found            controllers.PageNotFoundController.onPageLoad()
