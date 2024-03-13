@@ -49,7 +49,7 @@ class InstitutionSelectAddressControllerSpec extends SpecBase with MockitoSugar 
     AddressLookup(Some("2 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ")
   )
 
-  val addressRadios: Seq[RadioItem] = Seq(
+  val addressOptions: Seq[RadioItem] = Seq(
     RadioItem(content = Text("1 Address line 1, Town, ZZ1 1ZZ"), value = Some("1 Address line 1, Town, ZZ1 1ZZ")),
     RadioItem(content = Text("2 Address line 1, Town, ZZ1 1ZZ"), value = Some("2 Address line 1, Town, ZZ1 1ZZ"))
   )
@@ -73,7 +73,7 @@ class InstitutionSelectAddressControllerSpec extends SpecBase with MockitoSugar 
         val view = application.injector.instanceOf[InstitutionSelectAddressView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, addressRadios, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, addressOptions, NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -129,7 +129,7 @@ class InstitutionSelectAddressControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, addressRadios, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, addressOptions, NormalMode)(request, messages(application)).toString
       }
     }
   }

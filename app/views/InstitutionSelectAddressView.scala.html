@@ -26,7 +26,7 @@
     appConfig: FrontendAppConfig
 )
 
-@(form: Form[_], radioAddressFields: Seq[RadioItem], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], addressOptions: Seq[RadioItem], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("institutionSelectAddress.title"))) {
 
@@ -42,7 +42,7 @@
             RadiosViewModel.apply(
                 field = form("value"),
                 legend = LegendViewModel(messages("institutionSelectAddress.heading")).asPageHeading(),
-                items = radioAddressFields
+                items = addressOptions
             )
         )
 
