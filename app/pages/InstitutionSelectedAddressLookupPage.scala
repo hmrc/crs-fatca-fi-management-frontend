@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,12 @@
 
 package pages
 
-import models.UserAnswers
+import models.AddressLookup
 import play.api.libs.json.JsPath
 
-import scala.util.Try
-
-case object InstitutionSelectAddressPage extends QuestionPage[String] {
-
+object InstitutionSelectedAddressLookupPage extends QuestionPage[AddressLookup] {
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "institutionSelectAddress"
-
-  override def cleanup(value: Option[String], userAnswers: UserAnswers): Try[UserAnswers] =
-    value.fold(Try(userAnswers))(
-      _ => userAnswers.remove(InstitutionUkAddressPage)
-    )
+  override def toString: String = "selectedAddressLookup"
 
 }

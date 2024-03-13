@@ -18,13 +18,17 @@ package controllers
 
 import controllers.actions._
 import forms.InstitutionSelectAddressFormProvider
+
 import javax.inject.Inject
-import models.Mode
+import models.{AddressLookup, Mode}
 import navigation.Navigator
-import pages.InstitutionSelectAddressPage
+import pages.{AddressLookupPage, InstitutionSelectAddressPage, InstitutionSelectedAddressLookupPage}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.InstitutionSelectAddressView
 
@@ -48,26 +52,57 @@ class InstitutionSelectAddressController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.get(InstitutionSelectAddressPage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
+      request.userAnswers.get(AddressLookupPage) match {
+        case Some(addresses) =>
+          val preparedForm: Form[String] = request.userAnswers.get(InstitutionSelectAddressPage) match {
+            case None        => form
+            case Some(value) => form.fill(value)
+          }
 
-      Ok(view(preparedForm, mode))
+          val addressOptions: Seq[RadioItem] = addresses.map(
+            address => RadioItem(content = Text(s"${formatAddress(address)}"), value = Some(s"${formatAddress(address)}"))
+          )
+
+          Ok(view(preparedForm, addressOptions, mode))
+
+        case None => Redirect(routes.InstitutionUkAddressController.onPageLoad(mode))
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(InstitutionSelectAddressPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(InstitutionSelectAddressPage, mode, updatedAnswers))
-        )
+      request.userAnswers.get(AddressLookupPage) match {
+        case Some(addresses) =>
+          val radios: Seq[RadioItem] = addresses.map(
+            address => RadioItem(content = Text(s"${formatAddress(address)}"), value = Some(s"${formatAddress(address)}"))
+          )
+
+          form
+            .bindFromRequest()
+            .fold(
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, radios, mode))),
+              value => {
+                val addressToStore: AddressLookup = addresses.find(formatAddress(_) == value).getOrElse(throw new Exception("Cannot get address"))
+
+                for {
+                  updatedAnswers                    <- Future.fromTry(request.userAnswers.set(InstitutionSelectAddressPage, value))
+                  updatedAnswersWithSelectedAddress <- Future.fromTry(updatedAnswers.set(InstitutionSelectedAddressLookupPage, addressToStore))
+                  _                                 <- sessionRepository.set(updatedAnswersWithSelectedAddress)
+                } yield Redirect(navigator.nextPage(InstitutionSelectAddressPage, mode, updatedAnswersWithSelectedAddress))
+              }
+            )
+
+        case None => Future.successful(Redirect(routes.InstitutionUkAddressController.onPageLoad(mode)))
+      }
+  }
+
+  private def formatAddress(address: AddressLookup): String = {
+    val lines = Seq(address.addressLine1, address.addressLine2, address.addressLine3, address.addressLine4).flatten.mkString(", ")
+    val county = address.county.fold("")(
+      county => s"$county, "
+    )
+
+    s"$lines, ${address.town}, $county${address.postcode}"
   }
 
 }

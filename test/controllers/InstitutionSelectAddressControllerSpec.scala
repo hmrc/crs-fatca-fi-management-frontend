@@ -18,17 +18,19 @@ package controllers
 
 import base.SpecBase
 import forms.InstitutionSelectAddressFormProvider
-import models.{InstitutionSelectAddress, NormalMode, UserAnswers}
+import models.{AddressLookup, NormalMode}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.InstitutionSelectAddressPage
+import pages.AddressLookupPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 import views.html.InstitutionSelectAddressView
 
 import scala.concurrent.Future
@@ -42,40 +44,48 @@ class InstitutionSelectAddressControllerSpec extends SpecBase with MockitoSugar 
   val formProvider = new InstitutionSelectAddressFormProvider()
   val form         = formProvider()
 
+  val addresses: Seq[AddressLookup] = Seq(
+    AddressLookup(Some("1 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ"),
+    AddressLookup(Some("2 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ")
+  )
+
+  val addressOptions: Seq[RadioItem] = Seq(
+    RadioItem(content = Text("1 Address line 1, Town, ZZ1 1ZZ"), value = Some("1 Address line 1, Town, ZZ1 1ZZ")),
+    RadioItem(content = Text("2 Address line 1, Town, ZZ1 1ZZ"), value = Some("2 Address line 1, Town, ZZ1 1ZZ"))
+  )
+
+  val userAnswers = emptyUserAnswers
+    .set(AddressLookupPage, addresses)
+    .success
+    .value
+
   "InstitutionSelectAddress Controller" - {
 
     "must return OK and the correct view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, institutionSelectAddressRoute)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[InstitutionSelectAddressView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
-      }
-    }
-
-    "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      val userAnswers = UserAnswers(userAnswersId).set(InstitutionSelectAddressPage, InstitutionSelectAddress.values.head).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, institutionSelectAddressRoute)
 
-        val view = application.injector.instanceOf[InstitutionSelectAddressView]
-
         val result = route(application, request).value
 
+        val view = application.injector.instanceOf[InstitutionSelectAddressView]
+
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(InstitutionSelectAddress.values.head), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, addressOptions, NormalMode)(request, messages(application)).toString
       }
+    }
+
+    "must redirect to manual UK address page if there are no address matches" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      val request = FakeRequest(GET, institutionSelectAddressRoute)
+      val result  = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual routes.InstitutionUkAddressController.onPageLoad(NormalMode).url
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -85,7 +95,7 @@ class InstitutionSelectAddressControllerSpec extends SpecBase with MockitoSugar 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
@@ -94,8 +104,7 @@ class InstitutionSelectAddressControllerSpec extends SpecBase with MockitoSugar 
 
       running(application) {
         val request =
-          FakeRequest(POST, institutionSelectAddressRoute)
-            .withFormUrlEncodedBody(("value", InstitutionSelectAddress.values.head.toString))
+          FakeRequest(POST, institutionSelectAddressRoute).withFormUrlEncodedBody(("value", "1 Address line 1, Town, ZZ1 1ZZ"))
 
         val result = route(application, request).value
 
@@ -106,52 +115,21 @@ class InstitutionSelectAddressControllerSpec extends SpecBase with MockitoSugar 
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request =
           FakeRequest(POST, institutionSelectAddressRoute)
-            .withFormUrlEncodedBody(("value", "invalid value"))
+            .withFormUrlEncodedBody(("value", ""))
 
-        val boundForm = form.bind(Map("value" -> "invalid value"))
+        val boundForm = form.bind(Map("value" -> ""))
 
         val view = application.injector.instanceOf[InstitutionSelectAddressView]
 
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
-      }
-    }
-
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(GET, institutionSelectAddressRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
-
-    "redirect to Journey Recovery for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, institutionSelectAddressRoute)
-            .withFormUrlEncodedBody(("value", InstitutionSelectAddress.values.head.toString))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        contentAsString(result) mustEqual view(boundForm, addressOptions, NormalMode)(request, messages(application)).toString
       }
     }
   }
