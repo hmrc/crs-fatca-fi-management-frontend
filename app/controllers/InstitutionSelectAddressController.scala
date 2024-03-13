@@ -59,11 +59,11 @@ class InstitutionSelectAddressController @Inject() (
             case Some(value) => form.fill(value)
           }
 
-          val radios: Seq[RadioItem] = addresses.map(
+          val radioAddressFields: Seq[RadioItem] = addresses.map(
             address => RadioItem(content = Text(s"${formatAddress(address)}"), value = Some(s"${formatAddress(address)}"))
           )
 
-          Ok(view(preparedForm, radios, mode))
+          Ok(view(preparedForm, radioAddressFields, mode))
 
         case None => Redirect(routes.InstitutionUkAddressController.onPageLoad(mode))
       }

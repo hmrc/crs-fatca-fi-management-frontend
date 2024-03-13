@@ -17,7 +17,6 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.Regime.CRSFATCA
 import models.{AddressLookup, LookupAddressByPostcode}
 import play.api.Logging
 import play.api.http.Status._
@@ -39,7 +38,7 @@ class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppCon
 
     val lookupAddressByPostcode = LookupAddressByPostcode(postCode, None)
 
-    http.POST[LookupAddressByPostcode, HttpResponse](addressLookupUrl, lookupAddressByPostcode, headers = Seq("X-Hmrc-Origin" -> CRSFATCA.toString)) flatMap {
+    http.POST[LookupAddressByPostcode, HttpResponse](addressLookupUrl, lookupAddressByPostcode, headers = Seq("X-Hmrc-Origin" -> "CRSFATCA")) flatMap {
       case response if response.status equals OK =>
         Future.successful(
           sortAddresses(
