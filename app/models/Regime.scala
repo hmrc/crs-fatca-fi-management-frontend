@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-package pages
+package models
 
-import models.UserAnswers
-import play.api.libs.json.JsPath
+sealed trait Regime
 
-import scala.util.Try
+object Regime extends Enumerable.Implicits {
 
-case object InstitutionSelectAddressPage extends QuestionPage[String] {
+  case object CRSFATCA extends WithName("CRSFATCA") with Regime
 
-  override def path: JsPath = JsPath \ toString
+  val values: Seq[Regime] = Seq(CRSFATCA)
 
-  override def toString: String = "institutionSelectAddress"
-
-  override def cleanup(value: Option[String], userAnswers: UserAnswers): Try[UserAnswers] =
-    value.fold(Try(userAnswers))(
-      _ => userAnswers.remove(InstitutionUkAddressPage)
+  implicit val enumerable: Enumerable[Regime] =
+    Enumerable(
+      values.map(
+        v => v.toString -> v
+      ): _*
     )
 
 }

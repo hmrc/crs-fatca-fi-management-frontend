@@ -14,29 +14,35 @@
  * limitations under the License.
  *@
 
+@import config.FrontendAppConfig
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    link: components.Link,
+    appConfig: FrontendAppConfig
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], radios: Seq[RadioItem], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("institutionSelectAddress.title"))) {
 
     @formHelper(action = routes.InstitutionSelectAddressController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
+        <p>@HtmlContent(Html(messages( "institutionSelectAddress.p1.part1", link(routes.InstitutionUkAddressController.onPageLoad(mode).url, "institutionSelectAddress.p1.part2", Some("manualAddress")))))</p>
+
         @govukRadios(
-            RadiosViewModel(
-                field  = form("value"),
+            RadiosViewModel.apply(
+                field = form("value"),
                 legend = LegendViewModel(messages("institutionSelectAddress.heading")).asPageHeading(),
-                items  = InstitutionSelectAddress.options
+                items = radios
             )
         )
 
