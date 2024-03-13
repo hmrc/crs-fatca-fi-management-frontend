@@ -57,7 +57,6 @@ journeyRecovery.startAgain.guidance = [Add content to explain why the user needs
 signedOut.title = For your security, we signed you out
 signedOut.heading = For your security, we signed you out
 signedOut.guidance = We did not save your answers.
-signedOut.link = Sign in again to use the service
 
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
@@ -239,12 +238,3 @@ secondContactName.checkYourAnswersLabel.hiddenText = Change second contact name
 secondContactName.error.required = Enter a name for the second contact
 secondContactName.error.invalid = The name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, backslashes, carets (^), grave accents (`), hyphens and spaces
 secondContactName.error.length = The name must be 35 characters or less
-
-pageNotFound.title = Page not found
-pageNotFound.heading = Page not found
-pageNotFound.para.1 = If you typed the web address, check it is correct.
-pageNotFound.para.2 = If you pasted the web address, check you copied the entire address.
-pageNotFound.para.3 = You can email {0} if you have any questions about this service.
-pageNotFound.para.email = aeoi.enquiries@hmrc.gov.uk
-
-
