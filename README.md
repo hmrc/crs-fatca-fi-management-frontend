@@ -1,7 +1,7 @@
 
 # crs-fatca-fi-management-frontend
 
-This is a placeholder README.md for a new repository
+This service is used to manage financial institutions details.
 
 ## Running the service
 
