@@ -53,7 +53,7 @@ class IsThisInstitutionAddressController @Inject() (
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode))
+      Ok(view(preparedForm, mode, "fiName", "address"))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -61,7 +61,7 @@ class IsThisInstitutionAddressController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, "fiName", "address"))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(IsThisInstitutionAddressPage, value))

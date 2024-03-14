@@ -39,6 +39,8 @@ class IsThisInstitutionAddressControllerSpec extends SpecBase with MockitoSugar 
 
   val formProvider = new IsThisInstitutionAddressFormProvider()
   val form         = formProvider()
+  val address      = "someAddress"
+  val fiName       = "fiName"
 
   lazy val isThisInstitutionAddressRoute = routes.IsThisInstitutionAddressController.onPageLoad(NormalMode).url
 
