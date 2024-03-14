@@ -15,6 +15,7 @@
  *@
 
 @import components._
+@import models.Address
 
 @this(
     layout: templates.Layout,
@@ -26,7 +27,7 @@
     heading: Heading
 )
 
-@(form: Form[_], mode: Mode, fiName: String, address: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, fiName: String, address: Address)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("isThisInstitutionAddress.title"))) {
 
@@ -37,7 +38,7 @@
         }
 
         @heading(messages("isThisInstitutionAddress.heading", fiName))
-        @para(Html(address))
+        @para(Html(address.toString))
 
         @govukRadios(
             RadiosViewModel.yesNo(

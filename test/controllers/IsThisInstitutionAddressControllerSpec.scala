@@ -18,12 +18,13 @@ package controllers
 
 import base.SpecBase
 import forms.IsThisInstitutionAddressFormProvider
-import models.{NormalMode, UserAnswers}
+import models.{Address, Country, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.IsThisInstitutionAddressPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -37,10 +38,18 @@ class IsThisInstitutionAddressControllerSpec extends SpecBase with MockitoSugar 
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new IsThisInstitutionAddressFormProvider()
-  val form         = formProvider()
-  val address      = "someAddress"
-  val fiName       = "fiName"
+  val formProvider        = new IsThisInstitutionAddressFormProvider()
+  val form: Form[Boolean] = formProvider()
+
+  val address: Address = Address("1 address street",
+                                 addressLine2 = None,
+                                 addressLine3 = "Address town",
+                                 addressLine4 = None,
+                                 postCode = None,
+                                 country = Country("Great Britannia", "GB", "UK")
+  )
+
+  val fiName = "the financial institution"
 
   lazy val isThisInstitutionAddressRoute = routes.IsThisInstitutionAddressController.onPageLoad(NormalMode).url
 
@@ -58,7 +67,7 @@ class IsThisInstitutionAddressControllerSpec extends SpecBase with MockitoSugar 
         val view = application.injector.instanceOf[IsThisInstitutionAddressView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, fiName, address)(request, messages(application)).toString
       }
     }
 
@@ -76,7 +85,7 @@ class IsThisInstitutionAddressControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, fiName, address)(request, messages(application)).toString
       }
     }
 
@@ -122,7 +131,7 @@ class IsThisInstitutionAddressControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, fiName, address)(request, messages(application)).toString
       }
     }
 
