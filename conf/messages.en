@@ -168,12 +168,16 @@ institutionLocation.checkYourAnswersLabel = institutionLocation
 institutionLocation.error.required = Select yes if institutionLocation
 institutionLocation.change.hidden = InstitutionLocation
 
-institutionPostcode.title = institutionPostcode
-institutionPostcode.heading = institutionPostcode
-institutionPostcode.checkYourAnswersLabel = institutionPostcode
-institutionPostcode.error.required = Enter institutionPostcode
-institutionPostcode.error.length = InstitutionPostcode must be 10 characters or less
-institutionPostcode.change.hidden = InstitutionPostcode
+institutionPostcode.title = What is the financial institution's postcode?
+institutionPostcode.heading = What is the postcode for {0}?
+institutionPostcode.checkYourAnswersLabel = What is the financial institution's postcode?
+institutionPostcode.p1 = Enter the postcode to find the address automatically.
+institutionPostcode.manualLink = Or enter the address manually
+institutionPostcode.error.required = Enter your postcode
+institutionPostcode.error.length = Your postcode must be 10 characters or less
+institutionPostcode.error.chars = Postcode must only include letters a to z and numbers 0 to 9
+institutionPostcode.error.invalid = Enter a postcode, like AA1 1AA
+institutionPostcode.error.notFound = Postcode not found — enter a different postcode or enter the address manually
 
 institutionSelectAddress.title = What is your address?
 institutionSelectAddress.heading = What is your address?

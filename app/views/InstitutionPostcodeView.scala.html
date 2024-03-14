@@ -21,10 +21,12 @@
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    heading: components.Heading,
+    link: components.Link
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, fiName: String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("institutionPostcode.title"))) {
 
@@ -34,13 +36,19 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
+        @heading(messages("whatIsUniqueTaxpayerReference.heading", fiName))
+        <p class="govuk-body">@messages("institutionPostcode.p1")</p>
+
         @govukInput(
             InputViewModel(
-                field = form("value"),
-                label = LabelViewModel(messages("institutionPostcode.heading")).asPageHeading()
+                field = form("postCode"),
+                label = LabelViewModel(messages("institutionPostcode.heading, fiName")).visuallyHidden()
             )
-            .withWidth(Full)
+            .withWidth(Fixed10)
+            .withAutocomplete("postal-code")
         )
+
+        <p class="govuk-body">@link(controllers.routes.InstitutionUkAddressController.onPageLoad(mode).url, "institutionPostcode.manualLink" , id = Some("manualAddressLink"))</p>
 
         @govukButton(
             ButtonViewModel(messages("site.continue")).withAttribute("id" -> "submit")

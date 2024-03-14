@@ -17,11 +17,12 @@
 package controllers
 
 import base.SpecBase
+import connectors.AddressLookupConnector
 import forms.InstitutionPostcodeFormProvider
-import models.{NormalMode, UserAnswers}
+import models.{AddressLookup, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.InstitutionPostcodePage
 import play.api.inject.bind
@@ -80,27 +81,37 @@ class InstitutionPostcodeControllerSpec extends SpecBase with MockitoSugar {
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
+      val mockSessionRepository: SessionRepository = mock[SessionRepository]
+      val mockAddressLookupConnector               = mock[AddressLookupConnector]
+
+      val addresses: Seq[AddressLookup] = Seq(
+        AddressLookup(Some("1 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ"),
+        AddressLookup(Some("2 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ")
+      )
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockAddressLookupConnector.addressLookupByPostcode(any[String])(any(), any()))
+        .thenReturn(Future.successful(addresses))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[AddressLookupConnector].toInstance(mockAddressLookupConnector),
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute))
           )
           .build()
 
       running(application) {
         val request =
           FakeRequest(POST, institutionPostcodeRoute)
-            .withFormUrlEncodedBody(("value", "answer"))
+            .withFormUrlEncodedBody(("postCode", "AA1 1AA"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
+
         redirectLocation(result).value mustEqual onwardRoute.url
+        verify(mockAddressLookupConnector, times(1)).addressLookupByPostcode(any())(any(), any())
       }
     }
 

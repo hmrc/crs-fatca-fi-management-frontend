@@ -27,7 +27,6 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Writes
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import queries.Settable
 import uk.gov.hmrc.http.HeaderCarrier
