@@ -28,13 +28,15 @@ class InstitutionSelectAddressFormProviderSpec extends OptionFieldBehaviours {
 
     val fieldName   = "value"
     val requiredKey = "institutionSelectAddress.error.required"
+    val addresses   = Seq("Address 1", "Address 2", "Address 3")
 
-    behave like optionsField[InstitutionSelectAddress](
-      form,
-      fieldName,
-      validValues = InstitutionSelectAddress.values,
-      invalidError = FormError(fieldName, "error.invalid")
-    )
+    "must bind all valid values" in {
+      for (value <- addresses) {
+
+        val result = form.bind(Map(fieldName -> value)).apply(fieldName)
+        result.value.value mustBe value
+      }
+    }
 
     behave like mandatoryField(
       form,

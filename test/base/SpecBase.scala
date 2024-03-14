@@ -27,13 +27,15 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Writes
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import queries.Settable
+import uk.gov.hmrc.http.HeaderCarrier
 
 trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValues with ScalaFutures with IntegrationPatience {
 
-  val userAnswersId: String = "id"
-
+  val userAnswersId: String         = "id"
+  implicit val hc: HeaderCarrier    = HeaderCarrier()
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
 
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())

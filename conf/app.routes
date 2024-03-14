@@ -101,10 +101,10 @@ POST       /institutionPostcode                        controllers.InstitutionPo
 GET        /changeInstitutionPostcode                  controllers.InstitutionPostcodeController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeInstitutionPostcode                  controllers.InstitutionPostcodeController.onSubmit(mode: Mode = CheckMode)
 
-GET        /institutionSelectAddress                        controllers.InstitutionSelectAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /institutionSelectAddress                        controllers.InstitutionSelectAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /changeInstitutionSelectAddress                  controllers.InstitutionSelectAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeInstitutionSelectAddress                  controllers.InstitutionSelectAddressController.onSubmit(mode: Mode = CheckMode)
+GET        /select-address                             controllers.InstitutionSelectAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /select-address                             controllers.InstitutionSelectAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /change-select-address                      controllers.InstitutionSelectAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-select-address                      controllers.InstitutionSelectAddressController.onSubmit(mode: Mode = CheckMode)
 
 GET        /institutionNonUkAddress                        controllers.InstitutionNonUkAddressController.onPageLoad(mode: Mode = NormalMode)
 POST       /institutionNonUkAddress                        controllers.InstitutionNonUkAddressController.onSubmit(mode: Mode = NormalMode)

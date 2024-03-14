@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,15 @@
  * limitations under the License.
  */
 
-package pages
+package models
 
-import models.UserAnswers
-import play.api.libs.json.JsPath
+import play.api.libs.json.{Json, OFormat}
 
-import scala.util.Try
+case class Country(state: String, code: String, description: String)
 
-case object InstitutionSelectAddressPage extends QuestionPage[String] {
+object Country {
 
-  override def path: JsPath = JsPath \ toString
+  val GB = Country("valid", "GB", "United Kingdom")
 
-  override def toString: String = "institutionSelectAddress"
-
-  override def cleanup(value: Option[String], userAnswers: UserAnswers): Try[UserAnswers] =
-    value.fold(Try(userAnswers))(
-      _ => userAnswers.remove(InstitutionUkAddressPage)
-    )
-
+  implicit val format: OFormat[Country] = Json.format[Country]
 }

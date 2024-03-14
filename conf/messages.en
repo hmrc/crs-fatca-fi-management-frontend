@@ -175,13 +175,11 @@ institutionPostcode.error.required = Enter institutionPostcode
 institutionPostcode.error.length = InstitutionPostcode must be 10 characters or less
 institutionPostcode.change.hidden = InstitutionPostcode
 
-institutionSelectAddress.title = address1
-institutionSelectAddress.heading = address1
-institutionSelectAddress.address1 = address1
-institutionSelectAddress.address2 = address2
-institutionSelectAddress.checkYourAnswersLabel = address1
-institutionSelectAddress.error.required = Select institutionSelectAddress
-institutionSelectAddress.change.hidden = InstitutionSelectAddress
+institutionSelectAddress.title = What is your address?
+institutionSelectAddress.heading = What is your address?
+institutionSelectAddress.error.required = Select your address
+institutionSelectAddress.p1.part1 = Select from the list or {0}
+institutionSelectAddress.p1.part2 = enter your address manually
 
 institutionNonUkAddress.title = institutionSelectNonUkAddress
 institutionNonUkAddress.heading = institutionSelectNonUkAddress
