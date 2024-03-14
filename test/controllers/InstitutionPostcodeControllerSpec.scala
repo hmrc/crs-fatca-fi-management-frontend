@@ -19,12 +19,12 @@ package controllers
 import base.SpecBase
 import connectors.AddressLookupConnector
 import forms.InstitutionPostcodeFormProvider
-import models.{AddressLookup, NormalMode, UserAnswers}
+import models.{AddressLookup, NormalMode}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.InstitutionPostcodePage
+import pages.{InstitutionPostcodePage, NameOfFinancialInstitutionPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -40,6 +40,8 @@ class InstitutionPostcodeControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new InstitutionPostcodeFormProvider()
   val form         = formProvider()
+  val contactName  = "fiName"
+  private val ua   = emptyUserAnswers.set(NameOfFinancialInstitutionPage, contactName).get
 
   lazy val institutionPostcodeRoute = routes.InstitutionPostcodeController.onPageLoad(NormalMode).url
 
@@ -47,7 +49,7 @@ class InstitutionPostcodeControllerSpec extends SpecBase with MockitoSugar {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, institutionPostcodeRoute)
@@ -57,13 +59,13 @@ class InstitutionPostcodeControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[InstitutionPostcodeView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, "fiName")(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(InstitutionPostcodePage, "answer").success.value
+      val userAnswers = ua.set(InstitutionPostcodePage, "answer").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -75,7 +77,7 @@ class InstitutionPostcodeControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode, "fiName")(request, messages(application)).toString
       }
     }
 
@@ -117,7 +119,7 @@ class InstitutionPostcodeControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
         val request =
@@ -131,7 +133,7 @@ class InstitutionPostcodeControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "fiName")(request, messages(application)).toString
       }
     }
 
