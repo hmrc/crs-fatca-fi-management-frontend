@@ -24,18 +24,16 @@
     link: Link
 )
 
+
 @()(implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle    = titleNoForm(messages("signedOut.title")),
-    showBackLink = false,
-    timeout      = false,
-    showSignOut  = false
-) {
+@emailLink = {@link(href="mailto:aeoi.enquiries@hmrc.gov.uk", "pageNotFound.para.email")}
 
-    @heading(messages("signedOut.heading"))
+@layout(pageTitle = titleNoForm(messages("pageNotFound.title"))) {
 
-    @para(Html(messages("signedOut.guidance")))
-    <br>
-    @link(href = routes.IndexController.onPageLoad.url, key = "signedOut.link")
+    @heading(messages("pageNotFound.heading"))
+    @para(Html(messages("pageNotFound.para.1")))
+    @para(Html(messages("pageNotFound.para.2")))
+    @para(Html(messages("pageNotFound.para.3", emailLink)))
+
 }

@@ -85,7 +85,6 @@ POST       /utr                        controllers.WhatIsUniqueTaxpayerReference
 GET        /change-utr                  controllers.WhatIsUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-utr                  controllers.WhatIsUniqueTaxpayerReferenceController.onSubmit(mode: Mode = CheckMode)
 
-
 GET        /haveGIIN                        controllers.HaveGIINController.onPageLoad(mode: Mode = NormalMode)
 POST       /haveGIIN                        controllers.HaveGIINController.onSubmit(mode: Mode = NormalMode)
 GET        /changeHaveGIIN                  controllers.HaveGIINController.onPageLoad(mode: Mode = CheckMode)
