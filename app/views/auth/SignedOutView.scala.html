@@ -34,8 +34,6 @@
 ) {
 
     @heading(messages("signedOut.heading"))
-
     @para(Html(messages("signedOut.guidance")))
-    <br>
-    @link(href = routes.IndexController.onPageLoad.url, key = "signedOut.link")
+    @link(href = routes.IndexController.onPageLoad.url, key = "signedOut.link", classes = "govuk-link govuk-body")
 }
