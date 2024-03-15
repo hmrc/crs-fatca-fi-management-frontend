@@ -17,10 +17,10 @@
 package forms.mappings
 
 import java.time.LocalDate
-
-import play.api.data.FieldMapping
+import play.api.data.{FieldMapping, FormError, Mapping}
 import play.api.data.Forms.of
 import models.Enumerable
+import play.api.data.format.Formatter
 
 trait Mappings extends Formatters with Constraints {
 
@@ -71,5 +71,14 @@ trait Mappings extends Formatters with Constraints {
 
   protected def validatedUTR(requiredKey: String, invalidKey: String, invalidFormatKey: String, regex: String, msgArg: String = ""): FieldMapping[String] =
     of(validatedUtrFormatter(requiredKey, invalidKey, invalidFormatKey, regex, msgArg))
+
+  protected def mandatoryPostcode(requiredKey: String,
+                                  lengthKey: String,
+                                  invalidKey: String,
+                                  regex: String,
+                                  invalidCharKey: String,
+                                  InvalidCharRegex: String
+  ): Mapping[String] =
+    of(mandatoryPostcodeFormatter(requiredKey, lengthKey, invalidKey, regex, invalidCharKey, InvalidCharRegex))
 
 }

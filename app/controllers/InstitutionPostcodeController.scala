@@ -16,16 +16,20 @@
 
 package controllers
 
+import connectors.AddressLookupConnector
 import controllers.actions._
 import forms.InstitutionPostcodeFormProvider
+
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.InstitutionPostcodePage
+import pages.{AddressLookupPage, InstitutionPostcodePage}
+import play.api.data.FormError
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.ContactHelper
 import views.html.InstitutionPostcodeView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,11 +42,13 @@ class InstitutionPostcodeController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: InstitutionPostcodeFormProvider,
+  addressLookupConnector: AddressLookupConnector,
   val controllerComponents: MessagesControllerComponents,
   view: InstitutionPostcodeView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with ContactHelper {
 
   val form = formProvider()
 
@@ -53,20 +59,29 @@ class InstitutionPostcodeController @Inject() (
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode))
+      Ok(view(preparedForm, mode, getFinancialInstitutionName(request.userAnswers)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      form
-        .bindFromRequest()
+      val formReturned = form.bindFromRequest()
+
+      formReturned
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(InstitutionPostcodePage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(InstitutionPostcodePage, mode, updatedAnswers))
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, getFinancialInstitutionName(request.userAnswers)))),
+          postCode =>
+            addressLookupConnector.addressLookupByPostcode(postCode).flatMap {
+              case Nil =>
+                val formError = formReturned.withError(FormError("postCode", List("institutionPostcode.error.notFound")))
+                Future.successful(BadRequest(view(formError, mode, getFinancialInstitutionName(request.userAnswers))))
+
+              case addresses =>
+                for {
+                  updatedAnswers            <- Future.fromTry(request.userAnswers.set(InstitutionPostcodePage, postCode))
+                  updatedAnswersWithAddress <- Future.fromTry(updatedAnswers.set(AddressLookupPage, addresses))
+                  _                         <- sessionRepository.set(updatedAnswersWithAddress)
+                } yield Redirect(navigator.nextPage(InstitutionPostcodePage, mode, updatedAnswersWithAddress))
+            }
         )
   }
 

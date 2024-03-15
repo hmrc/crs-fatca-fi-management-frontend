@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import forms.ContactHavePhoneFormProvider
-import models.{Name, NormalMode, UserAnswers}
+import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

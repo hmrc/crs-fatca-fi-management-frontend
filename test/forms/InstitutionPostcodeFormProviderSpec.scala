@@ -21,33 +21,50 @@ import play.api.data.FormError
 
 class InstitutionPostcodeFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "institutionPostcode.error.required"
-  val lengthKey   = "institutionPostcode.error.length"
-  val maxLength   = 10
-
   val form = new InstitutionPostcodeFormProvider()()
 
-  ".value" - {
+  ".postCode" - {
 
-    val fieldName = "value"
+    val fieldName      = "postCode"
+    val requiredKey    = "institutionPostcode.error.required"
+    val lengthKey      = "institutionPostcode.error.length"
+    val invalidKey     = "institutionPostcode.error.invalid"
+    val invalidCharKey = "institutionPostcode.error.chars"
+
+    val postCodeMaxLength = 10
 
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      validPostCodes
     )
 
-    behave like fieldWithMaxLength(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
-      maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      maxLength = postCodeMaxLength,
+      lengthError = FormError(fieldName, lengthKey)
     )
 
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "xx9 9xx9",
+      FormError(fieldName, invalidKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "!#2",
+      FormError(fieldName, invalidCharKey),
+      Some("chars")
     )
   }
 

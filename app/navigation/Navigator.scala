@@ -16,11 +16,12 @@
 
 package navigation
 
-import javax.inject.{Inject, Singleton}
-import play.api.mvc.Call
 import controllers.routes
-import pages._
 import models._
+import pages._
+import play.api.mvc.Call
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class Navigator @Inject() () {
@@ -72,6 +73,7 @@ class Navigator @Inject() () {
           routes.CheckYourAnswersController.onPageLoad
         )
     case SecondContactPhoneNumberPage => _ => routes.CheckYourAnswersController.onPageLoad
+    case InstitutionPostcodePage      => addressLookupNavigation(NormalMode)
     case _ =>
       _ => routes.IndexController.onPageLoad
   }
@@ -80,6 +82,12 @@ class Navigator @Inject() () {
     case _ =>
       _ => routes.CheckYourAnswersController.onPageLoad
   }
+
+  private def addressLookupNavigation(mode: Mode)(ua: UserAnswers): Call =
+    ua.get(AddressLookupPage) match {
+      case Some(value) if value.length == 1 => controllers.routes.IsThisInstitutionAddressController.onPageLoad(mode)
+      case _                                => controllers.routes.InstitutionSelectAddressController.onPageLoad(mode)
+    }
 
   private def yesNoPage(ua: UserAnswers, fromPage: QuestionPage[Boolean], yesCall: => Call, noCall: => Call): Call =
     ua.get(fromPage)

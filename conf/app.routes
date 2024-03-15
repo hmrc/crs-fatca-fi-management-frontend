@@ -96,10 +96,10 @@ POST       /institutionLocation                        controllers.InstitutionLo
 GET        /changeInstitutionLocation                  controllers.InstitutionLocationController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeInstitutionLocation                  controllers.InstitutionLocationController.onSubmit(mode: Mode = CheckMode)
 
-GET        /institutionPostcode                        controllers.InstitutionPostcodeController.onPageLoad(mode: Mode = NormalMode)
-POST       /institutionPostcode                        controllers.InstitutionPostcodeController.onSubmit(mode: Mode = NormalMode)
-GET        /changeInstitutionPostcode                  controllers.InstitutionPostcodeController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeInstitutionPostcode                  controllers.InstitutionPostcodeController.onSubmit(mode: Mode = CheckMode)
+GET        /uk-postcode                        controllers.InstitutionPostcodeController.onPageLoad(mode: Mode = NormalMode)
+POST       /uk-postcode                        controllers.InstitutionPostcodeController.onSubmit(mode: Mode = NormalMode)
+GET        /change-uk-postcode                  controllers.InstitutionPostcodeController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-uk-postcode                  controllers.InstitutionPostcodeController.onSubmit(mode: Mode = CheckMode)
 
 GET        /select-address                             controllers.InstitutionSelectAddressController.onPageLoad(mode: Mode = NormalMode)
 POST       /select-address                             controllers.InstitutionSelectAddressController.onSubmit(mode: Mode = NormalMode)
