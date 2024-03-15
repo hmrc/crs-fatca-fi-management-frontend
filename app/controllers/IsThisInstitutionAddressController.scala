@@ -22,7 +22,7 @@ import forms.IsThisInstitutionAddressFormProvider
 import javax.inject.Inject
 import models.{Address, Country, Mode}
 import navigation.Navigator
-import pages.IsThisInstitutionAddressPage
+import pages.{AddressLookupPage, IsThisInstitutionAddressPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -49,12 +49,12 @@ class IsThisInstitutionAddressController @Inject() (
 
   val form = formProvider()
 
-  val chosenAddress = Address("1 address street",
-                              addressLine2 = None,
-                              addressLine3 = "Address town",
-                              addressLine4 = None,
-                              postCode = None,
-                              country = Country("Great Britannia", "GB", "UK")
+  val egAddress = Address("1 address street",
+                          addressLine2 = None,
+                          addressLine3 = "Address town",
+                          addressLine4 = None,
+                          postCode = None,
+                          country = Country("Great Britannia", "GB", "UK")
   )
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
@@ -65,15 +65,20 @@ class IsThisInstitutionAddressController @Inject() (
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode, getFinancialInstitutionName(ua), chosenAddress))
+      val address =
+        ua.get(AddressLookupPage).get.head.toAddress.get // need to protect against empty/ navigation to here should only happen with 1 found address?
+
+      Ok(view(preparedForm, mode, getFinancialInstitutionName(ua), address))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+      val address = request.userAnswers.get(AddressLookupPage).get.head.toAddress.get
+
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, getFinancialInstitutionName(request.userAnswers), chosenAddress))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, getFinancialInstitutionName(request.userAnswers), address))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(IsThisInstitutionAddressPage, value))

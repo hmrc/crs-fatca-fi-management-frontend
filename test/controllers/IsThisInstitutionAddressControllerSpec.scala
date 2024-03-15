@@ -18,12 +18,12 @@ package controllers
 
 import base.SpecBase
 import forms.IsThisInstitutionAddressFormProvider
-import models.{Address, Country, NormalMode, UserAnswers}
+import models.{Address, AddressLookup, Country, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.IsThisInstitutionAddressPage
+import pages.{AddressLookupPage, IsThisInstitutionAddressPage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -41,13 +41,25 @@ class IsThisInstitutionAddressControllerSpec extends SpecBase with MockitoSugar 
   val formProvider        = new IsThisInstitutionAddressFormProvider()
   val form: Form[Boolean] = formProvider()
 
-  val address: Address = Address("1 address street",
-                                 addressLine2 = None,
-                                 addressLine3 = "Address town",
-                                 addressLine4 = None,
-                                 postCode = None,
-                                 country = Country("Great Britannia", "GB", "UK")
+  val address: Address = Address(
+    "1 address street",
+    addressLine2 = None,
+    addressLine3 = "Address town",
+    addressLine4 = None,
+    postCode = Some("postcode"),
+    country = Country("valid", "GB", "United Kingdom")
   )
+
+  val addressLookup: AddressLookup = AddressLookup(Some("1 address street"),
+                                                   addressLine2 = None,
+                                                   addressLine3 = None,
+                                                   addressLine4 = None,
+                                                   town = "Address town",
+                                                   county = Some("Wessex"),
+                                                   postcode = "postcode"
+  )
+
+  val userAnswers: UserAnswers = emptyUserAnswers.set(AddressLookupPage, Seq(addressLookup)).success.value
 
   val fiName = "the financial institution"
 
@@ -57,7 +69,7 @@ class IsThisInstitutionAddressControllerSpec extends SpecBase with MockitoSugar 
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, isThisInstitutionAddressRoute)
@@ -73,9 +85,9 @@ class IsThisInstitutionAddressControllerSpec extends SpecBase with MockitoSugar 
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(IsThisInstitutionAddressPage, true).success.value
+      val ua = userAnswers.set(IsThisInstitutionAddressPage, true).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, isThisInstitutionAddressRoute)
@@ -96,7 +108,7 @@ class IsThisInstitutionAddressControllerSpec extends SpecBase with MockitoSugar 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
@@ -117,7 +129,7 @@ class IsThisInstitutionAddressControllerSpec extends SpecBase with MockitoSugar 
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request =
