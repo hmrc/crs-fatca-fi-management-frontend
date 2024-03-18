@@ -60,31 +60,37 @@ class IsThisInstitutionAddressController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
       val ua = request.userAnswers
-      val preparedForm = ua.get(IsThisInstitutionAddressPage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
+      ua.get(AddressLookupPage) match {
+        case Some(address) =>
+          val preparedForm = ua.get(IsThisInstitutionAddressPage) match {
+            case None        => form
+            case Some(value) => form.fill(value)
+          }
+          Ok(view(preparedForm, mode, getFinancialInstitutionName(ua), address.head.toAddress.get))
+
+        case None => Redirect(routes.JourneyRecoveryController.onPageLoad())
       }
-
-      val address =
-        ua.get(AddressLookupPage).get.head.toAddress.get // need to protect against empty/ navigation to here should only happen with 1 found address?
-
-      Ok(view(preparedForm, mode, getFinancialInstitutionName(ua), address))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val address = request.userAnswers.get(AddressLookupPage).get.head.toAddress.get
+      val ua = request.userAnswers
+      ua.get(AddressLookupPage) match {
+        case Some(address) =>
+          form
+            .bindFromRequest()
+            .fold(
+              formWithErrors =>
+                Future.successful(BadRequest(view(formWithErrors, mode, getFinancialInstitutionName(request.userAnswers), address.head.toAddress.get))),
+              value =>
+                for {
+                  updatedAnswers <- Future.fromTry(ua.set(IsThisInstitutionAddressPage, value))
+                  _              <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(navigator.nextPage(IsThisInstitutionAddressPage, mode, updatedAnswers))
+            )
+        case None => Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
 
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, getFinancialInstitutionName(request.userAnswers), address))),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(IsThisInstitutionAddressPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(IsThisInstitutionAddressPage, mode, updatedAnswers))
-        )
+      }
   }
 
 }
