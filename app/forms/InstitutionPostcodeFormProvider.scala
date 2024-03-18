@@ -17,16 +17,23 @@
 package forms
 
 import javax.inject.Inject
-
 import forms.mappings.Mappings
 import play.api.data.Form
+import utils.RegexConstants
 
-class InstitutionPostcodeFormProvider @Inject() extends Mappings {
+class InstitutionPostcodeFormProvider @Inject() extends Mappings with RegexConstants {
 
   def apply(): Form[String] =
     Form(
-      "value" -> text("institutionPostcode.error.required")
-        .verifying(maxLength(10, "institutionPostcode.error.length"))
+      "postCode" ->
+        mandatoryPostcode(
+          "institutionPostcode.error.required",
+          "institutionPostcode.error.length",
+          "institutionPostcode.error.invalid",
+          regexPostcode,
+          "institutionPostcode.error.chars",
+          postCodeAllowedChars
+        )
     )
 
 }

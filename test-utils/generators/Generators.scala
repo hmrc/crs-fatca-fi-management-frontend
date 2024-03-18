@@ -155,4 +155,25 @@ trait Generators extends RegexConstants {
     chars <- listOfN(10, Gen.oneOf(List(1, 2, 3, 4, 5, 6, 7, 8, 9)))
   } yield chars.mkString
 
+  def validPostCodes: Gen[String] = {
+    val disallowed = List('c', 'i', 'k', 'm', 'o', 'v')
+    for {
+      pt1Quantity <- Gen.choose(1, 2)
+      pt1         <- Gen.listOfN(pt1Quantity, Gen.alphaChar).map(_.mkString)
+      pt2         <- Gen.choose(0, 9)
+
+      pt3alphaOpt <- Gen.option(Gen.alphaChar)
+      pt3numOpt   <- Gen.option(Gen.choose(0, 9))
+      pt3 = if (pt3alphaOpt.isEmpty) pt3numOpt.getOrElse("").toString else pt3alphaOpt.get.toString
+
+      pt4 <- Gen.choose(0, 9)
+      pt5a <- Gen.alphaChar suchThat (
+        ch => !disallowed.contains(ch.toLower)
+      )
+      pt5b <- Gen.alphaChar suchThat (
+        ch => !disallowed.contains(ch.toLower)
+      )
+    } yield s"$pt1$pt2$pt3 $pt4$pt5a$pt5b"
+  }
+
 }
