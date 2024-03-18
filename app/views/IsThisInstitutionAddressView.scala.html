@@ -24,7 +24,8 @@
     govukRadios: GovukRadios,
     govukButton: GovukButton,
     para: Paragraph,
-    heading: Heading
+    heading: Heading,
+    addressBlock: AddressBlock
 )
 
 @(form: Form[_], mode: Mode, fiName: String, address: Address)(implicit request: Request[_], messages: Messages)
@@ -38,7 +39,8 @@
         }
 
         @heading(messages("isThisInstitutionAddress.heading", fiName))
-        @para(Html(address.toString))
+
+        @addressBlock(address)
 
         @govukRadios(
             RadiosViewModel.yesNo(
