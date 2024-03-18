@@ -23,7 +23,8 @@
     govukRadios: GovukRadios,
     govukButton: GovukButton,
     link: components.Link,
-    appConfig: FrontendAppConfig
+    appConfig: FrontendAppConfig,
+    heading: components.Heading
 )
 
 @(form: Form[_], addressOptions: Seq[RadioItem], mode: Mode)(implicit request: Request[_], messages: Messages)
@@ -36,12 +37,14 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <p>@HtmlContent(Html(messages( "institutionSelectAddress.p1.part1", link(routes.InstitutionUkAddressController.onPageLoad(mode).url, "institutionSelectAddress.p1.part2", Some("manualAddress")))))</p>
+        @heading(messages("institutionSelectAddress.heading"))
+
+        <p class="govuk-body">@Html(messages( "institutionSelectAddress.p1.part1", link(routes.InstitutionUkAddressController.onPageLoad(mode).url, "institutionSelectAddress.p1.part2", Some("manualAddress")))).</p>
 
         @govukRadios(
             RadiosViewModel.apply(
                 field = form("value"),
-                legend = LegendViewModel(messages("institutionSelectAddress.heading")).asPageHeading(),
+                legend = LegendViewModel(messages("institutionSelectAddress.heading")).withCssClass("govuk-visually-hidden"),
                 items = addressOptions
             )
         )

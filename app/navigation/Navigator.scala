@@ -74,6 +74,7 @@ class Navigator @Inject() () {
         )
     case SecondContactPhoneNumberPage => _ => routes.CheckYourAnswersController.onPageLoad
     case InstitutionPostcodePage      => addressLookupNavigation(NormalMode)
+    case InstitutionSelectAddressPage => _ => routes.ContactNameController.onPageLoad(NormalMode)
     case _ =>
       _ => routes.IndexController.onPageLoad
   }
