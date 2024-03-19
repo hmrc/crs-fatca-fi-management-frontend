@@ -183,7 +183,7 @@ institutionPostcode.continue = Find address
 
 institutionSelectAddress.title = What is your address?
 institutionSelectAddress.heading = What is your address?
-institutionSelectAddress.error.required = Select your address
+institutionSelectAddress.error.required = Select the address for the financial institution or enter it manually
 institutionSelectAddress.p1.part1 = Select from the list or {0}
 institutionSelectAddress.p1.part2 = enter your address manually
 
