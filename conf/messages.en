@@ -200,11 +200,11 @@ institutionUkAddress.error.required = Enter institutionSelectUkAddress
 institutionUkAddress.error.length = InstitutionSelectUkAddress must be 100 characters or less
 institutionUkAddress.change.hidden = InstitutionSelectUkAddress
 
-isThisInstitutionAddress.title = isThisInstitutionAddress
-isThisInstitutionAddress.heading = isThisInstitutionAddress
-isThisInstitutionAddress.checkYourAnswersLabel = isThisInstitutionAddress
-isThisInstitutionAddress.error.required = Select yes if isThisInstitutionAddress
-isThisInstitutionAddress.change.hidden = IsThisInstitutionAddress
+isThisInstitutionAddress.title = Is this the address?
+isThisInstitutionAddress.heading = Is this the address for {0}?
+isThisInstitutionAddress.checkYourAnswersLabel = Is this the address
+isThisInstitutionAddress.error.required = Select yes if this is the financial institution’s address
+isThisInstitutionAddress.change.hidden = Is this the address
 
 sendReports.title = sendReports
 sendReports.heading = sendReports

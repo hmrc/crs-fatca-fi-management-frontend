@@ -115,10 +115,10 @@ POST       /institutionUkAddress                        controllers.InstitutionU
 GET        /changeInstitutionUkAddress                  controllers.InstitutionUkAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeInstitutionUkAddress                  controllers.InstitutionUkAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET        /isThisInstitutionAddress                        controllers.IsThisInstitutionAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /isThisInstitutionAddress                        controllers.IsThisInstitutionAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /changeIsThisInstitutionAddress                  controllers.IsThisInstitutionAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeIsThisInstitutionAddress                  controllers.IsThisInstitutionAddressController.onSubmit(mode: Mode = CheckMode)
+GET        /is-this-the-address                         controllers.IsThisInstitutionAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /is-this-the-address                         controllers.IsThisInstitutionAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /change-is-this-the-address                  controllers.IsThisInstitutionAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-is-this-the-address                  controllers.IsThisInstitutionAddressController.onSubmit(mode: Mode = CheckMode)
 
 GET        /sendReports                        controllers.SendReportsController.onPageLoad(mode: Mode = NormalMode)
 POST       /sendReports                        controllers.SendReportsController.onSubmit(mode: Mode = NormalMode)
