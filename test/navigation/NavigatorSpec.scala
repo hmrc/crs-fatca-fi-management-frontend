@@ -112,8 +112,14 @@ class NavigatorSpec extends SpecBase {
         val userAnswers = emptyUserAnswers.withPage(NameOfFinancialInstitutionPage, "FI")
         navigator.nextPage(NameOfFinancialInstitutionPage, NormalMode, userAnswers) mustBe
           routes.HaveUniqueTaxpayerReferenceController.onPageLoad(NormalMode)
-
       }
+
+      "must go from IsThisInstitutionAddress page to ContactName page when user answers yes" in {
+        val userAnswers = emptyUserAnswers.withPage(IsThisInstitutionAddressPage, true)
+        navigator.nextPage(IsThisInstitutionAddressPage, NormalMode, userAnswers) mustBe
+          routes.ContactNameController.onPageLoad(NormalMode)
+      }
+      //todo: navigation from IsThisInstitutionAddress to /address-uk when No (page yet to exist)
 
     }
 
