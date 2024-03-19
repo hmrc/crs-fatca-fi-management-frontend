@@ -119,7 +119,7 @@ class NavigatorSpec extends SpecBase {
         navigator.nextPage(IsThisInstitutionAddressPage, NormalMode, userAnswers) mustBe
           routes.ContactNameController.onPageLoad(NormalMode)
       }
-      //todo: navigation from IsThisInstitutionAddress to /address-uk when No (page yet to exist)
+      // todo: navigation from IsThisInstitutionAddress to /address-uk when No (page yet to exist)
 
     }
 
