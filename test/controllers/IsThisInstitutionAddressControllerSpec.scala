@@ -18,12 +18,13 @@ package controllers
 
 import base.SpecBase
 import forms.IsThisInstitutionAddressFormProvider
-import models.{NormalMode, UserAnswers}
+import models.{Address, AddressLookup, Country, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.IsThisInstitutionAddressPage
+import pages.{AddressLookupPage, IsThisInstitutionAddressPage}
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -37,14 +38,52 @@ class IsThisInstitutionAddressControllerSpec extends SpecBase with MockitoSugar 
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new IsThisInstitutionAddressFormProvider()
-  val form         = formProvider()
+  val formProvider        = new IsThisInstitutionAddressFormProvider()
+  val form: Form[Boolean] = formProvider()
+
+  val address: Address = Address(
+    "1 address street",
+    addressLine2 = None,
+    addressLine3 = "Address town",
+    addressLine4 = None,
+    postCode = Some("postcode"),
+    country = Country("valid", "GB", "United Kingdom")
+  )
+
+  val addressLookup: AddressLookup = AddressLookup(Some("1 address street"),
+                                                   addressLine2 = None,
+                                                   addressLine3 = None,
+                                                   addressLine4 = None,
+                                                   town = "Address town",
+                                                   county = Some("Wessex"),
+                                                   postcode = "postcode"
+  )
+
+  val userAnswers: UserAnswers = emptyUserAnswers.set(AddressLookupPage, Seq(addressLookup)).success.value
+
+  val fiName = "the financial institution"
 
   lazy val isThisInstitutionAddressRoute = routes.IsThisInstitutionAddressController.onPageLoad(NormalMode).url
 
   "IsThisInstitutionAddress Controller" - {
 
     "must return OK and the correct view for a GET" in {
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, isThisInstitutionAddressRoute)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[IsThisInstitutionAddressView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form, NormalMode, fiName, address)(request, messages(application)).toString
+      }
+    }
+
+    "must redirect to JourneyRecovery for a GET when missing AddressLookupPage" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -53,18 +92,16 @@ class IsThisInstitutionAddressControllerSpec extends SpecBase with MockitoSugar 
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[IsThisInstitutionAddressView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(IsThisInstitutionAddressPage, true).success.value
+      val ua = userAnswers.set(IsThisInstitutionAddressPage, true).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, isThisInstitutionAddressRoute)
@@ -74,11 +111,11 @@ class IsThisInstitutionAddressControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, fiName, address)(request, messages(application)).toString
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "must redirect to JourneyRecovery for POST when AddressLookupPage is missing" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -100,13 +137,39 @@ class IsThisInstitutionAddressControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must redirect to the next page when valid data is submitted" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, isThisInstitutionAddressRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request =
@@ -120,7 +183,7 @@ class IsThisInstitutionAddressControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, fiName, address)(request, messages(application)).toString
       }
     }
 

@@ -18,14 +18,16 @@ package controllers
 
 import controllers.actions._
 import forms.IsThisInstitutionAddressFormProvider
+
 import javax.inject.Inject
-import models.Mode
+import models.{Address, Country, Mode}
 import navigation.Navigator
-import pages.IsThisInstitutionAddressPage
+import pages.{AddressLookupPage, IsThisInstitutionAddressPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.ContactHelper
 import views.html.IsThisInstitutionAddressView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,32 +44,53 @@ class IsThisInstitutionAddressController @Inject() (
   view: IsThisInstitutionAddressView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with ContactHelper {
 
   val form = formProvider()
 
+  val egAddress = Address("1 address street",
+                          addressLine2 = None,
+                          addressLine3 = "Address town",
+                          addressLine4 = None,
+                          postCode = None,
+                          country = Country("Great Britannia", "GB", "UK")
+  )
+
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.get(IsThisInstitutionAddressPage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
+      val ua = request.userAnswers
+      ua.get(AddressLookupPage) match {
+        case Some(address) =>
+          val preparedForm = ua.get(IsThisInstitutionAddressPage) match {
+            case None        => form
+            case Some(value) => form.fill(value)
+          }
+          Ok(view(preparedForm, mode, getFinancialInstitutionName(ua), address.head.toAddress.get))
 
-      Ok(view(preparedForm, mode))
+        case None => Redirect(routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(IsThisInstitutionAddressPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(IsThisInstitutionAddressPage, mode, updatedAnswers))
-        )
+      val ua = request.userAnswers
+      ua.get(AddressLookupPage) match {
+        case Some(address) =>
+          form
+            .bindFromRequest()
+            .fold(
+              formWithErrors =>
+                Future.successful(BadRequest(view(formWithErrors, mode, getFinancialInstitutionName(request.userAnswers), address.head.toAddress.get))),
+              value =>
+                for {
+                  updatedAnswers <- Future.fromTry(ua.set(IsThisInstitutionAddressPage, value))
+                  _              <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(navigator.nextPage(IsThisInstitutionAddressPage, mode, updatedAnswers))
+            )
+        case None => Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+
+      }
   }
 
 }
