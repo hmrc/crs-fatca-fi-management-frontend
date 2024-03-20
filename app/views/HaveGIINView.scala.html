@@ -14,15 +14,19 @@
  * limitations under the License.
  *@
 
+@import components._
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    para: Paragraph,
+    heading: Heading
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, fiName: String = "[FINAME]")(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("haveGIIN.title"))) {
 
@@ -32,10 +36,15 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
+        @heading(messages("haveGIIN.heading"))
+        @para(Html(messages("haveGIIN.para.1", fiName)))
+        @para(Html(messages("haveGIIN.para.2", fiName)))
+        @para(Html(messages("haveGIIN.para.3", fiName)))
+
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("haveGIIN.heading")).asPageHeading()
+                legend = LegendViewModel(messages("haveGIIN.subheading", fiName)).withCssClass("govuk-fieldset__legend govuk-fieldset__legend--m")
             )
         )
 
