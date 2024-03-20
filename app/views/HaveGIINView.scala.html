@@ -26,7 +26,7 @@
     heading: Heading
 )
 
-@(form: Form[_], mode: Mode, fiName: String = "[FINAME]")(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, fiName: String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("haveGIIN.title"))) {
 
