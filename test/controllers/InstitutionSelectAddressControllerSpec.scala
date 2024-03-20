@@ -23,7 +23,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.AddressLookupPage
+import pages.{AddressLookupPage, NameOfFinancialInstitutionPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -44,6 +44,9 @@ class InstitutionSelectAddressControllerSpec extends SpecBase with MockitoSugar 
   val formProvider = new InstitutionSelectAddressFormProvider()
   val form         = formProvider()
 
+  val contactName = "fiName"
+  private val ua  = emptyUserAnswers.set(NameOfFinancialInstitutionPage, contactName).get
+
   val addresses: Seq[AddressLookup] = Seq(
     AddressLookup(Some("1 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ"),
     AddressLookup(Some("2 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ")
@@ -54,7 +57,7 @@ class InstitutionSelectAddressControllerSpec extends SpecBase with MockitoSugar 
     RadioItem(content = Text("2 Address line 1, Town, ZZ1 1ZZ"), value = Some("2 Address line 1, Town, ZZ1 1ZZ"))
   )
 
-  val userAnswers = emptyUserAnswers
+  val userAnswers = ua
     .set(AddressLookupPage, addresses)
     .success
     .value
@@ -73,7 +76,7 @@ class InstitutionSelectAddressControllerSpec extends SpecBase with MockitoSugar 
         val view = application.injector.instanceOf[InstitutionSelectAddressView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, addressOptions, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, addressOptions, "fiName", NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -129,7 +132,7 @@ class InstitutionSelectAddressControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, addressOptions, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, addressOptions, "fiName", NormalMode)(request, messages(application)).toString
       }
     }
   }
