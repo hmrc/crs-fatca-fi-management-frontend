@@ -207,11 +207,10 @@ isThisInstitutionAddress.checkYourAnswersLabel = Is this the address
 isThisInstitutionAddress.error.required = Select yes if this is the financial institution’s address
 isThisInstitutionAddress.change.hidden = Is this the address
 
-sendReports.title = sendReports
-sendReports.heading = sendReports
-sendReports.checkYourAnswersLabel = sendReports
-sendReports.error.required = Select yes if sendReports
-sendReports.change.hidden = SendReports
+sendReports.title = Does the financial institution need to send FATCA reports?
+sendReports.heading = Does {0} need to send FATCA reports?
+sendReports.checkYourAnswersLabel = Does the financial institution need to send FATCA reports?
+sendReports.error.required = Select yes if the financial institution needs to send FATCA reports
 
 whatIsGIIN.title = whatIsGIIN
 whatIsGIIN.heading = whatIsGIIN
