@@ -181,8 +181,8 @@ institutionPostcode.error.invalid = Enter a real postcode or enter the address m
 institutionPostcode.error.notFound = Postcode not found — enter a different postcode or enter the address manually
 institutionPostcode.continue = Find address
 
-institutionSelectAddress.title = What is your address?
-institutionSelectAddress.heading = What is your address?
+institutionSelectAddress.title = What is the financial institution’s address?
+institutionSelectAddress.heading = What is the address for {0}?
 institutionSelectAddress.error.required = Select the address for the financial institution or enter it manually
 institutionSelectAddress.p1.part1 = Select from the list or {0}
 institutionSelectAddress.p1.part2 = enter your address manually

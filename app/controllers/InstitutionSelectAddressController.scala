@@ -30,6 +30,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.ContactHelper
 import views.html.InstitutionSelectAddressView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,7 +47,8 @@ class InstitutionSelectAddressController @Inject() (
   view: InstitutionSelectAddressView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with ContactHelper {
 
   val form = formProvider()
 
@@ -63,7 +65,7 @@ class InstitutionSelectAddressController @Inject() (
             address => RadioItem(content = Text(s"${formatAddress(address)}"), value = Some(s"${formatAddress(address)}"))
           )
 
-          Ok(view(preparedForm, addressOptions, mode))
+          Ok(view(preparedForm, addressOptions, getFinancialInstitutionName(request.userAnswers), mode))
 
         case None => Redirect(routes.InstitutionUkAddressController.onPageLoad(mode))
       }
@@ -80,7 +82,7 @@ class InstitutionSelectAddressController @Inject() (
           form
             .bindFromRequest()
             .fold(
-              formWithErrors => Future.successful(BadRequest(view(formWithErrors, radios, mode))),
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, radios, getFinancialInstitutionName(request.userAnswers), mode))),
               value => {
                 val addressToStore: AddressLookup = addresses.find(formatAddress(_) == value).getOrElse(throw new Exception("Cannot get address"))
 
