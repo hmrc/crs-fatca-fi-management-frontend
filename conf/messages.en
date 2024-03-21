@@ -212,12 +212,14 @@ sendReports.heading = Does {0} need to send FATCA reports?
 sendReports.checkYourAnswersLabel = Does the financial institution need to send FATCA reports?
 sendReports.error.required = Select yes if the financial institution needs to send FATCA reports
 
-whatIsGIIN.title = whatIsGIIN
-whatIsGIIN.heading = whatIsGIIN
-whatIsGIIN.checkYourAnswersLabel = whatIsGIIN
-whatIsGIIN.error.required = Enter whatIsGIIN
-whatIsGIIN.error.length = WhatIsGIIN must be 100 characters or less
-whatIsGIIN.change.hidden = WhatIsGIIN
+whatIsGIIN.title = What is the financial institution’s GIIN?
+whatIsGIIN.heading = What is the Global Intermediary Identification Number (GIIN) for {0}}?
+whatIsGIIN.checkYourAnswersLabel = What is the financial institution’s GIIN?
+whatIsGIIN.error.required = Enter the financial institution’s GIIN
+whatIsGIIN.error.length = GIIN must include 19 characters
+whatIsGIIN.error.invalid = GIIN must be in the right format
+whatIsGIIN.error.char = GIIN must only include letters a to z, numbers 0 to 9 and full stops
+whatIsGIIN.hint = For example, ‘98O96B.00000.LE.350’.
 
 secondContact.title = Is there someone else we can contact if your first contact is not available?
 secondContact.heading = Is there someone else we can contact if {0} is not available?

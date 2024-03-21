@@ -28,6 +28,9 @@ trait Transforms {
       s"$head $tail".toUpperCase
     } else { validPostCode.toUpperCase }
 
+  protected def validGIINFormat(validGIIN: String): String =
+    validGIIN.toUpperCase
+
   protected def minimiseSpace(value: String): String =
     value.replaceAll(" {2,}", " ")
 

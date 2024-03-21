@@ -81,4 +81,13 @@ trait Mappings extends Formatters with Constraints {
   ): Mapping[String] =
     of(mandatoryPostcodeFormatter(requiredKey, lengthKey, invalidKey, regex, invalidCharKey, InvalidCharRegex))
 
+  protected def mandatoryGIIN(requiredKey: String,
+                              lengthKey: String,
+                              invalidKey: String,
+                              regex: String,
+                              invalidCharKey: String,
+                              InvalidCharRegex: String
+  ): Mapping[String] =
+    of(mandatoryGIINFormatter(requiredKey, lengthKey, invalidKey, regex, invalidCharKey, InvalidCharRegex))
+
 }

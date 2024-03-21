@@ -43,6 +43,7 @@ trait RegexConstants {
   final val nonApiNameRegex             = """^[a-zA-Z0-9 "'&,\-\\\/]*$"""
   final val orgNameRegex                = """^[a-zA-Z0-9 &`\-\'\\\^]*$"""
   final val utrRegex                    = "^[0-9]*$"
+  final val giinRegex                   = "^[A-NP-Z0-9]{6}\\.[A-NP-Z0-9]{5}\\.(?:LE|SL|ME|BR|SP)\\.\\d{3}$"
 
   final val emailRegex = "^(?:[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+)*)" +
     "@(?:[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+)*)$"
@@ -50,6 +51,7 @@ trait RegexConstants {
   final val digitsAndWhiteSpaceOnly = """^\+?[\d\s]+$"""
   final val regexPostcode           = """^[A-Za-z]{1,2}[0-9Rr][0-9A-Za-z]?\s?[0-9][ABD-HJLNP-UW-Zabd-hjlnp-uw-z]{2}$"""
   final val postCodeAllowedChars    = """^[A-Za-z0-9 ]*$"""
+  final val giinAllowedChars        = """^[A-Za-z0-9 ]*$"""
 
   final val ninoFormatRegex = """^[A-Z]{2}[0-9]{6}[A-Z]{1}$"""
 

@@ -17,16 +17,24 @@
 package forms
 
 import javax.inject.Inject
-
 import forms.mappings.Mappings
 import play.api.data.Form
+import utils.RegexConstants
 
-class WhatIsGIINFormProvider @Inject() extends Mappings {
+class WhatIsGIINFormProvider @Inject() extends Mappings with RegexConstants {
+
+  private val maxLength = 19
 
   def apply(): Form[String] =
     Form(
-      "value" -> text("whatIsGIIN.error.required")
-        .verifying(maxLength(100, "whatIsGIIN.error.length"))
+      "value" -> mandatoryGIIN(
+        "whatIsGIIN.error.required",
+        "whatIsGIIN.error.length",
+        "whatIsGIIN.error.invalid",
+        giinRegex,
+        "whatIsGIIN.error.char",
+        giinAllowedChars
+      )
     )
 
 }
