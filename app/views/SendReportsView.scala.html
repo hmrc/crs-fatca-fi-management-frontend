@@ -33,12 +33,10 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @heading(messages("sendReports.heading", fiName))
-
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("sendReports.heading")).withCssClass("govuk-visually-hidden")
+                legend = LegendViewModel(messages("sendReports.heading", fiName)).asPageHeading()
             )
         )
 
