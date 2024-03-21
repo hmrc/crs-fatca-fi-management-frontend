@@ -31,14 +31,22 @@ class Navigator @Inject() () {
     case NameOfFinancialInstitutionPage =>
       _ => routes.HaveUniqueTaxpayerReferenceController.onPageLoad(NormalMode)
     case WhatIsUniqueTaxpayerReferencePage =>
-      _ => routes.IndexController.onPageLoad // TODO does FR need to send reports
+      _ => routes.SendReportsController.onPageLoad(NormalMode)
+    case SendReportsPage =>
+      userAnswers =>
+        yesNoPage(
+          userAnswers,
+          SendReportsPage,
+          routes.WhatIsGIINController.onPageLoad(NormalMode),
+          routes.HaveGIINController.onPageLoad(NormalMode)
+        )
     case HaveUniqueTaxpayerReferencePage =>
       userAnswers =>
         yesNoPage(
           userAnswers,
           HaveUniqueTaxpayerReferencePage,
           routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(NormalMode),
-          routes.IndexController.onPageLoad // todo does FR need to send reports
+          routes.SendReportsController.onPageLoad(NormalMode)
         )
     case ContactNamePage =>
       _ => routes.FirstContactEmailController.onPageLoad(NormalMode)
