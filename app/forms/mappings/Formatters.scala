@@ -231,16 +231,17 @@ trait Formatters extends Transforms {
   ): Formatter[String] =
     new Formatter[String] {
 
-      override def bind(key: String, ddata: Map[String, String]): Either[Seq[FormError], String] = {
-        val GIIN              = validGIINFormat(data)
-        val maxLengthPostcode = 19
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
+        val giin      = data.get(key).map(validGIINFormat)
+        val maxLength = 19
 
-        GIIN match {
-          case GIIN if GIIN.length > maxLengthPostcode            => Left(Seq(FormError(key, lengthKey)))
-          case GIIN if !stripSpaces(GIIN).matches(validCharRegex) => Left(Seq(FormError(key, invalidCharKey)))
-          case GIIN if !stripSpaces(GIIN).matches(regex)          => Left(Seq(FormError(key, invalidKey)))
-          case GIIN                                               => Right(validGIINFormat(GIIN))
-          case _                                                  => Left(Seq(FormError(key, requiredKey)))
+        giin match {
+          case None | Some("")                               => Left(Seq(FormError(key, requiredKey)))
+          case Some(value) if value.length > maxLength       => Left(Seq(FormError(key, lengthKey)))
+          case Some(value) if !value.matches(validCharRegex) => Left(Seq(FormError(key, invalidCharKey)))
+          case Some(value) if !value.matches(regex)          => Left(Seq(FormError(key, invalidKey)))
+          case Some(value)                                   => Right(validGIINFormat(value))
+          case _                                             => Left(Seq(FormError(key, invalidKey)))
         }
       }
 

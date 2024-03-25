@@ -21,33 +21,50 @@ import play.api.data.FormError
 
 class WhatIsGIINFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "whatIsGIIN.error.required"
-  val lengthKey   = "whatIsGIIN.error.length"
-  val maxLength   = 100
-
   val form = new WhatIsGIINFormProvider()()
 
   ".value" - {
 
-    val fieldName = "value"
+    val fieldName      = "value"
+    val requiredKey    = "whatIsGIIN.error.required"
+    val lengthKey      = "whatIsGIIN.error.length"
+    val invalidKey     = "whatIsGIIN.error.invalid"
+    val invalidCharKey = "whatIsGIIN.error.char"
+
+    val postCodeMaxLength = 19
 
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      validGIIN
     )
 
-    behave like fieldWithMaxLength(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
-      maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      maxLength = postCodeMaxLength,
+      lengthError = FormError(fieldName, lengthKey)
     )
 
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "98O96B.0000.LE.350",
+      FormError(fieldName, invalidKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "!#2",
+      FormError(fieldName, invalidCharKey),
+      Some("chars")
     )
   }
 

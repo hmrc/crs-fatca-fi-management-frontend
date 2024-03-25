@@ -23,8 +23,6 @@ import utils.RegexConstants
 
 class WhatIsGIINFormProvider @Inject() extends Mappings with RegexConstants {
 
-  private val maxLength = 19
-
   def apply(): Form[String] =
     Form(
       "value" -> mandatoryGIIN(

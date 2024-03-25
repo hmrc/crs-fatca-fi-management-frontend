@@ -43,7 +43,7 @@
                 field = form("value"),
                 label = LabelViewModel(messages("whatIsGIIN.heading", fiName)).asPageHeading()
             )
-            .withWidth(Full)
+            .withWidth(Fixed20)
             .withHint(HintViewModel(HtmlContent(messages("whatIsGIIN.hint"))))
         )
     }
@@ -53,14 +53,14 @@
         }
 
         @heading(messages("whatIsGIIN.heading", fiName))
-        @paragraph(Html(messages("whatIsGIIN.p1")))
+        @paragraph(Html(messages("whatIsGIIN.p1", fiName)))
 
         @govukInput(
             InputViewModel(
                 field = form("value"),
                 label = LabelViewModel(messages("whatIsGIIN.heading")).visuallyHidden()
             )
-            .withWidth(Full)
+            .withWidth(Fixed20)
             .withHint(HintViewModel(HtmlContent(messages("whatIsGIIN.hint"))))
         )
     }

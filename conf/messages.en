@@ -213,7 +213,8 @@ sendReports.checkYourAnswersLabel = Does the financial institution need to send 
 sendReports.error.required = Select yes if the financial institution needs to send FATCA reports
 
 whatIsGIIN.title = What is the financial institution’s GIIN?
-whatIsGIIN.heading = What is the Global Intermediary Identification Number (GIIN) for {0}}?
+whatIsGIIN.heading = What is the Global Intermediary Identification Number (GIIN) for {0}?
+whatIsGIIN.p1 = This is a number from the United States of America’s Internal Revenue Service (IRS). {0} must have registered with the IRS to receive a number.
 whatIsGIIN.checkYourAnswersLabel = What is the financial institution’s GIIN?
 whatIsGIIN.error.required = Enter the financial institution’s GIIN
 whatIsGIIN.error.length = GIIN must include 19 characters
