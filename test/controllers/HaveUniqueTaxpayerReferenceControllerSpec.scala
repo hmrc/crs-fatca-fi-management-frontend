@@ -39,7 +39,7 @@ class HaveUniqueTaxpayerReferenceControllerSpec extends SpecBase with MockitoSug
 
   val formProvider = new HaveUniqueTaxpayerReferenceFormProvider()
   val form         = formProvider()
-  val fiName       = "the financial institution"
+  val fiName       = "Financial Institution"
 
   lazy val haveUniqueTaxpayerReferenceRoute = routes.HaveUniqueTaxpayerReferenceController.onPageLoad(NormalMode).url
 
