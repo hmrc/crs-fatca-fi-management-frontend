@@ -121,6 +121,13 @@ class NavigatorSpec extends SpecBase {
       }
       // todo: navigation from IsThisInstitutionAddress to /address-uk when No (page yet to exist)
 
+      "must go from HaveGIIN to WhatIsGIIN when user answers yes" in {
+        val userAnswers = emptyUserAnswers.withPage(HaveGIINPage, true)
+        navigator.nextPage(HaveGIINPage, NormalMode, userAnswers) mustBe
+          routes.WhatIsGIINController.onPageLoad(NormalMode)
+      }
+      // todo: navigation from HaveGIIN to /where-is-fi-based when No (page yet to exist)
+
     }
 
     "in Check mode" - {
