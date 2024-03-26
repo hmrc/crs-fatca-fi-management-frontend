@@ -237,7 +237,7 @@ trait Formatters extends Transforms {
 
         giin match {
           case None | Some("")                               => Left(Seq(FormError(key, requiredKey)))
-          case Some(value) if value.length > maxLength       => Left(Seq(FormError(key, lengthKey)))
+          case Some(value) if value.length != maxLength      => Left(Seq(FormError(key, lengthKey)))
           case Some(value) if !value.matches(validCharRegex) => Left(Seq(FormError(key, invalidCharKey)))
           case Some(value) if !value.matches(regex)          => Left(Seq(FormError(key, invalidKey)))
           case Some(value)                                   => Right(validGIINFormat(value))

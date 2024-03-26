@@ -55,14 +55,14 @@ class WhatIsGIINFormProviderSpec extends StringFieldBehaviours {
     behave like fieldWithInvalidData(
       form,
       fieldName,
-      "98O96B.0000.LE.350",
+      "98O96B.00000.LE.350",
       FormError(fieldName, invalidKey)
     )
 
     behave like fieldWithInvalidData(
       form,
       fieldName,
-      "!#2",
+      "######.#####.##.###",
       FormError(fieldName, invalidCharKey),
       Some("chars")
     )
