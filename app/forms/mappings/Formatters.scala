@@ -235,11 +235,11 @@ trait Formatters extends Transforms {
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
         val giin      = data.get(key).map(validGIINFormat)
-        val maxLength = 19
+        val setLength = 19
 
         giin match {
           case None | Some("")                               => Left(Seq(FormError(key, requiredKey)))
-          case Some(value) if value.length != maxLength      => Left(Seq(FormError(key, lengthKey)))
+          case Some(value) if value.length != setLength      => Left(Seq(FormError(key, lengthKey)))
           case Some(value) if !value.matches(validCharRegex) => Left(Seq(FormError(key, invalidCharKey)))
           case Some(value) if !value.matches(regex)          => Left(Seq(FormError(key, formatKey)))
           case Some(value) if !value.matches(formatRegex)    => Left(Seq(FormError(key, invalidKey)))
