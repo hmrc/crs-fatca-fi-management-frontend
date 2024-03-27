@@ -19,10 +19,11 @@ package forms.mappings
 import play.api.data.FormError
 import play.api.data.format.Formatter
 import models.Enumerable
+import utils.RegexConstants
 
 import scala.util.control.Exception.nonFatalCatch
 
-trait Formatters extends Transforms {
+trait Formatters extends Transforms with RegexConstants {
 
   private def removeNonBreakingSpaces(str: String) =
     str.replaceAll("\u00A0", " ")
@@ -226,10 +227,7 @@ trait Formatters extends Transforms {
                                                lengthKey: String,
                                                invalidKey: String,
                                                formatKey: String,
-                                               regex: String,
-                                               formatRegex: String,
-                                               invalidCharKey: String,
-                                               validCharRegex: String
+                                               invalidCharKey: String
   ): Formatter[String] =
     new Formatter[String] {
 
@@ -238,13 +236,13 @@ trait Formatters extends Transforms {
         val setLength = 19
 
         giin match {
-          case None | Some("")                               => Left(Seq(FormError(key, requiredKey)))
-          case Some(value) if value.length != setLength      => Left(Seq(FormError(key, lengthKey)))
-          case Some(value) if !value.matches(validCharRegex) => Left(Seq(FormError(key, invalidCharKey)))
-          case Some(value) if !value.matches(regex)          => Left(Seq(FormError(key, formatKey)))
-          case Some(value) if !value.matches(formatRegex)    => Left(Seq(FormError(key, invalidKey)))
-          case Some(value)                                   => Right(validGIINFormat(value))
-          case _                                             => Left(Seq(FormError(key, invalidKey)))
+          case None | Some("")                                 => Left(Seq(FormError(key, requiredKey)))
+          case Some(value) if value.length != setLength        => Left(Seq(FormError(key, lengthKey)))
+          case Some(value) if !value.matches(giinAllowedChars) => Left(Seq(FormError(key, invalidCharKey)))
+          case Some(value) if !value.matches(invalidGIINRegex) => Left(Seq(FormError(key, formatKey)))
+          case Some(value) if !value.matches(giinFormatRegex)  => Left(Seq(FormError(key, invalidKey)))
+          case Some(value)                                     => Right(validGIINFormat(value))
+          case _                                               => Left(Seq(FormError(key, invalidKey)))
         }
       }
 
