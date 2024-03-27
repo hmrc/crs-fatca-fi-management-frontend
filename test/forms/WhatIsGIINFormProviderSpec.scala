@@ -32,7 +32,7 @@ class WhatIsGIINFormProviderSpec extends StringFieldBehaviours {
     val formatKey      = "whatIsGIIN.error.format"
     val invalidCharKey = "whatIsGIIN.error.char"
 
-    val postCodeMaxLength = 19
+    val giinSetLenght = 19
 
     behave like fieldThatBindsValidData(
       form,
@@ -43,14 +43,14 @@ class WhatIsGIINFormProviderSpec extends StringFieldBehaviours {
     behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
-      maxLength = postCodeMaxLength,
+      maxLength = giinSetLenght,
       lengthError = FormError(fieldName, lengthKey)
     )
 
     behave like fieldWithMinLengthAlpha(
       form,
       fieldName,
-      maxLength = postCodeMaxLength,
+      maxLength = giinSetLenght,
       lengthError = FormError(fieldName, lengthKey)
     )
 
