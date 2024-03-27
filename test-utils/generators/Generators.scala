@@ -48,6 +48,12 @@ trait Generators extends RegexConstants {
     chars     <- listOfN(length, Gen.alphaChar)
   } yield chars.mkString
 
+  def stringsShorterThanAlpha(minLength: Int): Gen[String] = for {
+    lowestPossibleLength <- 1
+    length               <- Gen.chooseNum(lowestPossibleLength, minLength - 1)
+    chars                <- listOfN(length, Gen.alphaChar)
+  } yield chars.mkString
+
   def stringMatchingRegexAndLength(regex: String, length: Int): Gen[String] =
     RegexpGen
       .from(regex)
@@ -174,6 +180,18 @@ trait Generators extends RegexConstants {
         ch => !disallowed.contains(ch.toLower)
       )
     } yield s"$pt1$pt2$pt3 $pt4$pt5a$pt5b"
+  }
+
+  def validGIIN: Gen[String] = {
+    val disallowed = 'o'
+    for {
+      pt1 <- Gen.listOfN(6, Gen.alphaNumChar).map(_.mkString) suchThat (
+        ch => !ch.toLowerCase.contains(disallowed)
+      )
+      pt2 <- Gen.listOfN(5, Gen.alphaNumChar).map(_.mkString)
+      pt3 <- Gen.listOfN(2, Gen.alphaNumChar).map(_.mkString)
+      pt4 <- Gen.listOfN(3, Gen.alphaNumChar).map(_.mkString)
+    } yield s"$pt1.$pt2.$pt3.$pt4"
   }
 
 }

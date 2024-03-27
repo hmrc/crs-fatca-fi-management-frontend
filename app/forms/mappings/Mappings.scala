@@ -16,11 +16,11 @@
 
 package forms.mappings
 
-import java.time.LocalDate
-import play.api.data.{FieldMapping, FormError, Mapping}
-import play.api.data.Forms.of
 import models.Enumerable
-import play.api.data.format.Formatter
+import play.api.data.Forms.of
+import play.api.data.{FieldMapping, Mapping}
+
+import java.time.LocalDate
 
 trait Mappings extends Formatters with Constraints {
 
@@ -80,5 +80,8 @@ trait Mappings extends Formatters with Constraints {
                                   InvalidCharRegex: String
   ): Mapping[String] =
     of(mandatoryPostcodeFormatter(requiredKey, lengthKey, invalidKey, regex, invalidCharKey, InvalidCharRegex))
+
+  protected def mandatoryGIIN(requiredKey: String, lengthKey: String, invalidKey: String, formatKey: String, invalidCharKey: String): Mapping[String] =
+    of(mandatoryGIINFormatter(requiredKey, lengthKey, invalidKey, formatKey, invalidCharKey))
 
 }

@@ -17,7 +17,6 @@
 package forms
 
 import forms.behaviours.OptionFieldBehaviours
-import models.InstitutionSelectAddress
 import play.api.data.FormError
 
 class InstitutionSelectAddressFormProviderSpec extends OptionFieldBehaviours {

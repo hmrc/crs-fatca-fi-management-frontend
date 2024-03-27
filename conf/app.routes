@@ -125,7 +125,7 @@ POST       /fatca-reports                        controllers.SendReportsControll
 GET        /change-fatca-reports                  controllers.SendReportsController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-fatca-reports                  controllers.SendReportsController.onSubmit(mode: Mode = CheckMode)
 
-GET        /whatIsGIIN                        controllers.WhatIsGIINController.onPageLoad(mode: Mode = NormalMode)
-POST       /whatIsGIIN                        controllers.WhatIsGIINController.onSubmit(mode: Mode = NormalMode)
-GET        /changeWhatIsGIIN                  controllers.WhatIsGIINController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeWhatIsGIIN                  controllers.WhatIsGIINController.onSubmit(mode: Mode = CheckMode)
+GET        /giin                        controllers.WhatIsGIINController.onPageLoad(mode: Mode = NormalMode)
+POST       /giin                        controllers.WhatIsGIINController.onSubmit(mode: Mode = NormalMode)
+GET        /change-giin                  controllers.WhatIsGIINController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-giin                  controllers.WhatIsGIINController.onSubmit(mode: Mode = CheckMode)
