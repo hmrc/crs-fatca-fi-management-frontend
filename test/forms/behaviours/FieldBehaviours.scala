@@ -45,10 +45,10 @@ trait FieldBehaviours extends FormSpec with ScalaCheckPropertyChecks with Genera
       }
     }
 
-  def fieldWithMinLengthAlpha(form: Form[_], fieldName: String, maxLength: Int, lengthError: FormError): Unit =
-    s"must not bind strings shorter than $maxLength characters" in {
+  def fieldWithMinLengthAlpha(form: Form[_], fieldName: String, minLength: Int, lengthError: FormError): Unit =
+    s"must not bind strings shorter than $minLength characters" in {
 
-      forAll(stringsShorterThanAlpha(maxLength) -> "shortString") {
+      forAll(stringsShorterThanAlpha(minLength) -> "shortString") {
         string =>
           val result = form.bind(Map(fieldName -> string)).apply(fieldName)
           result.errors mustEqual Seq(lengthError)

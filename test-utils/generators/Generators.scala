@@ -49,9 +49,9 @@ trait Generators extends RegexConstants {
   } yield chars.mkString
 
   def stringsShorterThanAlpha(minLength: Int): Gen[String] = for {
-    maxLength <- (minLength * 2).max(100)
-    length    <- Gen.chooseNum(minLength - 1, maxLength)
-    chars     <- listOfN(length, Gen.alphaChar)
+    lowestPossibleLength <- 1
+    length               <- Gen.chooseNum(lowestPossibleLength, minLength - 1)
+    chars                <- listOfN(length, Gen.alphaChar)
   } yield chars.mkString
 
   def stringMatchingRegexAndLength(regex: String, length: Int): Gen[String] =

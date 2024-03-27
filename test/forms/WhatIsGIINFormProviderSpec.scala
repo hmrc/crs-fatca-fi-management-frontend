@@ -50,7 +50,7 @@ class WhatIsGIINFormProviderSpec extends StringFieldBehaviours {
     behave like fieldWithMinLengthAlpha(
       form,
       fieldName,
-      maxLength = giinSetLength,
+      minLength = giinSetLength,
       lengthError = FormError(fieldName, lengthKey)
     )
 
