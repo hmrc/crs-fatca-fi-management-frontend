@@ -222,8 +222,9 @@ whatIsGIIN.p1 = This is a number from the United States of America’s Internal 
 whatIsGIIN.checkYourAnswersLabel = What is the financial institution’s GIIN?
 whatIsGIIN.error.required = Enter the financial institution’s GIIN
 whatIsGIIN.error.length = GIIN must include 19 characters
-whatIsGIIN.error.invalid = GIIN must be in the right format
+whatIsGIIN.error.format = GIIN must be in the right format
 whatIsGIIN.error.char = GIIN must only include letters a to z, numbers 0 to 9 and full stops
+whatIsGIIN.error.invalid = Enter a real GIIN
 whatIsGIIN.hint = For example, ‘98O96B.00000.LE.350’.
 
 secondContact.title = Is there someone else we can contact if your first contact is not available?

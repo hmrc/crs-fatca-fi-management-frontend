@@ -225,7 +225,9 @@ trait Formatters extends Transforms {
   private[mappings] def mandatoryGIINFormatter(requiredKey: String,
                                                lengthKey: String,
                                                invalidKey: String,
+                                               formatKey: String,
                                                regex: String,
+                                               formatRegex: String,
                                                invalidCharKey: String,
                                                validCharRegex: String
   ): Formatter[String] =
@@ -239,7 +241,8 @@ trait Formatters extends Transforms {
           case None | Some("")                               => Left(Seq(FormError(key, requiredKey)))
           case Some(value) if value.length != maxLength      => Left(Seq(FormError(key, lengthKey)))
           case Some(value) if !value.matches(validCharRegex) => Left(Seq(FormError(key, invalidCharKey)))
-          case Some(value) if !value.matches(regex)          => Left(Seq(FormError(key, invalidKey)))
+          case Some(value) if !value.matches(regex)          => Left(Seq(FormError(key, formatKey)))
+          case Some(value) if !value.matches(formatRegex)    => Left(Seq(FormError(key, invalidKey)))
           case Some(value)                                   => Right(validGIINFormat(value))
           case _                                             => Left(Seq(FormError(key, invalidKey)))
         }

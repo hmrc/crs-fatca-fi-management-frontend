@@ -29,7 +29,9 @@ class WhatIsGIINFormProvider @Inject() extends Mappings with RegexConstants {
         "whatIsGIIN.error.required",
         "whatIsGIIN.error.length",
         "whatIsGIIN.error.invalid",
+        "whatIsGIIN.error.format",
         giinRegex,
+        giinFormatRegex,
         "whatIsGIIN.error.char",
         giinAllowedChars
       )
