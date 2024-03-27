@@ -48,6 +48,12 @@ trait Generators extends RegexConstants {
     chars     <- listOfN(length, Gen.alphaChar)
   } yield chars.mkString
 
+  def stringsShorterThanAlpha(minLength: Int): Gen[String] = for {
+    maxLength <- (minLength * 2).max(100)
+    length    <- Gen.chooseNum(minLength - 1, maxLength)
+    chars     <- listOfN(length, Gen.alphaChar)
+  } yield chars.mkString
+
   def stringMatchingRegexAndLength(regex: String, length: Int): Gen[String] =
     RegexpGen
       .from(regex)
