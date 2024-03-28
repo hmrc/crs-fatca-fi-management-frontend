@@ -26,13 +26,13 @@
     heading: components.Heading
 )
 
-@(form: Form[_], mode: Mode, fiName: String, paragraphContent: Boolean)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, fiName: String, haveGIIN: Boolean)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("whatIsGIIN.title"))) {
 
     @formHelper(action = routes.WhatIsGIINController.onSubmit(mode)) {
 
-    @if(paragraphContent == true) {
+    @if(haveGIIN == true) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
@@ -47,7 +47,7 @@
             .withHint(HintViewModel(HtmlContent(messages("whatIsGIIN.hint"))))
         )
     }
-    @if(paragraphContent == false) {
+    @if(haveGIIN == false) {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }

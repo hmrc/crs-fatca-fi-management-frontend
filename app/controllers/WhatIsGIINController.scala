@@ -57,8 +57,8 @@ class WhatIsGIINController @Inject() (
       }
 
       val haveGIINAnswered = request.userAnswers.get(HaveGIINPage) match {
-        case None        => true
-        case Some(value) => false
+        case None        => false
+        case Some(value) => true
       }
 
       Ok(view(preparedForm, mode, getFinancialInstitutionName(request.userAnswers), haveGIINAnswered))
