@@ -59,7 +59,7 @@ class WhatIsGIINControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[WhatIsGIINView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, "fiName", true)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, "fiName", false)(request, messages(application)).toString
       }
     }
 
@@ -77,7 +77,7 @@ class WhatIsGIINControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode, "fiName", true)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode, "fiName", false)(request, messages(application)).toString
       }
     }
 
