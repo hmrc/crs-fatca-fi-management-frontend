@@ -23,5 +23,5 @@ case object NonUkAddressPage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "institutionSelectNonUkAddress"
+  override def toString: String = "selectNonUkAddress"
 }

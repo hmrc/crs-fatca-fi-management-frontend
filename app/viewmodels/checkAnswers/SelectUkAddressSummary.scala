@@ -30,11 +30,11 @@ object UkAddressSummary {
     answers.get(UkAddressPage).map {
       answer =>
         SummaryListRowViewModel(
-          key = "institutionUkAddress.checkYourAnswersLabel",
+          key = "ukAddress.checkYourAnswersLabel",
           value = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.addFinancialInstitution.routes.UkAddressController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("institutionUkAddress.change.hidden"))
+              .withVisuallyHiddenText(messages("ukAddress.change.hidden"))
           )
         )
     }

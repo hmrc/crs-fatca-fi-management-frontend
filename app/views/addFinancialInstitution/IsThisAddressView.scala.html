@@ -30,7 +30,7 @@
 
 @(form: Form[_], mode: Mode, fiName: String, address: Address)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("isThisInstitutionAddress.title"))) {
+@layout(pageTitle = title(form, messages("isThisAddress.title"))) {
 
     @formHelper(action = controllers.addFinancialInstitution.routes.IsThisAddressController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
@@ -38,14 +38,14 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @heading(messages("isThisInstitutionAddress.heading", fiName))
+        @heading(messages("isThisAddress.heading", fiName))
 
         @addressBlock(address)
 
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("isThisInstitutionAddress.heading", fiName)).withCssClass("govuk-visually-hidden")
+                legend = LegendViewModel(messages("isThisAddress.heading", fiName)).withCssClass("govuk-visually-hidden")
             )
         )
 

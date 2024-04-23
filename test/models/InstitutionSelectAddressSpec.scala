@@ -30,31 +30,31 @@ class InstitutionSelectAddressSpec extends AnyFreeSpec with Matchers with ScalaC
 
     "must deserialise valid values" in {
 
-      val gen = Gen.oneOf(InstitutionSelectAddress.values.toSeq)
+      val gen = Gen.oneOf(SelectAddress.values.toSeq)
 
       forAll(gen) {
-        institutionSelectAddress =>
-          JsString(institutionSelectAddress.toString).validate[InstitutionSelectAddress].asOpt.value mustEqual institutionSelectAddress
+        selectAddress =>
+          JsString(selectAddress.toString).validate[SelectAddress].asOpt.value mustEqual selectAddress
       }
     }
 
     "must fail to deserialise invalid values" in {
 
-      val gen = arbitrary[String] suchThat (!InstitutionSelectAddress.values.map(_.toString).contains(_))
+      val gen = arbitrary[String] suchThat (!SelectAddress.values.map(_.toString).contains(_))
 
       forAll(gen) {
         invalidValue =>
-          JsString(invalidValue).validate[InstitutionSelectAddress] mustEqual JsError("error.invalid")
+          JsString(invalidValue).validate[SelectAddress] mustEqual JsError("error.invalid")
       }
     }
 
     "must serialise" in {
 
-      val gen = Gen.oneOf(InstitutionSelectAddress.values.toSeq)
+      val gen = Gen.oneOf(SelectAddress.values.toSeq)
 
       forAll(gen) {
-        institutionSelectAddress =>
-          Json.toJson(institutionSelectAddress) mustEqual JsString(institutionSelectAddress.toString)
+        selectAddress =>
+          Json.toJson(selectAddress) mustEqual JsString(selectAddress.toString)
       }
     }
   }

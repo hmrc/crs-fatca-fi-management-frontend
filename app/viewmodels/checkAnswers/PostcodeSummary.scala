@@ -30,11 +30,11 @@ object PostcodeSummary {
     answers.get(PostcodePage).map {
       answer =>
         SummaryListRowViewModel(
-          key = "institutionPostcode.checkYourAnswersLabel",
+          key = "postcode.checkYourAnswersLabel",
           value = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.addFinancialInstitution.routes.PostcodeController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("institutionPostcode.change.hidden"))
+              .withVisuallyHiddenText(messages("postcode.change.hidden"))
           )
         )
     }

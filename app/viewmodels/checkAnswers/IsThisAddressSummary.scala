@@ -31,11 +31,11 @@ object IsThisAddressSummary {
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key = "isThisInstitutionAddress.checkYourAnswersLabel",
+          key = "isThisAddress.checkYourAnswersLabel",
           value = ValueViewModel(value),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.addFinancialInstitution.routes.IsThisAddressController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("isThisInstitutionAddress.change.hidden"))
+              .withVisuallyHiddenText(messages("isThisAddress.change.hidden"))
           )
         )
     }

@@ -27,11 +27,11 @@ class PostcodeFormProvider @Inject() extends Mappings with RegexConstants {
     Form(
       "postCode" ->
         mandatoryPostcode(
-          "institutionPostcode.error.required",
-          "institutionPostcode.error.length",
-          "institutionPostcode.error.invalid",
+          "postcode.error.required",
+          "postcode.error.length",
+          "postcode.error.invalid",
           regexPostcode,
-          "institutionPostcode.error.chars",
+          "postcode.error.chars",
           postCodeAllowedChars
         )
     )

@@ -92,7 +92,7 @@ class Navigator @Inject() () {
           userAnswers,
           IsThisAddressPage,
           routes.ContactNameController.onPageLoad(NormalMode),
-          controllers.routes.IndexController.onPageLoad
+          routes.UkAddressController.onPageLoad(NormalMode)
         )
     case HaveGIINPage =>
       userAnswers =>

@@ -17,7 +17,8 @@
 package navigation
 
 import base.SpecBase
-import controllers.routes
+import controllers.addFinancialInstitution.routes
+import pages.addFinancialInstitution._
 import pages._
 import models._
 
@@ -31,7 +32,7 @@ class NavigatorSpec extends SpecBase {
 
       "must go from a page that doesn't exist in the route map to Index" in {
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
+        navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe controllers.routes.IndexController.onPageLoad
       }
       "must go from ContactName page to FirstContactEmail" in {
         navigator.nextPage(ContactNamePage, NormalMode, UserAnswers("id")) mustBe
@@ -114,12 +115,17 @@ class NavigatorSpec extends SpecBase {
           routes.HaveUniqueTaxpayerReferenceController.onPageLoad(NormalMode)
       }
 
-      "must go from IsThisInstitutionAddress page to ContactName page when user answers yes" in {
-        val userAnswers = emptyUserAnswers.withPage(IsThisInstitutionAddressPage, true)
-        navigator.nextPage(IsThisInstitutionAddressPage, NormalMode, userAnswers) mustBe
+      "must go from IsThisAddress page to ContactName page when user answers yes" in {
+        val userAnswers = emptyUserAnswers.withPage(IsThisAddressPage, true)
+        navigator.nextPage(IsThisAddressPage, NormalMode, userAnswers) mustBe
           routes.ContactNameController.onPageLoad(NormalMode)
       }
-      // todo: navigation from IsThisInstitutionAddress to /address-uk when No (page yet to exist)
+
+      "must go from IsThisAddress page to ukAddress page when user answers no" in {
+        val userAnswers = emptyUserAnswers.withPage(IsThisAddressPage, false)
+        navigator.nextPage(IsThisAddressPage, NormalMode, userAnswers) mustBe
+          routes.UkAddressController.onPageLoad(NormalMode)
+      }
 
       "must go from HaveGIIN to WhatIsGIIN when user answers yes" in {
         val userAnswers = emptyUserAnswers.withPage(HaveGIINPage, true)

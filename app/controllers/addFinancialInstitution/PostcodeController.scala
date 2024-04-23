@@ -71,7 +71,7 @@ class PostcodeController @Inject() (
           postCode =>
             addressLookupConnector.addressLookupByPostcode(postCode).flatMap {
               case Nil =>
-                val formError = formReturned.withError(FormError("postCode", List("institutionPostcode.error.notFound")))
+                val formError = formReturned.withError(FormError("postCode", List("postcode.error.notFound")))
                 Future.successful(BadRequest(view(formError, mode, getFinancialInstitutionName(request.userAnswers))))
 
               case addresses =>

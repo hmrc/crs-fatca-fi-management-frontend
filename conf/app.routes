@@ -90,11 +90,6 @@ POST       /have-giin                         controllers.addFinancialInstitutio
 GET        /change-have-giin                  controllers.addFinancialInstitution.HaveGIINController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-have-giin                  controllers.addFinancialInstitution.HaveGIINController.onSubmit(mode: Mode = CheckMode)
 
-GET        /institutionLocation                        controllers.addFinancialInstitution.LocationController.onPageLoad(mode: Mode = NormalMode)
-POST       /institutionLocation                        controllers.addFinancialInstitution.LocationController.onSubmit(mode: Mode = NormalMode)
-GET        /changeInstitutionLocation                  controllers.addFinancialInstitution.LocationController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeInstitutionLocation                  controllers.addFinancialInstitution.LocationController.onSubmit(mode: Mode = CheckMode)
-
 GET        /uk-postcode                        controllers.addFinancialInstitution.PostcodeController.onPageLoad(mode: Mode = NormalMode)
 POST       /uk-postcode                        controllers.addFinancialInstitution.PostcodeController.onSubmit(mode: Mode = NormalMode)
 GET        /change-uk-postcode                  controllers.addFinancialInstitution.PostcodeController.onPageLoad(mode: Mode = CheckMode)

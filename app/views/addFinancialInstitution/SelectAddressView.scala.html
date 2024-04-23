@@ -29,7 +29,7 @@
 
 @(form: Form[_], addressOptions: Seq[RadioItem], fiName: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("institutionSelectAddress.title"))) {
+@layout(pageTitle = title(form, messages("selectAddress.title"))) {
 
     @formHelper(action = controllers.addFinancialInstitution.routes.SelectAddressController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -37,14 +37,14 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @heading(messages("institutionSelectAddress.heading", fiName))
+        @heading(messages("selectAddress.heading", fiName))
 
-        <p class="govuk-body">@Html(messages( "institutionSelectAddress.p1.part1", link(controllers.addFinancialInstitution.routes.UkAddressController.onPageLoad(mode).url, "institutionSelectAddress.p1.part2", Some("manualAddress")))).</p>
+        <p class="govuk-body">@Html(messages( "selectAddress.p1.part1", link(controllers.addFinancialInstitution.routes.UkAddressController.onPageLoad(mode).url, "selectAddress.p1.part2", Some("manualAddress")))).</p>
 
         @govukRadios(
             RadiosViewModel.apply(
                 field = form("value"),
-                legend = LegendViewModel(messages("institutionSelectAddress.heading")).withCssClass("govuk-visually-hidden"),
+                legend = LegendViewModel(messages("selectAddress.heading")).withCssClass("govuk-visually-hidden"),
                 items = addressOptions
             )
         )

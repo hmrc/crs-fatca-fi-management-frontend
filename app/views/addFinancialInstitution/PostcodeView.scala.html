@@ -28,7 +28,7 @@
 
 @(form: Form[_], mode: Mode, fiName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("institutionPostcode.title"))) {
+@layout(pageTitle = title(form, messages("postcode.title"))) {
 
     @formHelper(action = controllers.addFinancialInstitution.routes.PostcodeController.onSubmit(mode)) {
 
@@ -36,22 +36,22 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @heading(messages("institutionPostcode.heading", fiName))
-        <p class="govuk-body">@messages("institutionPostcode.p1")</p>
+        @heading(messages("postcode.heading", fiName))
+        <p class="govuk-body">@messages("postcode.p1")</p>
 
         @govukInput(
             InputViewModel(
                 field = form("postCode"),
-                label = LabelViewModel(messages("institutionPostcode.heading, fiName")).visuallyHidden()
+                label = LabelViewModel(messages("postcode.heading, fiName")).visuallyHidden()
             )
             .withWidth(Fixed10)
             .withAutocomplete("postal-code")
         )
 
-        <p class="govuk-body">@link(controllers.addFinancialInstitution.routes.UkAddressController.onPageLoad(mode).url, "institutionPostcode.manualLink" , id = Some("manualAddressLink"))</p>
+        <p class="govuk-body">@link(controllers.addFinancialInstitution.routes.UkAddressController.onPageLoad(mode).url, "postcode.manualLink" , id = Some("manualAddressLink"))</p>
 
         @govukButton(
-            ButtonViewModel(messages("institutionPostcode.continue")).withAttribute("id" -> "submit")
+            ButtonViewModel(messages("postcode.continue")).withAttribute("id" -> "submit")
         )
     }
 }

@@ -30,11 +30,11 @@ object NonUkAddressSummary {
     answers.get(NonUkAddressPage).map {
       answer =>
         SummaryListRowViewModel(
-          key = "institutionNonUkAddress.checkYourAnswersLabel",
+          key = "nonUkAddress.checkYourAnswersLabel",
           value = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.addFinancialInstitution.routes.NonUkAddressController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("institutionNonUkAddress.change.hidden"))
+              .withVisuallyHiddenText(messages("nonUkAddress.change.hidden"))
           )
         )
     }

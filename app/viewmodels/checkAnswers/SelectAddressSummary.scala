@@ -32,16 +32,16 @@ object SelectAddressSummary {
       answer =>
         val value = ValueViewModel(
           HtmlContent(
-            HtmlFormat.escape(messages(s"institutionSelectAddress.$answer"))
+            HtmlFormat.escape(messages(s"selectAddress.$answer"))
           )
         )
 
         SummaryListRowViewModel(
-          key = "institutionSelectAddress.checkYourAnswersLabel",
+          key = "selectAddress.checkYourAnswersLabel",
           value = value,
           actions = Seq(
             ActionItemViewModel("site.change", controllers.addFinancialInstitution.routes.SelectAddressController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("institutionSelectAddress.change.hidden"))
+              .withVisuallyHiddenText(messages("selectAddress.change.hidden"))
           )
         )
     }

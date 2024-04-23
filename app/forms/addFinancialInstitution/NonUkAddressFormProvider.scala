@@ -25,8 +25,8 @@ class NonUkAddressFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      "value" -> text("institutionNonUkAddress.error.required")
-        .verifying(maxLength(100, "institutionNonUkAddress.error.length"))
+      "value" -> text("nonUkAddress.error.required")
+        .verifying(maxLength(100, "nonUkAddress.error.length"))
     )
 
 }

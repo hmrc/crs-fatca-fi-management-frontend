@@ -167,49 +167,43 @@ haveGIIN.error.required = Select yes if you would like to provide a GIIN for the
 haveGIIN.checkYourAnswersLabel = haveGIIN
 haveGIIN.change.hidden = HaveGIIN
 
-location.title = institutionLocation
-location.heading = institutionLocation
-location.checkYourAnswersLabel = institutionLocation
-location.error.required = Select yes if institutionLocation
-location.change.hidden = InstitutionLocation
-
 postcode.title = What is the financial institution’s postcode?
 postcode.heading = What is the postcode for {0}?
 postcode.checkYourAnswersLabel = What is the financial institution’s postcode?
 postcode.p1 = Enter the postcode to find the address automatically.
 postcode.manualLink = Or enter the address manually
 postcode.error.required = Enter a postcode, like AA1 1AA
-institutionPostcode.error.length = Postcode must be 10 characters or less
-institutionPostcode.error.chars = Postcode must only include letters a to z and numbers 0 to 9
-institutionPostcode.error.invalid = Enter a real postcode or enter the address manually
-institutionPostcode.error.notFound = Postcode not found — enter a different postcode or enter the address manually
-institutionPostcode.continue = Find address
+postcode.error.length = Postcode must be 10 characters or less
+postcode.error.chars = Postcode must only include letters a to z and numbers 0 to 9
+postcode.error.invalid = Enter a real postcode or enter the address manually
+postcode.error.notFound = Postcode not found — enter a different postcode or enter the address manually
+postcode.continue = Find address
 
-institutionSelectAddress.title = What is the financial institution’s address?
-institutionSelectAddress.heading = What is the address for {0}?
-institutionSelectAddress.error.required = Select the address for the financial institution or enter it manually
-institutionSelectAddress.p1.part1 = Select from the list or {0}
-institutionSelectAddress.p1.part2 = enter your address manually
+selectAddress.title = What is the financial institution’s address?
+selectAddress.heading = What is the address for {0}?
+selectAddress.error.required = Select the address for the financial institution or enter it manually
+selectAddress.p1.part1 = Select from the list or {0}
+selectAddress.p1.part2 = enter your address manually
 
-institutionNonUkAddress.title = institutionSelectNonUkAddress
-institutionNonUkAddress.heading = institutionSelectNonUkAddress
-institutionNonUkAddress.checkYourAnswersLabel = institutionSelectNonUkAddress
-institutionNonUkAddress.error.required = Enter institutionSelectNonUkAddress
-institutionNonUkAddress.error.length = InstitutionSelectNonUkAddress must be 100 characters or less
-institutionNonUkAddress.change.hidden = InstitutionSelectNonUkAddress
+nonUkAddress.title = institutionSelectNonUkAddress
+nonUkAddress.heading = institutionSelectNonUkAddress
+nonUkAddress.checkYourAnswersLabel = institutionSelectNonUkAddress
+nonUkAddress.error.required = Enter institutionSelectNonUkAddress
+nonUkAddress.error.length = InstitutionSelectNonUkAddress must be 100 characters or less
+nonUkAddress.change.hidden = InstitutionSelectNonUkAddress
 
-institutionUkAddress.title = institutionSelectUkAddress
-institutionUkAddress.heading = institutionSelectUkAddress
-institutionUkAddress.checkYourAnswersLabel = institutionSelectUkAddress
-institutionUkAddress.error.required = Enter institutionSelectUkAddress
-institutionUkAddress.error.length = InstitutionSelectUkAddress must be 100 characters or less
-institutionUkAddress.change.hidden = InstitutionSelectUkAddress
+ukAddress.title = institutionSelectUkAddress
+ukAddress.heading = institutionSelectUkAddress
+ukAddress.checkYourAnswersLabel = institutionSelectUkAddress
+ukAddress.error.required = Enter institutionSelectUkAddress
+ukAddress.error.length = InstitutionSelectUkAddress must be 100 characters or less
+ukAddress.change.hidden = InstitutionSelectUkAddress
 
-isThisInstitutionAddress.title = Is this the address?
-isThisInstitutionAddress.heading = Is this the address for {0}?
-isThisInstitutionAddress.checkYourAnswersLabel = Is this the address
-isThisInstitutionAddress.error.required = Select yes if this is the financial institution’s address
-isThisInstitutionAddress.change.hidden = Is this the address
+isThisAddress.title = Is this the address?
+isThisAddress.heading = Is this the address for {0}?
+isThisAddress.checkYourAnswersLabel = Is this the address
+isThisAddress.error.required = Select yes if this is the financial institution’s address
+isThisAddress.change.hidden = Is this the address
 
 sendReports.title = Does the financial institution need to send FATCA reports?
 sendReports.heading = Does {0} need to send FATCA reports?
