@@ -14,32 +14,38 @@
  * limitations under the License.
  *@
 
-@import viewmodels.InputWidth._
+@import components._
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
-    govukButton: GovukButton
+    govukRadios: GovukRadios,
+    govukButton: GovukButton,
+    para: Paragraph,
+    heading: Heading
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, fiName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("nameOfFinancialInstitution.title"))) {
+@layout(pageTitle = title(form, messages("haveGIIN.title"))) {
 
-    @formHelper(action = routes.NameOfFinancialInstitutionController.onSubmit(mode)) {
+    @formHelper(action = controllers.addFinancialInstitution.routes.HaveGIINController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @govukInput(
-            InputViewModel(
+        @heading(messages("haveGIIN.heading"))
+        @para(Html(messages("haveGIIN.para.1", fiName)))
+        @para(Html(messages("haveGIIN.para.2", fiName)))
+        @para(Html(messages("haveGIIN.para.3", fiName)))
+
+        @govukRadios(
+            RadiosViewModel.yesNo(
                 field = form("value"),
-                label = LabelViewModel(messages("nameOfFinancialInstitution.heading")).asPageHeading()
+                legend = LegendViewModel(messages("haveGIIN.subheading", fiName)).withCssClass("govuk-fieldset__legend govuk-fieldset__legend--m")
             )
-            .withWidth(ThreeQuarters)
         )
 
         @govukButton(

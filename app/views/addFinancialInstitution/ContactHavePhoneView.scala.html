@@ -14,37 +14,33 @@
  * limitations under the License.
  *@
 
-@import components._
-
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
-    govukButton: GovukButton,
-    heading: Heading,
-    paragraph: Paragraph
+    govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode, financialInstitutionName: String, secondContactName: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode , finInstitution: String , contactName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("secondContactCanWePhone.title"))) {
+@layout(pageTitle = title(form, messages("contactHavePhone.title.business"))) {
 
-    @formHelper(action = routes.SecondContactCanWePhoneController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = controllers.addFinancialInstitution.routes.ContactHavePhoneController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @heading(messages("secondContactCanWePhone.heading", secondContactName))
-        @paragraph(Html(messages("secondContactCanWePhone.p1", financialInstitutionName)))
+      <h1 class="govuk-heading-l">@messages(messages(s"contactHavePhone.heading.business" , contactName))</h1>
+      <p class="govuk-body">@messages("contactHavePhone.p1" , finInstitution)</p>
 
-        @govukRadios(
-            RadiosViewModel.yesNo(
-                field = form("value"),
-                legend = LegendViewModel(messages("secondContactCanWePhone.heading", secondContactName)).withCssClass("govuk-visually-hidden")
-            )
-        )
+     @govukRadios(
+         RadiosViewModel.yesNo(
+               field = form("value"),
+               legend = LegendViewModel(messages("contactHavePhone.heading.business")).withCssClass("govuk-visually-hidden")
+         )
+     )
 
         @govukButton(
             ButtonViewModel(messages("site.continue")).withAttribute("id" -> "submit")

@@ -30,7 +30,7 @@
 
 @layout(pageTitle = title(form, messages("whatIsGIIN.title"))) {
 
-    @formHelper(action = routes.WhatIsGIINController.onSubmit(mode)) {
+    @formHelper(action = controllers.addFinancialInstitution.routes.WhatIsGIINController.onSubmit(mode)) {
 
     @if(haveGIIN == true) {
 

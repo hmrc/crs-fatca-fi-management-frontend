@@ -14,30 +14,32 @@
  * limitations under the License.
  *@
 
+@import viewmodels.InputWidth._
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
+    govukInput: GovukInput,
     govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode, fiName: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("haveUniqueTaxpayerReference.title"))) {
+@layout(pageTitle = title(form, messages("nameOfFinancialInstitution.title"))) {
 
-    @formHelper(action = routes.HaveUniqueTaxpayerReferenceController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @govukRadios(
-            RadiosViewModel.yesNo(
+        @govukInput(
+            InputViewModel(
                 field = form("value"),
-                legend = LegendViewModel(messages("haveUniqueTaxpayerReference.heading", fiName)).asPageHeading()
+                label = LabelViewModel(messages("nameOfFinancialInstitution.heading")).asPageHeading()
             )
-            .withHint(HintViewModel(HtmlContent(messages("haveUniqueTaxpayerReference.hint"))))
+            .withWidth(ThreeQuarters)
         )
 
         @govukButton(

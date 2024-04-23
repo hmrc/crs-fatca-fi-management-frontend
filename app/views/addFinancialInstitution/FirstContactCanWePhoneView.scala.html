@@ -14,40 +14,29 @@
  * limitations under the License.
  *@
 
-@import viewmodels.InputWidth._
-@import config.FrontendAppConfig
-
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
-    link: components.Link,
-    heading: components.Heading,
-    appConfig: FrontendAppConfig,
+    govukRadios: GovukRadios,
     govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode, fiName: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("whatIsUniqueTaxpayerReference.title"))) {
+@layout(pageTitle = title(form, messages("firstContactCanWePhone.title"))) {
 
-    @formHelper(action = routes.WhatIsUniqueTaxpayerReferenceController.onSubmit(mode)) {
+    @formHelper(action = controllers.addFinancialInstitution.routes.FirstContactCanWePhoneController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @heading(messages("whatIsUniqueTaxpayerReference.heading", fiName))
-
-        <p class="govuk-body">@messages("whatIsUniqueTaxpayerReference.p1") @link(appConfig.lostUTRUrl, "whatIsUniqueTaxpayerReference.p1.link").</p>
-
-        @govukInput(
-            InputViewModel(
+        @govukRadios(
+            RadiosViewModel.yesNo(
                 field = form("value"),
-                label = LabelViewModel(messages("whatIsUniqueTaxpayerReference.heading", fiName)).visuallyHidden()
+                legend = LegendViewModel(messages("firstContactCanWePhone.heading")).asPageHeading()
             )
-            .withWidth(OneThird)
         )
 
         @govukButton(

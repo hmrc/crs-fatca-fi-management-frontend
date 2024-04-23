@@ -14,42 +14,44 @@
  * limitations under the License.
  *@
 
-@import components._
+@import viewmodels.InputWidth._
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
+    govukInput: GovukInput,
     govukButton: GovukButton,
-    para: Paragraph,
-    heading: Heading
+    heading: components.Heading,
+    link: components.Link
 )
 
 @(form: Form[_], mode: Mode, fiName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("haveGIIN.title"))) {
+@layout(pageTitle = title(form, messages("institutionPostcode.title"))) {
 
-    @formHelper(action = routes.HaveGIINController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = controllers.addFinancialInstitution.routes.PostcodeController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @heading(messages("haveGIIN.heading"))
-        @para(Html(messages("haveGIIN.para.1", fiName)))
-        @para(Html(messages("haveGIIN.para.2", fiName)))
-        @para(Html(messages("haveGIIN.para.3", fiName)))
+        @heading(messages("institutionPostcode.heading", fiName))
+        <p class="govuk-body">@messages("institutionPostcode.p1")</p>
 
-        @govukRadios(
-            RadiosViewModel.yesNo(
-                field = form("value"),
-                legend = LegendViewModel(messages("haveGIIN.subheading", fiName)).withCssClass("govuk-fieldset__legend govuk-fieldset__legend--m")
+        @govukInput(
+            InputViewModel(
+                field = form("postCode"),
+                label = LabelViewModel(messages("institutionPostcode.heading, fiName")).visuallyHidden()
             )
+            .withWidth(Fixed10)
+            .withAutocomplete("postal-code")
         )
 
+        <p class="govuk-body">@link(controllers.addFinancialInstitution.routes.UkAddressController.onPageLoad(mode).url, "institutionPostcode.manualLink" , id = Some("manualAddressLink"))</p>
+
         @govukButton(
-            ButtonViewModel(messages("site.continue")).withAttribute("id" -> "submit")
+            ButtonViewModel(messages("institutionPostcode.continue")).withAttribute("id" -> "submit")
         )
     }
 }

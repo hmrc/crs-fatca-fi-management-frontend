@@ -14,39 +14,36 @@
  * limitations under the License.
  *@
 
-@import viewmodels.InputWidth._
 @import components._
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
+    govukRadios: GovukRadios,
     govukButton: GovukButton,
-    paragraph: Paragraph,
-    heading: Heading
+    heading: Heading,
+    paragraph: Paragraph
 )
 
-@(form: Form[_], fiName: String , mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, financialInstitutionName: String, secondContactName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("secondContactName.title"))) {
+@layout(pageTitle = title(form, messages("secondContactCanWePhone.title"))) {
 
-    @formHelper(action = routes.SecondContactNameController.onSubmit(mode)) {
+    @formHelper(action = controllers.addFinancialInstitution.routes.SecondContactCanWePhoneController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @heading(messages("secondContactName.heading", fiName))
+        @heading(messages("secondContactCanWePhone.heading", secondContactName))
+        @paragraph(Html(messages("secondContactCanWePhone.p1", financialInstitutionName)))
 
-        @paragraph(Html(messages("secondContactName.p1")))
-
-        @govukInput(
-            InputViewModel(
+        @govukRadios(
+            RadiosViewModel.yesNo(
                 field = form("value"),
-                label = LabelViewModel(messages("secondContactName.heading")).visuallyHidden()
+                legend = LegendViewModel(messages("secondContactCanWePhone.heading", secondContactName)).withCssClass("govuk-visually-hidden")
             )
-            .withWidth(Full)
         )
 
         @govukButton(

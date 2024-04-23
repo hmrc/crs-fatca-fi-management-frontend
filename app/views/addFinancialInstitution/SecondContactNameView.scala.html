@@ -16,6 +16,7 @@
 
 @import viewmodels.InputWidth._
 @import components._
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
@@ -26,24 +27,24 @@
     heading: Heading
 )
 
-@(form: Form[_], mode: Mode, finInstitution: String, name: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], fiName: String , mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("secondContactEmail.title"))) {
+@layout(pageTitle = title(form, messages("secondContactName.title"))) {
 
-    @formHelper(action = routes.SecondContactEmailController.onSubmit(mode)) {
+    @formHelper(action = controllers.addFinancialInstitution.routes.SecondContactNameController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-      @heading(messages("secondContactEmail.heading", name))
+        @heading(messages("secondContactName.heading", fiName))
 
-      @paragraph(Html(messages("secondContactEmail.p1", finInstitution)))
+        @paragraph(Html(messages("secondContactName.p1")))
 
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("secondContactEmail.heading")).visuallyHidden()
+                label = LabelViewModel(messages("secondContactName.heading")).visuallyHidden()
             )
             .withWidth(Full)
         )

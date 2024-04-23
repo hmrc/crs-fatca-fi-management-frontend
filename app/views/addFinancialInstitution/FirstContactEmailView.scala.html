@@ -14,41 +14,44 @@
  * limitations under the License.
  *@
 
+@import viewmodels.InputWidth._
 @import components._
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
+    govukInput: GovukInput,
     govukButton: GovukButton,
     paragraph: Paragraph,
     heading: Heading
 )
 
-@(form: Form[_], contactName: String, mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, finInstitution: String, name: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("secondContact.title"))) {
+@layout(pageTitle = title(form, messages("firstContactEmail.title"))) {
 
-    @formHelper(action = routes.SecondContactExistsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = controllers.addFinancialInstitution.routes.FirstContactEmailController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-       @heading(messages("secondContact.heading", contactName))
+        @heading(messages("firstContactEmail.heading", name))
 
-       @paragraph(Html(messages("secondContact.p1")))
+        @paragraph(Html(messages("firstContactEmail.p1", finInstitution)))
 
-       @govukRadios(
-          RadiosViewModel.yesNo(
-           field = form("value"),
-           legend = LegendViewModel(messages("secondContact.heading", contactName)).withCssClass("govuk-visually-hidden")
-         )
-       )
+        @govukInput(
+            InputViewModel(
+                field = form("value"),
+                label = LabelViewModel(messages("firstContactEmail.heading", name)).visuallyHidden()
+            )
+            .withWidth(Full)
+            .asEmail()
+        )
 
-     @govukButton(
-         ButtonViewModel(messages("site.continue")).withAttribute("id" -> "submit")
-     )
+        @govukButton(
+            ButtonViewModel(messages("site.continue")).withAttribute("id" -> "submit")
+        )
     }
 }

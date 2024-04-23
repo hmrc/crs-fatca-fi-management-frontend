@@ -15,7 +15,6 @@
  *@
 
 @import components._
-@import models.Address
 
 @this(
     layout: templates.Layout,
@@ -23,34 +22,33 @@
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
     govukButton: GovukButton,
-    para: Paragraph,
-    heading: Heading,
-    addressBlock: AddressBlock
+    paragraph: Paragraph,
+    heading: Heading
 )
 
-@(form: Form[_], mode: Mode, fiName: String, address: Address)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], contactName: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("isThisInstitutionAddress.title"))) {
+@layout(pageTitle = title(form, messages("secondContact.title"))) {
 
-    @formHelper(action = routes.IsThisInstitutionAddressController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = controllers.addFinancialInstitution.routes.SecondContactExistsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @heading(messages("isThisInstitutionAddress.heading", fiName))
+       @heading(messages("secondContact.heading", contactName))
 
-        @addressBlock(address)
+       @paragraph(Html(messages("secondContact.p1")))
 
-        @govukRadios(
-            RadiosViewModel.yesNo(
-                field = form("value"),
-                legend = LegendViewModel(messages("isThisInstitutionAddress.heading", fiName)).withCssClass("govuk-visually-hidden")
-            )
-        )
+       @govukRadios(
+          RadiosViewModel.yesNo(
+           field = form("value"),
+           legend = LegendViewModel(messages("secondContact.heading", contactName)).withCssClass("govuk-visually-hidden")
+         )
+       )
 
-        @govukButton(
-            ButtonViewModel(messages("site.continue")).withAttribute("id" -> "submit")
-        )
+     @govukButton(
+         ButtonViewModel(messages("site.continue")).withAttribute("id" -> "submit")
+     )
     }
 }

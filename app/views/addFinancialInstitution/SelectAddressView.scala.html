@@ -14,28 +14,38 @@
  * limitations under the License.
  *@
 
+@import config.FrontendAppConfig
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    link: components.Link,
+    appConfig: FrontendAppConfig,
+    heading: components.Heading
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], addressOptions: Seq[RadioItem], fiName: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("firstContactCanWePhone.title"))) {
+@layout(pageTitle = title(form, messages("institutionSelectAddress.title"))) {
 
-    @formHelper(action = routes.FirstContactCanWePhoneController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = controllers.addFinancialInstitution.routes.SelectAddressController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
+        @heading(messages("institutionSelectAddress.heading", fiName))
+
+        <p class="govuk-body">@Html(messages( "institutionSelectAddress.p1.part1", link(controllers.addFinancialInstitution.routes.UkAddressController.onPageLoad(mode).url, "institutionSelectAddress.p1.part2", Some("manualAddress")))).</p>
+
         @govukRadios(
-            RadiosViewModel.yesNo(
+            RadiosViewModel.apply(
                 field = form("value"),
-                legend = LegendViewModel(messages("firstContactCanWePhone.heading")).asPageHeading()
+                legend = LegendViewModel(messages("institutionSelectAddress.heading")).withCssClass("govuk-visually-hidden"),
+                items = addressOptions
             )
         )
 

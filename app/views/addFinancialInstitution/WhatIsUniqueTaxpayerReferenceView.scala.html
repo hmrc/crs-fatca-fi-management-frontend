@@ -15,32 +15,39 @@
  *@
 
 @import viewmodels.InputWidth._
+@import config.FrontendAppConfig
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
+    link: components.Link,
+    heading: components.Heading,
+    appConfig: FrontendAppConfig,
     govukButton: GovukButton
 )
 
-@(contactName: String, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, fiName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("secondContactPhoneNumber.title"))) {
+@layout(pageTitle = title(form, messages("whatIsUniqueTaxpayerReference.title"))) {
 
-    @formHelper(action = routes.SecondContactPhoneNumberController.onSubmit(mode)) {
+    @formHelper(action = controllers.addFinancialInstitution.routes.WhatIsUniqueTaxpayerReferenceController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
+        @heading(messages("whatIsUniqueTaxpayerReference.heading", fiName))
+
+        <p class="govuk-body">@messages("whatIsUniqueTaxpayerReference.p1") @link(appConfig.lostUTRUrl, "whatIsUniqueTaxpayerReference.p1.link").</p>
+
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("secondContactPhoneNumber.heading", contactName)).asPageHeading()
+                label = LabelViewModel(messages("whatIsUniqueTaxpayerReference.heading", fiName)).visuallyHidden()
             )
-            .withHint(HintViewModel(messages("secondContactPhoneNumber.hint")))
-            .withWidth(Fixed20)
+            .withWidth(OneThird)
         )
 
         @govukButton(
