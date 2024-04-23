@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import forms.IsThisInstitutionAddressFormProvider
+import forms.IsThisAddressFormProvider
 import models.{Address, AddressLookup, Country, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -38,7 +38,7 @@ class IsThisInstitutionAddressControllerSpec extends SpecBase with MockitoSugar 
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider        = new IsThisInstitutionAddressFormProvider()
+  val formProvider        = new IsThisAddressFormProvider()
   val form: Form[Boolean] = formProvider()
 
   val address: Address = Address(

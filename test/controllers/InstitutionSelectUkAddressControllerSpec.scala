@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import forms.InstitutionUkAddressFormProvider
+import forms.UkAddressFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -37,7 +37,7 @@ class InstitutionUkAddressControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new InstitutionUkAddressFormProvider()
+  val formProvider = new UkAddressFormProvider()
   val form         = formProvider()
 
   lazy val institutionUkAddressRoute = routes.InstitutionUkAddressController.onPageLoad(NormalMode).url

@@ -21,7 +21,7 @@ import play.api.data.FormError
 
 class InstitutionSelectAddressFormProviderSpec extends OptionFieldBehaviours {
 
-  val form = new InstitutionSelectAddressFormProvider()()
+  val form = new SelectAddressFormProvider()()
 
   ".value" - {
 

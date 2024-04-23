@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import forms.InstitutionSelectAddressFormProvider
+import forms.SelectAddressFormProvider
 import models.{AddressLookup, NormalMode}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -41,7 +41,7 @@ class InstitutionSelectAddressControllerSpec extends SpecBase with MockitoSugar 
 
   lazy val institutionSelectAddressRoute = routes.InstitutionSelectAddressController.onPageLoad(NormalMode).url
 
-  val formProvider = new InstitutionSelectAddressFormProvider()
+  val formProvider = new SelectAddressFormProvider()
   val form         = formProvider()
 
   val contactName = "fiName"

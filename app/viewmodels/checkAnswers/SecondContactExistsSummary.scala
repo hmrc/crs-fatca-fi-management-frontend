@@ -16,9 +16,8 @@
 
 package viewmodels.checkAnswers
 
-import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.SecondContactExistsPage
+import pages.addFinancialInstitution.SecondContactExistsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
@@ -35,7 +34,7 @@ object SecondContactExistsSummary {
           key = "secondContact.checkYourAnswersLabel",
           value = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.SecondContactExistsController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", controllers.addFinancialInstitution.routes.SecondContactExistsController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("secondContact.checkYourAnswersLabel.hiddenText"))
           )
         )

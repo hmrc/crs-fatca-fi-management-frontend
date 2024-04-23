@@ -25,7 +25,7 @@ class InstitutionUkAddressFormProviderSpec extends StringFieldBehaviours {
   val lengthKey   = "institutionUkAddress.error.length"
   val maxLength   = 100
 
-  val form = new InstitutionUkAddressFormProvider()()
+  val form = new UkAddressFormProvider()()
 
   ".value" - {
 

@@ -16,9 +16,8 @@
 
 package viewmodels.checkAnswers
 
-import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.SendReportsPage
+import pages.addFinancialInstitution.SendReportsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
@@ -35,7 +34,7 @@ object SendReportsSummary {
           key = "sendReports.checkYourAnswersLabel",
           value = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.SendReportsController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", controllers.addFinancialInstitution.routes.SendReportsController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("sendReports.change.hidden"))
           )
         )

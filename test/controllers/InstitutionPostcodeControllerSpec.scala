@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import connectors.AddressLookupConnector
-import forms.InstitutionPostcodeFormProvider
+import forms.PostcodeFormProvider
 import models.{AddressLookup, NormalMode}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -38,7 +38,7 @@ class InstitutionPostcodeControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new InstitutionPostcodeFormProvider()
+  val formProvider = new PostcodeFormProvider()
   val form         = formProvider()
   val contactName  = "fiName"
   private val ua   = emptyUserAnswers.set(NameOfFinancialInstitutionPage, contactName).get

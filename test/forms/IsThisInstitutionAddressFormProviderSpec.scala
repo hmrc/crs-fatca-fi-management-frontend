@@ -24,7 +24,7 @@ class IsThisInstitutionAddressFormProviderSpec extends BooleanFieldBehaviours {
   val requiredKey = "isThisInstitutionAddress.error.required"
   val invalidKey  = "error.boolean"
 
-  val form = new IsThisInstitutionAddressFormProvider()()
+  val form = new IsThisAddressFormProvider()()
 
   ".value" - {
 

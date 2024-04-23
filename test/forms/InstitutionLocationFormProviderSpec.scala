@@ -24,7 +24,7 @@ class InstitutionLocationFormProviderSpec extends BooleanFieldBehaviours {
   val requiredKey = "institutionLocation.error.required"
   val invalidKey  = "error.boolean"
 
-  val form = new InstitutionLocationFormProvider()()
+  val form = new LocationFormProvider()()
 
   ".value" - {
 

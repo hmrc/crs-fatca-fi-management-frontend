@@ -21,7 +21,7 @@ import play.api.data.FormError
 
 class InstitutionPostcodeFormProviderSpec extends StringFieldBehaviours {
 
-  val form = new InstitutionPostcodeFormProvider()()
+  val form = new PostcodeFormProvider()()
 
   ".postCode" - {
 

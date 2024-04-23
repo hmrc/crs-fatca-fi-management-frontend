@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import forms.InstitutionLocationFormProvider
+import forms.LocationFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -37,7 +37,7 @@ class InstitutionLocationControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new InstitutionLocationFormProvider()
+  val formProvider = new LocationFormProvider()
   val form         = formProvider()
 
   lazy val institutionLocationRoute = routes.InstitutionLocationController.onPageLoad(NormalMode).url
