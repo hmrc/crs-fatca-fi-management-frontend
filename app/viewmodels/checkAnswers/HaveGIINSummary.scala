@@ -16,9 +16,8 @@
 
 package viewmodels.checkAnswers
 
-import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.HaveGIINPage
+import pages.addFinancialInstitution.HaveGIINPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
@@ -35,7 +34,7 @@ object HaveGIINSummary {
           key = "haveGIIN.checkYourAnswersLabel",
           value = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.HaveGIINController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", controllers.addFinancialInstitution.routes.HaveGIINController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("haveGIIN.change.hidden"))
           )
         )

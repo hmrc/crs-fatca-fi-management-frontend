@@ -16,9 +16,8 @@
 
 package viewmodels.checkAnswers
 
-import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.FirstContactEmailPage
+import pages.addFinancialInstitution.FirstContactEmailPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -34,7 +33,7 @@ object FirstContactEmailSummary {
           key = "firstContactEmail.checkYourAnswersLabel",
           value = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.FirstContactEmailController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", controllers.addFinancialInstitution.routes.FirstContactEmailController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("firstContactEmail.change.hidden"))
           )
         )

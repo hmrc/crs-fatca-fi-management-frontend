@@ -17,7 +17,7 @@
 package utils
 
 import models.UserAnswers
-import pages.{ContactNamePage, NameOfFinancialInstitutionPage, SecondContactNamePage}
+import pages.addFinancialInstitution.{ContactNamePage, NameOfFinancialInstitutionPage, SecondContactNamePage}
 import play.api.i18n.Messages
 
 trait ContactHelper {

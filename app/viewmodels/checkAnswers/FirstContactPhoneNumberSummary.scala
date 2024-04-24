@@ -16,9 +16,8 @@
 
 package viewmodels.checkAnswers
 
-import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.FirstContactPhoneNumberPage
+import pages.addFinancialInstitution.FirstContactPhoneNumberPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -34,7 +33,7 @@ object FirstContactPhoneNumberSummary {
           key = "firstContactPhoneNumber.checkYourAnswersLabel",
           value = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.FirstContactPhoneNumberController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", controllers.addFinancialInstitution.routes.FirstContactPhoneNumberController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("firstContactPhoneNumber.change.hidden"))
           )
         )

@@ -16,9 +16,10 @@
 
 package navigation
 
-import controllers.routes
+import controllers.addFinancialInstitution.routes
 import models._
 import pages._
+import pages.addFinancialInstitution._
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -41,7 +42,7 @@ class Navigator @Inject() () {
           routes.HaveGIINController.onPageLoad(NormalMode)
         )
     case HaveGIINPage   => _ => routes.WhatIsGIINController.onPageLoad(NormalMode)
-    case WhatIsGIINPage => _ => routes.IndexController.onPageLoad // TODO: Change this to whereIsFIBased when implemented
+    case WhatIsGIINPage => _ => controllers.routes.IndexController.onPageLoad // TODO: Change this to whereIsFIBased when implemented
     case HaveUniqueTaxpayerReferencePage =>
       userAnswers =>
         yesNoPage(
@@ -83,15 +84,15 @@ class Navigator @Inject() () {
           routes.CheckYourAnswersController.onPageLoad
         )
     case SecondContactPhoneNumberPage => _ => routes.CheckYourAnswersController.onPageLoad
-    case InstitutionPostcodePage      => addressLookupNavigation(NormalMode)
-    case InstitutionSelectAddressPage => _ => routes.ContactNameController.onPageLoad(NormalMode)
-    case IsThisInstitutionAddressPage =>
+    case PostcodePage                 => addressLookupNavigation(NormalMode)
+    case SelectAddressPage            => _ => routes.ContactNameController.onPageLoad(NormalMode)
+    case IsThisAddressPage =>
       userAnswers =>
         yesNoPage(
           userAnswers,
-          IsThisInstitutionAddressPage,
+          IsThisAddressPage,
           routes.ContactNameController.onPageLoad(NormalMode),
-          routes.IndexController.onPageLoad
+          routes.UkAddressController.onPageLoad(NormalMode)
         )
     case HaveGIINPage =>
       userAnswers =>
@@ -99,10 +100,10 @@ class Navigator @Inject() () {
           userAnswers,
           HaveGIINPage,
           routes.WhatIsGIINController.onPageLoad(NormalMode),
-          routes.IndexController.onPageLoad
+          controllers.routes.IndexController.onPageLoad
         )
     case _ =>
-      _ => routes.IndexController.onPageLoad
+      _ => controllers.routes.IndexController.onPageLoad
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
@@ -112,8 +113,8 @@ class Navigator @Inject() () {
 
   private def addressLookupNavigation(mode: Mode)(ua: UserAnswers): Call =
     ua.get(AddressLookupPage) match {
-      case Some(value) if value.length == 1 => controllers.routes.IsThisInstitutionAddressController.onPageLoad(mode)
-      case _                                => controllers.routes.InstitutionSelectAddressController.onPageLoad(mode)
+      case Some(value) if value.length == 1 => routes.IsThisAddressController.onPageLoad(mode)
+      case _                                => routes.SelectAddressController.onPageLoad(mode)
     }
 
   private def yesNoPage(ua: UserAnswers, fromPage: QuestionPage[Boolean], yesCall: => Call, noCall: => Call): Call =

@@ -16,9 +16,8 @@
 
 package viewmodels.checkAnswers
 
-import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.WhatIsUniqueTaxpayerReferencePage
+import pages.addFinancialInstitution.WhatIsUniqueTaxpayerReferencePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -34,7 +33,7 @@ object WhatIsUniqueTaxpayerReferenceSummary {
           key = "whatIsUniqueTaxpayerReference.checkYourAnswersLabel",
           value = ValueViewModel(HtmlFormat.escape(answer.uniqueTaxPayerReference).toString),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", controllers.addFinancialInstitution.routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("whatIsUniqueTaxpayerReference.change.hidden"))
           )
         )
