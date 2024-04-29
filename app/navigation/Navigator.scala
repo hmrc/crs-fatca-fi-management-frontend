@@ -41,8 +41,7 @@ class Navigator @Inject() () {
           routes.WhatIsGIINController.onPageLoad(NormalMode),
           routes.HaveGIINController.onPageLoad(NormalMode)
         )
-    case HaveGIINPage   => _ => routes.WhatIsGIINController.onPageLoad(NormalMode)
-    case WhatIsGIINPage => _ => controllers.routes.IndexController.onPageLoad // TODO: Change this to whereIsFIBased when implemented
+    case WhatIsGIINPage => _ => routes.WhereIsFIBasedController.onPageLoad(NormalMode)
     case HaveUniqueTaxpayerReferencePage =>
       userAnswers =>
         yesNoPage(

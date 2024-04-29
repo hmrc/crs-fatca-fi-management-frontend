@@ -124,3 +124,8 @@ GET        /giin                        controllers.addFinancialInstitution.What
 POST       /giin                        controllers.addFinancialInstitution.WhatIsGIINController.onSubmit(mode: Mode = NormalMode)
 GET        /change-giin                  controllers.addFinancialInstitution.WhatIsGIINController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-giin                  controllers.addFinancialInstitution.WhatIsGIINController.onSubmit(mode: Mode = CheckMode)
+
+GET        /where-is-fi-based                        controllers.addFinancialInstitution.WhereIsFIBasedController.onPageLoad(mode: Mode = NormalMode)
+POST       /where-is-fi-based                        controllers.addFinancialInstitution.WhereIsFIBasedController.onSubmit(mode: Mode = NormalMode)
+GET        /change-where-is-fi-based                  controllers.addFinancialInstitution.WhereIsFIBasedController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-where-is-fi-based                  controllers.addFinancialInstitution.WhereIsFIBasedController.onSubmit(mode: Mode = CheckMode)
