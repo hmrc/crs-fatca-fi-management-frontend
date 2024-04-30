@@ -139,6 +139,18 @@ class NavigatorSpec extends SpecBase {
           routes.WhereIsFIBasedController.onPageLoad(NormalMode)
       }
 
+      "must go from WhereIsFIBased to UKPostcode when user answers yes" in {
+        val userAnswers = emptyUserAnswers.withPage(WhereIsFIBasedPage, true)
+        navigator.nextPage(WhereIsFIBasedPage, NormalMode, userAnswers) mustBe
+          routes.PostcodeController.onPageLoad(NormalMode)
+      }
+
+      "must go from WhereIsFIBased to NonUKAddress when user answers no" in {
+        val userAnswers = emptyUserAnswers.withPage(WhereIsFIBasedPage, false)
+        navigator.nextPage(WhereIsFIBasedPage, NormalMode, userAnswers) mustBe
+          routes.NonUkAddressController.onPageLoad(NormalMode)
+      }
+
     }
 
     "in Check mode" - {

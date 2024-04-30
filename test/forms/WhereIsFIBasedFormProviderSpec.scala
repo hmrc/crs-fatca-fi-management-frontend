@@ -17,24 +17,24 @@
 package forms
 
 import forms.addFinancialInstitution.WhereIsFIBasedFormProvider
-import forms.behaviours.OptionFieldBehaviours
-import models.WhereIsFIBased
+import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class WhereIsFIBasedFormProviderSpec extends OptionFieldBehaviours {
+class WhereIsFIBasedFormProviderSpec extends BooleanFieldBehaviours {
 
   val form = new WhereIsFIBasedFormProvider()()
 
+  val requiredKey = "whereIsFIBased.error.required"
+  val invalidKey  = "error.boolean"
+
   ".value" - {
 
-    val fieldName   = "value"
-    val requiredKey = "whereIsFIBased.error.required"
+    val fieldName = "value"
 
-    behave like optionsField[WhereIsFIBased](
+    behave like booleanField(
       form,
       fieldName,
-      validValues = WhereIsFIBased.values,
-      invalidError = FormError(fieldName, "error.invalid")
+      invalidError = FormError(fieldName, invalidKey)
     )
 
     behave like mandatoryField(

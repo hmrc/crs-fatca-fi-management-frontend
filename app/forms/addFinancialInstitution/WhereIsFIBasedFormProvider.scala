@@ -17,16 +17,15 @@
 package forms.addFinancialInstitution
 
 import forms.mappings.Mappings
-import models.WhereIsFIBased
 import play.api.data.Form
 
 import javax.inject.Inject
 
 class WhereIsFIBasedFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[WhereIsFIBased] =
+  def apply(): Form[Boolean] =
     Form(
-      "value" -> enumerable[WhereIsFIBased]("whereIsFIBased.error.required")
+      "value" -> boolean("whereIsFIBased.error.required")
     )
 
 }

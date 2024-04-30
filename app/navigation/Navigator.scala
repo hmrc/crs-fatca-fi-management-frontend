@@ -42,6 +42,14 @@ class Navigator @Inject() () {
           routes.HaveGIINController.onPageLoad(NormalMode)
         )
     case WhatIsGIINPage => _ => routes.WhereIsFIBasedController.onPageLoad(NormalMode)
+    case WhereIsFIBasedPage =>
+      userAnswers =>
+        yesNoPage(
+          userAnswers,
+          WhereIsFIBasedPage,
+          routes.PostcodeController.onPageLoad(NormalMode),
+          routes.NonUkAddressController.onPageLoad(NormalMode)
+        )
     case HaveUniqueTaxpayerReferencePage =>
       userAnswers =>
         yesNoPage(

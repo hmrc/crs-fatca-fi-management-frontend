@@ -17,14 +17,13 @@
 package controllers.addFinancialInstitution
 
 import base.SpecBase
-import controllers.routes
 import forms.addFinancialInstitution.WhereIsFIBasedFormProvider
-import models.{NormalMode, UserAnswers, WhereIsFIBased}
+import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.addFinancialInstitution.{FirstContactCanWePhonePage, NameOfFinancialInstitutionPage, WhereIsFIBasedPage}
+import pages.addFinancialInstitution.{NameOfFinancialInstitutionPage, WhereIsFIBasedPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -65,7 +64,7 @@ class WhereIsFIBasedControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = ua.set(WhereIsFIBasedPage, WhereIsFIBased.values.head).success.value
+      val userAnswers = ua.set(WhereIsFIBasedPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -77,7 +76,7 @@ class WhereIsFIBasedControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(WhereIsFIBased.values.head), NormalMode, "fiName")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, "fiName")(request, messages(application)).toString
       }
     }
 
@@ -98,7 +97,7 @@ class WhereIsFIBasedControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, whereIsFIBasedRoute)
-            .withFormUrlEncodedBody(("value", WhereIsFIBased.values.head.toString))
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
