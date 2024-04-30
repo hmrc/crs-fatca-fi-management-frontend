@@ -124,3 +124,5 @@ GET        /giin                        controllers.addFinancialInstitution.What
 POST       /giin                        controllers.addFinancialInstitution.WhatIsGIINController.onSubmit(mode: Mode = NormalMode)
 GET        /change-giin                  controllers.addFinancialInstitution.WhatIsGIINController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-giin                  controllers.addFinancialInstitution.WhatIsGIINController.onSubmit(mode: Mode = CheckMode)
+
+GET        /problem/information-sent     controllers.InformationSentController.onPageLoad

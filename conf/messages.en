@@ -253,4 +253,7 @@ pageNotFound.para.2 = If you pasted the web address, check you copied the entire
 pageNotFound.para.3 = You can email {0} if you have any questions about this service.
 pageNotFound.para.email = aeoi.enquiries@hmrc.gov.uk
 
-
+informationSent.title = You have already sent this information
+informationSent.heading = You have already sent this information
+informationSent.p1 = We will contact you if we have any questions about the details you have provided.
+informationSent.link = Manage your CRS or FATCA reports
