@@ -100,15 +100,15 @@ POST       /select-address                             controllers.addFinancialI
 GET        /change-select-address                      controllers.addFinancialInstitution.SelectAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-select-address                      controllers.addFinancialInstitution.SelectAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET        /institutionNonUkAddress                        controllers.addFinancialInstitution.NonUkAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /institutionNonUkAddress                        controllers.addFinancialInstitution.NonUkAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /changeInstitutionNonUkAddress                  controllers.addFinancialInstitution.NonUkAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeInstitutionNonUkAddress                  controllers.addFinancialInstitution.NonUkAddressController.onSubmit(mode: Mode = CheckMode)
+GET        /address-non-uk                        controllers.addFinancialInstitution.NonUkAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /address-non-uk                        controllers.addFinancialInstitution.NonUkAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /change-address-non-uk                  controllers.addFinancialInstitution.NonUkAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-address-non-uk                  controllers.addFinancialInstitution.NonUkAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET        /institutionUkAddress                        controllers.addFinancialInstitution.UkAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /institutionUkAddress                        controllers.addFinancialInstitution.UkAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /changeInstitutionUkAddress                  controllers.addFinancialInstitution.UkAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeInstitutionUkAddress                  controllers.addFinancialInstitution.UkAddressController.onSubmit(mode: Mode = CheckMode)
+GET        /address-uk                        controllers.addFinancialInstitution.UkAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /address-uk                        controllers.addFinancialInstitution.UkAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /change-address-uk                  controllers.addFinancialInstitution.UkAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-address-uk                  controllers.addFinancialInstitution.UkAddressController.onSubmit(mode: Mode = CheckMode)
 
 GET        /is-this-the-address                         controllers.addFinancialInstitution.IsThisAddressController.onPageLoad(mode: Mode = NormalMode)
 POST       /is-this-the-address                         controllers.addFinancialInstitution.IsThisAddressController.onSubmit(mode: Mode = NormalMode)
