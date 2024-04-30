@@ -29,14 +29,13 @@
     @formHelper(action = controllers.addFinancialInstitution.routes.WhereIsFIBasedController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
         @govukRadios(
-            RadiosViewModel(
+            RadiosViewModel.yesNo(
                 field  = form("value"),
-                legend = LegendViewModel(messages("whereIsFIBased.heading", fiName)).asPageHeading(),
-                items  = WhereIsFIBased.options
+                legend = LegendViewModel(messages("whereIsFIBased.heading", fiName)).asPageHeading()
             )
         )
 
