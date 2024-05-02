@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,27 +16,27 @@
 
 package handlers
 
-import javax.inject.{Inject, Singleton}
+import config.FrontendAppConfig
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Request
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
-import views.html.{ErrorTemplate, PageNotFoundView}
+import views.html.{PageNotFoundView, ThereIsAProblemView}
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class ErrorHandler @Inject() (
-  val messagesApi: MessagesApi,
-  view: ErrorTemplate,
-  pageNotFoundView: PageNotFoundView
-) extends FrontendErrorHandler
-    with I18nSupport {
+                               val messagesApi: MessagesApi,
+                               view: ThereIsAProblemView,
+                               frontendAppConfig: FrontendAppConfig,
+                               notFoundView: PageNotFoundView
+                             ) extends FrontendErrorHandler
+  with I18nSupport {
 
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit
-    rh: Request[_]
-  ): Html =
-    view(pageTitle, heading, message)
+  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit rh: Request[_]): Html =
+    view()
 
-  override def notFoundTemplate(implicit request: Request[_]): Html =
-    pageNotFoundView()
+  override def notFoundTemplate(implicit request: Request[_]): Html = notFoundView(frontendAppConfig.emailEnquiries)
 
 }

@@ -35,10 +35,10 @@ class JourneyRecoveryControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val problemiew = application.injector.instanceOf[ThereIsAProblemView]
+        val problemView = application.injector.instanceOf[ThereIsAProblemView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual problemiew()(
+        contentAsString(result) mustEqual problemView()(
           request,
           messages(application)
         ).toString
