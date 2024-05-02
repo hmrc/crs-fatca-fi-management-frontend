@@ -127,7 +127,7 @@ class Navigator @Inject() () {
   private def yesNoPage(ua: UserAnswers, fromPage: QuestionPage[Boolean], yesCall: => Call, noCall: => Call): Call =
     ua.get(fromPage)
       .map(if (_) yesCall else noCall)
-      .getOrElse(controllers.routes.JourneyRecoveryController.onPageLoad())
+      .getOrElse(controllers.routes.JourneyRecoveryController.onPageLoad)
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>

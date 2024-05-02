@@ -38,6 +38,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   val signOutUrl: String            = configuration.get[String]("urls.signOut")
   lazy val lostUTRUrl: String       = configuration.get[String]("urls.lostUTR")
   lazy val addressLookUpUrl: String = configuration.get[Service]("microservice.services.address-lookup").baseUrl
+  lazy val emailEnquiries: String   = configuration.get[String]("urls.emailEnquiries")
 
   private val exitSurveyBaseUrl: String = configuration.get[String]("feedback-frontend.host")
   val exitSurveyUrl: String             = s"$exitSurveyBaseUrl/feedback/$appName"
