@@ -10,7 +10,7 @@ GET         /language/:lang                              controllers.LanguageSwi
 
 GET         /refresh-session                             controllers.KeepAliveController.keepAlive
 
-GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad()
+GET         /problem/there-is-a-problem                  controllers.JourneyRecoveryController.onPageLoad()
 
 GET         /check-your-answers                          controllers.addFinancialInstitution.CheckYourAnswersController.onPageLoad
 

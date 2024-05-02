@@ -38,6 +38,11 @@ error.number = Please enter a valid number
 error.required = Please enter a value
 error.summary.title = There is a problem
 
+thereIsAProblem.title = Sorry, there is a problem with the service
+thereIsAProblem.heading = Sorry, there is a problem with the service
+thereIsAProblem.paragraph.1 = Try again later.
+thereIsAProblem.paragraph.2 = You can email {0} if you need to contact someone about your CRS or FATCA reporting.
+
 index.title = crs-fatca-fi-management-frontend
 index.heading = crs-fatca-fi-management-frontend
 index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
