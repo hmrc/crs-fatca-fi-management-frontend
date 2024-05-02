@@ -11,6 +11,7 @@ GET         /language/:lang                              controllers.LanguageSwi
 GET         /refresh-session                             controllers.KeepAliveController.keepAlive
 
 GET         /problem/there-is-a-problem                  controllers.JourneyRecoveryController.onPageLoad()
+GET         /problem/information-sent                    controllers.InformationSentController.onPageLoad
 
 GET         /check-your-answers                          controllers.addFinancialInstitution.CheckYourAnswersController.onPageLoad
 
@@ -129,5 +130,3 @@ GET        /where-is-fi-based                        controllers.addFinancialIns
 POST       /where-is-fi-based                        controllers.addFinancialInstitution.WhereIsFIBasedController.onSubmit(mode: Mode = NormalMode)
 GET        /change-where-is-fi-based                  controllers.addFinancialInstitution.WhereIsFIBasedController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-where-is-fi-based                  controllers.addFinancialInstitution.WhereIsFIBasedController.onSubmit(mode: Mode = CheckMode)
-
-GET        /problem/information-sent     controllers.InformationSentController.onPageLoad
