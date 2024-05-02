@@ -27,12 +27,12 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class ErrorHandler @Inject() (
-                               val messagesApi: MessagesApi,
-                               view: ThereIsAProblemView,
-                               frontendAppConfig: FrontendAppConfig,
-                               notFoundView: PageNotFoundView
-                             ) extends FrontendErrorHandler
-  with I18nSupport {
+  val messagesApi: MessagesApi,
+  view: ThereIsAProblemView,
+  frontendAppConfig: FrontendAppConfig,
+  notFoundView: PageNotFoundView
+) extends FrontendErrorHandler
+    with I18nSupport {
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit rh: Request[_]): Html =
     view()
