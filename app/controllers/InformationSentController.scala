@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,26 +17,24 @@
 package controllers
 
 import controllers.actions.IdentifierAction
-import play.api.Logging
-import play.api.i18n.I18nSupport
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.ThereIsAProblemView
+import views.html.InformationSentView
 
 import javax.inject.Inject
 
-class JourneyRecoveryController @Inject() (
-  val controllerComponents: MessagesControllerComponents,
+class InformationSentController @Inject() (
+  override val messagesApi: MessagesApi,
   identify: IdentifierAction,
-  problemView: ThereIsAProblemView
+  val controllerComponents: MessagesControllerComponents,
+  view: InformationSentView
 ) extends FrontendBaseController
-    with I18nSupport
-    with Logging {
+    with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = identify {
+  def onPageLoad: Action[AnyContent] = identify {
     implicit request =>
-      logger.info("Something went wrong")
-      Ok(problemView())
+      Ok(view())
   }
 
 }

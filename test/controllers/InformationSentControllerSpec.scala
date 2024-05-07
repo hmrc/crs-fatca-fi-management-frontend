@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,28 +19,25 @@ package controllers
 import base.SpecBase
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.ThereIsAProblemView
+import views.html.InformationSentView
 
-class JourneyRecoveryControllerSpec extends SpecBase {
+class InformationSentControllerSpec extends SpecBase {
 
-  "JourneyRecovery Controller" - {
+  "InformationSent Controller" - {
 
-    "must return OK and the problem view" in {
+    "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.JourneyRecoveryController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.InformationSentController.onPageLoad.url)
 
         val result = route(application, request).value
 
-        val problemView = application.injector.instanceOf[ThereIsAProblemView]
+        val view = application.injector.instanceOf[InformationSentView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual problemView()(
-          request,
-          messages(application)
-        ).toString
+        contentAsString(result) mustEqual view()(request, messages(application)).toString
       }
     }
   }
