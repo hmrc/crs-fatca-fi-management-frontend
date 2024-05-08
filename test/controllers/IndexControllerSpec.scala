@@ -39,7 +39,7 @@ class IndexControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view("", true, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(true, None, NormalMode)(request, messages(application)).toString
       }
     }
   }

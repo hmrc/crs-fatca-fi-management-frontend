@@ -33,7 +33,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValues with ScalaFutures with IntegrationPatience {
 
-  val userAnswersId: String         = "id"
+  val userAnswersId: String         = "FATCAID"
   implicit val hc: HeaderCarrier    = HeaderCarrier()
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
 

@@ -16,12 +16,10 @@
 
 package controllers
 
-import connectors.SubscriptionConnector
+import config.FrontendAppConfig
 import controllers.actions.IdentifierAction
 import models.{Mode, UserAnswers}
 import play.api.Logging
-
-import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -29,6 +27,7 @@ import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.IndexView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IndexController @Inject() (
@@ -36,6 +35,7 @@ class IndexController @Inject() (
   sessionRepository: SessionRepository,
   identify: IdentifierAction,
   subscriptionService: SubscriptionService,
+  conf: FrontendAppConfig,
   view: IndexView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -44,13 +44,18 @@ class IndexController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = identify.async {
     implicit request =>
-      subscriptionService.getSubscription().flatMap {
+      subscriptionService.getSubscription(request.subscriptionId).flatMap {
         sub =>
+          val changeContactDetailsLink: String = if (sub.isBusiness == true) {
+            s"${conf.registerUrl}/change-contact/organisation/details"
+          } else {
+            s"${conf.registerUrl}/change-contact/individual/details"
+          }
           sessionRepository.get(request.userId) flatMap {
-            case Some(_) => Future.successful(Ok(view(sub.isBusiness, mode)))
+            case Some(_) => Future.successful(Ok(view(sub.isBusiness, sub.businessName, changeContactDetailsLink, mode)))
             case None =>
               sessionRepository.set(UserAnswers(request.userId)) map {
-                case true => Ok(view(sub.isBusiness, mode))
+                case true => Ok(view(sub.isBusiness, sub.businessName, changeContactDetailsLink, mode))
                 case false =>
                   logger.error(s"Failed to initialize user answers for userId: [${request.userId}]")
                   Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
