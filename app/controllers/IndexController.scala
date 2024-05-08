@@ -16,14 +16,16 @@
 
 package controllers
 
+import connectors.SubscriptionConnector
 import controllers.actions.IdentifierAction
-import models.UserAnswers
+import models.{Mode, UserAnswers}
 import play.api.Logging
 
 import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.IndexView
 
@@ -33,22 +35,26 @@ class IndexController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   sessionRepository: SessionRepository,
   identify: IdentifierAction,
+  subscriptionService: SubscriptionService,
   view: IndexView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with Logging
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = identify.async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = identify.async {
     implicit request =>
-      sessionRepository.get(request.userId) flatMap {
-        case Some(_) => Future.successful(Ok(view()))
-        case None =>
-          sessionRepository.set(UserAnswers(request.userId)) map {
-            case true => Ok(view())
-            case false =>
-              logger.error(s"Failed to initialize user answers for userId: [${request.userId}]")
-              Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      subscriptionService.getSubscription().flatMap {
+        sub =>
+          sessionRepository.get(request.userId) flatMap {
+            case Some(_) => Future.successful(Ok(view(sub.isBusiness, mode)))
+            case None =>
+              sessionRepository.set(UserAnswers(request.userId)) map {
+                case true => Ok(view(sub.isBusiness, mode))
+                case false =>
+                  logger.error(s"Failed to initialize user answers for userId: [${request.userId}]")
+                  Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+              }
           }
       }
   }

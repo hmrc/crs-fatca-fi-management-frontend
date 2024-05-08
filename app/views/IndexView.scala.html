@@ -15,10 +15,13 @@
  *@
 
 @this(
-    layout: templates.Layout
+    layout: templates.Layout,
+    link: components.Link
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@(isBusiness: Boolean, mode: Mode)(implicit request: Request[_], messages: Messages)
+
+@emailLink = {@link(href="mailto:aeoi.enquiries@hmrc.gov.uk", "index.p4.link")}
 
 @layout(
     pageTitle    = titleNoForm(messages("index.title")),
@@ -27,5 +30,15 @@
 
     <h1 class="govuk-heading-xl">@messages("index.heading")</h1>
 
-    <p class="govuk-body">@messages("index.guidance")</p>
+    <p class="govuk-body">@Html(messages("index.p1", link(controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(mode).url, "index.p1.link")))</p>
+
+    <p class="govuk-body">@messages("index.p2")</p>
+
+    <p class="govuk-heading-m">@messages("index.h2")</p>
+
+    @if(isBusiness == true){<p class="govuk-body">@link(controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(mode).url, "index.p3")</p>}
+
+    @if(isBusiness == false){<p class="govuk-body">@link(controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(mode).url, "organisationIndex.p3")</p>}
+
+    <p class="govuk-body">@Html(messages("index.p4", emailLink))</p>
 }
