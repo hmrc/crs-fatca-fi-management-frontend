@@ -17,8 +17,12 @@
 package controllers
 
 import base.SpecBase
-import connectors.FileDetailsConnector
+import config.FrontendAppConfig
 import models.NormalMode
+import models.subscription.request.{ContactInformation, IndividualDetails}
+import models.subscription.response.UserSubscription
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -27,18 +31,32 @@ import repositories.SessionRepository
 import services.SubscriptionService
 import views.html.IndexView
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+
 class IndexControllerSpec extends SpecBase {
 
   "Index Controller" - {
 
     "must return OK and the correct view for a GET" in {
+
+      val individualSubscription = UserSubscription("", None, true, ContactInformation(IndividualDetails("firstName", "lastName"), "", None), None)
+
       val mockSubscriptionService = mock[SubscriptionService]
       val mockSessionRepository   = mock[SessionRepository]
+      val mockAppConfig           = mock[FrontendAppConfig]
+
+      when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSubscriptionService.getSubscription("FATCAID")).thenReturn(Future.successful(individualSubscription))
+      when(mockAppConfig.registerIndividualDetailsUrl) thenReturn "url"
+      when(mockAppConfig.registerOrganisationDetailsUrl) thenReturn "url"
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(
           bind[SubscriptionService].toInstance(mockSubscriptionService),
-          bind[SessionRepository].toInstance(mockSessionRepository)
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[FrontendAppConfig].toInstance(mockAppConfig)
         )
         .build()
 
@@ -54,6 +72,7 @@ class IndexControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view(true, "businessName", "", NormalMode)(request, messages(application)).toString
       }
     }
+  }
   }
 
 }
