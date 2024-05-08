@@ -17,6 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
+import models.subscription.request.ReadSubscriptionRequest
 import models.subscription.response.DisplaySubscriptionResponse
 import play.api.Logging
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
@@ -27,12 +28,12 @@ import scala.concurrent.{ExecutionContext, Future}
 class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient) extends Logging {
 
   def readSubscription(
-    fatcaId: String
+    readSubscriptionRequest: ReadSubscriptionRequest
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[DisplaySubscriptionResponse] = {
 
     val submissionUrl = s"${config.registrationUrl}/crs-fatca-registration/subscription/read-subscription"
 
-    http.POST[String, DisplaySubscriptionResponse](submissionUrl, fatcaId)
+    http.POST[ReadSubscriptionRequest, DisplaySubscriptionResponse](submissionUrl, readSubscriptionRequest)
 
   }
 

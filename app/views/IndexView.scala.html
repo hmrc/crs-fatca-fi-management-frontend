@@ -22,7 +22,7 @@
     conf: FrontendAppConfig
 )
 
-@(isBusiness: Boolean, businessName: Option[String], changeContactDetailsLink: String,mode: Mode)(implicit request: Request[_], messages: Messages)
+@(isBusiness: Boolean, businessName: String, changeContactDetailsLink: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @emailLink = {@link(href="mailto:aeoi.enquiries@hmrc.gov.uk", "index.p4.link")}
 
@@ -40,8 +40,8 @@
     <p class="govuk-heading-m">@messages("index.h2")</p>
 
     @if(isBusiness == false){<p class="govuk-body">@link(changeContactDetailsLink, "index.p3")</p>}
-s
-    @if(isBusiness == true){<p class="govuk-body">@link(changeContactDetailsLink, "organisationIndex.p3", businessName)</p>}
+
+    @if(isBusiness == true){<p class="govuk-body">@link(changeContactDetailsLink, messages("organisationIndex.p3", businessName))</p>}
 
     <p class="govuk-body">@Html(messages("index.p4", emailLink))</p>
 }

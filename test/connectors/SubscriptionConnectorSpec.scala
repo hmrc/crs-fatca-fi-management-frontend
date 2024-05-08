@@ -21,6 +21,8 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqua
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
 import helpers.WireMockServerHandler
+import models.IdentifierType
+import models.subscription.request.ReadSubscriptionRequest
 import models.subscription.response.DisplaySubscriptionResponse
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
@@ -62,14 +64,14 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
     "Return subscription response" in {
       stubResponse(readSubscriptionUrl, OK, exampleResponse)
 
-      val result = connector.readSubscription("fatcaId")
+      val result = connector.readSubscription(ReadSubscriptionRequest(IdentifierType.FATCAID, "fatcaId"))
       result.futureValue mustBe Json.parse(exampleResponse).as[DisplaySubscriptionResponse]
     }
 
     "Throw an exception when display response doesn't contain subscription information" in {
       stubResponse(readSubscriptionUrl, OK, "{}")
 
-      val result = connector.readSubscription("fatcaId")
+      val result = connector.readSubscription(ReadSubscriptionRequest(IdentifierType.FATCAID, "fatcaId"))
       assertThrows[Exception] {
         result.futureValue
       }
@@ -78,7 +80,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
     "Throw an exception when response status is not 2XX" in {
       stubResponse(readSubscriptionUrl, INTERNAL_SERVER_ERROR, exampleResponse)
 
-      val result = connector.readSubscription("fatcaId")
+      val result = connector.readSubscription(ReadSubscriptionRequest(IdentifierType.FATCAID, "fatcaId"))
       assertThrows[Exception] {
         result.futureValue
       }
@@ -87,7 +89,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
     "Throw an exception when response status is not 2XX and response doesn't contain subscription information" in {
       stubResponse(readSubscriptionUrl, INTERNAL_SERVER_ERROR, "{}")
 
-      val result = connector.readSubscription("fatcaId")
+      val result = connector.readSubscription(ReadSubscriptionRequest(IdentifierType.FATCAID, "fatcaId"))
       assertThrows[Exception] {
         result.futureValue
       }

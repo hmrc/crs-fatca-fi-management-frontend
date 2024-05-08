@@ -17,6 +17,8 @@
 package services
 
 import connectors.SubscriptionConnector
+import models.IdentifierType
+import models.subscription.request.ReadSubscriptionRequest
 import models.subscription.response.UserSubscription
 import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
@@ -27,6 +29,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class SubscriptionService @Inject() (val subscriptionConnector: SubscriptionConnector) extends Logging {
 
   def getSubscription(fatcaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserSubscription] =
-    subscriptionConnector.readSubscription(fatcaId).map(_.success)
+    subscriptionConnector.readSubscription(ReadSubscriptionRequest(IdentifierType.FATCAID, fatcaId)).map(_.success)
 
 }

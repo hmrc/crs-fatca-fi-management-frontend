@@ -17,9 +17,14 @@
 package controllers
 
 import base.SpecBase
+import connectors.FileDetailsConnector
 import models.NormalMode
+import org.scalatestplus.mockito.MockitoSugar.mock
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.SessionRepository
+import services.SubscriptionService
 import views.html.IndexView
 
 class IndexControllerSpec extends SpecBase {
@@ -27,8 +32,15 @@ class IndexControllerSpec extends SpecBase {
   "Index Controller" - {
 
     "must return OK and the correct view for a GET" in {
+      val mockSubscriptionService = mock[SubscriptionService]
+      val mockSessionRepository   = mock[SessionRepository]
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(
+          bind[SubscriptionService].toInstance(mockSubscriptionService),
+          bind[SessionRepository].toInstance(mockSessionRepository)
+        )
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
@@ -39,7 +51,7 @@ class IndexControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(true, None, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(true, "businessName", "", NormalMode)(request, messages(application)).toString
       }
     }
   }
