@@ -21,7 +21,6 @@ import models.subscription.request.{ContactInformation, IndividualDetails, Organ
 import models.subscription.response.UserSubscription
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.inject.bind
 
 class UserSubscriptionSpec extends SpecBase with ScalaCheckPropertyChecks {
 
@@ -29,9 +28,6 @@ class UserSubscriptionSpec extends SpecBase with ScalaCheckPropertyChecks {
 
   val individualSubscription   = UserSubscription("", None, true, ContactInformation(IndividualDetails("firstName", "lastName"), "", None), None)
   val organisationSubscription = UserSubscription("", Some("trading name"), true, ContactInformation(OrganisationDetails("business"), "", None), None)
-
-  private val app = applicationBuilder()
-    .overrides(bind[UserSubscription].toInstance(mockUserSubscription))
 
   "UserSubscription" - {
     "isBusiness must return true if subscription response contains organisation details" in {

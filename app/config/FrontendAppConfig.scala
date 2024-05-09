@@ -42,6 +42,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val registerUrl: String                    = configuration.get[String]("urls.register")
   lazy val registerOrganisationDetailsUrl: String = s"$registerUrl/change-contact/organisation/details"
   lazy val registerIndividualDetailsUrl: String   = s"$registerUrl/change-contact/individual/details"
+  lazy val emailEnquiries: String                 = configuration.get[String]("urls.emailEnquiries")
 
   private val exitSurveyBaseUrl: String = configuration.get[String]("feedback-frontend.host")
   val exitSurveyUrl: String             = s"$exitSurveyBaseUrl/feedback/$appName"

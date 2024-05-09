@@ -25,9 +25,9 @@
 )
 
 
-@()(implicit request: Request[_], messages: Messages)
+@(emailLink: String)(implicit request: Request[_], messages: Messages)
 
-@emailLink = {@link(href="mailto:aeoi.enquiries@hmrc.gov.uk", "pageNotFound.para.email")}
+@emailLink = {@link(href="mailto:$emailLink", "pageNotFound.para.email", openInNewWindow = true)}
 
 @layout(pageTitle = titleNoForm(messages("pageNotFound.title"))) {
 

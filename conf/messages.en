@@ -21,6 +21,8 @@ timeout.message = For security reasons, you will be signed out of this service i
 timeout.keepAlive = Stay signed in
 timeout.signOut = Sign out
 
+enquiries.email = aeoi.enquiries@hmrc.gov.uk
+
 error.browser.title.prefix = Error:
 error.boolean = Please give an answer
 error.invalid_date = Give a correct date
@@ -46,6 +48,11 @@ organisationIndex.p3 = Change your contact details for {0}
 index.p4 = Email {0} if you are having problems with the service.
 index.p1.link = add a financial institution
 index.p4.link = aeoi.enquiries@hmrc.gov.uk
+
+thereIsAProblem.title = Sorry, there is a problem with the service
+thereIsAProblem.heading = Sorry, there is a problem with the service
+thereIsAProblem.paragraph.1 = Try again later.
+thereIsAProblem.paragraph.2 = You can email {0} if you need to contact someone about your CRS or FATCA reporting.
 
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
@@ -266,3 +273,8 @@ whereIsFIBased.yes = Yes
 whereIsFIBased.no = No
 whereIsFIBased.checkYourAnswersLabel = Is the financial institution based in the UK, Jersey, Guernsey or the Isle of Man?
 whereIsFIBased.error.required = Select yes if the financial institution is based in the UK, Jersey, Guernsey or the Isle of Man
+
+informationSent.title = You have already sent this information
+informationSent.heading = You have already sent this information
+informationSent.p1 = We will contact you if we have any questions about the details you have provided.
+informationSent.link = Manage your CRS or FATCA reports
