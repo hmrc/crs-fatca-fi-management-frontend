@@ -19,6 +19,7 @@ package controllers.actions
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.routes
+import models.IdentifierType
 import models.requests.IdentifierRequest
 import play.api.Logging
 import play.api.mvc.Results._
@@ -68,8 +69,8 @@ class AuthenticatedIdentifierAction @Inject() (
                                    block: IdentifierRequest[A] => Future[Result]
   ): Future[Result] = {
 
-    val fatcaEnrolment  = "HMRC-FATCA-ORG"
-    val fatcaIdentifier = "FATCAID"
+    val fatcaEnrolment  = config.enrolmentKey
+    val fatcaIdentifier = IdentifierType.FATCAID
 
     val subscriptionId: Option[String] = for {
       enrolment      <- enrolments.getEnrolment(fatcaEnrolment)

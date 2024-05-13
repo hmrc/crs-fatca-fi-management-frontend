@@ -72,7 +72,7 @@ class IndexControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(false, "", "/change-contact/individual/details", NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(false, "", "/change-contact/individual/details")(request, messages(application)).toString
       }
     }
 
@@ -103,9 +103,7 @@ class IndexControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(true, "businessName", "/change-contact/organisation/details", NormalMode)(request,
-                                                                                                                         messages(application)
-        ).toString
+        contentAsString(result) mustEqual view(true, "businessName", "/change-contact/organisation/details")(request, messages(application)).toString
       }
     }
   }
