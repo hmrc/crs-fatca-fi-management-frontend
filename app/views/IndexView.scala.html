@@ -37,11 +37,15 @@
 
     <p class="govuk-body">@messages("index.p2")</p>
 
-    <p class="govuk-heading-m">@messages("index.h2")</p>
+    @if(isBusiness == false){
+        <p class="govuk-heading-m">@messages("index.h2")</p>
+        <p class="govuk-body">@link(changeContactDetailsLink, "index.p3")</p>
+    }
 
-    @if(isBusiness == false){<p class="govuk-body">@link(changeContactDetailsLink, "index.p3")</p>}
+    @if(isBusiness == true){
+        <p class="govuk-heading-m">@messages("organisationIndex.h2")</p>
+        <p class="govuk-body">@link(changeContactDetailsLink, messages("organisationIndex.p3", businessName))</p>
+    }
 
-    @if(isBusiness == true){<p class="govuk-body">@link(changeContactDetailsLink, messages("organisationIndex.p3", businessName))</p>}
-
-    <p class="govuk-body">@Html(messages("index.p4", emailLink))</p>
+    <p class="govuk-body govuk-!-padding-top-4">@Html(messages("index.p4", emailLink))</p>
 }
