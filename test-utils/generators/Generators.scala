@@ -194,4 +194,6 @@ trait Generators extends RegexConstants {
     } yield s"$pt1.$pt2.$pt3.$pt4"
   }
 
+  def invalidCountry: Gen[String] = Gen.oneOf(Set("Invalid Country 1", "Invalid Country 2", "&nbsp"))
+
 }
