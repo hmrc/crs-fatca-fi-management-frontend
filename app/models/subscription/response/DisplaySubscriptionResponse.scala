@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package models.requests
+package models.subscription.response
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.auth.core.AffinityGroup
+import play.api.libs.json.{Json, OFormat}
 
-case class IdentifierRequest[A](request: Request[A], userId: String, subscriptionId: String, userType: AffinityGroup) extends WrappedRequest[A](request)
+case class DisplaySubscriptionResponse(success: UserSubscription)
+
+object DisplaySubscriptionResponse {
+  implicit lazy val format: OFormat[DisplaySubscriptionResponse] = Json.format[DisplaySubscriptionResponse]
+}

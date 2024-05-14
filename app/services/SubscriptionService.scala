@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-package controllers.actions
+package services
+
+import connectors.SubscriptionConnector
+import models.IdentifierType
+import models.subscription.request.ReadSubscriptionRequest
+import models.subscription.response.UserSubscription
+import play.api.Logging
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
-import models.requests.IdentifierRequest
-import play.api.mvc._
-import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
-
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeIdentifierAction @Inject() (bodyParsers: PlayBodyParsers) extends IdentifierAction {
+class SubscriptionService @Inject() (val subscriptionConnector: SubscriptionConnector) extends Logging {
 
-  override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] =
-    block(IdentifierRequest(request, "FATCAID", "subscriptionId", Organisation))
-
-  override def parser: BodyParser[AnyContent] =
-    bodyParsers.default
-
-  override protected def executionContext: ExecutionContext =
-    scala.concurrent.ExecutionContext.Implicits.global
+  def getSubscription(fatcaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserSubscription] =
+    subscriptionConnector.readSubscription(ReadSubscriptionRequest(IdentifierType.FATCAID, fatcaId)).map(_.success)
 
 }

@@ -33,12 +33,16 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   def feedbackUrl(implicit request: RequestHeader): String =
     s"$contactHost/contact/beta-feedback?service=$appName&backUrl=${SafeRedirectUrl(host + request.uri).encodedUrl}"
 
-  val loginUrl: String              = configuration.get[String]("urls.login")
-  val loginContinueUrl: String      = configuration.get[String]("urls.loginContinue")
-  val signOutUrl: String            = configuration.get[String]("urls.signOut")
-  lazy val lostUTRUrl: String       = configuration.get[String]("urls.lostUTR")
-  lazy val addressLookUpUrl: String = configuration.get[Service]("microservice.services.address-lookup").baseUrl
-  lazy val emailEnquiries: String   = configuration.get[String]("urls.emailEnquiries")
+  val loginUrl: String                            = configuration.get[String]("urls.login")
+  val loginContinueUrl: String                    = configuration.get[String]("urls.loginContinue")
+  val signOutUrl: String                          = configuration.get[String]("urls.signOut")
+  lazy val lostUTRUrl: String                     = configuration.get[String]("urls.lostUTR")
+  lazy val addressLookUpUrl: String               = configuration.get[Service]("microservice.services.address-lookup").baseUrl
+  lazy val registrationUrl: String                = configuration.get[Service]("microservice.services.crs-fatca-registration").baseUrl
+  lazy val registerUrl: String                    = configuration.get[String]("urls.register")
+  lazy val registerOrganisationDetailsUrl: String = s"$registerUrl/change-contact/organisation/details"
+  lazy val registerIndividualDetailsUrl: String   = s"$registerUrl/change-contact/individual/details"
+  lazy val emailEnquiries: String                 = configuration.get[String]("urls.emailEnquiries")
 
   private val exitSurveyBaseUrl: String = configuration.get[String]("feedback-frontend.host")
   val exitSurveyUrl: String             = s"$exitSurveyBaseUrl/feedback/$appName"
@@ -55,6 +59,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   val countdown: Int = configuration.get[Int]("timeout-dialog.countdown")
 
   val cacheTtl: Int = configuration.get[Int]("mongodb.timeToLiveInSeconds")
+
+  val enrolmentKey: String = configuration.get[String]("keys.enrolmentKey.crsFatca")
 
   lazy val countryCodeJson: String = configuration.get[String]("json.countries")
 }

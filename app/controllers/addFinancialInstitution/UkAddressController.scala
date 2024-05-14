@@ -49,7 +49,7 @@ class UkAddressController @Inject() (
     with ContactHelper
     with I18nSupport {
 
-  val countriesList: Seq[Country] = countryListFactory.countryListWithUKCountries
+  lazy val countriesList: Seq[Country] = countryListFactory.countryListWithUKCountries
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
