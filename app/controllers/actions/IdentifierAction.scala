@@ -76,7 +76,7 @@ class AuthenticatedIdentifierAction @Inject() (
 
     subscriptionId.fold {
       logger.warn("Unable to retrieve Fatca id from Enrolments")
-      Future.successful(Redirect(config.registrationUrl))
+      Future.successful(Redirect(config.registerUrl))
     } {
       fatcaId =>
         block(IdentifierRequest(request, internalId, fatcaId, affinityGroup))
