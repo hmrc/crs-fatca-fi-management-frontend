@@ -18,7 +18,6 @@ package controllers
 
 import base.SpecBase
 import config.FrontendAppConfig
-import models.NormalMode
 import models.subscription.request.{ContactInformation, IndividualDetails, OrganisationDetails}
 import models.subscription.response.UserSubscription
 import org.mockito.ArgumentMatchers.any
@@ -54,7 +53,6 @@ class IndexControllerSpec extends SpecBase {
       when(mockSubscriptionService.getSubscription(any())(any[HeaderCarrier](), any[ExecutionContext]())).thenReturn(Future.successful(individualSubscription))
       when(mockAppConfig.registerIndividualDetailsUrl) thenReturn "/change-contact/individual/details"
       when(mockAppConfig.feedbackUrl(any[RequestHeader]())) thenReturn "test"
-
       val application = applicationBuilder(userAnswers = None)
         .overrides(
           bind[SubscriptionService].toInstance(mockSubscriptionService),
