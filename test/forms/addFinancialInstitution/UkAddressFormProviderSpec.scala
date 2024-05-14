@@ -17,37 +17,230 @@
 package forms.addFinancialInstitution
 
 import forms.behaviours.StringFieldBehaviours
+import models.Country
+import org.scalacheck.Gen
 import play.api.data.FormError
+import wolfendale.scalacheck.regexp.RegexpGen
 
 class UkAddressFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "ukAddress.error.required"
-  val lengthKey   = "ukAddress.error.length"
-  val maxLength   = 100
+  private val countries = Seq(
+    Country("valid", "AD", "Andorra"),
+    Country("valid", "FJ", "Fiji"),
+    Country("valid", "GG", "Guernsey"),
+    Country("valid", "GG", "Guernsey"),
+    Country("valid", "GG", "Guernsey")
+  )
 
-  val form = new UkAddressFormProvider()()
+  val form = new UkAddressFormProvider()(countries)
 
-  ".value" - {
+  val addressLineMaxLength = 35
 
-    val fieldName = "value"
+  ".addressLine1" - {
 
-    behave like fieldThatBindsValidData(
+    val fieldName   = "addressLine1"
+    val requiredKey = "ukAddress.error.addressLine1.required"
+    val invalidKey  = "ukAddress.error.addressLine1.invalid"
+    val lengthKey   = "ukAddress.error.addressLine1.length"
+
+    behave like fieldThatBindsValidDataWithoutInvalidError(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      RegexpGen.from(apiAddressRegex),
+      invalidKey
     )
 
-    behave like fieldWithMaxLength(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
-      maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      maxLength = addressLineMaxLength,
+      lengthError = FormError(fieldName, lengthKey)
+    )
+
+    behave like fieldWithNonEmptyWhitespace(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
     )
 
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidKey)
+    )
+  }
+
+  ".addressLine2" - {
+
+    val fieldName  = "addressLine2"
+    val invalidKey = "ukAddress.error.addressLine2.invalid"
+    val lengthKey  = "ukAddress.error.addressLine2.length"
+
+    behave like fieldThatBindsValidDataWithoutInvalidError(
+      form,
+      fieldName,
+      RegexpGen.from(apiAddressRegex),
+      invalidKey
+    )
+
+    behave like fieldWithMaxLengthAlpha(
+      form,
+      fieldName,
+      maxLength = addressLineMaxLength,
+      lengthError = FormError(fieldName, lengthKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidKey)
+    )
+  }
+
+  ".addressLine3" - {
+
+    val fieldName   = "addressLine3"
+    val requiredKey = "ukAddress.error.addressLine3.required"
+    val invalidKey  = "ukAddress.error.addressLine3.invalid"
+    val lengthKey   = "ukAddress.error.addressLine3.length"
+
+    behave like fieldThatBindsValidDataWithoutInvalidError(
+      form,
+      fieldName,
+      RegexpGen.from(apiAddressRegex),
+      invalidKey
+    )
+
+    behave like fieldWithMaxLengthAlpha(
+      form,
+      fieldName,
+      maxLength = addressLineMaxLength,
+      lengthError = FormError(fieldName, lengthKey)
+    )
+
+    behave like fieldWithNonEmptyWhitespace(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidKey)
+    )
+  }
+
+  ".addressLine4" - {
+
+    val fieldName  = "addressLine4"
+    val invalidKey = "ukAddress.error.addressLine4.invalid"
+    val lengthKey  = "ukAddress.error.addressLine4.length"
+
+    behave like fieldThatBindsValidDataWithoutInvalidError(
+      form,
+      fieldName,
+      RegexpGen.from(apiAddressRegex),
+      invalidKey
+    )
+
+    behave like fieldWithMaxLengthAlpha(
+      form,
+      fieldName,
+      maxLength = addressLineMaxLength,
+      lengthError = FormError(fieldName, lengthKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidKey)
+    )
+  }
+
+  ".postCode" - {
+
+    val fieldName      = "postCode"
+    val requiredKey    = "ukAddress.error.postcode.required"
+    val lengthKey      = "ukAddress.error.postcode.length"
+    val invalidKey     = "ukAddress.error.postcode.invalid"
+    val invalidCharKey = "ukAddress.error.postcode.chars"
+
+    val postCodeMaxLength = 10
+
+    behave like fieldThatBindsValidData(
+      form,
+      fieldName,
+      validPostCodes
+    )
+
+    behave like fieldWithMaxLengthAlpha(
+      form,
+      fieldName,
+      maxLength = postCodeMaxLength,
+      lengthError = FormError(fieldName, lengthKey)
+    )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "xx9 9xx9",
+      FormError(fieldName, invalidKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "!#2",
+      FormError(fieldName, invalidCharKey),
+      Some("chars")
+    )
+  }
+
+  ".country" - {
+
+    val fieldName   = "country"
+    val requiredKey = "ukAddress.error.country.required"
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldThatBindsValidData(
+      form,
+      fieldName,
+      Gen.oneOf(countries.map(_.code))
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      invalidCountry,
+      error = FormError(fieldName, requiredKey)
     )
   }
 

@@ -8,3 +8,18 @@
     display: inline-block;
     word-break: break-word;
 }
+
+// Raise index of dropdown arrow on accessible autocomplete
+// This prevents it from being hidden behind the other address inputs
+.autocomplete__dropdown-arrow-down {
+  z-index: 0;
+  pointer-events: none;
+}
+
+// Constrain the input (and drop-down) so they are situated with the other address inputs
+// important to do this on the wrapper rather than the input itself otherwise the down-arrow will be floating by itself
+@media (min-width: 40.0625em){
+  .autocomplete__wrapper {
+    width: 66.66%!important;
+  }
+}

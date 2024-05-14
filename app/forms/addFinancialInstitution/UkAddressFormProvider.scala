@@ -17,16 +17,60 @@
 package forms.addFinancialInstitution
 
 import javax.inject.Inject
-
 import forms.mappings.Mappings
+import models.{Address, Country}
 import play.api.data.Form
+import play.api.data.Forms.mapping
+import utils.RegexConstants
 
-class UkAddressFormProvider @Inject() extends Mappings {
+class UkAddressFormProvider @Inject() extends Mappings with RegexConstants {
 
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("ukAddress.error.required")
-        .verifying(maxLength(100, "ukAddress.error.length"))
-    )
+  val addressLineLength = 35
+
+  def apply(countryList: Seq[Country]): Form[Address] = Form(
+    mapping(
+      "addressLine1" -> validatedText(
+        "ukAddress.error.addressLine1.required",
+        "ukAddress.error.addressLine1.invalid",
+        "ukAddress.error.addressLine1.length",
+        apiAddressRegex,
+        addressLineLength
+      ),
+      "addressLine2" -> validatedOptionalText("ukAddress.error.addressLine2.invalid",
+                                              "ukAddress.error.addressLine2.length",
+                                              apiAddressRegex,
+                                              addressLineLength
+      ),
+      "addressLine3" -> validatedText(
+        "ukAddress.error.addressLine3.required",
+        "ukAddress.error.addressLine3.invalid",
+        "ukAddress.error.addressLine3.length",
+        apiAddressRegex,
+        addressLineLength
+      ),
+      "addressLine4" -> validatedOptionalText("ukAddress.error.addressLine4.invalid",
+                                              "ukAddress.error.addressLine4.length",
+                                              apiAddressRegex,
+                                              addressLineLength
+      ),
+      "postCode" -> mandatoryPostcode(
+        "ukAddress.error.postcode.required",
+        "ukAddress.error.postcode.length",
+        "ukAddress.error.postcode.invalid",
+        regexPostcode,
+        "ukAddress.error.postcode.chars",
+        postCodeAllowedChars
+      ).transform[Option[String]](
+        postCode => Option(postCode),
+        _.getOrElse(throw new IllegalStateException("postCode is empty"))
+      ),
+      "country" -> text("ukAddress.error.country.required")
+        .verifying("ukAddress.error.country.required", value => countryList.exists(_.code == value))
+        .transform[Country](
+          value => countryList.find(_.code == value).getOrElse(throw new IllegalStateException(s"Country with code [$value] not found")),
+          _.code
+        )
+    )(Address.apply)(Address.unapply)
+  )
 
 }

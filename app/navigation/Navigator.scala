@@ -109,6 +109,7 @@ class Navigator @Inject() () {
           routes.WhatIsGIINController.onPageLoad(NormalMode),
           controllers.routes.IndexController.onPageLoad
         )
+    case UkAddressPage => _ => routes.ContactNameController.onPageLoad(NormalMode)
     case _ =>
       _ => controllers.routes.IndexController.onPageLoad
   }
