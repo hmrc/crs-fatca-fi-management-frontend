@@ -68,13 +68,9 @@ class AuthenticatedIdentifierAction @Inject() (
                                    affinityGroup: AffinityGroup,
                                    block: IdentifierRequest[A] => Future[Result]
   ): Future[Result] = {
-
-    val fatcaEnrolment  = config.enrolmentKey
-    val fatcaIdentifier = IdentifierType.FATCAID
-
     val subscriptionId: Option[String] = for {
-      enrolment      <- enrolments.getEnrolment(fatcaEnrolment)
-      id             <- enrolment.getIdentifier(fatcaIdentifier)
+      enrolment      <- enrolments.getEnrolment(config.enrolmentKey)
+      id             <- enrolment.getIdentifier(IdentifierType.FATCAID)
       subscriptionId <- if (id.value.nonEmpty) Some(id.value) else None
     } yield subscriptionId
 
