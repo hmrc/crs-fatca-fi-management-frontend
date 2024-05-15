@@ -51,22 +51,18 @@ object LookupAddressByPostcode {
 
 object AddressLookup {
 
-  implicit val addressLookupWrite = new Writes[AddressLookup] {
+  implicit val addressLookupWrite: Writes[AddressLookup] = (addressLookup: AddressLookup) => {
+    def lines: List[String] = List(addressLookup.addressLine1, addressLookup.addressLine2, addressLookup.addressLine3, addressLookup.addressLine4).flatten
 
-    def writes(addressLookup: AddressLookup) = {
-      def lines: List[String] = List(addressLookup.addressLine1, addressLookup.addressLine2, addressLookup.addressLine3, addressLookup.addressLine4).flatten
-
-      Json.obj(
-        "address" ->
-          Json.obj(
-            "lines"    -> lines,
-            "town"     -> addressLookup.town,
-            "county"   -> addressLookup.county,
-            "postcode" -> addressLookup.postcode
-          )
-      )
-    }
-
+    Json.obj(
+      "address" ->
+        Json.obj(
+          "lines"    -> lines,
+          "town"     -> addressLookup.town,
+          "county"   -> addressLookup.county,
+          "postcode" -> addressLookup.postcode
+        )
+    )
   }
 
   implicit val addressLookupReads: Reads[AddressLookup] =
