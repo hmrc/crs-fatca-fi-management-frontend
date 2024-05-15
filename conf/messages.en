@@ -38,10 +38,10 @@ error.number = Please enter a valid number
 error.required = Please enter a value
 error.summary.title = There is a problem
 
-index.title = Manage your CRS and FATCA Reports
-index.heading = Manage your CRS and FATCA Reports
-index.p1 = To send a report you must {0}.
-index.p2 = You will need to provide your CRS and FATCA user ID ABCD123456 in every file you send to HMRC.
+index.title = Manage your CRS and FATCA reports
+index.heading = Manage your CRS and FATCA reports
+index.p1 = To send a report, you must {0}.
+index.p2 = You will need to provide your CRS and FATCA user ID {0} in every file you send to HMRC.
 index.h2 = Your contact details
 organisationIndex.h2 = Contact details
 index.p3 = Change your contact details
