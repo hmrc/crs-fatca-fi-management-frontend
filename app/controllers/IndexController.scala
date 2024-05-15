@@ -44,7 +44,8 @@ class IndexController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = identify.async {
     implicit request =>
-      subscriptionService.getSubscription(request.subscriptionId).flatMap {
+      val fatcaId = request.fatcaId
+      subscriptionService.getSubscription(fatcaId).flatMap {
         sub =>
           val changeContactDetailsLink: String = if (sub.isBusiness) {
             conf.registerOrganisationDetailsUrl
@@ -53,10 +54,10 @@ class IndexController @Inject() (
           }
           val businessName: String = sub.businessName.getOrElse("")
           sessionRepository.get(request.userId) flatMap {
-            case Some(_) => Future.successful(Ok(view(sub.isBusiness, businessName, changeContactDetailsLink)))
+            case Some(_) => Future.successful(Ok(view(sub.isBusiness, businessName, changeContactDetailsLink, fatcaId)))
             case None =>
               sessionRepository.set(UserAnswers(request.userId)) map {
-                case true => Ok(view(sub.isBusiness, businessName, changeContactDetailsLink))
+                case true => Ok(view(sub.isBusiness, businessName, changeContactDetailsLink, fatcaId))
                 case false =>
                   logger.error(s"Failed to initialize user answers for userId: [${request.userId}]")
                   Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
