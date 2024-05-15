@@ -17,16 +17,54 @@
 package forms.addFinancialInstitution
 
 import javax.inject.Inject
-
 import forms.mappings.Mappings
+import models.{Address, Country}
 import play.api.data.Form
+import play.api.data.Forms.mapping
+import utils.RegexConstants
 
-class NonUkAddressFormProvider @Inject() extends Mappings {
+class NonUkAddressFormProvider @Inject() extends Mappings with RegexConstants {
 
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("nonUkAddress.error.required")
-        .verifying(maxLength(100, "nonUkAddress.error.length"))
-    )
+  val addressLineLength = 35
+
+  def apply(countryList: Seq[Country]): Form[Address] = Form(
+    mapping(
+      "addressLine1" -> validatedText(
+        "nonUkAddress.error.addressLine1.required",
+        "nonUkAddress.error.addressLine1.invalid",
+        "nonUkAddress.error.addressLine1.length",
+        apiAddressRegex,
+        addressLineLength
+      ),
+      "addressLine2" -> validatedOptionalText(
+        "nonUkAddress.error.addressLine2.invalid",
+        "nonUkAddress.error.addressLine2.length",
+        apiAddressRegex,
+        addressLineLength
+      ),
+      "addressLine3" -> validatedText(
+        "nonUkAddress.error.addressLine3.required",
+        "nonUkAddress.error.addressLine3.invalid",
+        "nonUkAddress.error.addressLine3.length",
+        apiAddressRegex,
+        addressLineLength
+      ),
+      "addressLine4" -> validatedOptionalText(
+        "nonUkAddress.error.addressLine4.invalid",
+        "nonUkAddress.error.addressLine4.length",
+        apiAddressRegex,
+        addressLineLength
+      ),
+      "postCode" -> optionalPostcode(
+        "nonUkAddress.error.postcode.length"
+      ),
+      "country" -> text("nonUkAddress.error.country.required")
+        .verifying("nonUkAddress.error.country.required", value => countryList.exists(_.code == value))
+        .transform[Country](
+          value => countryList.find(_.code == value).getOrElse(throw new IllegalStateException(s"Country with code [$value] not found")),
+          _.code
+        )
+    )(Address.apply)(Address.unapply)
+  )
 
 }

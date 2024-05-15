@@ -15,33 +15,100 @@
  *@
 
 @import viewmodels.InputWidth._
+@import models.Country
+@import uk.gov.hmrc.govukfrontend.views.Implicits.RichSelect
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.accessibleautocomplete.AccessibleAutocomplete
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
+    govukSelect: GovukSelect,
     govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+
+@(form: Form[_], countries: Seq[SelectItem], fiName: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("nonUkAddress.title"))) {
 
-    @formHelper(action = controllers.addFinancialInstitution.routes.NonUkAddressController.onSubmit(mode)) {
+    @formHelper(action = controllers.addFinancialInstitution.routes.NonUkAddressController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @govukInput(
-            InputViewModel(
-                field = form("value"),
-                label = LabelViewModel(messages("nonUkAddress.heading")).asPageHeading()
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                <h1 class="govuk-fieldset__heading">
+                    @messages("nonUkAddress.heading", fiName)
+                </h1>
+            </legend>
+        
+            @govukInput(
+                InputViewModel(
+                    field = form("addressLine1"),
+                    label = LabelViewModel(messages("nonUkAddress.addressLine1"))
+                )
+                .withAutocomplete("address-line1")
+                .withWidth(TwoThirds)
             )
-            .withWidth(Full)
-        )
-
+        
+            @govukInput(
+                InputViewModel(
+                    field = form("addressLine2"),
+                    label = LabelViewModel(messages("nonUkAddress.addressLine2"))
+                )
+                .withAutocomplete("address-line2")
+                .withWidth(TwoThirds)
+            )
+        
+            @govukInput(
+                InputViewModel(
+                    field = form("addressLine3"),
+                    label = LabelViewModel(messages("nonUkAddress.addressLine3"))
+                )
+                .withAutocomplete("address-level2")
+                .withWidth(TwoThirds)
+            )
+        
+            @govukInput(
+                InputViewModel(
+                    field = form("addressLine4"),
+                    label = LabelViewModel(messages("nonUkAddress.addressLine4.region"))
+                )
+                .withAutocomplete("address-level1")
+                .withWidth(TwoThirds)
+            )
+        
+            @govukInput(
+                InputViewModel(
+                    field = form("postCode"),
+                    label = LabelViewModel(messages("nonUkAddress.postCode.optional"))
+                )
+                .withAutocomplete("postal-code")
+                .withWidth(Fixed10)
+            )
+        
+            @govukSelect(
+                SelectViewModel(
+                    field = form("country"),
+                    label = LabelViewModel(messages("nonUkAddress.countryCode")),
+                    items = countries
+                )
+                .withAttribute("autocomplete" -> "country-name")
+                .asAccessibleAutocomplete(Some(
+                    AccessibleAutocomplete(
+                        defaultValue = Some(""),
+                        showAllValues = true,
+                        autoSelect = true
+                    )
+                ))
+            )
+    
+        </fieldset>
+    
         @govukButton(
             ButtonViewModel(messages("site.continue")).withAttribute("id" -> "submit")
         )

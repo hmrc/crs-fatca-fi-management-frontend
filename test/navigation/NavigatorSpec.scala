@@ -156,6 +156,11 @@ class NavigatorSpec extends SpecBase {
           routes.ContactNameController.onPageLoad(NormalMode)
       }
 
+      "must go from NonUkAddress to ContactName" in {
+        navigator.nextPage(NonUkAddressPage, NormalMode, emptyUserAnswers) mustBe
+          routes.ContactNameController.onPageLoad(NormalMode)
+      }
+
     }
 
     "in Check mode" - {

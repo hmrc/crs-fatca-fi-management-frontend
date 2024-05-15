@@ -17,85 +17,125 @@
 package controllers.addFinancialInstitution
 
 import base.SpecBase
+import config.FrontendAppConfig
 import forms.addFinancialInstitution.NonUkAddressFormProvider
-import models.{NormalMode, UserAnswers}
+import models.{Address, Country, NormalMode}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.addFinancialInstitution.NonUkAddressPage
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import pages.addFinancialInstitution.{NameOfFinancialInstitutionPage, NonUkAddressPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
+import utils.CountryListFactory
 import views.html.addFinancialInstitution.NonUkAddressView
 
 import scala.concurrent.Future
 
-class NonUkAddressControllerSpec extends SpecBase with MockitoSugar {
+class NonUkAddressControllerSpec extends SpecBase with GuiceOneAppPerSuite with MockitoSugar {
 
-  def onwardRoute = Call("GET", "/foo")
+  private val PostCode     = "XX9 9XX"
+  private val AddressLine1 = "value 1"
+  private val AddressLine2 = "value 2"
+  private val AddressLine3 = "value 3"
+  private val AddressLine4 = "value 4"
 
-  val formProvider = new NonUkAddressFormProvider()
-  val form         = formProvider()
+  private val TestFinancialInstitutionName = "Some Financial Institution"
 
-  lazy val NonUkAddressRoute = routes.NonUkAddressController.onPageLoad(NormalMode).url
+  private val testCountry: Country             = Country("valid", "AG", "Antigua and Barbuda")
+  private val testCountryList: Seq[Country]    = Seq(testCountry)
+  private val mockAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
+
+  private val address: Address = Address(AddressLine1, Some(AddressLine2), AddressLine3, Some(AddressLine4), Some(PostCode), testCountry)
+
+  private val countryListFactory: CountryListFactory = new CountryListFactory(app.environment, mockAppConfig) {
+    override lazy val countryList: Seq[Country] = testCountryList
+  }
+
+  private val formProvider = new NonUkAddressFormProvider()
+  private val form         = formProvider(testCountryList)
+
+  private def onwardRoute                    = Call("GET", "/foo")
+  private lazy val nonUkAddressRoute: String = routes.NonUkAddressController.onPageLoad(NormalMode).url
 
   "NonUkAddress Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers = emptyUserAnswers.withPage(NameOfFinancialInstitutionPage, TestFinancialInstitutionName)
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[CountryListFactory].to(countryListFactory))
+        .build()
 
       running(application) {
-        val request = FakeRequest(GET, NonUkAddressRoute)
+        val request = FakeRequest(GET, nonUkAddressRoute)
+        val view    = application.injector.instanceOf[NonUkAddressView]
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[NonUkAddressView]
-
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(
+          form,
+          countryListFactory.countrySelectList(form.data, testCountryList),
+          TestFinancialInstitutionName,
+          NormalMode
+        )(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
+      val userAnswers = emptyUserAnswers
+        .withPage(NameOfFinancialInstitutionPage, TestFinancialInstitutionName)
+        .withPage(NonUkAddressPage, address)
 
-      val userAnswers = UserAnswers(userAnswersId).set(NonUkAddressPage, "answer").success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[CountryListFactory].to(countryListFactory))
+        .build()
 
       running(application) {
-        val request = FakeRequest(GET, NonUkAddressRoute)
-
-        val view = application.injector.instanceOf[NonUkAddressView]
+        val request = FakeRequest(GET, nonUkAddressRoute)
+        val view    = application.injector.instanceOf[NonUkAddressView]
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(
+          form.fill(address),
+          countryListFactory.countrySelectList(form.data, testCountryList),
+          TestFinancialInstitutionName,
+          NormalMode
+        )(request, messages(application)).toString
       }
     }
 
     "must redirect to the next page when valid data is submitted" in {
-
       val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(emptyUserAnswers.withPage(NameOfFinancialInstitutionPage, TestFinancialInstitutionName)))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CountryListFactory].to(countryListFactory)
           )
           .build()
 
       running(application) {
         val request =
-          FakeRequest(POST, NonUkAddressRoute)
-            .withFormUrlEncodedBody(("value", "answer"))
+          FakeRequest(POST, nonUkAddressRoute)
+            .withFormUrlEncodedBody(
+              ("addressLine1", AddressLine1),
+              ("addressLine2", AddressLine2),
+              ("addressLine3", AddressLine2),
+              ("addressLine4", AddressLine2),
+              ("postCode", PostCode),
+              ("country", testCountry.code)
+            )
 
         val result = route(application, request).value
 
@@ -104,32 +144,36 @@ class NonUkAddressControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+    "must return a Bad Request and corresponding view when invalid data is submitted" in {
+      val userAnswers = emptyUserAnswers.withPage(NameOfFinancialInstitutionPage, TestFinancialInstitutionName)
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[CountryListFactory].to(countryListFactory))
+        .build()
 
       running(application) {
-        val request =
-          FakeRequest(POST, NonUkAddressRoute)
-            .withFormUrlEncodedBody(("value", ""))
-
+        val request   = FakeRequest(POST, nonUkAddressRoute).withFormUrlEncodedBody(("value", "invalid data"))
         val boundForm = form.bind(Map("value" -> ""))
-
-        val view = application.injector.instanceOf[NonUkAddressView]
+        val view      = application.injector.instanceOf[NonUkAddressView]
 
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(
+          boundForm,
+          countryListFactory.countrySelectList(form.data, testCountryList),
+          TestFinancialInstitutionName,
+          NormalMode
+        )(request, messages(application)).toString
       }
     }
 
     "must redirect to Journey Recovery for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(bind[CountryListFactory].to(countryListFactory))
+        .build()
 
       running(application) {
-        val request = FakeRequest(GET, NonUkAddressRoute)
+        val request = FakeRequest(GET, nonUkAddressRoute)
 
         val result = route(application, request).value
 
@@ -139,13 +183,12 @@ class NonUkAddressControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must redirect to Journey Recovery for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(bind[CountryListFactory].to(countryListFactory))
+        .build()
 
       running(application) {
-        val request =
-          FakeRequest(POST, NonUkAddressRoute)
-            .withFormUrlEncodedBody(("value", "answer"))
+        val request = FakeRequest(POST, nonUkAddressRoute).withFormUrlEncodedBody(("value", "answer"))
 
         val result = route(application, request).value
 

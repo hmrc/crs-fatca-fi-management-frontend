@@ -34,15 +34,21 @@ class CountryListFactory @Inject() (environment: Environment, appConfig: Fronten
 
   private def getCountryList: Seq[Country] =
     (environment.resourceAsStream(appConfig.countryCodeJson) map Json.parse map {
-      _.as[Seq[Country]].sortWith(
-        (country, country2) => country.description.toLowerCase < country2.description.toLowerCase
-      )
+      _.as[Seq[Country]]
+        .sortWith(
+          (country, country2) => country.description.toLowerCase < country2.description.toLowerCase
+        )
+        .distinct
     }).getOrElse(throw new IllegalStateException("Could not retrieve countries list from JSON file."))
 
   lazy val countryListWithUKCountries: Seq[Country] = countryList
     .filter(
       country => countryCodesForUkCountries.contains(country.code)
     )
+
+  lazy val countryListWithoutUKCountries: Seq[Country] = countryList.filter(
+    country => !countryCodesForUkCountries.contains(country.code)
+  )
 
   def countrySelectList(value: Map[String, String], countries: Seq[Country]): Seq[SelectItem] = {
     def containsCountry(country: Country): Boolean =

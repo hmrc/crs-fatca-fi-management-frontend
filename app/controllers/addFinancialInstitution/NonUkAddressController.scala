@@ -18,13 +18,14 @@ package controllers.addFinancialInstitution
 
 import controllers.actions._
 import forms.addFinancialInstitution.NonUkAddressFormProvider
-import models.Mode
+import models.{Country, Mode}
 import navigation.Navigator
 import pages.addFinancialInstitution.NonUkAddressPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.{ContactHelper, CountryListFactory}
 import views.html.addFinancialInstitution.NonUkAddressView
 
 import javax.inject.Inject
@@ -32,6 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class NonUkAddressController @Inject() (
   override val messagesApi: MessagesApi,
+  countryListFactory: CountryListFactory,
   sessionRepository: SessionRepository,
   navigator: Navigator,
   identify: IdentifierAction,
@@ -42,26 +44,46 @@ class NonUkAddressController @Inject() (
   view: NonUkAddressView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
+    with ContactHelper
     with I18nSupport {
 
-  val form = formProvider()
+  lazy val countriesList: Seq[Country] = countryListFactory.countryListWithoutUKCountries
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
+      val form = formProvider(countriesList)
       val preparedForm = request.userAnswers.get(NonUkAddressPage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode))
+      Ok(
+        view(
+          preparedForm,
+          countryListFactory.countrySelectList(preparedForm.data, countriesList),
+          getFinancialInstitutionName(request.userAnswers),
+          mode
+        )
+      )
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+      val form = formProvider(countriesList)
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          formWithErrors =>
+            Future.successful(
+              BadRequest(
+                view(
+                  formWithErrors,
+                  countryListFactory.countrySelectList(formWithErrors.data, countriesList),
+                  getFinancialInstitutionName(request.userAnswers),
+                  mode
+                )
+              )
+            ),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(NonUkAddressPage, value))
