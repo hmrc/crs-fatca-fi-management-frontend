@@ -296,3 +296,19 @@ ukAddress.error.postcode.length = Postcode must be 10 characters or less
 ukAddress.error.postcode.chars = Postcode must only include letters a to z and numbers 0 to 9
 ukAddress.error.postcode.invalid = Enter a real postcode
 ukAddress.error.country.required = Select country
+
+isTheAddressCorrect.title = Is this the registered address for ABC Bank plc?
+isTheAddressCorrect.heading = Is this the registered address for ABC Bank plc?
+isTheAddressCorrect.checkYourAnswersLabel = isTheAddressCorrect
+isTheAddressCorrect.error.required = Select yes if the registered address for the financial institution is correct
+
+isThisTheBusinessName.title = Is this the correct name for the business?
+isThisTheBusinessName.heading = Is this the correct name for the business?
+isThisTheBusinessName.checkYourAnswersLabel = isThisTheBusinessName
+isThisTheBusinessName.error.required = Select yes if this is the correct name for the business
+
+reportForRegisteredBusiness.title = Would you like to add your business as a financial institution?
+reportForRegisteredBusiness.heading = Would you like to add your business as a financial institution?
+reportForRegisteredBusiness.p1 = If you need to report for the business you registered as, then you can add them as a financial institution now. If you would prefer to add another financial institution first, then you can still add the registered business later.
+reportForRegisteredBusiness.checkYourAnswersLabel = reportForRegisteredBusiness
+reportForRegisteredBusiness.error.required = Select yes if you would like to add your business as a financial institution

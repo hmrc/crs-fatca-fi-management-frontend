@@ -130,3 +130,18 @@ GET        /where-is-fi-based                        controllers.addFinancialIns
 POST       /where-is-fi-based                        controllers.addFinancialInstitution.WhereIsFIBasedController.onSubmit(mode: Mode = NormalMode)
 GET        /change-where-is-fi-based                  controllers.addFinancialInstitution.WhereIsFIBasedController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-where-is-fi-based                  controllers.addFinancialInstitution.WhereIsFIBasedController.onSubmit(mode: Mode = CheckMode)
+
+GET        /isTheAddressCorrect                        controllers.addFinancialInstitution.registeredBusiness.IsTheAddressCorrectController.onPageLoad(mode: Mode = NormalMode)
+POST       /isTheAddressCorrect                        controllers.addFinancialInstitution.registeredBusiness.IsTheAddressCorrectController.onSubmit(mode: Mode = NormalMode)
+GET        /changeIsTheAddressCorrect                  controllers.addFinancialInstitution.registeredBusiness.IsTheAddressCorrectController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeIsTheAddressCorrect                  controllers.addFinancialInstitution.registeredBusiness.IsTheAddressCorrectController.onSubmit(mode: Mode = CheckMode)
+
+GET        /isThisTheBusinessName                        controllers.addFinancialInstitution.registeredBusiness.IsThisTheBusinessNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /isThisTheBusinessName                        controllers.addFinancialInstitution.registeredBusiness.IsThisTheBusinessNameController.onSubmit(mode: Mode = NormalMode)
+GET        /changeIsThisTheBusinessName                  controllers.addFinancialInstitution.registeredBusiness.IsThisTheBusinessNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeIsThisTheBusinessName                  controllers.addFinancialInstitution.registeredBusiness.IsThisTheBusinessNameController.onSubmit(mode: Mode = CheckMode)
+
+GET        /reportForRegisteredBusiness                        controllers.addFinancialInstitution.registeredBusiness.ReportForRegisteredBusinessController.onPageLoad(mode: Mode = NormalMode)
+POST       /reportForRegisteredBusiness                        controllers.addFinancialInstitution.registeredBusiness.ReportForRegisteredBusinessController.onSubmit(mode: Mode = NormalMode)
+GET        /changeReportForRegisteredBusiness                  controllers.addFinancialInstitution.registeredBusiness.ReportForRegisteredBusinessController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeReportForRegisteredBusiness                  controllers.addFinancialInstitution.registeredBusiness.ReportForRegisteredBusinessController.onSubmit(mode: Mode = CheckMode)
