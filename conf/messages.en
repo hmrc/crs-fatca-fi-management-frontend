@@ -200,13 +200,6 @@ selectAddress.error.required = Select the address for the financial institution 
 selectAddress.p1.part1 = Select from the list or {0}
 selectAddress.p1.part2 = enter your address manually
 
-nonUkAddress.title = institutionSelectNonUkAddress
-nonUkAddress.heading = institutionSelectNonUkAddress
-nonUkAddress.checkYourAnswersLabel = institutionSelectNonUkAddress
-nonUkAddress.error.required = Enter institutionSelectNonUkAddress
-nonUkAddress.error.length = InstitutionSelectNonUkAddress must be 100 characters or less
-nonUkAddress.change.hidden = InstitutionSelectNonUkAddress
-
 isThisAddress.title = Is this the address?
 isThisAddress.heading = Is this the address for {0}?
 isThisAddress.checkYourAnswersLabel = Is this the address
@@ -296,3 +289,25 @@ ukAddress.error.postcode.length = Postcode must be 10 characters or less
 ukAddress.error.postcode.chars = Postcode must only include letters a to z and numbers 0 to 9
 ukAddress.error.postcode.invalid = Enter a real postcode
 ukAddress.error.country.required = Select country
+
+nonUkAddress.title = What is the financial institution’s registered address?
+nonUkAddress.heading = What is the registered address for {0}?
+nonUkAddress.addressLine1 = Address line 1
+nonUkAddress.addressLine2 = Address line 2 (optional)
+nonUkAddress.addressLine3 = City
+nonUkAddress.addressLine4.region = Region (optional)
+nonUkAddress.postCode.optional = Postcode (optional)
+nonUkAddress.countryCode = Country
+
+nonUkAddress.error.addressLine1.required = Enter address line 1
+nonUkAddress.error.addressLine1.invalid = Address line 1 must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands (&), hyphens, full stops and spaces
+nonUkAddress.error.addressLine1.length = Address line 1 must be 35 characters or less
+nonUkAddress.error.addressLine2.invalid = Address line 2 must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands (&), hyphens, full stops and spaces
+nonUkAddress.error.addressLine2.length = Address line 2 must be 35 characters or less
+nonUkAddress.error.addressLine3.required = Enter city
+nonUkAddress.error.addressLine3.invalid = City must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands (&), hyphens, full stops and spaces
+nonUkAddress.error.addressLine3.length = City must be 35 characters or less
+nonUkAddress.error.addressLine4.invalid = Region must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands (&), hyphens, full stops and spaces
+nonUkAddress.error.addressLine4.length = Region must be 35 characters or less
+nonUkAddress.error.postcode.length = Postcode must be 10 characters or less
+nonUkAddress.error.country.required = Select country
