@@ -16,7 +16,14 @@
 
 package models.requests
 
+import models.UniqueTaxpayerReference
 import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment}
 
-case class IdentifierRequest[A](request: Request[A], userId: String, fatcaId: String, userType: AffinityGroup) extends WrappedRequest[A](request)
+case class IdentifierRequest[A](request: Request[A],
+                                userId: String,
+                                fatcaId: String,
+                                userType: AffinityGroup,
+                                enrolments: Set[Enrolment] = Set.empty,
+                                autoMatched: Boolean = false
+) extends WrappedRequest[A](request)

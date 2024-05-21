@@ -17,11 +17,11 @@
 package controllers
 
 import config.FrontendAppConfig
-import controllers.actions.IdentifierAction
-import models.UserAnswers
+import controllers.actions.{CtUtrRetrievalAction, IdentifierAction}
+import models.{NormalMode, UserAnswers}
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -36,13 +36,14 @@ class IndexController @Inject() (
   identify: IdentifierAction,
   subscriptionService: SubscriptionService,
   conf: FrontendAppConfig,
+  retrieveCtUTR: CtUtrRetrievalAction,
   view: IndexView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with Logging
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = identify.async {
+  def onPageLoad(): Action[AnyContent] = (identify andThen retrieveCtUTR()).async {
     implicit request =>
       val fatcaId = request.fatcaId
       subscriptionService.getSubscription(fatcaId).flatMap {
@@ -52,12 +53,18 @@ class IndexController @Inject() (
           } else {
             conf.registerIndividualDetailsUrl
           }
+          val autoMatchedLink: Call = if (request.autoMatched) {
+            controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(NormalMode)
+          } else {
+            controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode)
+          }
+
           val businessName: String = sub.businessName.getOrElse("")
           sessionRepository.get(request.userId) flatMap {
-            case Some(_) => Future.successful(Ok(view(sub.isBusiness, businessName, changeContactDetailsLink, fatcaId)))
+            case Some(_) => Future.successful(Ok(view(sub.isBusiness, businessName, changeContactDetailsLink, fatcaId, autoMatchedLink)))
             case None =>
               sessionRepository.set(UserAnswers(request.userId)) map {
-                case true => Ok(view(sub.isBusiness, businessName, changeContactDetailsLink, fatcaId))
+                case true => Ok(view(sub.isBusiness, businessName, changeContactDetailsLink, fatcaId, autoMatchedLink))
                 case false =>
                   logger.error(s"Failed to initialize user answers for userId: [${request.userId}]")
                   Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
