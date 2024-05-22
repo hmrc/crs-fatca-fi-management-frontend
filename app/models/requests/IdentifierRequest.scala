@@ -16,7 +16,6 @@
 
 package models.requests
 
-import models.UniqueTaxpayerReference
 import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment}
 

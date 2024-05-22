@@ -24,6 +24,7 @@ import pages.addFinancialInstitution.IsRegisteredBusiness.IsThisTheBusinessNameP
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.addFinancialInstitution.IsRegisteredBusiness.IsThisTheBusinessNameView
 
@@ -37,6 +38,7 @@ class IsThisTheBusinessNameController @Inject() (
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
+  subscriptionService: SubscriptionService,
   formProvider: IsThisTheBusinessNameFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: IsThisTheBusinessNameView
@@ -48,20 +50,30 @@ class IsThisTheBusinessNameController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.get(IsThisTheBusinessNamePage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
+      subscriptionService.getSubscription(request.fatcaId).flatMap {
+        sub =>
+          val businessName = sub.tradingName.getOrElse("")
 
-      Ok(view(preparedForm, mode))
+          val preparedForm = request.userAnswers.get(IsThisTheBusinessNamePage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
+
+          Future.successful(Ok(view(preparedForm, mode, businessName)))
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+      val businessName = subscriptionService
+        .getSubscription(request.fatcaId)
+        .map(
+          sub => sub.tradingName
+        )
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, businessName))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(IsThisTheBusinessNamePage, value))
