@@ -19,6 +19,7 @@ package navigation
 import controllers.addFinancialInstitution.routes
 import models._
 import pages._
+import pages.addFinancialInstitution.IsRegisteredBusiness.{IsThisTheBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 import play.api.mvc.Call
 
@@ -110,6 +111,22 @@ class Navigator @Inject() () {
           controllers.routes.IndexController.onPageLoad
         )
     case UkAddressPage => _ => routes.ContactNameController.onPageLoad(NormalMode)
+    case ReportForRegisteredBusinessPage =>
+      userAnswers =>
+        yesNoPage(
+          userAnswers,
+          ReportForRegisteredBusinessPage,
+          controllers.addFinancialInstitution.registeredBusiness.routes.IsThisTheBusinessNameController.onPageLoad(NormalMode),
+          routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode)
+        )
+    case IsThisTheBusinessNamePage =>
+      userAnswers =>
+        yesNoPage(
+          userAnswers,
+          IsThisTheBusinessNamePage,
+          routes.SendReportsController.onPageLoad(NormalMode),
+          routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode)
+        )
     case _ =>
       _ => controllers.routes.IndexController.onPageLoad
   }

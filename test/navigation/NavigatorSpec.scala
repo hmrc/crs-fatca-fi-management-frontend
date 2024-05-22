@@ -21,6 +21,7 @@ import controllers.addFinancialInstitution.routes
 import pages.addFinancialInstitution._
 import pages._
 import models._
+import pages.addFinancialInstitution.IsRegisteredBusiness.{IsThisTheBusinessNamePage, ReportForRegisteredBusinessPage}
 
 class NavigatorSpec extends SpecBase {
 
@@ -154,6 +155,32 @@ class NavigatorSpec extends SpecBase {
       "must go from UkAddress to ContactName" in {
         navigator.nextPage(UkAddressPage, NormalMode, emptyUserAnswers) mustBe
           routes.ContactNameController.onPageLoad(NormalMode)
+      }
+
+      "must go from ReportForRegisteredBusiness" - {
+        " to IsThisTheBusinessName if Yes" in {
+          val userAnswers = emptyUserAnswers.set(ReportForRegisteredBusinessPage, true).get
+          navigator.nextPage(ReportForRegisteredBusinessPage, NormalMode, userAnswers) mustBe
+            controllers.addFinancialInstitution.registeredBusiness.routes.IsThisTheBusinessNameController.onPageLoad(NormalMode)
+        }
+        " to NameOfFinancialInstitution if No" in {
+          val userAnswers = emptyUserAnswers.set(ReportForRegisteredBusinessPage, false).get
+          navigator.nextPage(ReportForRegisteredBusinessPage, NormalMode, userAnswers) mustBe
+            routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode)
+        }
+      }
+
+      "must go from IsThisTheBusinessName" - {
+        " to SendReports if Yes" in {
+          val userAnswers = emptyUserAnswers.set(IsThisTheBusinessNamePage, true).get
+          navigator.nextPage(IsThisTheBusinessNamePage, NormalMode, userAnswers) mustBe
+            routes.SendReportsController.onPageLoad(NormalMode)
+        }
+        " to NameOfFinancialInstitution if No" in {
+          val userAnswers = emptyUserAnswers.set(ReportForRegisteredBusinessPage, false).get
+          navigator.nextPage(ReportForRegisteredBusinessPage, NormalMode, userAnswers) mustBe
+            routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode)
+        }
       }
 
     }
