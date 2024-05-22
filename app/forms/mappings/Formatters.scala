@@ -240,6 +240,24 @@ trait Formatters extends Transforms with RegexConstants {
 
     }
 
+  private[mappings] def optionalPostcodeFormatter(lengthKey: String): Formatter[Option[String]] = new Formatter[Option[String]] {
+
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
+      val postCode          = postCodeDataTransform(data.get(key))
+      val maxLengthPostcode = 10
+
+      postCode match {
+        case Some(postCode) if postCode.length > maxLengthPostcode => Left(Seq(FormError(key, lengthKey)))
+        case Some(postcode)                                        => Right(Option(postcode))
+        case _                                                     => Right(None)
+      }
+    }
+
+    override def unbind(key: String, value: Option[String]): Map[String, String] =
+      Map(key -> value.getOrElse(""))
+
+  }
+
   private[mappings] def mandatoryGIINFormatter(requiredKey: String,
                                                lengthKey: String,
                                                invalidKey: String,

@@ -157,6 +157,11 @@ class NavigatorSpec extends SpecBase {
           routes.ContactNameController.onPageLoad(NormalMode)
       }
 
+      "must go from NonUkAddress to ContactName" in {
+        navigator.nextPage(NonUkAddressPage, NormalMode, emptyUserAnswers) mustBe
+          routes.ContactNameController.onPageLoad(NormalMode)
+      }
+
       "must go from ReportForRegisteredBusiness" - {
         " to IsThisTheBusinessName if Yes" in {
           val userAnswers = emptyUserAnswers.set(ReportForRegisteredBusinessPage, true).get
