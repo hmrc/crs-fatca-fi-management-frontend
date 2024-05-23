@@ -36,5 +36,4 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
     http.POST[ReadSubscriptionRequest, DisplaySubscriptionResponse](submissionUrl, readSubscriptionRequest)
 
   }
-
 }

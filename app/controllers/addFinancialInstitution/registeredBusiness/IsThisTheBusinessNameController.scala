@@ -18,9 +18,10 @@ package controllers.addFinancialInstitution.registeredBusiness
 
 import controllers.actions._
 import forms.addFinancialInstitution.IsRegisteredBusiness.IsThisTheBusinessNameFormProvider
-import models.Mode
+import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.addFinancialInstitution.IsRegisteredBusiness.IsThisTheBusinessNamePage
+import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -48,14 +49,14 @@ class IsThisTheBusinessNameController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       subscriptionService.getSubscription(request.fatcaId).flatMap {
         sub =>
-          val businessName = sub.tradingName.getOrElse("")
+          val businessName = sub.businessName.getOrElse("")
 
           val preparedForm = request.userAnswers.get(IsThisTheBusinessNamePage) match {
-            case None => form
+            case None        => form
             case Some(value) => form.fill(value)
           }
 
@@ -65,21 +66,26 @@ class IsThisTheBusinessNameController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val businessName = subscriptionService
-        .getSubscription(request.fatcaId)
-        .map(
-          sub => sub.tradingName
-        )
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, businessName))),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(IsThisTheBusinessNamePage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(IsThisTheBusinessNamePage, mode, updatedAnswers))
-        )
+      subscriptionService.getSubscription(request.fatcaId).flatMap {
+        sub =>
+          val businessName = sub.businessName.getOrElse("")
+          form
+            .bindFromRequest()
+            .fold(
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, businessName))),
+              value =>
+                for {
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(IsThisTheBusinessNamePage, value))
+                  updatedFIName  <- setFIName(value, sub.businessName, updatedAnswers)
+                  _              <- sessionRepository.set(updatedFIName)
+                } yield Redirect(navigator.nextPage(IsThisTheBusinessNamePage, mode, updatedAnswers))
+            )
+      }
   }
+
+  private def setFIName(isThisYourBusinessName: Boolean, tradingName: Option[String], userAnswers: UserAnswers): Future[UserAnswers] =
+    if (isThisYourBusinessName) {
+      Future.fromTry(userAnswers.set(NameOfFinancialInstitutionPage, tradingName.getOrElse("")))
+    } else { Future.successful(userAnswers) }
 
 }

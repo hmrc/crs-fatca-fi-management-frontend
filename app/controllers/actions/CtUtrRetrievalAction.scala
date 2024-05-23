@@ -49,9 +49,6 @@ class CtUtrRetrievalActionProvider @Inject() (
         case i if i.key == IdentifierType.UTR => UniqueTaxpayerReference(i.value)
       })
 
-    println(ctUtr.toString + "=============================================================")
-    println(request.enrolments.toString + "=============================================================")
-
     ctUtr match {
       case Some(_) =>
         block(request.copy(autoMatched = true))

@@ -19,7 +19,8 @@
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    heading: components.Heading
 )
 
 @(form: Form[_], mode: Mode, businessName: String)(implicit request: Request[_], messages: Messages)
@@ -32,12 +33,13 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <p class="govuk-body">businessName</p>
+        @heading(messages("isThisTheBusinessName.heading"))
+        <p class="govuk-body">@businessName</p>
 
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("isThisTheBusinessName.heading")).asPageHeading()
+                legend = LegendViewModel(messages("isThisTheBusinessName.heading")).withCssClass("govuk-visually-hidden")
             )
         )
 
