@@ -133,6 +133,12 @@ class NavigatorSpec extends SpecBase {
           routes.WhatIsGIINController.onPageLoad(NormalMode)
       }
 
+      "must go from HaveGIIN to WhereIsFIBased when user answer is no" in {
+        val userAnswers = emptyUserAnswers.withPage(HaveGIINPage, false)
+        navigator.nextPage(HaveGIINPage, NormalMode, userAnswers) mustBe
+          routes.WhereIsFIBasedController.onPageLoad(NormalMode)
+      }
+
       "must go from WhatIsGIIN to WhereIsFIBased when user answers yes" in {
         val userAnswers = emptyUserAnswers.withPage(WhatIsGIINPage, "answer")
         navigator.nextPage(WhatIsGIINPage, NormalMode, userAnswers) mustBe

@@ -23,7 +23,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.addFinancialInstitution.{SecondContactEmailPage, SecondContactNamePage}
+import pages.addFinancialInstitution._
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -41,9 +41,12 @@ class SecondContactEmailControllerSpec extends SpecBase with MockitoSugar {
   val form                 = formProvider()
   val contactName          = "Mr Test"
   val financialInstitution = "Placeholder Financial Institution"
-  private val ua           = emptyUserAnswers.set(SecondContactNamePage, contactName).get
 
-  lazy val secondContactEmailRoute = routes.SecondContactEmailController.onPageLoad(NormalMode).url
+  private val ua = emptyUserAnswers
+    .withPage(SecondContactNamePage, contactName)
+    .withPage(NameOfFinancialInstitutionPage, financialInstitution)
+
+  private lazy val secondContactEmailRoute = routes.SecondContactEmailController.onPageLoad(NormalMode).url
 
   "SecondContactEmail Controller" - {
 
