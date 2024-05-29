@@ -32,15 +32,18 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
+        <h1 class="govuk-heading-l">@messages("reportForRegisteredBusiness.heading")</h1>
+        <p class="govuk-body">@Html(messages("reportForRegisteredBusiness.p1"))</p>
+
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("reportForRegisteredBusiness.heading")).asPageHeading()
+                legend = LegendViewModel(messages("reportForRegisteredBusiness.heading")).withCssClass("govuk-visually-hidden")
             )
         )
 
         @govukButton(
-            ButtonViewModel(messages("site.continue"))
+            ButtonViewModel(messages("site.continue")).withAttribute("id" -> "submit")
         )
     }
 }

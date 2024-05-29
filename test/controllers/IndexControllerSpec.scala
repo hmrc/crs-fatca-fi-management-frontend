@@ -45,17 +45,17 @@ class IndexControllerSpec extends SpecBase {
 
   when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
   when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+  when(mockAppConfig.changeIndividualDetailsUrl) thenReturn "/change-contact/individual/details"
+  when(mockAppConfig.changeOrganisationDetailsUrl) thenReturn "/change-contact/organisation/details"
+  when(mockAppConfig.feedbackUrl(any[RequestHeader]())) thenReturn "test"
 
   "Index Controller" - {
 
     "must return OK and the correct view for a GET with individualSubscription details" in {
-
       val individualSubscription =
         UserSubscription("FATCAID", None, true, ContactInformation(IndividualDetails("firstName", "lastName"), "test@test.com", None), None)
 
       when(mockSubscriptionService.getSubscription(any())(any[HeaderCarrier](), any[ExecutionContext]())).thenReturn(Future.successful(individualSubscription))
-      when(mockAppConfig.registerIndividualDetailsUrl) thenReturn "/change-contact/individual/details"
-      when(mockAppConfig.feedbackUrl(any[RequestHeader]())) thenReturn "test"
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(
@@ -75,24 +75,21 @@ class IndexControllerSpec extends SpecBase {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual view(
-          false,
-          "",
-          "/change-contact/individual/details",
+          isBusiness = false,
+          None,
           "subscriptionId",
-          controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode)
+          controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url,
+          "/change-contact/individual/details"
         )(request, messages(application)).toString
       }
     }
 
     "must return OK and the correct view for a GET with organisationSubscription details" in {
-
       val organisationSubscription =
         UserSubscription("FATCAID", None, true, ContactInformation(OrganisationDetails("businessName"), "test@test.com", None), None)
 
       when(mockSubscriptionService.getSubscription(any())(any[HeaderCarrier](), any[ExecutionContext]()))
         .thenReturn(Future.successful(organisationSubscription))
-      when(mockAppConfig.registerOrganisationDetailsUrl) thenReturn "/change-contact/organisation/details"
-      when(mockAppConfig.feedbackUrl(any[RequestHeader]())) thenReturn "test"
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(
@@ -112,24 +109,21 @@ class IndexControllerSpec extends SpecBase {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual view(
-          true,
-          "businessName",
-          "/change-contact/organisation/details",
+          isBusiness = true,
+          Some("businessName"),
           "subscriptionId",
-          controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode)
+          controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url,
+          "/change-contact/organisation/details"
         )(request, messages(application)).toString
       }
     }
 
     "must return OK and the correct view for a GET with individualSubscription details with ctUTRRetrievalAction returning true" in {
-
       val individualSubscription =
         UserSubscription("FATCAID", None, true, ContactInformation(IndividualDetails("firstName", "lastName"), "test@test.com", None), None)
 
-      when(mockCtUtrRetrievalAction.apply()).thenReturn(new FakeCtUtrRetrievalAction())
       when(mockSubscriptionService.getSubscription(any())(any[HeaderCarrier](), any[ExecutionContext]())).thenReturn(Future.successful(individualSubscription))
-      when(mockAppConfig.registerIndividualDetailsUrl) thenReturn "/change-contact/individual/details"
-      when(mockAppConfig.feedbackUrl(any[RequestHeader]())) thenReturn "test"
+      when(mockCtUtrRetrievalAction.apply()).thenReturn(new FakeCtUtrRetrievalAction())
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(
@@ -150,11 +144,11 @@ class IndexControllerSpec extends SpecBase {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual view(
-          false,
-          "",
-          "/change-contact/individual/details",
+          isBusiness = false,
+          None,
           "subscriptionId",
-          controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(NormalMode)
+          controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(NormalMode).url,
+          "/change-contact/individual/details"
         )(request, messages(application)).toString
       }
     }
