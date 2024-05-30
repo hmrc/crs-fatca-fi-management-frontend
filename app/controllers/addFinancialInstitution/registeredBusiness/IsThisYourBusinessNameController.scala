@@ -17,22 +17,22 @@
 package controllers.addFinancialInstitution.registeredBusiness
 
 import controllers.actions._
-import forms.addFinancialInstitution.IsRegisteredBusiness.IsThisTheBusinessNameFormProvider
+import forms.addFinancialInstitution.IsRegisteredBusiness.IsThisYourBusinessNameFormProvider
 import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.addFinancialInstitution.IsRegisteredBusiness.IsThisTheBusinessNamePage
+import pages.addFinancialInstitution.IsRegisteredBusiness.IsThisYourBusinessNamePage
 import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.addFinancialInstitution.IsRegisteredBusiness.IsThisTheBusinessNameView
+import views.html.addFinancialInstitution.IsRegisteredBusiness.IsThisYourBusinessNameView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IsThisTheBusinessNameController @Inject() (
+class IsThisYourBusinessNameController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: Navigator,
@@ -40,9 +40,9 @@ class IsThisTheBusinessNameController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   subscriptionService: SubscriptionService,
-  formProvider: IsThisTheBusinessNameFormProvider,
+  formProvider: IsThisYourBusinessNameFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: IsThisTheBusinessNameView
+  view: IsThisYourBusinessNameView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
@@ -55,7 +55,7 @@ class IsThisTheBusinessNameController @Inject() (
         sub =>
           val businessName = sub.businessName.getOrElse("")
 
-          val preparedForm = request.userAnswers.get(IsThisTheBusinessNamePage) match {
+          val preparedForm = request.userAnswers.get(IsThisYourBusinessNamePage) match {
             case None        => form
             case Some(value) => form.fill(value)
           }
@@ -75,10 +75,10 @@ class IsThisTheBusinessNameController @Inject() (
               formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, businessName))),
               value =>
                 for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.set(IsThisTheBusinessNamePage, value))
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(IsThisYourBusinessNamePage, value))
                   updatedFIName  <- setFIName(value, sub.businessName, updatedAnswers)
                   _              <- sessionRepository.set(updatedFIName)
-                } yield Redirect(navigator.nextPage(IsThisTheBusinessNamePage, mode, updatedAnswers))
+                } yield Redirect(navigator.nextPage(IsThisYourBusinessNamePage, mode, updatedAnswers))
             )
       }
   }

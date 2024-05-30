@@ -19,9 +19,9 @@ package pages.addFinancialInstitution.IsRegisteredBusiness
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object IsThisTheBusinessNamePage extends QuestionPage[Boolean] {
+case object IsThisYourBusinessNamePage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "isThisTheBusinessName"
+  override def toString: String = "isThisYourBusinessName"
 }

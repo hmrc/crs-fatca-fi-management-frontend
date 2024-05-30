@@ -295,10 +295,10 @@ isTheAddressCorrect.heading = Is this the registered address for ABC Bank plc?
 isTheAddressCorrect.checkYourAnswersLabel = isTheAddressCorrect
 isTheAddressCorrect.error.required = Select yes if the registered address for the financial institution is correct
 
-isThisTheBusinessName.title = Is this the correct name for the business?
-isThisTheBusinessName.heading = Is this the correct name for the business?
-isThisTheBusinessName.checkYourAnswersLabel = isThisTheBusinessName
-isThisTheBusinessName.error.required = Select yes if this is the correct name for the business
+isThisYourBusinessName.title = Is this the correct name for the business?
+isThisYourBusinessName.heading = Is this the correct name for the business?
+isThisYourBusinessName.checkYourAnswersLabel = isThisYourBusinessName
+isThisYourBusinessName.error.required = Select yes if this is the correct name for the business
 
 reportForRegisteredBusiness.title = Would you like to add your business as a financial institution?
 reportForRegisteredBusiness.heading = Would you like to add your business as a financial institution?

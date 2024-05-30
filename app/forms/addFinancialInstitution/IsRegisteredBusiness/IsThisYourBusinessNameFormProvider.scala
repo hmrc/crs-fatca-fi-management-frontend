@@ -16,31 +16,16 @@
 
 package forms.addFinancialInstitution.IsRegisteredBusiness
 
-import forms.behaviours.BooleanFieldBehaviours
-import play.api.data.FormError
+import forms.mappings.Mappings
+import play.api.data.Form
 
-class IsThisTheBusinessNameFormProviderSpec extends BooleanFieldBehaviours {
+import javax.inject.Inject
 
-  val requiredKey = "isThisTheBusinessName.error.required"
-  val invalidKey  = "error.boolean"
+class IsThisYourBusinessNameFormProvider @Inject() extends Mappings {
 
-  val form = new IsThisTheBusinessNameFormProvider()()
-
-  ".value" - {
-
-    val fieldName = "value"
-
-    behave like booleanField(
-      form,
-      fieldName,
-      invalidError = FormError(fieldName, invalidKey)
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("isThisYourBusinessName.error.required")
     )
-
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
-  }
 
 }

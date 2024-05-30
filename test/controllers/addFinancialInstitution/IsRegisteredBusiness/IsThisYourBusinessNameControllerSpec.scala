@@ -17,7 +17,7 @@
 package controllers.addFinancialInstitution.IsRegisteredBusiness
 
 import base.SpecBase
-import forms.addFinancialInstitution.IsRegisteredBusiness.IsThisTheBusinessNameFormProvider
+import forms.addFinancialInstitution.IsRegisteredBusiness.IsThisYourBusinessNameFormProvider
 import models.subscription.request.{ContactInformation, OrganisationDetails}
 import models.subscription.response.UserSubscription
 import models.{NormalMode, UserAnswers}
@@ -25,7 +25,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.addFinancialInstitution.IsRegisteredBusiness.IsThisTheBusinessNamePage
+import pages.addFinancialInstitution.IsRegisteredBusiness.IsThisYourBusinessNamePage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -34,15 +34,15 @@ import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.SubscriptionService
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.addFinancialInstitution.IsRegisteredBusiness.IsThisTheBusinessNameView
+import views.html.addFinancialInstitution.IsRegisteredBusiness.IsThisYourBusinessNameView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class IsThisTheBusinessNameControllerSpec extends SpecBase with MockitoSugar {
+class IsThisYourBusinessNameControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider        = new IsThisTheBusinessNameFormProvider()
+  val formProvider        = new IsThisYourBusinessNameFormProvider()
   val form: Form[Boolean] = formProvider()
 
   val mockSubscriptionService: SubscriptionService = mock[SubscriptionService]
@@ -53,10 +53,10 @@ class IsThisTheBusinessNameControllerSpec extends SpecBase with MockitoSugar {
   when(mockSubscriptionService.getSubscription(any())(any[HeaderCarrier](), any[ExecutionContext]()))
     .thenReturn(Future.successful(organisationSubscription))
 
-  lazy val isThisTheBusinessNameRoute: String =
-    controllers.addFinancialInstitution.registeredBusiness.routes.IsThisTheBusinessNameController.onPageLoad(NormalMode).url
+  lazy val isThisYourBusinessNameRoute: String =
+    controllers.addFinancialInstitution.registeredBusiness.routes.IsThisYourBusinessNameController.onPageLoad(NormalMode).url
 
-  "IsThisTheBusinessName Controller" - {
+  "IsThisYourBusinessName Controller" - {
 
     "must return OK and the correct view for a GET" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -66,11 +66,11 @@ class IsThisTheBusinessNameControllerSpec extends SpecBase with MockitoSugar {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, isThisTheBusinessNameRoute)
+        val request = FakeRequest(GET, isThisYourBusinessNameRoute)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[IsThisTheBusinessNameView]
+        val view = application.injector.instanceOf[IsThisYourBusinessNameView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode, "testName")(request, messages(application)).toString
@@ -79,7 +79,7 @@ class IsThisTheBusinessNameControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(IsThisTheBusinessNamePage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(IsThisYourBusinessNamePage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(
@@ -88,9 +88,9 @@ class IsThisTheBusinessNameControllerSpec extends SpecBase with MockitoSugar {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, isThisTheBusinessNameRoute)
+        val request = FakeRequest(GET, isThisYourBusinessNameRoute)
 
-        val view = application.injector.instanceOf[IsThisTheBusinessNameView]
+        val view = application.injector.instanceOf[IsThisYourBusinessNameView]
 
         val result = route(application, request).value
 
@@ -116,7 +116,7 @@ class IsThisTheBusinessNameControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, isThisTheBusinessNameRoute)
+          FakeRequest(POST, isThisYourBusinessNameRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value

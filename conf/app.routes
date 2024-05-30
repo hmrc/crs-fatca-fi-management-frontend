@@ -141,9 +141,9 @@ POST       /registered-business/is-the-address-correct              controllers.
 GET        /registered-business/change-is-the-address-correct       controllers.addFinancialInstitution.registeredBusiness.IsTheAddressCorrectController.onPageLoad(mode: Mode = CheckMode)
 POST       /registered-business/change-is-the-address-correct       controllers.addFinancialInstitution.registeredBusiness.IsTheAddressCorrectController.onSubmit(mode: Mode = CheckMode)
 
-GET        /registered-business/is-this-the-business-name           controllers.addFinancialInstitution.registeredBusiness.IsThisTheBusinessNameController.onPageLoad(mode: Mode = NormalMode)
-POST       /registered-business/is-this-the-business-name           controllers.addFinancialInstitution.registeredBusiness.IsThisTheBusinessNameController.onSubmit(mode: Mode = NormalMode)
-GET        /registered-business/change-is-this-the-business-name    controllers.addFinancialInstitution.registeredBusiness.IsThisTheBusinessNameController.onPageLoad(mode: Mode = CheckMode)
-POST       /registered-business/change-is-this-the-business-name    controllers.addFinancialInstitution.registeredBusiness.IsThisTheBusinessNameController.onSubmit(mode: Mode = CheckMode)
+GET        /registered-business/is-this-your-business-name           controllers.addFinancialInstitution.registeredBusiness.IsThisYourBusinessNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /registered-business/is-this-your-business-name           controllers.addFinancialInstitution.registeredBusiness.IsThisYourBusinessNameController.onSubmit(mode: Mode = NormalMode)
+GET        /registered-business/change-is-this-your-business-name    controllers.addFinancialInstitution.registeredBusiness.IsThisYourBusinessNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /registered-business/change-is-this-your-business-name    controllers.addFinancialInstitution.registeredBusiness.IsThisYourBusinessNameController.onSubmit(mode: Mode = CheckMode)
 
 
