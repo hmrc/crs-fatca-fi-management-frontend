@@ -21,6 +21,7 @@ import pages.addFinancialInstitution.SecondContactPhoneNumberPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.CheckYourAnswersViewModel.accessibleActionItem
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
@@ -33,7 +34,7 @@ object SecondContactPhoneNumberSummary {
           key = "secondContactPhoneNumber.checkYourAnswersLabel",
           value = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.addFinancialInstitution.routes.SecondContactPhoneNumberController.onPageLoad(CheckMode).url)
+            accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.SecondContactPhoneNumberController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("secondContactPhoneNumber.change.hidden"))
           )
         )

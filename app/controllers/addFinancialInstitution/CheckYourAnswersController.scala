@@ -17,10 +17,12 @@
 package controllers.addFinancialInstitution
 
 import com.google.inject.Inject
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions._
+import models.UserAnswers
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.checkAnswers.CheckYourAnswersViewModel._
 import viewmodels.govuk.summarylist._
 import views.html.addFinancialInstitution.CheckYourAnswersView
 
@@ -36,11 +38,17 @@ class CheckYourAnswersController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val list = SummaryListViewModel(
-        rows = Seq.empty
-      )
+      val ua: UserAnswers = request.userAnswers
 
-      Ok(view(list))
+      val financialInstitutionList = SummaryListViewModel(getFinancialInstitutionSummaries(ua))
+      val firstContactList         = SummaryListViewModel(getFirstContactSummaries(ua))
+      val secondContactList        = SummaryListViewModel(getSecondContactSummaries(ua))
+
+      Ok(view(financialInstitutionList, firstContactList, secondContactList))
+  }
+
+  def confirmAndAdd(): Action[AnyContent] = (identify andThen getData andThen requireData) {
+    Redirect(routes.CheckYourAnswersController.onPageLoad())
   }
 
 }
