@@ -18,6 +18,7 @@ package controllers.addFinancialInstitution
 
 import controllers.actions._
 import forms.addFinancialInstitution.SelectAddressFormProvider
+import models.AddressLookup.formatAddress
 import models.{AddressLookup, Mode}
 import navigation.Navigator
 import pages.addFinancialInstitution.{AddressLookupPage, SelectAddressPage, SelectedAddressLookupPage}
@@ -95,15 +96,6 @@ class SelectAddressController @Inject() (
 
         case None => Future.successful(Redirect(routes.UkAddressController.onPageLoad(mode)))
       }
-  }
-
-  private def formatAddress(address: AddressLookup): String = {
-    val lines = Seq(address.addressLine1, address.addressLine2, address.addressLine3, address.addressLine4).flatten.mkString(", ")
-    val county = address.county.fold("")(
-      county => s"$county, "
-    )
-
-    s"$lines, ${address.town}, $county${address.postcode}"
   }
 
 }

@@ -16,8 +16,9 @@
 
 package viewmodels.checkAnswers
 
+import models.AddressLookup.formatAddress
 import models.{CheckMode, UserAnswers}
-import pages.addFinancialInstitution._
+import pages.addFinancialInstitution.AddressLookupPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -25,26 +26,19 @@ import viewmodels.checkAnswers.CheckYourAnswersViewModel.accessibleActionItem
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object FirstContactPhoneNumberSummary {
+object AddressLookupSummary {
 
-  def row(ua: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    val canPhoneAnswer = ua.get(ContactHavePhonePage)
-    val phoneAnswer    = ua.get(FirstContactPhoneNumberPage)
-
-    Option((canPhoneAnswer, phoneAnswer) match {
-      case (Some(true), Some(answer)) => createRow(answer)
-      case (_, _)                     => createRow(messages("site.notProvided"))
-    })
-  }
-
-  private def createRow(answer: String)(implicit messages: Messages) =
-    SummaryListRowViewModel(
-      key = "firstContactPhoneNumber.checkYourAnswersLabel",
-      value = ValueViewModel(HtmlContent(answer)),
-      actions = Seq(
-        accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.ContactHavePhoneController.onPageLoad(CheckMode).url)
-          .withVisuallyHiddenText(messages("firstContactPhoneNumber.change.hidden"))
-      )
-    )
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(AddressLookupPage).map {
+      answer =>
+        SummaryListRowViewModel(
+          key = "AddressLookup.checkYourAnswersLabel",
+          value = ValueViewModel(HtmlContent(formatAddress(answer.head))),
+          actions = Seq(
+            accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.WhereIsFIBasedController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("AddressLookup.change.hidden"))
+          )
+        )
+    }
 
 }

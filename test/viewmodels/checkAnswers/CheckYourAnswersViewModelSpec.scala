@@ -25,13 +25,14 @@ class CheckYourAnswersViewModelSpec extends SpecBase {
 
   implicit val mockMessages: Messages = mock[Messages]
   val sut                             = CheckYourAnswersViewModel
+  val ua                              = emptyUserAnswers
 
   "CheckYourAnswersViewModel" - {
-    val ua1 = emptyUserAnswers.withPage(NameOfFinancialInstitutionPage, "TestFinancialInstitutionName")
-    val ua2 = ua1.withPage(HaveUniqueTaxpayerReferencePage, true)
-    val ua3 = ua2.withPage(FirstContactEmailPage, "test@email.com")
-
     "getFinancialInstitutionSummaries must" - {
+      val ua1 = emptyUserAnswers.withPage(NameOfFinancialInstitutionPage, "TestFinancialInstitutionName")
+      val ua2 = ua1.withPage(HaveUniqueTaxpayerReferencePage, true)
+      val ua3 = ua2.withPage(FirstContactEmailPage, "test@email.com")
+
       "only return rows for relevant populated answers" in {
         sut.getFinancialInstitutionSummaries(emptyUserAnswers).length mustBe 0
         sut.getFinancialInstitutionSummaries(ua1).length mustBe 1
@@ -41,22 +42,34 @@ class CheckYourAnswersViewModelSpec extends SpecBase {
     }
     "getFirstContactSummaries must" - {
       "only return rows for relevant populated answers" in {
-        val ua4 = ua3.withPage(FirstContactPhoneNumberPage, "04025429852")
+        val ans = ua
+          .withPage(FirstContactPhoneNumberPage, "04025429852")
+          .withPage(FirstContactEmailPage, "test@email.com")
+        val ans2 = ua
+          .withPage(FirstContactPhoneNumberPage, "04025429852")
+          .withPage(SecondContactEmailPage, "test@email.com")
 
-        sut.getFirstContactSummaries(emptyUserAnswers).length mustBe 0
-        sut.getFirstContactSummaries(ua3).length mustBe 1
-        sut.getFirstContactSummaries(ua4).length mustBe 2
+        sut.getFirstContactSummaries(ans).length mustBe 2
+        sut.getFirstContactSummaries(ans2).length mustBe 1
+      }
+      "display phone number not provided row by default" in {
+        val ans = ua
+          .withPage(ContactNamePage, "MrTest")
+          .withPage(FirstContactPhoneNumberPage, "04025429852")
+        val ans2 = ua.withPage(ContactNamePage, "MrTest")
+
+        sut.getFirstContactSummaries(ans).length mustBe 2
+        sut.getFirstContactSummaries(ans2).length mustBe 2
       }
     }
     "getSecondContactSummaries must" - {
       "only return rows for relevant populated answers" in {
-        val ua5 = ua3.withPage(SecondContactNamePage, "SecondContact")
+        val ans = ua.withPage(SecondContactNamePage, "SecondContact")
 
         sut.getSecondContactSummaries(emptyUserAnswers).length mustBe 0
-        sut.getSecondContactSummaries(ua5).length mustBe 1
+        sut.getSecondContactSummaries(ans).length mustBe 1
       }
     }
-
   }
 
 }

@@ -17,19 +17,27 @@
 package controllers.addFinancialInstitution
 
 import base.SpecBase
+import models.CheckMode
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.mockito.internal.matchers.Any
+import org.scalatestplus.mockito.MockitoSugar.mock
+import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import viewmodels.checkAnswers.CheckYourAnswersViewModel.accessibleActionItem
 import viewmodels.govuk.SummaryListFluency
 import views.html.addFinancialInstitution.CheckYourAnswersView
 
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
+  implicit val mockMessages: Messages = mock[Messages]
 
   "Check Your Answers Controller" - {
 
     "onPageLoad" - {
 
       "must return OK and the correct view for a GET" in {
-
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
@@ -40,8 +48,26 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           val view = application.injector.instanceOf[CheckYourAnswersView]
           val list = SummaryListViewModel(Seq.empty)
 
+          val firstContactList = SummaryListViewModel(
+            Seq(
+              SummaryListRowViewModel(
+                key = KeyViewModel(HtmlContent("First contact telephone number")),
+                value = ValueViewModel(HtmlContent("Not provided")),
+                actions = Seq(
+                  ActionItemViewModel(
+                    content = HtmlContent(
+                      s"""
+                         |<span aria-hidden="true">Change</span>
+                         |""".stripMargin
+                    ),
+                    href = controllers.addFinancialInstitution.routes.ContactHavePhoneController.onPageLoad(CheckMode).url
+                  ).withVisuallyHiddenText("Change first contact telephone number")
+                )
+              )
+            )
+          )
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(list, list, list)(request, messages(application)).toString
+          contentAsString(result) mustEqual view(list, firstContactList, list)(request, messages(application)).toString
         }
       }
 

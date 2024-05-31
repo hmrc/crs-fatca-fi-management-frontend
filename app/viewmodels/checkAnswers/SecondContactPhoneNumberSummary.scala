@@ -17,9 +17,9 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.addFinancialInstitution.SecondContactPhoneNumberPage
+import pages.addFinancialInstitution._
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.checkAnswers.CheckYourAnswersViewModel.accessibleActionItem
 import viewmodels.govuk.summarylist._
@@ -27,17 +27,27 @@ import viewmodels.implicits._
 
 object SecondContactPhoneNumberSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SecondContactPhoneNumberPage).map {
-      answer =>
-        SummaryListRowViewModel(
-          key = "secondContactPhoneNumber.checkYourAnswersLabel",
-          value = ValueViewModel(HtmlFormat.escape(answer).toString),
-          actions = Seq(
-            accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.SecondContactCanWePhoneController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("secondContactPhoneNumber.change.hidden"))
-          )
-        )
+  def row(ua: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+    val sendContactExists = ua.get(SecondContactExistsPage)
+    val canPhoneAnswer    = ua.get(SecondContactCanWePhonePage)
+    val phoneAnswer       = ua.get(SecondContactPhoneNumberPage)
+
+    (sendContactExists, canPhoneAnswer, phoneAnswer) match {
+      case (None, _, _)                           => None
+      case (Some(true), Some(false), _)           => Option(createRow(messages("site.notProvided")))
+      case (Some(true), Some(true), Some(answer)) => Option(createRow(answer))
+      case (_, _, _)                              => None
     }
+  }
+
+  private def createRow(answer: String)(implicit messages: Messages) =
+    SummaryListRowViewModel(
+      key = "secondContactPhoneNumber.checkYourAnswersLabel",
+      value = ValueViewModel(HtmlContent(answer)),
+      actions = Seq(
+        accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.SecondContactCanWePhoneController.onPageLoad(CheckMode).url)
+          .withVisuallyHiddenText(messages("secondContactPhoneNumber.change.hidden"))
+      )
+    )
 
 }

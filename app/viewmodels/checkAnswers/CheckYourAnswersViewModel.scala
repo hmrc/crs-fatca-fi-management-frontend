@@ -34,15 +34,18 @@ object CheckYourAnswersViewModel {
       href = href
     )
 
+  private def getAddressRow(ua: UserAnswers)(implicit messages: Messages) =
+    AddressLookupSummary.row(ua)
+
   def getFinancialInstitutionSummaries(ua: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] =
     Seq(
       NameOfFinancialInstitutionSummary.row(ua),
       HaveUniqueTaxpayerReferenceSummary.row(ua),
+      WhatIsUniqueTaxpayerReferenceSummary.row(ua),
       SendReportsSummary.row(ua),
-      IsThisAddressSummary.row(ua),
-      SelectAddressSummary.row(ua),
-      PostcodeSummary.row(ua),
-      WhereIsFIBasedSummary.row(ua)
+      HaveGIINSummary.row(ua),
+      WhatIsGIINSummary.row(ua),
+      getAddressRow(ua)
     ).flatten
 
   def getFirstContactSummaries(ua: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = Seq(
@@ -51,10 +54,12 @@ object CheckYourAnswersViewModel {
     FirstContactPhoneNumberSummary.row(ua)
   ).flatten
 
-  def getSecondContactSummaries(ua: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = Seq(
-    SecondContactNameSummary.row(ua),
-    SecondContactEmailSummary.row(ua),
-    SecondContactPhoneNumberSummary.row(ua)
-  ).flatten
+  def getSecondContactSummaries(ua: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] =
+    Seq(
+      SecondContactExistsSummary.row(ua),
+      SecondContactNameSummary.row(ua),
+      SecondContactEmailSummary.row(ua),
+      SecondContactPhoneNumberSummary.row(ua)
+    ).flatten
 
 }
