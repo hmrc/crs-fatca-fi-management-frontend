@@ -25,6 +25,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.addFinancialInstitution.IsRegisteredBusiness.IsTheAddressCorrectPage
+import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -40,14 +41,18 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new IsTheAddressCorrectFormProvider()
   val form         = formProvider()
+  val fiName       = "fi name"
 
-  lazy val isTheAddressCorrectRoute = controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(NormalMode).url
+  lazy val isTheAddressCorrectRoute: String =
+    controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(NormalMode).url
 
   "IsTheAddressCorrect Controller" - {
 
     "must return OK and the correct view for a GET" in {
+      val userAnswers = UserAnswers(userAnswersId)
+        .withPage(NameOfFinancialInstitutionPage, fiName)
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, isTheAddressCorrectRoute)
@@ -57,13 +62,14 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[IsTheAddressCorrectView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, fiName)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      val userAnswers = UserAnswers(userAnswersId).set(IsTheAddressCorrectPage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .withPage(IsTheAddressCorrectPage, true)
+        .withPage(NameOfFinancialInstitutionPage, fiName)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -75,12 +81,11 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, fiName)(request, messages(application)).toString
       }
     }
 
     "must redirect to the next page when valid data is submitted" in {
-
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -106,8 +111,10 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
+      val userAnswers = UserAnswers(userAnswersId)
+        .withPage(NameOfFinancialInstitutionPage, fiName)
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request =
@@ -121,12 +128,11 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, fiName)(request, messages(application)).toString
       }
     }
 
     "must redirect to Journey Recovery for a GET if no existing data is found" in {
-
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
@@ -140,7 +146,6 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must redirect to Journey Recovery for a POST if no existing data is found" in {
-
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {

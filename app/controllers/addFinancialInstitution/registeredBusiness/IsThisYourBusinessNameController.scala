@@ -17,6 +17,7 @@
 package controllers.addFinancialInstitution.registeredBusiness
 
 import controllers.actions._
+import controllers.routes
 import forms.addFinancialInstitution.IsRegisteredBusiness.IsThisYourBusinessNameFormProvider
 import models.{Mode, UserAnswers}
 import navigation.Navigator
@@ -53,14 +54,19 @@ class IsThisYourBusinessNameController @Inject() (
     implicit request =>
       subscriptionService.getSubscription(request.fatcaId).flatMap {
         sub =>
-          val businessName = sub.businessName.getOrElse("")
+          val result = sub.businessName match {
+            case None =>
+              Redirect(routes.JourneyRecoveryController.onPageLoad())
+            case Some(fiName) =>
+              val preparedForm = request.userAnswers.get(IsThisYourBusinessNamePage) match {
+                case None        => form
+                case Some(value) => form.fill(value)
+              }
 
-          val preparedForm = request.userAnswers.get(IsThisYourBusinessNamePage) match {
-            case None        => form
-            case Some(value) => form.fill(value)
+              Ok(view(preparedForm, mode, fiName))
           }
 
-          Future.successful(Ok(view(preparedForm, mode, businessName)))
+          Future.successful(result)
       }
   }
 
@@ -68,24 +74,28 @@ class IsThisYourBusinessNameController @Inject() (
     implicit request =>
       subscriptionService.getSubscription(request.fatcaId).flatMap {
         sub =>
-          val businessName = sub.businessName.getOrElse("")
-          form
-            .bindFromRequest()
-            .fold(
-              formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, businessName))),
-              value =>
-                for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.set(IsThisYourBusinessNamePage, value))
-                  updatedFIName  <- setFIName(value, sub.businessName, updatedAnswers)
-                  _              <- sessionRepository.set(updatedFIName)
-                } yield Redirect(navigator.nextPage(IsThisYourBusinessNamePage, mode, updatedAnswers))
-            )
+          sub.businessName match {
+            case None =>
+              Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+            case Some(fiName) =>
+              form
+                .bindFromRequest()
+                .fold(
+                  formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, fiName))),
+                  value =>
+                    for {
+                      updatedAnswers <- Future.fromTry(request.userAnswers.set(IsThisYourBusinessNamePage, value))
+                      updatedFIName  <- setFIName(value, fiName, updatedAnswers)
+                      _              <- sessionRepository.set(updatedFIName)
+                    } yield Redirect(navigator.nextPage(IsThisYourBusinessNamePage, mode, updatedAnswers))
+                )
+          }
       }
   }
 
-  private def setFIName(isThisYourBusinessName: Boolean, tradingName: Option[String], userAnswers: UserAnswers): Future[UserAnswers] =
+  private def setFIName(isThisYourBusinessName: Boolean, fiName: String, userAnswers: UserAnswers): Future[UserAnswers] =
     if (isThisYourBusinessName) {
-      Future.fromTry(userAnswers.set(NameOfFinancialInstitutionPage, tradingName.getOrElse("")))
+      Future.fromTry(userAnswers.set(NameOfFinancialInstitutionPage, fiName))
     } else { Future.successful(userAnswers) }
 
 }

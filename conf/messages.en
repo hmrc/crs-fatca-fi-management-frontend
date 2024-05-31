@@ -290,8 +290,8 @@ ukAddress.error.postcode.chars = Postcode must only include letters a to z and n
 ukAddress.error.postcode.invalid = Enter a real postcode
 ukAddress.error.country.required = Select country
 
-isTheAddressCorrect.title = Is this the registered address for ABC Bank plc?
-isTheAddressCorrect.heading = Is this the registered address for ABC Bank plc?
+isTheAddressCorrect.title = Is this the registered address for {0}?
+isTheAddressCorrect.heading = Is this the registered address for {0}?
 isTheAddressCorrect.checkYourAnswersLabel = isTheAddressCorrect
 isTheAddressCorrect.error.required = Select yes if the registered address for the financial institution is correct
 

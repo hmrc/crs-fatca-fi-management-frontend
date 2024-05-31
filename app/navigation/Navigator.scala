@@ -42,8 +42,8 @@ class Navigator @Inject() () {
           routes.WhatIsGIINController.onPageLoad(NormalMode),
           routes.HaveGIINController.onPageLoad(NormalMode)
         )
-    case WhatIsGIINPage if ReportForRegisteredBusinessPage.length > 1 => _ => routes.WhereIsFIBasedController.onPageLoad(NormalMode)
-    case WhatIsGIINPage if ReportForRegisteredBusinessPage.length < 1 => _ => routes.WhereIsFIBasedController.onPageLoad(NormalMode)
+    case WhatIsGIINPage =>
+      _ => routes.WhereIsFIBasedController.onPageLoad(NormalMode)
     case WhereIsFIBasedPage =>
       userAnswers =>
         yesNoPage(
