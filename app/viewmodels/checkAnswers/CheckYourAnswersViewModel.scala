@@ -17,6 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.UserAnswers
+import pages.addFinancialInstitution._
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, SummaryListRow}
@@ -48,14 +49,25 @@ object CheckYourAnswersViewModel {
 
   }
 
+  private def getGIINRows(ua: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = {
+    val sendReports = ua.get(SendReportsPage)
+    val haveGIIN    = ua.get(HaveGIINPage)
+
+    (sendReports, haveGIIN) match {
+      case (Some(true), None)         => Seq(WhatIsGIINSummary.row(ua)).flatten
+      case (Some(false), Some(true))  => Seq(HaveGIINSummary.row(ua), WhatIsGIINSummary.row(ua)).flatten
+      case (Some(false), Some(false)) => Seq(HaveGIINSummary.row(ua)).flatten
+      case (_, _)                     => Seq.empty
+    }
+  }
+
   def getFinancialInstitutionSummaries(ua: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] =
     Seq(
       NameOfFinancialInstitutionSummary.row(ua),
       HaveUniqueTaxpayerReferenceSummary.row(ua),
       WhatIsUniqueTaxpayerReferenceSummary.row(ua),
       SendReportsSummary.row(ua),
-      HaveGIINSummary.row(ua),
-      WhatIsGIINSummary.row(ua),
+      getGIINRows(ua),
       getAddressRow(ua)
     ).flatten
 
