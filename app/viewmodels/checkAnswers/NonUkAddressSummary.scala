@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.addFinancialInstitution.AddressLookupPage
+import pages.addFinancialInstitution._
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -26,14 +26,14 @@ import viewmodels.checkAnswers.CheckYourAnswersViewModel.accessibleActionItem
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object AddressLookupSummary {
+object NonUkAddressSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(AddressLookupPage).map {
+    answers.get(NonUkAddressPage).map {
       answer =>
         SummaryListRowViewModel(
           key = "mainAddress.checkYourAnswersLabel",
-          value = ValueViewModel(HtmlContent(formatAddress(answer.head))),
+          value = ValueViewModel(HtmlContent(formatAddress(answer))),
           actions = Seq(
             accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.WhereIsFIBasedController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("mainAddress.change.hidden"))

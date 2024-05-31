@@ -159,30 +159,6 @@ haveGIIN.error.required = Select yes if you would like to provide a GIIN for the
 haveGIIN.checkYourAnswersLabel = Would you like to provide their Global Intermediary Identification number?
 haveGIIN.change.hidden = Change if you would like to provide a Global Intermediary Identification number
 
-postcode.title = What is the financial institution’s postcode?
-postcode.heading = What is the postcode for {0}?
-postcode.checkYourAnswersLabel = What is the financial institution’s postcode?
-postcode.p1 = Enter the postcode to find the address automatically.
-postcode.manualLink = Or enter the address manually
-postcode.error.required = Enter a postcode, like AA1 1AA
-postcode.error.length = Postcode must be 10 characters or less
-postcode.error.chars = Postcode must only include letters a to z and numbers 0 to 9
-postcode.error.invalid = Enter a real postcode or enter the address manually
-postcode.error.notFound = Postcode not found — enter a different postcode or enter the address manually
-postcode.continue = Find address
-
-selectAddress.title = What is the financial institution’s address?
-selectAddress.heading = What is the address for {0}?
-selectAddress.error.required = Select the address for the financial institution or enter it manually
-selectAddress.p1.part1 = Select from the list or {0}
-selectAddress.p1.part2 = enter your address manually
-
-isThisAddress.title = Is this the address?
-isThisAddress.heading = Is this the address for {0}?
-isThisAddress.checkYourAnswersLabel = Is this the address
-isThisAddress.error.required = Select yes if this is the financial institution’s address
-isThisAddress.change.hidden = Is this the address
-
 sendReports.title = Does the financial institution need to send FATCA reports?
 sendReports.heading = Does {0} need to send FATCA reports?
 sendReports.checkYourAnswersLabel = Does the financial institution need to send FATCA reports?
@@ -306,3 +282,31 @@ nonUkAddress.error.addressLine4.invalid = Region must only include letters a to 
 nonUkAddress.error.addressLine4.length = Region must be 35 characters or less
 nonUkAddress.error.postcode.length = Postcode must be 10 characters or less
 nonUkAddress.error.country.required = Select country
+
+selectAddress.title = What is the financial institution’s address?
+selectAddress.heading = What is the address for {0}?
+selectAddress.error.required = Select the address for the financial institution or enter it manually
+selectAddress.p1.part1 = Select from the list or {0}
+selectAddress.p1.part2 = enter your address manually
+
+isThisAddress.title = Is this the address?
+isThisAddress.heading = Is this the address for {0}?
+isThisAddress.checkYourAnswersLabel = Is this the address
+isThisAddress.error.required = Select yes if this is the financial institution’s address
+isThisAddress.change.hidden = Is this the address
+
+postcode.title = What is the financial institution’s postcode?
+postcode.heading = What is the postcode for {0}?
+postcode.checkYourAnswersLabel = What is the financial institution’s postcode?
+postcode.p1 = Enter the postcode to find the address automatically.
+postcode.manualLink = Or enter the address manually
+postcode.error.required = Enter a postcode, like AA1 1AA
+postcode.error.length = Postcode must be 10 characters or less
+postcode.error.chars = Postcode must only include letters a to z and numbers 0 to 9
+postcode.error.invalid = Enter a real postcode or enter the address manually
+postcode.error.notFound = Postcode not found — enter a different postcode or enter the address manually
+postcode.continue = Find address
+
+mainAddress.checkYourAnswersLabel = Main business address
+mainAddress.change.hidden = Change main business address
+

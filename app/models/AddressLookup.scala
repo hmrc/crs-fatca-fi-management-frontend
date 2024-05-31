@@ -101,13 +101,4 @@ object AddressLookup {
       }
   }
 
-  def formatAddress(address: AddressLookup): String = {
-    val lines = Seq(address.addressLine1, address.addressLine2, address.addressLine3, address.addressLine4).flatten.mkString(", ")
-    val county = address.county.fold("")(
-      county => s"$county, "
-    )
-
-    s"$lines, ${address.town}, $county${address.postcode}"
-  }
-
 }

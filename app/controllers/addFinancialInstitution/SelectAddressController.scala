@@ -18,7 +18,6 @@ package controllers.addFinancialInstitution
 
 import controllers.actions._
 import forms.addFinancialInstitution.SelectAddressFormProvider
-import models.AddressLookup.formatAddress
 import models.{AddressLookup, Mode}
 import navigation.Navigator
 import pages.addFinancialInstitution.{AddressLookupPage, SelectAddressPage, SelectedAddressLookupPage}
@@ -29,6 +28,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.AddressHelper.formatAddress
 import utils.ContactHelper
 import views.html.addFinancialInstitution.SelectAddressView
 

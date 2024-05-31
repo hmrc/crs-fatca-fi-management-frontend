@@ -34,8 +34,19 @@ object CheckYourAnswersViewModel {
       href = href
     )
 
-  private def getAddressRow(ua: UserAnswers)(implicit messages: Messages) =
-    AddressLookupSummary.row(ua)
+  private def getAddressRow(ua: UserAnswers)(implicit messages: Messages) = {
+    val addressLookup = AddressLookupSummary.row(ua)
+    val nonUkAddress  = NonUkAddressSummary.row(ua)
+    val ukAddress     = UkAddressSummary.row(ua)
+
+    (addressLookup.isDefined, nonUkAddress.isDefined, ukAddress.isDefined) match {
+      case (false, false, true) => ukAddress
+      case (false, true, false) => nonUkAddress
+      case (true, false, false) => addressLookup
+      case (_, _, _)            => None
+    }
+
+  }
 
   def getFinancialInstitutionSummaries(ua: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] =
     Seq(
