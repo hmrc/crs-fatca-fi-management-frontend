@@ -128,16 +128,58 @@ class NavigatorSpec extends SpecBase {
           routes.UkAddressController.onPageLoad(NormalMode)
       }
 
-      "must go from HaveGIIN to WhatIsGIIN when user answers yes" in {
-        val userAnswers = emptyUserAnswers.withPage(HaveGIINPage, true)
-        navigator.nextPage(HaveGIINPage, NormalMode, userAnswers) mustBe
-          routes.WhatIsGIINController.onPageLoad(NormalMode)
+      "HaveGIIN" - {
+
+        "must go to WhatIsGIIN when user answers yes" in {
+          val userAnswers = emptyUserAnswers.withPage(HaveGIINPage, true)
+          navigator.nextPage(HaveGIINPage, NormalMode, userAnswers) mustBe
+            routes.WhatIsGIINController.onPageLoad(NormalMode)
+        }
+
+        "if the FI is the user" - {
+          "must go to IsTheAddressCorrect when user answers no" in {
+            val userAnswers = emptyUserAnswers
+              .withPage(ReportForRegisteredBusinessPage, true)
+              .withPage(HaveGIINPage, false)
+
+            navigator.nextPage(HaveGIINPage, NormalMode, userAnswers) mustBe
+              controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(NormalMode)
+          }
+        }
+
+        "if the FI is not the user" - {
+          "must go to WhereIsFIBased when user answers no" in {
+            val userAnswers = emptyUserAnswers
+              .withPage(ReportForRegisteredBusinessPage, false)
+              .withPage(HaveGIINPage, false)
+
+            navigator.nextPage(HaveGIINPage, NormalMode, userAnswers) mustBe
+              routes.WhereIsFIBasedController.onPageLoad(NormalMode)
+          }
+        }
+
       }
 
-      "must go from WhatIsGIIN to WhereIsFIBased when user answers yes" in {
-        val userAnswers = emptyUserAnswers.withPage(WhatIsGIINPage, "answer")
-        navigator.nextPage(WhatIsGIINPage, NormalMode, userAnswers) mustBe
-          routes.WhereIsFIBasedController.onPageLoad(NormalMode)
+      "WhatIsGIIN" - {
+
+        "must go to IsTheAddressCorrect when FI is the user" in {
+          val userAnswers = emptyUserAnswers
+            .withPage(ReportForRegisteredBusinessPage, true)
+            .withPage(WhatIsGIINPage, "answer")
+
+          navigator.nextPage(WhatIsGIINPage, NormalMode, userAnswers) mustBe
+            controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(NormalMode)
+        }
+
+        "must go to WhereIsFIBased when FI is not the user" in {
+          val userAnswers = emptyUserAnswers
+            .withPage(ReportForRegisteredBusinessPage, false)
+            .withPage(WhatIsGIINPage, "answer")
+
+          navigator.nextPage(WhatIsGIINPage, NormalMode, userAnswers) mustBe
+            routes.WhereIsFIBasedController.onPageLoad(NormalMode)
+        }
+
       }
 
       "must go from WhereIsFIBased to UKPostcode when user answers yes" in {

@@ -43,7 +43,12 @@ class Navigator @Inject() () {
           routes.HaveGIINController.onPageLoad(NormalMode)
         )
     case WhatIsGIINPage =>
-      _ => routes.WhereIsFIBasedController.onPageLoad(NormalMode)
+      userAnswers =>
+        isFiUser(
+          userAnswers,
+          controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(NormalMode),
+          routes.WhereIsFIBasedController.onPageLoad(NormalMode)
+        )
     case WhereIsFIBasedPage =>
       userAnswers =>
         yesNoPage(
@@ -109,7 +114,11 @@ class Navigator @Inject() () {
           userAnswers,
           HaveGIINPage,
           routes.WhatIsGIINController.onPageLoad(NormalMode),
-          controllers.routes.IndexController.onPageLoad
+          isFiUser(
+            userAnswers,
+            controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(NormalMode),
+            routes.WhereIsFIBasedController.onPageLoad(NormalMode)
+          )
         )
     case ReportForRegisteredBusinessPage =>
       userAnswers =>
@@ -137,6 +146,12 @@ class Navigator @Inject() () {
     case _ =>
       _ => routes.CheckYourAnswersController.onPageLoad
   }
+
+  private def isFiUser(ua: UserAnswers, yesCall: => Call, noCall: => Call): Call =
+    ua.get(ReportForRegisteredBusinessPage) match {
+      case Some(value) if value => yesCall
+      case _                    => noCall
+    }
 
   private def addressLookupNavigation(mode: Mode)(ua: UserAnswers): Call =
     ua.get(AddressLookupPage) match {
