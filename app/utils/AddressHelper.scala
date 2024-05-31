@@ -17,6 +17,7 @@
 package utils
 
 import models.{Address, AddressLookup}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 
 object AddressHelper {
 
@@ -51,6 +52,27 @@ object AddressHelper {
         case Some(s)   => s
       }
     lines.mkString(", ")
+  }
+
+  def formatAddressBlock(address: Address): HtmlContent = {
+    val lines = Seq(address.addressLine1,
+                    address.addressLine2,
+                    address.addressLine3,
+                    address.addressLine4,
+                    address.country,
+                    address.postCode,
+                    address.country.description
+    )
+      .collect {
+        case s: String => s
+        case Some(s)   => s
+      }
+    val block = lines
+      .map(
+        line => s"<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>$line</p>"
+      )
+      .mkString("")
+    HtmlContent(block)
   }
 
 }
