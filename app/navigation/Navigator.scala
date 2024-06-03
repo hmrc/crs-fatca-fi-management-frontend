@@ -60,12 +60,12 @@ class Navigator @Inject() () {
         )
     case ContactNamePage =>
       _ => routes.FirstContactEmailController.onPageLoad(NormalMode)
-    case FirstContactEmailPage => _ => routes.ContactHavePhoneController.onPageLoad(NormalMode)
-    case ContactHavePhonePage =>
+    case FirstContactEmailPage => _ => routes.FirstContactHavePhoneController.onPageLoad(NormalMode)
+    case FirstContactHavePhonePage =>
       userAnswers =>
         yesNoPage(
           userAnswers,
-          ContactHavePhonePage,
+          FirstContactHavePhonePage,
           routes.FirstContactPhoneNumberController.onPageLoad(NormalMode),
           routes.SecondContactExistsController.onPageLoad(NormalMode)
         )
