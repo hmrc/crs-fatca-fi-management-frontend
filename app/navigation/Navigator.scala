@@ -31,7 +31,12 @@ class Navigator @Inject() () {
   private val normalRoutes: Page => UserAnswers => Call = {
 
     case NameOfFinancialInstitutionPage =>
-      _ => routes.HaveUniqueTaxpayerReferenceController.onPageLoad(NormalMode)
+      userAnswers =>
+        isFiUser(
+          userAnswers,
+          routes.SendReportsController.onPageLoad(NormalMode),
+          routes.HaveUniqueTaxpayerReferenceController.onPageLoad(NormalMode)
+        )
     case WhatIsUniqueTaxpayerReferencePage =>
       _ => routes.SendReportsController.onPageLoad(NormalMode)
     case SendReportsPage =>
