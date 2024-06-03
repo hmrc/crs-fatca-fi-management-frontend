@@ -125,3 +125,20 @@ GET        /where-is-fi-based                        controllers.addFinancialIns
 POST       /where-is-fi-based                        controllers.addFinancialInstitution.WhereIsFIBasedController.onSubmit(mode: Mode = NormalMode)
 GET        /change-where-is-fi-based                  controllers.addFinancialInstitution.WhereIsFIBasedController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-where-is-fi-based                  controllers.addFinancialInstitution.WhereIsFIBasedController.onSubmit(mode: Mode = CheckMode)
+
+GET        /report-for-registered-business                          controllers.addFinancialInstitution.registeredBusiness.ReportForRegisteredBusinessController.onPageLoad(mode: Mode = NormalMode)
+POST       /report-for-registered-business                          controllers.addFinancialInstitution.registeredBusiness.ReportForRegisteredBusinessController.onSubmit(mode: Mode = NormalMode)
+GET        /change-report-for-registered-business                   controllers.addFinancialInstitution.registeredBusiness.ReportForRegisteredBusinessController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-report-for-registered-business                   controllers.addFinancialInstitution.registeredBusiness.ReportForRegisteredBusinessController.onSubmit(mode: Mode = CheckMode)
+
+GET        /registered-business/is-the-address-correct              controllers.addFinancialInstitution.registeredBusiness.IsTheAddressCorrectController.onPageLoad(mode: Mode = NormalMode)
+POST       /registered-business/is-the-address-correct              controllers.addFinancialInstitution.registeredBusiness.IsTheAddressCorrectController.onSubmit(mode: Mode = NormalMode)
+GET        /registered-business/change-is-the-address-correct       controllers.addFinancialInstitution.registeredBusiness.IsTheAddressCorrectController.onPageLoad(mode: Mode = CheckMode)
+POST       /registered-business/change-is-the-address-correct       controllers.addFinancialInstitution.registeredBusiness.IsTheAddressCorrectController.onSubmit(mode: Mode = CheckMode)
+
+GET        /registered-business/is-this-your-business-name           controllers.addFinancialInstitution.registeredBusiness.IsThisYourBusinessNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /registered-business/is-this-your-business-name           controllers.addFinancialInstitution.registeredBusiness.IsThisYourBusinessNameController.onSubmit(mode: Mode = NormalMode)
+GET        /registered-business/change-is-this-your-business-name    controllers.addFinancialInstitution.registeredBusiness.IsThisYourBusinessNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /registered-business/change-is-this-your-business-name    controllers.addFinancialInstitution.registeredBusiness.IsThisYourBusinessNameController.onSubmit(mode: Mode = CheckMode)
+
+

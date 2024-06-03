@@ -19,6 +19,7 @@ package navigation
 import controllers.addFinancialInstitution.routes
 import models._
 import pages._
+import pages.addFinancialInstitution.IsRegisteredBusiness.{IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 import play.api.mvc.Call
 
@@ -41,7 +42,13 @@ class Navigator @Inject() () {
           routes.WhatIsGIINController.onPageLoad(NormalMode),
           routes.HaveGIINController.onPageLoad(NormalMode)
         )
-    case WhatIsGIINPage => _ => routes.WhereIsFIBasedController.onPageLoad(NormalMode)
+    case WhatIsGIINPage =>
+      userAnswers =>
+        isFiUser(
+          userAnswers,
+          controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(NormalMode),
+          routes.WhereIsFIBasedController.onPageLoad(NormalMode)
+        )
     case WhereIsFIBasedPage =>
       userAnswers =>
         yesNoPage(
@@ -107,7 +114,27 @@ class Navigator @Inject() () {
           userAnswers,
           HaveGIINPage,
           routes.WhatIsGIINController.onPageLoad(NormalMode),
-          routes.WhereIsFIBasedController.onPageLoad(NormalMode)
+          isFiUser(
+            userAnswers,
+            controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(NormalMode),
+            routes.WhereIsFIBasedController.onPageLoad(NormalMode)
+          )
+        )
+    case ReportForRegisteredBusinessPage =>
+      userAnswers =>
+        yesNoPage(
+          userAnswers,
+          ReportForRegisteredBusinessPage,
+          controllers.addFinancialInstitution.registeredBusiness.routes.IsThisYourBusinessNameController.onPageLoad(NormalMode),
+          routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode)
+        )
+    case IsThisYourBusinessNamePage =>
+      userAnswers =>
+        yesNoPage(
+          userAnswers,
+          IsThisYourBusinessNamePage,
+          routes.SendReportsController.onPageLoad(NormalMode),
+          routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode)
         )
     case UkAddressPage    => _ => routes.FirstContactNameController.onPageLoad(NormalMode)
     case NonUkAddressPage => _ => routes.FirstContactNameController.onPageLoad(NormalMode)
@@ -116,6 +143,12 @@ class Navigator @Inject() () {
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = _ => _ => routes.CheckYourAnswersController.onPageLoad
+
+  private def isFiUser(ua: UserAnswers, yesCall: => Call, noCall: => Call): Call =
+    ua.get(ReportForRegisteredBusinessPage) match {
+      case Some(value) if value => yesCall
+      case _                    => noCall
+    }
 
   private def addressLookupNavigation(mode: Mode)(ua: UserAnswers): Call =
     ua.get(AddressLookupPage) match {
