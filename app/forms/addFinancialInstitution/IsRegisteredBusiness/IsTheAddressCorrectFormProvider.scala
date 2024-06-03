@@ -14,11 +14,18 @@
  * limitations under the License.
  */
 
-package models.requests
+package forms.addFinancialInstitution.IsRegisteredBusiness
 
-import play.api.mvc.{Request, WrappedRequest}
-import models.UserAnswers
+import forms.mappings.Mappings
+import play.api.data.Form
 
-case class OptionalDataRequest[A](request: Request[A], userId: String, fatcaId: String, userAnswers: Option[UserAnswers]) extends WrappedRequest[A](request)
+import javax.inject.Inject
 
-case class DataRequest[A](request: Request[A], userId: String, fatcaId: String, userAnswers: UserAnswers) extends WrappedRequest[A](request)
+class IsTheAddressCorrectFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("isTheAddressCorrect.error.required")
+    )
+
+}

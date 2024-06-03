@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package models.requests
+package pages.addFinancialInstitution.IsRegisteredBusiness
 
-import play.api.mvc.{Request, WrappedRequest}
-import models.UserAnswers
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-case class OptionalDataRequest[A](request: Request[A], userId: String, fatcaId: String, userAnswers: Option[UserAnswers]) extends WrappedRequest[A](request)
+case object IsTheAddressCorrectPage extends QuestionPage[Boolean] {
 
-case class DataRequest[A](request: Request[A], userId: String, fatcaId: String, userAnswers: UserAnswers) extends WrappedRequest[A](request)
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "isTheAddressCorrect"
+}
