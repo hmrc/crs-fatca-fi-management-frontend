@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.addFinancialInstitution.routes
 import models._
 import pages._
-import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
+import pages.addFinancialInstitution.IsRegisteredBusiness.{IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 
 class NavigatorSpec extends SpecBase {
@@ -192,15 +192,15 @@ class NavigatorSpec extends SpecBase {
             routes.NonUkAddressController.onPageLoad(NormalMode)
         }
 
-      "must go from UkAddress to FirstContactName" in {
-        navigator.nextPage(UkAddressPage, NormalMode, emptyUserAnswers) mustBe
-          routes.FirstContactNameController.onPageLoad(NormalMode)
-      }
+        "must go from UkAddress to FirstContactName" in {
+          navigator.nextPage(UkAddressPage, NormalMode, emptyUserAnswers) mustBe
+            routes.FirstContactNameController.onPageLoad(NormalMode)
+        }
 
-      "must go from NonUkAddress to FirstContactName" in {
-        navigator.nextPage(NonUkAddressPage, NormalMode, emptyUserAnswers) mustBe
-          routes.FirstContactNameController.onPageLoad(NormalMode)
-      }
+        "must go from NonUkAddress to FirstContactName" in {
+          navigator.nextPage(NonUkAddressPage, NormalMode, emptyUserAnswers) mustBe
+            routes.FirstContactNameController.onPageLoad(NormalMode)
+        }
 
         "must go from ReportForRegisteredBusiness" - {
           " to IsThisYourBusinessName if Yes" in {
@@ -245,3 +245,5 @@ class NavigatorSpec extends SpecBase {
     }
 
   }
+
+}
