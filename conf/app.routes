@@ -31,11 +31,6 @@ POST        /email                                       controllers.addFinancia
 GET         /change-email                                controllers.addFinancialInstitution.FirstContactEmailController.onPageLoad(mode: Mode = CheckMode)
 POST        /change-email                                controllers.addFinancialInstitution.FirstContactEmailController.onSubmit(mode: Mode = CheckMode)
 
-GET         /firstContactCanWePhone                      controllers.addFinancialInstitution.FirstContactCanWePhoneController.onPageLoad(mode: Mode = NormalMode)
-POST        /firstContactCanWePhone                      controllers.addFinancialInstitution.FirstContactCanWePhoneController.onSubmit(mode: Mode = NormalMode)
-GET         /changeFirstContactCanWePhone                controllers.addFinancialInstitution.FirstContactCanWePhoneController.onPageLoad(mode: Mode = CheckMode)
-POST        /changeFirstContactCanWePhone                controllers.addFinancialInstitution.FirstContactCanWePhoneController.onSubmit(mode: Mode = CheckMode)
-
 GET         /phone                                       controllers.addFinancialInstitution.FirstContactPhoneNumberController.onPageLoad(mode: Mode = NormalMode)
 POST        /phone                                       controllers.addFinancialInstitution.FirstContactPhoneNumberController.onSubmit(mode: Mode = NormalMode)
 GET         /change-phone                                controllers.addFinancialInstitution.FirstContactPhoneNumberController.onPageLoad(mode: Mode = CheckMode)

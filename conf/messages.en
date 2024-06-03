@@ -77,12 +77,6 @@ signedOut.link = Sign in again to use the service
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 
-firstContactCanWePhone.title = firstContactCanWePhone
-firstContactCanWePhone.heading = firstContactCanWePhone
-firstContactCanWePhone.checkYourAnswersLabel = firstContactCanWePhone
-firstContactCanWePhone.error.required = Select yes if firstContactCanWePhone
-firstContactCanWePhone.change.hidden = FirstContactCanWePhone
-
 firstContactEmail.title = What is the email address for the first contact?
 firstContactEmail.heading = What is the email address for {0}?
 firstContactEmail.p1 = We will use this email address to send confirmation of reports for {0} or if we have any questions about them.

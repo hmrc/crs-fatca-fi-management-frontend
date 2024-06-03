@@ -42,7 +42,7 @@ class NavigatorSpec extends SpecBase {
         navigator.nextPage(FirstContactEmailPage, NormalMode, UserAnswers("id")) mustBe
           routes.ContactHavePhoneController.onPageLoad(NormalMode)
       }
-      "must go from FirstContactCanWePhone" - {
+      "must go from ContactHavePhonePage" - {
         " to FirstContactPhone if Yes" in {
           val userAnswers = emptyUserAnswers.set(ContactHavePhonePage, true).get
           navigator.nextPage(ContactHavePhonePage, NormalMode, userAnswers) mustBe
