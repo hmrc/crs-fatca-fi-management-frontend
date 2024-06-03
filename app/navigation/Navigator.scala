@@ -58,7 +58,7 @@ class Navigator @Inject() () {
           routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(NormalMode),
           routes.SendReportsController.onPageLoad(NormalMode)
         )
-    case ContactNamePage =>
+    case FirstContactNamePage =>
       _ => routes.FirstContactEmailController.onPageLoad(NormalMode)
     case FirstContactEmailPage => _ => routes.FirstContactHavePhoneController.onPageLoad(NormalMode)
     case FirstContactHavePhonePage =>
@@ -109,8 +109,8 @@ class Navigator @Inject() () {
           routes.WhatIsGIINController.onPageLoad(NormalMode),
           routes.WhereIsFIBasedController.onPageLoad(NormalMode)
         )
-    case UkAddressPage    => _ => routes.ContactNameController.onPageLoad(NormalMode)
-    case NonUkAddressPage => _ => routes.ContactNameController.onPageLoad(NormalMode)
+    case UkAddressPage    => _ => routes.FirstContactNameController.onPageLoad(NormalMode)
+    case NonUkAddressPage => _ => routes.FirstContactNameController.onPageLoad(NormalMode)
     case _ =>
       _ => controllers.routes.IndexController.onPageLoad()
   }

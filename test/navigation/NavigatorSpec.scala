@@ -35,7 +35,7 @@ class NavigatorSpec extends SpecBase {
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe controllers.routes.IndexController.onPageLoad
       }
       "must go from ContactName page to FirstContactEmail" in {
-        navigator.nextPage(ContactNamePage, NormalMode, UserAnswers("id")) mustBe
+        navigator.nextPage(FirstContactNamePage, NormalMode, UserAnswers("id")) mustBe
           routes.FirstContactEmailController.onPageLoad(NormalMode)
       }
       "must go from FirstContactEmail page to FirstContactHavePhone" in {

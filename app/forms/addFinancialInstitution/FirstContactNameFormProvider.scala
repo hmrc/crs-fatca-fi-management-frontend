@@ -14,14 +14,26 @@
  * limitations under the License.
  */
 
-package pages.addFinancialInstitution
+package forms.addFinancialInstitution
 
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import javax.inject.Inject
+import forms.mappings.Mappings
+import play.api.data.Form
+import utils.RegexConstants
 
-case object ContactNamePage extends QuestionPage[String] {
+class FirstContactNameFormProvider @Inject() extends Mappings with RegexConstants {
 
-  override def path: JsPath = JsPath \ toString
+  val maxLength: Int = 35
 
-  override def toString: String = "contactName"
+  def apply(): Form[String] =
+    Form(
+      "value" -> validatedText(
+        "firstContactName.error.required",
+        "firstContactName.error.invalid",
+        "firstContactName.error.length",
+        orgNameRegex,
+        maxLength
+      )
+    )
+
 }

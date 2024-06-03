@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.addFinancialInstitution._
 import models.Mode
 import navigation.Navigator
-import pages.addFinancialInstitution.{ContactNamePage, FirstContactHavePhonePage}
+import pages.addFinancialInstitution.{FirstContactNamePage, FirstContactHavePhonePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -52,7 +52,7 @@ class FirstContactHavePhoneController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
       val ua          = request.userAnswers
-      val contactName = ua.get(ContactNamePage)
+      val contactName = ua.get(FirstContactNamePage)
       val fi          = getFinancialInstitutionName(ua)
 
       val preparedForm = ua.get(FirstContactHavePhonePage) match {

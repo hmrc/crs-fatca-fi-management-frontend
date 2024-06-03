@@ -21,7 +21,7 @@ import play.api.data.FormError
 
 class FirstContactHavePhoneFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "contactHavePhone.error.required.business"
+  val requiredKey = "firstContactHavePhone.error.required.business"
   val invalidKey  = "error.boolean"
 
   val form = new FirstContactHavePhoneFormProvider()()

@@ -17,10 +17,10 @@
 package controllers.addFinancialInstitution
 
 import controllers.actions._
-import forms.addFinancialInstitution.ContactNameFormProvider
+import forms.addFinancialInstitution.FirstContactNameFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.addFinancialInstitution.ContactNamePage
+import pages.addFinancialInstitution.FirstContactNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -31,16 +31,16 @@ import views.html.addFinancialInstitution.ContactNameView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ContactNameController @Inject() (
-  override val messagesApi: MessagesApi,
-  sessionRepository: SessionRepository,
-  navigator: Navigator,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
-  formProvider: ContactNameFormProvider,
-  val controllerComponents: MessagesControllerComponents,
-  view: ContactNameView
+class FirstContactNameController @Inject()(
+                                        override val messagesApi: MessagesApi,
+                                        sessionRepository: SessionRepository,
+                                        navigator: Navigator,
+                                        identify: IdentifierAction,
+                                        getData: DataRetrievalAction,
+                                        requireData: DataRequiredAction,
+                                        formProvider: FirstContactNameFormProvider,
+                                        val controllerComponents: MessagesControllerComponents,
+                                        view: ContactNameView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
@@ -52,7 +52,7 @@ class ContactNameController @Inject() (
     implicit request =>
       val ua = request.userAnswers
 
-      val preparedForm = ua.get(ContactNamePage) match {
+      val preparedForm = ua.get(FirstContactNamePage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -69,11 +69,11 @@ class ContactNameController @Inject() (
           value =>
             for {
               updatedAnswers <- Future.fromTry(
-                request.userAnswers.set(ContactNamePage, value)
+                request.userAnswers.set(FirstContactNamePage, value)
               )
               _ <- sessionRepository.set(updatedAnswers)
 
-            } yield Redirect(navigator.nextPage(ContactNamePage, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(FirstContactNamePage, mode, updatedAnswers))
         )
   }
 

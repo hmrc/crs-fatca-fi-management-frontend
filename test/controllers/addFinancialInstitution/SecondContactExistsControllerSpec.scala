@@ -23,7 +23,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.addFinancialInstitution.{ContactNamePage, SecondContactExistsPage}
+import pages.addFinancialInstitution.{FirstContactNamePage, SecondContactExistsPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -43,7 +43,7 @@ class SecondContactExistsControllerSpec extends SpecBase with MockitoSugar {
   val name: Name               = Name(FirstName, LastName)
   val form                     = formProvider()
   val contactName              = name.fullName
-  val userAnswers: UserAnswers = emptyUserAnswers.set(ContactNamePage, contactName).success.value
+  val userAnswers: UserAnswers = emptyUserAnswers.set(FirstContactNamePage, contactName).success.value
 
   lazy val secondContactExistsRoute = routes.SecondContactExistsController.onPageLoad(NormalMode).url
 

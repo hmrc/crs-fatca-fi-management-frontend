@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.addFinancialInstitution.FirstContactEmailFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.addFinancialInstitution.{ContactNamePage, FirstContactEmailPage}
+import pages.addFinancialInstitution.{FirstContactNamePage, FirstContactEmailPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -58,7 +58,7 @@ class FirstContactEmailController @Inject() (
         case None        => form
         case Some(value) => form.fill(value)
       }
-      val contactName = ua.get(ContactNamePage)
+      val contactName = ua.get(FirstContactNamePage)
       contactName match {
         case None       => Redirect(controllers.routes.IndexController.onPageLoad())
         case Some(name) => Ok(view(preparedForm, mode, fi, name))
@@ -70,7 +70,7 @@ class FirstContactEmailController @Inject() (
       val ua = request.userAnswers
       val fi = getFinancialInstitutionName(ua)
 
-      ua.get(ContactNamePage)
+      ua.get(FirstContactNamePage)
         .fold {
           Future.successful(Redirect(controllers.routes.IndexController.onPageLoad()))
         } {

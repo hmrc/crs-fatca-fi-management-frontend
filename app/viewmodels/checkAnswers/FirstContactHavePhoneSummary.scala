@@ -31,11 +31,11 @@ object FirstContactHavePhoneSummary {
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key = "contactHavePhone.checkYourAnswersLabel",
+          key = "firstContactHavePhone.checkYourAnswersLabel",
           value = ValueViewModel(value),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.addFinancialInstitution.routes.FirstContactHavePhoneController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("contactHavePhone.change.hidden"))
+              .withVisuallyHiddenText(messages("firstContactHavePhone.change.hidden"))
           )
         )
     }

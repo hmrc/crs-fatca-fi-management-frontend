@@ -46,7 +46,7 @@ class FirstContactHavePhoneControllerSpec extends SpecBase with MockitoSugar {
 
   private val ua =
     emptyUserAnswers
-      .withPage(ContactNamePage, contactName)
+      .withPage(FirstContactNamePage, contactName)
       .withPage(NameOfFinancialInstitutionPage, financialInstitution)
 
   "ContactHavePhone Controller" - {

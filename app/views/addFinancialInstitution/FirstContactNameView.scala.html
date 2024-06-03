@@ -26,7 +26,7 @@
 
 @(form: Form[_], mode: Mode, fiName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("contactName.title"))) {
+@layout(pageTitle = title(form, messages("firstContactName.title"))) {
 
     @formHelper(action = controllers.addFinancialInstitution.routes.ContactNameController.onSubmit(mode)) {
 
@@ -37,8 +37,8 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("contactName.heading", fiName)).asPageHeading()
-            ).withHint(HintViewModel(Text(messages("contactName.hint"))))
+                label = LabelViewModel(messages("firstContactName.heading", fiName)).asPageHeading()
+            ).withHint(HintViewModel(Text(messages("firstContactName.hint"))))
             .withWidth(ThreeQuarters)
         )
 
