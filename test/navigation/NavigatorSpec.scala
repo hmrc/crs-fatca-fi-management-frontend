@@ -180,68 +180,70 @@ class NavigatorSpec extends SpecBase {
             routes.WhereIsFIBasedController.onPageLoad(NormalMode)
         }
 
-      "must go from WhereIsFIBased to UKPostcode when user answers yes" in {
-        val userAnswers = emptyUserAnswers.withPage(WhereIsFIBasedPage, true)
-        navigator.nextPage(WhereIsFIBasedPage, NormalMode, userAnswers) mustBe
-          routes.PostcodeController.onPageLoad(NormalMode)
-      }
-
-      "must go from WhereIsFIBased to NonUKAddress when user answers no" in {
-        val userAnswers = emptyUserAnswers.withPage(WhereIsFIBasedPage, false)
-        navigator.nextPage(WhereIsFIBasedPage, NormalMode, userAnswers) mustBe
-          routes.NonUkAddressController.onPageLoad(NormalMode)
-      }
-
-      "must go from UkAddress to ContactName" in {
-        navigator.nextPage(UkAddressPage, NormalMode, emptyUserAnswers) mustBe
-          routes.ContactNameController.onPageLoad(NormalMode)
-      }
-
-      "must go from NonUkAddress to ContactName" in {
-        navigator.nextPage(NonUkAddressPage, NormalMode, emptyUserAnswers) mustBe
-          routes.ContactNameController.onPageLoad(NormalMode)
-      }
-
-      "must go from ReportForRegisteredBusiness" - {
-        " to IsThisYourBusinessName if Yes" in {
-          val userAnswers = emptyUserAnswers.set(ReportForRegisteredBusinessPage, true).get
-          navigator.nextPage(ReportForRegisteredBusinessPage, NormalMode, userAnswers) mustBe
-            controllers.addFinancialInstitution.registeredBusiness.routes.IsThisYourBusinessNameController.onPageLoad(NormalMode)
+        "must go from WhereIsFIBased to UKPostcode when user answers yes" in {
+          val userAnswers = emptyUserAnswers.withPage(WhereIsFIBasedPage, true)
+          navigator.nextPage(WhereIsFIBasedPage, NormalMode, userAnswers) mustBe
+            routes.PostcodeController.onPageLoad(NormalMode)
         }
-        " to NameOfFinancialInstitution if No" in {
-          val userAnswers = emptyUserAnswers.set(ReportForRegisteredBusinessPage, false).get
-          navigator.nextPage(ReportForRegisteredBusinessPage, NormalMode, userAnswers) mustBe
-            routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode)
+
+        "must go from WhereIsFIBased to NonUKAddress when user answers no" in {
+          val userAnswers = emptyUserAnswers.withPage(WhereIsFIBasedPage, false)
+          navigator.nextPage(WhereIsFIBasedPage, NormalMode, userAnswers) mustBe
+            routes.NonUkAddressController.onPageLoad(NormalMode)
         }
+
+        "must go from UkAddress to ContactName" in {
+          navigator.nextPage(UkAddressPage, NormalMode, emptyUserAnswers) mustBe
+            routes.ContactNameController.onPageLoad(NormalMode)
+        }
+
+        "must go from NonUkAddress to ContactName" in {
+          navigator.nextPage(NonUkAddressPage, NormalMode, emptyUserAnswers) mustBe
+            routes.ContactNameController.onPageLoad(NormalMode)
+        }
+
+        "must go from ReportForRegisteredBusiness" - {
+          " to IsThisYourBusinessName if Yes" in {
+            val userAnswers = emptyUserAnswers.set(ReportForRegisteredBusinessPage, true).get
+            navigator.nextPage(ReportForRegisteredBusinessPage, NormalMode, userAnswers) mustBe
+              controllers.addFinancialInstitution.registeredBusiness.routes.IsThisYourBusinessNameController.onPageLoad(NormalMode)
+          }
+          " to NameOfFinancialInstitution if No" in {
+            val userAnswers = emptyUserAnswers.set(ReportForRegisteredBusinessPage, false).get
+            navigator.nextPage(ReportForRegisteredBusinessPage, NormalMode, userAnswers) mustBe
+              routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode)
+          }
+        }
+
+        "must go from IsThisYourBusinessName" - {
+          " to SendReports if Yes" in {
+            val userAnswers = emptyUserAnswers.set(IsThisYourBusinessNamePage, true).get
+            navigator.nextPage(IsThisYourBusinessNamePage, NormalMode, userAnswers) mustBe
+              routes.SendReportsController.onPageLoad(NormalMode)
+          }
+          " to NameOfFinancialInstitution if No" in {
+            val userAnswers = emptyUserAnswers.set(ReportForRegisteredBusinessPage, false).get
+            navigator.nextPage(ReportForRegisteredBusinessPage, NormalMode, userAnswers) mustBe
+              routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode)
+          }
+        }
+
       }
 
-      "must go from IsThisYourBusinessName" - {
-        " to SendReports if Yes" in {
-          val userAnswers = emptyUserAnswers.set(IsThisYourBusinessNamePage, true).get
-          navigator.nextPage(IsThisYourBusinessNamePage, NormalMode, userAnswers) mustBe
-            routes.SendReportsController.onPageLoad(NormalMode)
-        }
-        " to NameOfFinancialInstitution if No" in {
-          val userAnswers = emptyUserAnswers.set(ReportForRegisteredBusinessPage, false).get
-          navigator.nextPage(ReportForRegisteredBusinessPage, NormalMode, userAnswers) mustBe
-            routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode)
+      "in Check mode" - {
+
+        "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
+
+          case object UnknownPage extends Page
+          navigator.nextPage(
+            UnknownPage,
+            CheckMode,
+            UserAnswers("id")
+          ) mustBe routes.CheckYourAnswersController.onPageLoad
         }
       }
-
     }
 
-    "in Check mode" - {
-
-      "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
-
-        case object UnknownPage extends Page
-        navigator.nextPage(
-          UnknownPage,
-          CheckMode,
-          UserAnswers("id")
-        ) mustBe routes.CheckYourAnswersController.onPageLoad
-      }
-    }
   }
 
 }
