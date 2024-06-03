@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.addFinancialInstitution.FirstContactEmailFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.addFinancialInstitution.{FirstContactNamePage, FirstContactEmailPage}
+import pages.addFinancialInstitution.{FirstContactEmailPage, FirstContactNamePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

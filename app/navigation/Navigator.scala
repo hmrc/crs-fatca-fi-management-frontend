@@ -92,13 +92,13 @@ class Navigator @Inject() () {
         )
     case SecondContactPhoneNumberPage => _ => routes.CheckYourAnswersController.onPageLoad
     case PostcodePage                 => addressLookupNavigation(NormalMode)
-    case SelectAddressPage            => _ => routes.ContactNameController.onPageLoad(NormalMode)
+    case SelectAddressPage            => _ => routes.FirstContactNameController.onPageLoad(NormalMode)
     case IsThisAddressPage =>
       userAnswers =>
         yesNoPage(
           userAnswers,
           IsThisAddressPage,
-          routes.ContactNameController.onPageLoad(NormalMode),
+          routes.FirstContactNameController.onPageLoad(NormalMode),
           routes.UkAddressController.onPageLoad(NormalMode)
         )
     case HaveGIINPage =>

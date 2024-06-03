@@ -38,9 +38,8 @@ class CountryListFactorySpec extends SpecBase with GuiceOneAppPerSuite with Befo
   private val conf = mock[FrontendAppConfig]
   private val env  = mock[Environment]
 
-  override def beforeEach(): Unit = {
+  override def beforeEach(): Unit =
     reset(conf, env)
-  }
 
   "Country List Factory" - {
 
