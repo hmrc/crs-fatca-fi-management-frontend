@@ -110,7 +110,13 @@ class NavigatorSpec extends SpecBase {
           routes.CheckYourAnswersController.onPageLoad
       }
 
-      "must go from NameOfFinancialInstitutionPage to HaveUniqueTaxpayerReferencePage" in {
+      "must go from NameOfFinancialInstitutionPage to SendReportsPage when user is FI" in {
+        val userAnswers = emptyUserAnswers.withPage(ReportForRegisteredBusinessPage, true)
+        navigator.nextPage(NameOfFinancialInstitutionPage, NormalMode, userAnswers) mustBe
+          routes.SendReportsController.onPageLoad(NormalMode)
+      }
+
+      "must go from NameOfFinancialInstitutionPage to HaveUniqueTaxpayerReferencePage when user is not FI" in {
         val userAnswers = emptyUserAnswers.withPage(NameOfFinancialInstitutionPage, "FI")
         navigator.nextPage(NameOfFinancialInstitutionPage, NormalMode, userAnswers) mustBe
           routes.HaveUniqueTaxpayerReferenceController.onPageLoad(NormalMode)
