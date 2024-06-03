@@ -23,7 +23,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.addFinancialInstitution.{ContactHavePhonePage, ContactNamePage}
+import pages.addFinancialInstitution._
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -43,13 +43,17 @@ class ContactHavePhoneControllerSpec extends SpecBase with MockitoSugar {
   lazy val contactHavePhoneRoute = routes.ContactHavePhoneController.onPageLoad(NormalMode).url
   val contactName                = "Mr Test"
   val financialInstitution       = "Placeholder Financial Institution"
-  private val userAnswers        = emptyUserAnswers.set(ContactNamePage, contactName).get
+
+  private val ua =
+    emptyUserAnswers
+      .withPage(ContactNamePage, contactName)
+      .withPage(NameOfFinancialInstitutionPage, financialInstitution)
 
   "ContactHavePhone Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, contactHavePhoneRoute)
@@ -64,13 +68,7 @@ class ContactHavePhoneControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val userAnswers = emptyUserAnswers
-        .set(ContactNamePage, contactName)
-        .success
-        .value
-        .set(ContactHavePhonePage, true)
-        .success
-        .value
+      val userAnswers = ua.withPage(ContactHavePhonePage, true)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -114,7 +112,7 @@ class ContactHavePhoneControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
         val request =

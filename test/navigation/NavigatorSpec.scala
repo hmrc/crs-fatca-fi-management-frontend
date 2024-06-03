@@ -180,8 +180,6 @@ class NavigatorSpec extends SpecBase {
             routes.WhereIsFIBasedController.onPageLoad(NormalMode)
         }
 
-      }
-
       "must go from WhereIsFIBased to UKPostcode when user answers yes" in {
         val userAnswers = emptyUserAnswers.withPage(WhereIsFIBasedPage, true)
         navigator.nextPage(WhereIsFIBasedPage, NormalMode, userAnswers) mustBe

@@ -139,13 +139,10 @@ class Navigator @Inject() () {
     case UkAddressPage    => _ => routes.ContactNameController.onPageLoad(NormalMode)
     case NonUkAddressPage => _ => routes.ContactNameController.onPageLoad(NormalMode)
     case _ =>
-      _ => controllers.routes.IndexController.onPageLoad
+      _ => controllers.routes.IndexController.onPageLoad()
   }
 
-  private val checkRouteMap: Page => UserAnswers => Call = {
-    case _ =>
-      _ => routes.CheckYourAnswersController.onPageLoad
-  }
+  private val checkRouteMap: Page => UserAnswers => Call = _ => _ => routes.CheckYourAnswersController.onPageLoad
 
   private def isFiUser(ua: UserAnswers, yesCall: => Call, noCall: => Call): Call =
     ua.get(ReportForRegisteredBusinessPage) match {
@@ -162,7 +159,7 @@ class Navigator @Inject() () {
   private def yesNoPage(ua: UserAnswers, fromPage: QuestionPage[Boolean], yesCall: => Call, noCall: => Call): Call =
     ua.get(fromPage)
       .map(if (_) yesCall else noCall)
-      .getOrElse(controllers.routes.JourneyRecoveryController.onPageLoad)
+      .getOrElse(controllers.routes.JourneyRecoveryController.onPageLoad())
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>

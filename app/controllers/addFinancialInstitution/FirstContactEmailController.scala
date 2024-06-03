@@ -21,10 +21,12 @@ import forms.addFinancialInstitution.FirstContactEmailFormProvider
 import models.Mode
 import navigation.Navigator
 import pages.addFinancialInstitution.{ContactNamePage, FirstContactEmailPage}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.ContactHelper
 import views.html.addFinancialInstitution.FirstContactEmailView
 
 import javax.inject.Inject
@@ -42,14 +44,15 @@ class FirstContactEmailController @Inject() (
   view: FirstContactEmailView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with ContactHelper {
 
-  val form = formProvider()
-  val fi   = "Placeholder Financial Institution" // todo: pull in this when available
+  val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
       val ua = request.userAnswers
+      val fi = getFinancialInstitutionName(ua)
 
       val preparedForm = ua.get(FirstContactEmailPage) match {
         case None        => form
@@ -57,17 +60,19 @@ class FirstContactEmailController @Inject() (
       }
       val contactName = ua.get(ContactNamePage)
       contactName match {
-        case None       => Redirect(controllers.routes.IndexController.onPageLoad)
+        case None       => Redirect(controllers.routes.IndexController.onPageLoad())
         case Some(name) => Ok(view(preparedForm, mode, fi, name))
       }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      request.userAnswers
-        .get(ContactNamePage)
+      val ua = request.userAnswers
+      val fi = getFinancialInstitutionName(ua)
+
+      ua.get(ContactNamePage)
         .fold {
-          Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+          Future.successful(Redirect(controllers.routes.IndexController.onPageLoad()))
         } {
           name =>
             form
@@ -76,7 +81,7 @@ class FirstContactEmailController @Inject() (
                 formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, fi, name))),
                 value =>
                   for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(FirstContactEmailPage, value))
+                    updatedAnswers <- Future.fromTry(ua.set(FirstContactEmailPage, value))
                     _              <- sessionRepository.set(updatedAnswers)
                   } yield Redirect(navigator.nextPage(FirstContactEmailPage, mode, updatedAnswers))
               )
