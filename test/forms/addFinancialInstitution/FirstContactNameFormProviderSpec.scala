@@ -21,14 +21,14 @@ import play.api.data.FormError
 import utils.RegexConstants
 import wolfendale.scalacheck.regexp.RegexpGen
 
-class ContactNameFormProviderSpec extends StringFieldBehaviours with RegexConstants {
+class FirstContactNameFormProviderSpec extends StringFieldBehaviours with RegexConstants {
 
-  val requiredKey = "contactName.error.required"
-  val lengthKey   = "contactName.error.length"
-  val invalidKey  = "contactName.error.invalid"
+  val requiredKey = "firstContactName.error.required"
+  val lengthKey   = "firstContactName.error.length"
+  val invalidKey  = "firstContactName.error.invalid"
   val maxLength   = 35
 
-  val form = new ContactNameFormProvider()()
+  val form = new FirstContactNameFormProvider()()
 
   ".value" - {
 

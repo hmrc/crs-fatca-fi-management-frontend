@@ -17,63 +17,68 @@
 package controllers.addFinancialInstitution
 
 import controllers.actions._
-import forms.addFinancialInstitution.ContactNameFormProvider
+import forms.addFinancialInstitution._
 import models.Mode
 import navigation.Navigator
-import pages.addFinancialInstitution.ContactNamePage
+import pages.addFinancialInstitution.{FirstContactHavePhonePage, FirstContactNamePage}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ContactHelper
-import views.html.addFinancialInstitution.ContactNameView
+import views.html.addFinancialInstitution.FirstContactHavePhoneView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ContactNameController @Inject() (
+class FirstContactHavePhoneController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
-  formProvider: ContactNameFormProvider,
+  formProvider: FirstContactHavePhoneFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: ContactNameView
+  view: FirstContactHavePhoneView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with ContactHelper {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val ua = request.userAnswers
+      val ua          = request.userAnswers
+      val contactName = ua.get(FirstContactNamePage)
+      val fi          = getFinancialInstitutionName(ua)
 
-      val preparedForm = ua.get(ContactNamePage) match {
+      val preparedForm = ua.get(FirstContactHavePhonePage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
-      Ok(view(preparedForm, mode, getFinancialInstitutionName(ua)))
+      contactName match {
+        case None              => Redirect(controllers.routes.IndexController.onPageLoad())
+        case Some(contactName) => Ok(view(preparedForm, mode, fi, contactName))
 
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+      val ua = request.userAnswers
+      val fi = getFinancialInstitutionName(ua)
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, getFinancialInstitutionName(request.userAnswers)))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, fi, getFirstContactName(ua)))),
           value =>
             for {
-              updatedAnswers <- Future.fromTry(
-                request.userAnswers.set(ContactNamePage, value)
-              )
-              _ <- sessionRepository.set(updatedAnswers)
-
-            } yield Redirect(navigator.nextPage(ContactNamePage, mode, updatedAnswers))
+              updatedAnswers <- Future.fromTry(ua.set(FirstContactHavePhonePage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(FirstContactHavePhonePage, mode, updatedAnswers))
         )
   }
 

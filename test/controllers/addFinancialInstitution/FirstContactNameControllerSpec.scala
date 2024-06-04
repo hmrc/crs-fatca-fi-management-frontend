@@ -17,29 +17,29 @@
 package controllers.addFinancialInstitution
 
 import base.SpecBase
-import forms.addFinancialInstitution.ContactNameFormProvider
+import forms.addFinancialInstitution.FirstContactNameFormProvider
 import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.addFinancialInstitution.{ContactNamePage, NameOfFinancialInstitutionPage}
+import pages.addFinancialInstitution.{FirstContactNamePage, NameOfFinancialInstitutionPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import views.html.addFinancialInstitution.ContactNameView
+import views.html.addFinancialInstitution.FirstContactNameView
 
 import scala.concurrent.Future
 
-class ContactNameControllerSpec extends SpecBase with MockitoSugar {
+class FirstContactNameControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider                  = new ContactNameFormProvider()
+  val formProvider                  = new FirstContactNameFormProvider()
   val form                          = formProvider()
-  lazy val contactNameRoute         = routes.ContactNameController.onPageLoad(NormalMode).url
+  lazy val contactNameRoute         = routes.FirstContactNameController.onPageLoad(NormalMode).url
   val fiName                        = "FI name"
   private val ua                    = emptyUserAnswers.set(NameOfFinancialInstitutionPage, fiName).get
   private val mockSessionRepository = mock[SessionRepository]
@@ -56,7 +56,7 @@ class ContactNameControllerSpec extends SpecBase with MockitoSugar {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[ContactNameView]
+        val view = application.injector.instanceOf[FirstContactNameView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode, "FI name")(request, messages(application)).toString
@@ -65,14 +65,14 @@ class ContactNameControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = ua.set(ContactNamePage, "answer").success.value
+      val userAnswers = ua.set(FirstContactNamePage, "answer").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, contactNameRoute)
 
-        val view = application.injector.instanceOf[ContactNameView]
+        val view = application.injector.instanceOf[FirstContactNameView]
 
         val result = route(application, request).value
 
@@ -114,7 +114,7 @@ class ContactNameControllerSpec extends SpecBase with MockitoSugar {
 
         val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[ContactNameView]
+        val view = application.injector.instanceOf[FirstContactNameView]
 
         val result = route(application, request).value
 

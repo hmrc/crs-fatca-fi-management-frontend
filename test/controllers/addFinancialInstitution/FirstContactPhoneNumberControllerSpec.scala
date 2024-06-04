@@ -23,7 +23,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.addFinancialInstitution.{ContactNamePage, FirstContactPhoneNumberPage}
+import pages.addFinancialInstitution.{FirstContactNamePage, FirstContactPhoneNumberPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -42,7 +42,7 @@ class FirstContactPhoneNumberControllerSpec extends SpecBase with MockitoSugar {
   val defaultName  = "your first contact"
   val name         = "Firstname Lastname"
 
-  val userAnswers = emptyUserAnswers.set(ContactNamePage, name).success.value
+  val userAnswers = emptyUserAnswers.set(FirstContactNamePage, name).success.value
 
   lazy val firstContactPhoneNumberRoute = routes.FirstContactPhoneNumberController.onPageLoad(NormalMode).url
 

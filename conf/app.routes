@@ -21,10 +21,10 @@ GET         /account/signed-out                          controllers.auth.Signed
 
 GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad
 
-GET         /contact-name                                controllers.addFinancialInstitution.ContactNameController.onPageLoad(mode: Mode = NormalMode)
-POST        /contact-name                                controllers.addFinancialInstitution.ContactNameController.onSubmit(mode: Mode = NormalMode)
-GET         /change/contact-name                         controllers.addFinancialInstitution.ContactNameController.onPageLoad(mode: Mode = CheckMode)
-POST        /change/contact-name                         controllers.addFinancialInstitution.ContactNameController.onSubmit(mode: Mode = CheckMode)
+GET         /contact-name                                controllers.addFinancialInstitution.FirstContactNameController.onPageLoad(mode: Mode = NormalMode)
+POST        /contact-name                                controllers.addFinancialInstitution.FirstContactNameController.onSubmit(mode: Mode = NormalMode)
+GET         /change/contact-name                         controllers.addFinancialInstitution.FirstContactNameController.onPageLoad(mode: Mode = CheckMode)
+POST        /change/contact-name                         controllers.addFinancialInstitution.FirstContactNameController.onSubmit(mode: Mode = CheckMode)
 
 GET         /email                                       controllers.addFinancialInstitution.FirstContactEmailController.onPageLoad(mode: Mode = NormalMode)
 POST        /email                                       controllers.addFinancialInstitution.FirstContactEmailController.onSubmit(mode: Mode = NormalMode)
@@ -61,10 +61,10 @@ POST        /second-contact-phone                        controllers.addFinancia
 GET         /change-second-contact-phone                 controllers.addFinancialInstitution.SecondContactPhoneNumberController.onPageLoad(mode: Mode = CheckMode)
 POST        /change-second-contact-phone                 controllers.addFinancialInstitution.SecondContactPhoneNumberController.onSubmit(mode: Mode = CheckMode)
 
-GET        /have-phone                          controllers.addFinancialInstitution.ContactHavePhoneController.onPageLoad(mode: models.Mode = models.NormalMode)
-POST       /have-phone                          controllers.addFinancialInstitution.ContactHavePhoneController.onSubmit(mode: models.Mode = models.NormalMode)
-GET        /change-have-phone                   controllers.addFinancialInstitution.ContactHavePhoneController.onPageLoad(mode: models.Mode = models.CheckMode)
-POST       /change-have-phone                   controllers.addFinancialInstitution.ContactHavePhoneController.onSubmit(mode: models.Mode = models.CheckMode)
+GET        /have-phone                          controllers.addFinancialInstitution.FirstContactHavePhoneController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /have-phone                          controllers.addFinancialInstitution.FirstContactHavePhoneController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /change-have-phone                   controllers.addFinancialInstitution.FirstContactHavePhoneController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /change-have-phone                   controllers.addFinancialInstitution.FirstContactHavePhoneController.onSubmit(mode: models.Mode = models.CheckMode)
 
 GET        /have-utr                              controllers.addFinancialInstitution.HaveUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = NormalMode)
 POST       /have-utr                              controllers.addFinancialInstitution.HaveUniqueTaxpayerReferenceController.onSubmit(mode: Mode = NormalMode)
