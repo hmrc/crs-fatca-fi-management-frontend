@@ -63,6 +63,7 @@ object CheckYourAnswersViewModel {
 
   def getFinancialInstitutionSummaries(ua: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] =
     Seq(
+      ReportForRegisteredBusinessSummary.row(ua),
       NameOfFinancialInstitutionSummary.row(ua),
       HaveUniqueTaxpayerReferenceSummary.row(ua),
       WhatIsUniqueTaxpayerReferenceSummary.row(ua),

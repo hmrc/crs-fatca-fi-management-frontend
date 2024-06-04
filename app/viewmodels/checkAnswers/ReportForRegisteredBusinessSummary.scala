@@ -36,7 +36,7 @@ object ReportForRegisteredBusinessSummary {
           value = ValueViewModel(value),
           actions = Seq(
             accessibleActionItem("site.change",
-                                controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(CheckMode).url
+                                 controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(CheckMode).url
             )
               .withVisuallyHiddenText(messages("reportForRegisteredBusiness.change.hidden"))
           )
