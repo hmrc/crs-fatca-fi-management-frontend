@@ -29,11 +29,6 @@ POST        /email                                       controllers.addFinancia
 GET         /change-email                                controllers.addFinancialInstitution.FirstContactEmailController.onPageLoad(mode: Mode = CheckMode)
 POST        /change-email                                controllers.addFinancialInstitution.FirstContactEmailController.onSubmit(mode: Mode = CheckMode)
 
-GET         /firstContactCanWePhone                      controllers.addFinancialInstitution.FirstContactCanWePhoneController.onPageLoad(mode: Mode = NormalMode)
-POST        /firstContactCanWePhone                      controllers.addFinancialInstitution.FirstContactCanWePhoneController.onSubmit(mode: Mode = NormalMode)
-GET         /changeFirstContactCanWePhone                controllers.addFinancialInstitution.FirstContactCanWePhoneController.onPageLoad(mode: Mode = CheckMode)
-POST        /changeFirstContactCanWePhone                controllers.addFinancialInstitution.FirstContactCanWePhoneController.onSubmit(mode: Mode = CheckMode)
-
 GET         /phone                                       controllers.addFinancialInstitution.FirstContactPhoneNumberController.onPageLoad(mode: Mode = NormalMode)
 POST        /phone                                       controllers.addFinancialInstitution.FirstContactPhoneNumberController.onSubmit(mode: Mode = NormalMode)
 GET         /change-phone                                controllers.addFinancialInstitution.FirstContactPhoneNumberController.onPageLoad(mode: Mode = CheckMode)
@@ -131,3 +126,20 @@ POST       /change-where-is-fi-based                  controllers.addFinancialIn
 
 GET        /check-your-answers                controllers.addFinancialInstitution.CheckYourAnswersController.onPageLoad()
 POST       /check-your-answers                controllers.addFinancialInstitution.CheckYourAnswersController.confirmAndAdd()
+
+GET        /report-for-registered-business                          controllers.addFinancialInstitution.registeredBusiness.ReportForRegisteredBusinessController.onPageLoad(mode: Mode = NormalMode)
+POST       /report-for-registered-business                          controllers.addFinancialInstitution.registeredBusiness.ReportForRegisteredBusinessController.onSubmit(mode: Mode = NormalMode)
+GET        /change-report-for-registered-business                   controllers.addFinancialInstitution.registeredBusiness.ReportForRegisteredBusinessController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-report-for-registered-business                   controllers.addFinancialInstitution.registeredBusiness.ReportForRegisteredBusinessController.onSubmit(mode: Mode = CheckMode)
+
+GET        /registered-business/is-the-address-correct              controllers.addFinancialInstitution.registeredBusiness.IsTheAddressCorrectController.onPageLoad(mode: Mode = NormalMode)
+POST       /registered-business/is-the-address-correct              controllers.addFinancialInstitution.registeredBusiness.IsTheAddressCorrectController.onSubmit(mode: Mode = NormalMode)
+GET        /registered-business/change-is-the-address-correct       controllers.addFinancialInstitution.registeredBusiness.IsTheAddressCorrectController.onPageLoad(mode: Mode = CheckMode)
+POST       /registered-business/change-is-the-address-correct       controllers.addFinancialInstitution.registeredBusiness.IsTheAddressCorrectController.onSubmit(mode: Mode = CheckMode)
+
+GET        /registered-business/is-this-your-business-name           controllers.addFinancialInstitution.registeredBusiness.IsThisYourBusinessNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /registered-business/is-this-your-business-name           controllers.addFinancialInstitution.registeredBusiness.IsThisYourBusinessNameController.onSubmit(mode: Mode = NormalMode)
+GET        /registered-business/change-is-this-your-business-name    controllers.addFinancialInstitution.registeredBusiness.IsThisYourBusinessNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /registered-business/change-is-this-your-business-name    controllers.addFinancialInstitution.registeredBusiness.IsThisYourBusinessNameController.onSubmit(mode: Mode = CheckMode)
+
+

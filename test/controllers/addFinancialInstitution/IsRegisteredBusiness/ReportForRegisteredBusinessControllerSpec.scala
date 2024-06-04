@@ -14,46 +14,48 @@
  * limitations under the License.
  */
 
-package controllers.addFinancialInstitution
+package controllers.addFinancialInstitution.IsRegisteredBusiness
 
 import base.SpecBase
-import forms.addFinancialInstitution.FirstContactCanWePhoneFormProvider
+import controllers.routes
+import forms.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.addFinancialInstitution.FirstContactCanWePhonePage
+import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import views.html.addFinancialInstitution.FirstContactCanWePhoneView
+import views.html.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessView
 
 import scala.concurrent.Future
 
-class FirstContactCanWePhoneControllerSpec extends SpecBase with MockitoSugar {
+class ReportForRegisteredBusinessControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new FirstContactCanWePhoneFormProvider()
+  val formProvider = new ReportForRegisteredBusinessFormProvider()
   val form         = formProvider()
 
-  lazy val firstContactCanWePhoneRoute = routes.FirstContactCanWePhoneController.onPageLoad(NormalMode).url
+  lazy val reportForRegisteredBusinessRoute =
+    controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(NormalMode).url
 
-  "FirstContactCanWePhone Controller" - {
+  "ReportForRegisteredBusiness Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, firstContactCanWePhoneRoute)
+        val request = FakeRequest(GET, reportForRegisteredBusinessRoute)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[FirstContactCanWePhoneView]
+        val view = application.injector.instanceOf[ReportForRegisteredBusinessView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
@@ -62,14 +64,14 @@ class FirstContactCanWePhoneControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(FirstContactCanWePhonePage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(ReportForRegisteredBusinessPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, firstContactCanWePhoneRoute)
+        val request = FakeRequest(GET, reportForRegisteredBusinessRoute)
 
-        val view = application.injector.instanceOf[FirstContactCanWePhoneView]
+        val view = application.injector.instanceOf[ReportForRegisteredBusinessView]
 
         val result = route(application, request).value
 
@@ -94,7 +96,7 @@ class FirstContactCanWePhoneControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, firstContactCanWePhoneRoute)
+          FakeRequest(POST, reportForRegisteredBusinessRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
@@ -110,12 +112,12 @@ class FirstContactCanWePhoneControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, firstContactCanWePhoneRoute)
+          FakeRequest(POST, reportForRegisteredBusinessRoute)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[FirstContactCanWePhoneView]
+        val view = application.injector.instanceOf[ReportForRegisteredBusinessView]
 
         val result = route(application, request).value
 
@@ -129,12 +131,12 @@ class FirstContactCanWePhoneControllerSpec extends SpecBase with MockitoSugar {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, firstContactCanWePhoneRoute)
+        val request = FakeRequest(GET, reportForRegisteredBusinessRoute)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 
@@ -144,13 +146,13 @@ class FirstContactCanWePhoneControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, firstContactCanWePhoneRoute)
+          FakeRequest(POST, reportForRegisteredBusinessRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
   }

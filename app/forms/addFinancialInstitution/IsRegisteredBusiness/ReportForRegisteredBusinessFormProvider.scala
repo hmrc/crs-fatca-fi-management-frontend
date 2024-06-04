@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package pages.addFinancialInstitution
+package forms.addFinancialInstitution.IsRegisteredBusiness
 
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import forms.mappings.Mappings
+import play.api.data.Form
 
-case object FirstContactCanWePhonePage extends QuestionPage[Boolean] {
+import javax.inject.Inject
 
-  override def path: JsPath = JsPath \ toString
+class ReportForRegisteredBusinessFormProvider @Inject() extends Mappings {
 
-  override def toString: String = "firstContactCanWePhone"
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("reportForRegisteredBusiness.error.required")
+    )
+
 }

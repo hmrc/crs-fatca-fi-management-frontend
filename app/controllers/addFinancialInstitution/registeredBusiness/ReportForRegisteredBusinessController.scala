@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-package controllers.addFinancialInstitution
+package controllers.addFinancialInstitution.registeredBusiness
 
 import controllers.actions._
-import forms.addFinancialInstitution.FirstContactCanWePhoneFormProvider
+import forms.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.addFinancialInstitution.FirstContactCanWePhonePage
+import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.addFinancialInstitution.FirstContactCanWePhoneView
+import views.html.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FirstContactCanWePhoneController @Inject() (
+class ReportForRegisteredBusinessController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
-  formProvider: FirstContactCanWePhoneFormProvider,
+  formProvider: ReportForRegisteredBusinessFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: FirstContactCanWePhoneView
+  view: ReportForRegisteredBusinessView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
@@ -48,7 +48,7 @@ class FirstContactCanWePhoneController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.get(FirstContactCanWePhonePage) match {
+      val preparedForm = request.userAnswers.get(ReportForRegisteredBusinessPage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -64,9 +64,9 @@ class FirstContactCanWePhoneController @Inject() (
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(FirstContactCanWePhonePage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(ReportForRegisteredBusinessPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(FirstContactCanWePhonePage, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(ReportForRegisteredBusinessPage, mode, updatedAnswers))
         )
   }
 

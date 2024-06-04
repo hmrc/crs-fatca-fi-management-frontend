@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package forms.addFinancialInstitution
-
-import javax.inject.Inject
+package forms.addFinancialInstitution.IsRegisteredBusiness
 
 import forms.mappings.Mappings
 import play.api.data.Form
 
-class FirstContactCanWePhoneFormProvider @Inject() extends Mappings {
+import javax.inject.Inject
+
+class IsTheAddressCorrectFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("firstContactCanWePhone.error.required")
+      "value" -> boolean("isTheAddressCorrect.error.required")
     )
 
 }

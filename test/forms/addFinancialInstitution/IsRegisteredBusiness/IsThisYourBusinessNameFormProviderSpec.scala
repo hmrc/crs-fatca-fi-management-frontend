@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package forms.addFinancialInstitution
+package forms.addFinancialInstitution.IsRegisteredBusiness
 
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class FirstContactCanWePhoneFormProviderSpec extends BooleanFieldBehaviours {
+class IsThisYourBusinessNameFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "firstContactCanWePhone.error.required"
+  val requiredKey = "isThisYourBusinessName.error.required"
   val invalidKey  = "error.boolean"
 
-  val form = new FirstContactCanWePhoneFormProvider()()
+  val form = new IsThisYourBusinessNameFormProvider()()
 
   ".value" - {
 

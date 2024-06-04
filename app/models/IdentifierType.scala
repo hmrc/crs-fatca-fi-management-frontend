@@ -17,7 +17,7 @@
 package models
 
 object IdentifierType {
-
+  val UTR     = "UTR"
   val FATCAID = "FATCAID"
 
 }

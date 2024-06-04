@@ -79,7 +79,7 @@ class AuthenticatedIdentifierAction @Inject() (
       Future.successful(Redirect(config.registerUrl))
     } {
       fatcaId =>
-        block(IdentifierRequest(request, internalId, fatcaId, affinityGroup))
+        block(IdentifierRequest(request, internalId, fatcaId, affinityGroup, enrolments.enrolments))
     }
   }
 

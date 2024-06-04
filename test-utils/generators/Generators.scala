@@ -168,9 +168,8 @@ trait Generators extends RegexConstants {
       pt1         <- Gen.listOfN(pt1Quantity, Gen.alphaChar).map(_.mkString)
       pt2         <- Gen.choose(0, 9)
 
-      pt3alphaOpt <- Gen.option(Gen.alphaChar)
-      pt3numOpt   <- Gen.option(Gen.choose(0, 9))
-      pt3 = if (pt3alphaOpt.isEmpty) pt3numOpt.getOrElse("").toString else pt3alphaOpt.get.toString
+      pt3numOpt <- Gen.option(Gen.choose(0, 9))
+      pt3 = pt3numOpt.getOrElse("").toString
 
       pt4 <- Gen.choose(0, 9)
       pt5a <- Gen.alphaChar suchThat (

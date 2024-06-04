@@ -17,26 +17,28 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.addFinancialInstitution.FirstContactCanWePhonePage
+import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.checkAnswers.CheckYourAnswersViewModel.accessibleActionItem
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object FirstContactCanWePhoneSummary {
+object ReportForRegisteredBusinessSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(FirstContactCanWePhonePage).map {
+    answers.get(ReportForRegisteredBusinessPage).map {
       answer =>
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key = "firstContactCanWePhone.checkYourAnswersLabel",
+          key = "reportForRegisteredBusiness.checkYourAnswersLabel",
           value = ValueViewModel(value),
           actions = Seq(
-            accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.FirstContactCanWePhoneController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("firstContactCanWePhone.change.hidden"))
+            accessibleActionItem("site.change",
+                                controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(CheckMode).url
+            )
+              .withVisuallyHiddenText(messages("reportForRegisteredBusiness.change.hidden"))
           )
         )
     }
