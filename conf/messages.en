@@ -101,14 +101,14 @@ firstContactPhoneNumber.error.invalid = The telephone number must only include n
 firstContactPhoneNumber.error.length = The telephone number must be 24 characters or less
 firstContactPhoneNumber.change.hidden = Change first contact telephone number
 
-contactName.title = What is the name of the person or team we should contact?
-contactName.heading = What is the name of the person or team we should contact at {0}?
-contactName.hint = For example, ‘Ashley Smith’ or ‘Tax team’.
-contactName.checkYourAnswersLabel = First contact name
-contactName.error.required = Enter a name for the first contact
-contactName.error.invalid = The name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, backslashes, carets (^), grave accents (`), hyphens and spaces
-contactName.error.length = The name must be 35 characters or less
-contactName.change.hidden = Change first contact name
+firstContactName.title = What is the name of the person or team we should contact?
+firstContactName.heading = What is the name of the person or team we should contact at {0}?
+firstContactName.hint = For example, ‘Ashley Smith’ or ‘Tax team’.
+firstContactName.checkYourAnswersLabel = First contact name
+firstContactName.error.required = Enter a name for the first contact
+firstContactName.error.invalid = The name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, backslashes, carets (^), grave accents (`), hyphens and spaces
+firstContactName.error.length = The name must be 35 characters or less
+firstContactName.change.hidden = Change first contact name
 
 firstContactHavePhone.title.business = Can we contact the first contact by telephone?
 firstContactHavePhone.heading.business = Can we contact {0} by telephone?
