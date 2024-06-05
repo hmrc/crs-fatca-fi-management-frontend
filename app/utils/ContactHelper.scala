@@ -17,14 +17,14 @@
 package utils
 
 import models.UserAnswers
-import pages.addFinancialInstitution.{ContactNamePage, NameOfFinancialInstitutionPage, SecondContactNamePage}
+import pages.addFinancialInstitution.{FirstContactNamePage, NameOfFinancialInstitutionPage, SecondContactNamePage}
 import play.api.i18n.Messages
 
 trait ContactHelper {
 
   def getFirstContactName(userAnswers: UserAnswers)(implicit messages: Messages): String =
     userAnswers
-      .get(ContactNamePage)
+      .get(FirstContactNamePage)
       .fold(messages("default.firstContact.name"))(
         contactName => contactName
       )

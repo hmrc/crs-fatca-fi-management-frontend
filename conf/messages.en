@@ -110,13 +110,13 @@ contactName.error.invalid = The name must only include letters a to z, numbers 0
 contactName.error.length = The name must be 35 characters or less
 contactName.change.hidden = Change first contact name
 
-contactHavePhone.title.business = Can we contact the first contact by telephone?
-contactHavePhone.heading.business = Can we contact {0} by telephone?
-contactHavePhone.title.individual = Can we contact you by telephone?
-contactHavePhone.heading.individual = Can we contact you by telephone?
-contactHavePhone.p1 = We will call if we have any questions about reports for {0}.
-contactHavePhone.error.required.individual = Select yes if we can contact you by telephone
-contactHavePhone.error.required.business = Select yes if they can be contacted by telephone
+firstContactHavePhone.title.business = Can we contact the first contact by telephone?
+firstContactHavePhone.heading.business = Can we contact {0} by telephone?
+firstContactHavePhone.title.individual = Can we contact you by telephone?
+firstContactHavePhone.heading.individual = Can we contact you by telephone?
+firstContactHavePhone.p1 = We will call if we have any questions about reports for {0}.
+firstContactHavePhone.error.required.individual = Select yes if we can contact you by telephone
+firstContactHavePhone.error.required.business = Select yes if they can be contacted by telephone
 
 haveUniqueTaxpayerReference.title = Is there a Unique Taxpayer Reference (UTR)?
 haveUniqueTaxpayerReference.heading = Does {0} have a Unique Taxpayer Reference (UTR)?

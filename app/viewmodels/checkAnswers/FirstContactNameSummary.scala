@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.addFinancialInstitution.ContactNamePage
+import pages.addFinancialInstitution.FirstContactNamePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -25,17 +25,17 @@ import viewmodels.checkAnswers.CheckYourAnswersViewModel.accessibleActionItem
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object ContactNameSummary {
+object FirstContactNameSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(ContactNamePage).map {
+    answers.get(FirstContactNamePage).map {
       answer =>
         SummaryListRowViewModel(
-          key = "contactName.checkYourAnswersLabel",
+          key = "firstContactName.checkYourAnswersLabel",
           value = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
             accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.ContactNameController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("contactName.change.hidden"))
+              .withVisuallyHiddenText(messages("firstContactName.change.hidden"))
           )
         )
     }

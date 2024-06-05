@@ -18,10 +18,10 @@ package navigation
 
 import base.SpecBase
 import controllers.addFinancialInstitution.routes
-import pages.addFinancialInstitution._
-import pages._
 import models._
+import pages._
 import pages.addFinancialInstitution.IsRegisteredBusiness.{IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
+import pages.addFinancialInstitution._
 
 class NavigatorSpec extends SpecBase {
 
@@ -35,23 +35,23 @@ class NavigatorSpec extends SpecBase {
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe controllers.routes.IndexController.onPageLoad
       }
-      "must go from ContactName page to FirstContactEmail" in {
-        navigator.nextPage(ContactNamePage, NormalMode, UserAnswers("id")) mustBe
+      "must go from FirstContactName page to FirstContactEmail" in {
+        navigator.nextPage(FirstContactNamePage, NormalMode, UserAnswers("id")) mustBe
           routes.FirstContactEmailController.onPageLoad(NormalMode)
       }
-      "must go from FirstContactEmail page to FirstContactCanWePhone" in {
+      "must go from FirstContactEmail page to FirstContactHavePhone" in {
         navigator.nextPage(FirstContactEmailPage, NormalMode, UserAnswers("id")) mustBe
-          routes.ContactHavePhoneController.onPageLoad(NormalMode)
+          routes.FirstContactHavePhoneController.onPageLoad(NormalMode)
       }
-      "must go from ContactHavePhonePage" - {
+      "must go from FirstContactHavePhonePage" - {
         " to FirstContactPhone if Yes" in {
-          val userAnswers = emptyUserAnswers.set(ContactHavePhonePage, true).get
-          navigator.nextPage(ContactHavePhonePage, NormalMode, userAnswers) mustBe
+          val userAnswers = emptyUserAnswers.set(FirstContactHavePhonePage, true).get
+          navigator.nextPage(FirstContactHavePhonePage, NormalMode, userAnswers) mustBe
             routes.FirstContactPhoneNumberController.onPageLoad(NormalMode)
         }
         " to SecondContactExists if No" in {
-          val userAnswers = emptyUserAnswers.set(ContactHavePhonePage, false).get
-          navigator.nextPage(ContactHavePhonePage, NormalMode, userAnswers) mustBe
+          val userAnswers = emptyUserAnswers.set(FirstContactHavePhonePage, false).get
+          navigator.nextPage(FirstContactHavePhonePage, NormalMode, userAnswers) mustBe
             routes.SecondContactExistsController.onPageLoad(NormalMode)
         }
       }
@@ -125,7 +125,7 @@ class NavigatorSpec extends SpecBase {
       "must go from IsThisAddress page to ContactName page when user answers yes" in {
         val userAnswers = emptyUserAnswers.withPage(IsThisAddressPage, true)
         navigator.nextPage(IsThisAddressPage, NormalMode, userAnswers) mustBe
-          routes.ContactNameController.onPageLoad(NormalMode)
+          routes.FirstContactNameController.onPageLoad(NormalMode)
       }
 
       "must go from IsThisAddress page to ukAddress page when user answers no" in {
@@ -198,14 +198,14 @@ class NavigatorSpec extends SpecBase {
             routes.NonUkAddressController.onPageLoad(NormalMode)
         }
 
-        "must go from UkAddress to ContactName" in {
+        "must go from UkAddress to FirstContactName" in {
           navigator.nextPage(UkAddressPage, NormalMode, emptyUserAnswers) mustBe
-            routes.ContactNameController.onPageLoad(NormalMode)
+            routes.FirstContactNameController.onPageLoad(NormalMode)
         }
 
-        "must go from NonUkAddress to ContactName" in {
+        "must go from NonUkAddress to FirstContactName" in {
           navigator.nextPage(NonUkAddressPage, NormalMode, emptyUserAnswers) mustBe
-            routes.ContactNameController.onPageLoad(NormalMode)
+            routes.FirstContactNameController.onPageLoad(NormalMode)
         }
 
         "must go from ReportForRegisteredBusiness" - {

@@ -70,14 +70,14 @@ class Navigator @Inject() () {
           routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(NormalMode),
           routes.SendReportsController.onPageLoad(NormalMode)
         )
-    case ContactNamePage =>
+    case FirstContactNamePage =>
       _ => routes.FirstContactEmailController.onPageLoad(NormalMode)
-    case FirstContactEmailPage => _ => routes.ContactHavePhoneController.onPageLoad(NormalMode)
-    case ContactHavePhonePage =>
+    case FirstContactEmailPage => _ => routes.FirstContactHavePhoneController.onPageLoad(NormalMode)
+    case FirstContactHavePhonePage =>
       userAnswers =>
         yesNoPage(
           userAnswers,
-          ContactHavePhonePage,
+          FirstContactHavePhonePage,
           routes.FirstContactPhoneNumberController.onPageLoad(NormalMode),
           routes.SecondContactExistsController.onPageLoad(NormalMode)
         )
@@ -104,13 +104,13 @@ class Navigator @Inject() () {
         )
     case SecondContactPhoneNumberPage => _ => routes.CheckYourAnswersController.onPageLoad
     case PostcodePage                 => addressLookupNavigation(NormalMode)
-    case SelectAddressPage            => _ => routes.ContactNameController.onPageLoad(NormalMode)
+    case SelectAddressPage            => _ => routes.FirstContactNameController.onPageLoad(NormalMode)
     case IsThisAddressPage =>
       userAnswers =>
         yesNoPage(
           userAnswers,
           IsThisAddressPage,
-          routes.ContactNameController.onPageLoad(NormalMode),
+          routes.FirstContactNameController.onPageLoad(NormalMode),
           routes.UkAddressController.onPageLoad(NormalMode)
         )
     case HaveGIINPage =>
@@ -141,8 +141,8 @@ class Navigator @Inject() () {
           routes.SendReportsController.onPageLoad(NormalMode),
           routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode)
         )
-    case UkAddressPage    => _ => routes.ContactNameController.onPageLoad(NormalMode)
-    case NonUkAddressPage => _ => routes.ContactNameController.onPageLoad(NormalMode)
+    case UkAddressPage    => _ => routes.FirstContactNameController.onPageLoad(NormalMode)
+    case NonUkAddressPage => _ => routes.FirstContactNameController.onPageLoad(NormalMode)
     case _ =>
       _ => controllers.routes.IndexController.onPageLoad()
   }

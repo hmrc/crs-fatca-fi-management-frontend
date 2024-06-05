@@ -19,9 +19,9 @@ package pages.addFinancialInstitution
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object ContactHavePhonePage extends QuestionPage[Boolean] {
+case object FirstContactHavePhonePage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "contactHavePhone"
+  override def toString: String = "firstContactHavePhone"
 }

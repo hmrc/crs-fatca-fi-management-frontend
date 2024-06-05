@@ -17,7 +17,7 @@
 package controllers.addFinancialInstitution
 
 import base.SpecBase
-import forms.addFinancialInstitution.ContactHavePhoneFormProvider
+import forms.addFinancialInstitution.FirstContactHavePhoneFormProvider
 import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -29,24 +29,24 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import views.html.addFinancialInstitution.ContactHavePhoneView
+import views.html.addFinancialInstitution.FirstContactHavePhoneView
 
 import scala.concurrent.Future
 
-class ContactHavePhoneControllerSpec extends SpecBase with MockitoSugar {
+class FirstContactHavePhoneControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new ContactHavePhoneFormProvider()
+  val formProvider = new FirstContactHavePhoneFormProvider()
   val form         = formProvider()
 
-  lazy val contactHavePhoneRoute = routes.ContactHavePhoneController.onPageLoad(NormalMode).url
+  lazy val contactHavePhoneRoute = routes.FirstContactHavePhoneController.onPageLoad(NormalMode).url
   val contactName                = "Mr Test"
   val financialInstitution       = "Placeholder Financial Institution"
 
   private val ua =
     emptyUserAnswers
-      .withPage(ContactNamePage, contactName)
+      .withPage(FirstContactNamePage, contactName)
       .withPage(NameOfFinancialInstitutionPage, financialInstitution)
 
   "ContactHavePhone Controller" - {
@@ -60,7 +60,7 @@ class ContactHavePhoneControllerSpec extends SpecBase with MockitoSugar {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[ContactHavePhoneView]
+        val view = application.injector.instanceOf[FirstContactHavePhoneView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode, financialInstitution, contactName)(request, messages(application)).toString
@@ -68,14 +68,14 @@ class ContactHavePhoneControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val userAnswers = ua.withPage(ContactHavePhonePage, true)
+      val userAnswers = ua.withPage(FirstContactHavePhonePage, true)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, contactHavePhoneRoute)
 
-        val view = application.injector.instanceOf[ContactHavePhoneView]
+        val view = application.injector.instanceOf[FirstContactHavePhoneView]
 
         val result = route(application, request).value
 
@@ -121,7 +121,7 @@ class ContactHavePhoneControllerSpec extends SpecBase with MockitoSugar {
 
         val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[ContactHavePhoneView]
+        val view = application.injector.instanceOf[FirstContactHavePhoneView]
 
         val result = route(application, request).value
 

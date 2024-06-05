@@ -19,12 +19,12 @@ package forms.addFinancialInstitution
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class ContactHavePhoneFormProviderSpec extends BooleanFieldBehaviours {
+class FirstContactHavePhoneFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "contactHavePhone.error.required.business"
+  val requiredKey = "firstContactHavePhone.error.required.business"
   val invalidKey  = "error.boolean"
 
-  val form = new ContactHavePhoneFormProvider()()
+  val form = new FirstContactHavePhoneFormProvider()()
 
   ".value" - {
 

@@ -14,33 +14,33 @@
  * limitations under the License.
  *@
 
+@import viewmodels.InputWidth._
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
+    govukInput: GovukInput,
     govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode , finInstitution: String , contactName: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, fiName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("contactHavePhone.title.business"))) {
+@layout(pageTitle = title(form, messages("firstContactName.title"))) {
 
-    @formHelper(action = controllers.addFinancialInstitution.routes.ContactHavePhoneController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = controllers.addFinancialInstitution.routes.FirstContactNameController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-      <h1 class="govuk-heading-l">@messages(messages(s"contactHavePhone.heading.business" , contactName))</h1>
-      <p class="govuk-body">@messages("contactHavePhone.p1" , finInstitution)</p>
-
-     @govukRadios(
-         RadiosViewModel.yesNo(
-               field = form("value"),
-               legend = LegendViewModel(messages("contactHavePhone.heading.business")).withCssClass("govuk-visually-hidden")
-         )
-     )
+        @govukInput(
+            InputViewModel(
+                field = form("value"),
+                label = LabelViewModel(messages("firstContactName.heading", fiName)).asPageHeading()
+            ).withHint(HintViewModel(Text(messages("firstContactName.hint"))))
+            .withWidth(ThreeQuarters)
+        )
 
         @govukButton(
             ButtonViewModel(messages("site.continue")).withAttribute("id" -> "submit")
