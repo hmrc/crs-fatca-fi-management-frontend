@@ -73,7 +73,7 @@ object CheckYourAnswersViewModel {
     ).flatten
 
   def getFirstContactSummaries(ua: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = Seq(
-    ContactNameSummary.row(ua),
+    FirstContactNameSummary.row(ua),
     FirstContactEmailSummary.row(ua),
     FirstContactPhoneNumberSummary.row(ua)
   ).flatten

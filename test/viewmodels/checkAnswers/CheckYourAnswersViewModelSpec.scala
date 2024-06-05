@@ -54,9 +54,9 @@ class CheckYourAnswersViewModelSpec extends SpecBase {
       }
       "display phone number not provided row by default" in {
         val ans = ua
-          .withPage(ContactNamePage, "MrTest")
+          .withPage(FirstContactNamePage, "MrTest")
           .withPage(FirstContactPhoneNumberPage, "04025429852")
-        val ans2 = ua.withPage(ContactNamePage, "MrTest")
+        val ans2 = ua.withPage(FirstContactNamePage, "MrTest")
 
         sut.getFirstContactSummaries(ans).length mustBe 2
         sut.getFirstContactSummaries(ans2).length mustBe 2

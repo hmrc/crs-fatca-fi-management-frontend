@@ -28,7 +28,7 @@ import viewmodels.implicits._
 object FirstContactPhoneNumberSummary {
 
   def row(ua: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    val canPhoneAnswer = ua.get(ContactHavePhonePage)
+    val canPhoneAnswer = ua.get(FirstContactHavePhonePage)
     val phoneAnswer    = ua.get(FirstContactPhoneNumberPage)
 
     Option((canPhoneAnswer, phoneAnswer) match {
@@ -42,7 +42,7 @@ object FirstContactPhoneNumberSummary {
       key = "firstContactPhoneNumber.checkYourAnswersLabel",
       value = ValueViewModel(HtmlContent(answer)),
       actions = Seq(
-        accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.ContactHavePhoneController.onPageLoad(CheckMode).url)
+        accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.FirstContactHavePhoneController.onPageLoad(CheckMode).url)
           .withVisuallyHiddenText(messages("firstContactPhoneNumber.change.hidden"))
       )
     )

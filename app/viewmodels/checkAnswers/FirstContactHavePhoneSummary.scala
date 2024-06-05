@@ -35,7 +35,7 @@ object FirstContactHavePhoneSummary {
           key = "firstContactHavePhone.checkYourAnswersLabel",
           value = ValueViewModel(value),
           actions = Seq(
-            accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.ContactHavePhoneController.onPageLoad(CheckMode).url)
+            accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.FirstContactHavePhoneController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("firstContactHavePhone.change.hidden"))
           )
         )

@@ -18,15 +18,11 @@ package controllers.addFinancialInstitution
 
 import base.SpecBase
 import models.CheckMode
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.mockito.internal.matchers.Any
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import viewmodels.checkAnswers.CheckYourAnswersViewModel.accessibleActionItem
 import viewmodels.govuk.SummaryListFluency
 import views.html.addFinancialInstitution.CheckYourAnswersView
 
@@ -60,7 +56,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
                          |<span aria-hidden="true">Change</span>
                          |""".stripMargin
                     ),
-                    href = controllers.addFinancialInstitution.routes.ContactHavePhoneController.onPageLoad(CheckMode).url
+                    href = controllers.addFinancialInstitution.routes.FirstContactHavePhoneController.onPageLoad(CheckMode).url
                   ).withVisuallyHiddenText("Change first contact telephone number")
                 )
               )

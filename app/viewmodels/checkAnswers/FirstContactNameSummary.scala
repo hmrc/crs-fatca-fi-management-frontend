@@ -34,7 +34,7 @@ object FirstContactNameSummary {
           key = "firstContactName.checkYourAnswersLabel",
           value = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
-            accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.ContactNameController.onPageLoad(CheckMode).url)
+            accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.FirstContactNameController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("firstContactName.change.hidden"))
           )
         )
