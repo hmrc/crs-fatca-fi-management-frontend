@@ -56,8 +56,8 @@ thereIsAProblem.heading = Sorry, there is a problem with the service
 thereIsAProblem.paragraph.1 = Try again later.
 thereIsAProblem.paragraph.2 = You can email {0} if you need to contact someone about your CRS or FATCA reporting.
 
-checkYourAnswers.title = Check Your Answers
-checkYourAnswers.heading = Check Your Answers
+checkYourAnswers.title = Check the details for the financial institution
+checkYourAnswers.heading = Check the details for {0}
 checkYourAnswers.subheading.FirstContact = First contact
 checkYourAnswers.subheading.SecondContact = Second contact
 checkYourAnswers.submit.subheading = Now add this financial institution

@@ -26,13 +26,13 @@
 
 )
 
-@(financialInstitutionList: SummaryList, firstContactList: SummaryList, secondContactList: SummaryList)(implicit request: Request[_], messages: Messages)
+@(fiName: String, financialInstitutionList: SummaryList, firstContactList: SummaryList, secondContactList: SummaryList)(implicit request: Request[_], messages: Messages)
 
 @secondExists = @{secondContactList.rows.nonEmpty}
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
-    @heading(messages("checkYourAnswers.heading"))
+    @heading(messages("checkYourAnswers.heading", fiName))
 
     @govukSummaryList(financialInstitutionList)
 

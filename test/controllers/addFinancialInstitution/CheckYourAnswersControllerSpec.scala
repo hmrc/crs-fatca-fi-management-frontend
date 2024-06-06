@@ -63,7 +63,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
             )
           )
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(list, firstContactList, list)(request, messages(application)).toString
+          contentAsString(result) mustEqual view(fiName, list, firstContactList, list)(request, messages(application)).toString
         }
       }
 
