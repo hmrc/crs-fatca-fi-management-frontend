@@ -268,8 +268,9 @@ isThisYourBusinessName.error.required = Select yes if this is the correct name f
 reportForRegisteredBusiness.title = Would you like to add your business as a financial institution?
 reportForRegisteredBusiness.heading = Would you like to add your business as a financial institution?
 reportForRegisteredBusiness.p1 = If you need to report for the business you registered as, then you can add them as a financial institution now. If you would prefer to add another financial institution first, then you can still add the registered business later.
-reportForRegisteredBusiness.checkYourAnswersLabel = reportForRegisteredBusiness
+reportForRegisteredBusiness.checkYourAnswersLabel = Do you need to report for the business you registered as?
 reportForRegisteredBusiness.error.required = Select yes if you would like to add your business as a financial institution
+reportForRegisteredBusiness.change.hidden = Change if you need to report for the business you registered as
 
 nonUkAddress.title = What is the financial institution’s registered address?
 nonUkAddress.heading = What is the registered address for {0}?

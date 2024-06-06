@@ -36,7 +36,7 @@ object SecondContactExistsSummary {
           value = ValueViewModel(value),
           actions = Seq(
             accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.SecondContactExistsController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("secondContact.checkYourAnswersLabel.hiddenText"))
+              .withVisuallyHiddenText(messages("secondContact.change.hidden"))
           )
         )
     }
