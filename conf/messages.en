@@ -155,7 +155,7 @@ haveGIIN.change.hidden = Change if you would like to provide a Global Intermedia
 
 sendReports.title = Does the financial institution need to send FATCA reports?
 sendReports.heading = Does {0} need to send FATCA reports?
-sendReports.checkYourAnswersLabel = Does the financial institution need to send FATCA reports?
+sendReports.checkYourAnswersLabel = Do they need to send FATCA reports?
 sendReports.error.required = Select yes if the financial institution needs to send FATCA reports
 sendReports.change.hidden = Change if they need to send FATCA reports
 
