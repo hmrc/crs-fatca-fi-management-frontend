@@ -121,7 +121,7 @@ firstContactHavePhone.error.required.business = Select yes if they can be contac
 haveUniqueTaxpayerReference.title = Is there a Unique Taxpayer Reference (UTR)?
 haveUniqueTaxpayerReference.heading = Does {0} have a Unique Taxpayer Reference (UTR)?
 haveUniqueTaxpayerReference.hint = This is 10 numbers, for example 1234567890. It will be on tax returns and other letters about Corporation Tax. It may be called ‘reference’, ‘UTR’ or ‘official use’.
-haveUniqueTaxpayerReference.checkYourAnswersLabel = Is there a Unique Taxpayer Reference (UTR)?
+haveUniqueTaxpayerReference.checkYourAnswersLabel = Do they have a Unique Taxpayer Reference?
 haveUniqueTaxpayerReference.error.required = Select yes if the financial institution has a Unique Taxpayer Reference
 haveUniqueTaxpayerReference.change.hidden = Change if they have a Unique Taxpayer Reference
 
@@ -135,7 +135,7 @@ nameOfFinancialInstitution.change.hidden = Change financial institution name
 
 whatIsUniqueTaxpayerReference.title = What is the Corporation Tax Unique Taxpayer Reference (UTR)?
 whatIsUniqueTaxpayerReference.heading = What is the Corporation Tax Unique Taxpayer Reference (UTR) for {0}?
-whatIsUniqueTaxpayerReference.checkYourAnswersLabel = What is the Corporation Tax Unique Taxpayer Reference (UTR)?
+whatIsUniqueTaxpayerReference.checkYourAnswersLabel = Unique Taxpayer Reference
 whatIsUniqueTaxpayerReference.error.required = Enter the financial institution’s Unique Taxpayer Reference
 whatIsUniqueTaxpayerReference.error.invalid = Unique Taxpayer Reference must only include numbers 0 to 9
 whatIsUniqueTaxpayerReference.error.invalidFormat = Unique Taxpayer Reference must include 10 numbers, for example 1234567890
@@ -162,7 +162,7 @@ sendReports.change.hidden = Change if they need to send FATCA reports
 whatIsGIIN.title = What is the financial institution’s GIIN?
 whatIsGIIN.heading = What is the Global Intermediary Identification Number (GIIN) for {0}?
 whatIsGIIN.p1 = This is a number from the United States of America’s Internal Revenue Service (IRS). {0} must have registered with the IRS to receive a number.
-whatIsGIIN.checkYourAnswersLabel = Global Intermediary Identification
+whatIsGIIN.checkYourAnswersLabel = Global Intermediary Identification Number
 whatIsGIIN.error.required = Enter the financial institution’s GIIN
 whatIsGIIN.error.length = GIIN must include 19 characters
 whatIsGIIN.error.format = GIIN must be in the right format
