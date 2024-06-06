@@ -17,26 +17,34 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.addFinancialInstitution.FirstContactPhoneNumberPage
+import pages.addFinancialInstitution._
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.CheckYourAnswersViewModel.accessibleActionItem
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object FirstContactPhoneNumberSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(FirstContactPhoneNumberPage).map {
-      answer =>
-        SummaryListRowViewModel(
-          key = "firstContactPhoneNumber.checkYourAnswersLabel",
-          value = ValueViewModel(HtmlFormat.escape(answer).toString),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.addFinancialInstitution.routes.FirstContactPhoneNumberController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("firstContactPhoneNumber.change.hidden"))
-          )
-        )
-    }
+  def row(ua: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+    val canPhoneAnswer = ua.get(FirstContactHavePhonePage)
+    val phoneAnswer    = ua.get(FirstContactPhoneNumberPage)
+
+    Option((canPhoneAnswer, phoneAnswer) match {
+      case (Some(true), Some(answer)) => createRow(answer)
+      case (_, _)                     => createRow(messages("site.notProvided"))
+    })
+  }
+
+  private def createRow(answer: String)(implicit messages: Messages) =
+    SummaryListRowViewModel(
+      key = "firstContactPhoneNumber.checkYourAnswersLabel",
+      value = ValueViewModel(HtmlContent(answer)),
+      actions = Seq(
+        accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.FirstContactHavePhoneController.onPageLoad(CheckMode).url)
+          .withVisuallyHiddenText(messages("firstContactPhoneNumber.change.hidden"))
+      )
+    )
 
 }

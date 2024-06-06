@@ -65,7 +65,7 @@ class IsThisAddressController @Inject() (
             case None        => form
             case Some(value) => form.fill(value)
           }
-          Ok(view(preparedForm, mode, getFinancialInstitutionName(ua), address.head.toAddress.get))
+          Ok(view(preparedForm, mode, getFinancialInstitutionName(ua), address.head.toAddress))
 
         case None => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       }
@@ -80,7 +80,7 @@ class IsThisAddressController @Inject() (
             .bindFromRequest()
             .fold(
               formWithErrors =>
-                Future.successful(BadRequest(view(formWithErrors, mode, getFinancialInstitutionName(request.userAnswers), address.head.toAddress.get))),
+                Future.successful(BadRequest(view(formWithErrors, mode, getFinancialInstitutionName(request.userAnswers), address.head.toAddress))),
               value =>
                 for {
                   updatedAnswers <- Future.fromTry(ua.set(IsThisAddressPage, value))

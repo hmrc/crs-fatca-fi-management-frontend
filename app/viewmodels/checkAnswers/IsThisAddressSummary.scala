@@ -20,6 +20,7 @@ import models.{CheckMode, UserAnswers}
 import pages.addFinancialInstitution.IsThisAddressPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.CheckYourAnswersViewModel.accessibleActionItem
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
@@ -34,7 +35,7 @@ object IsThisAddressSummary {
           key = "isThisAddress.checkYourAnswersLabel",
           value = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.addFinancialInstitution.routes.IsThisAddressController.onPageLoad(CheckMode).url)
+            accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.IsThisAddressController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("isThisAddress.change.hidden"))
           )
         )

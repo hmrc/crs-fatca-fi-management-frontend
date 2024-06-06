@@ -11,6 +11,7 @@ site.start = Start now
 site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
+site.notProvided = Not provided
 
 date.day = Day
 date.month = Month
@@ -57,6 +58,11 @@ thereIsAProblem.paragraph.2 = You can email {0} if you need to contact someone a
 
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
+checkYourAnswers.subheading.FirstContact = First contact
+checkYourAnswers.subheading.SecondContact = Second contact
+checkYourAnswers.submit.subheading = Now add this financial institution
+checkYourAnswers.submit.para = By adding this financial institution, you are confirming that the information is correct and complete to the best of your knowledge.
+checkYourAnswers.submit.button = Confirm and add
 
 default.firstContact.name = your first contact
 default.secondContact.name = your second contact
@@ -80,11 +86,11 @@ unauthorised.heading = You can’t access this service with this account
 firstContactEmail.title = What is the email address for the first contact?
 firstContactEmail.heading = What is the email address for {0}?
 firstContactEmail.p1 = We will use this email address to send confirmation of reports for {0} or if we have any questions about them.
-firstContactEmail.checkYourAnswersLabel = Financial institution contact email
+firstContactEmail.checkYourAnswersLabel = First contact email address
 firstContactEmail.error.required = Enter an email address for the first contact
 firstContactEmail.error.length = The email address must be 132 characters or less
 firstContactEmail.error.format = Enter an email address in the right format, like yourname@example.com
-firstContactEmail.change.hidden = Change email for financial institution contact
+firstContactEmail.change.hidden = Change first contact email address
 
 firstContactPhoneNumber.checkYourAnswersLabel = First contact telephone number
 firstContactPhoneNumber.title = What is the telephone number for the first contact?
@@ -95,44 +101,14 @@ firstContactPhoneNumber.error.invalid = The telephone number must only include n
 firstContactPhoneNumber.error.length = The telephone number must be 24 characters or less
 firstContactPhoneNumber.change.hidden = Change first contact telephone number
 
-secondContactCanWePhone.title = Can we contact the second contact by telephone?
-secondContactCanWePhone.heading = Can we contact {0} by telephone?
-secondContactCanWePhone.p1 = We will call if we have any questions about reports for {0}.
-secondContactCanWePhone.checkYourAnswersLabel = Can we contact {0} by telephone?
-secondContactCanWePhone.error.required = Select yes if they can be contacted by telephone
-secondContactCanWePhone.change.hidden = Change can we contact {0} by telephone?
-
-secondContactEmail.title = secondContactEmail
-secondContactEmail.heading = secondContactEmail
-secondContactEmail.checkYourAnswersLabel = secondContactEmail
-secondContactEmail.error.required = Enter secondContactEmail
-secondContactEmail.error.length = SecondContactEmail must be 100 characters or less
-secondContactEmail.change.hidden = SecondContactEmail
-
-secondContactName.title = secondContactName
-secondContactName.heading = secondContactName
-secondContactName.checkYourAnswersLabel = secondContactName
-secondContactName.error.required = Enter secondContactName
-secondContactName.error.length = SecondContactName must be 100 characters or less
-secondContactName.change.hidden = SecondContactName
-
-secondContactPhoneNumber.title = What is the telephone number for the second contact?
-secondContactPhoneNumber.heading = What is the telephone number for {0}?
-secondContactPhoneNumber.checkYourAnswersLabel = Second contact telephone number
-secondContactPhoneNumber.error.required = Enter a telephone number for the second contact
-secondContactPhoneNumber.error.invalid = The telephone number must only include numbers 0 to 9 and a plus sign, like 01632 960 001, 07700 900 982 or +44 808 157 0192
-secondContactPhoneNumber.error.length = The telephone number must be 24 characters or less
-secondContactPhoneNumber.change.hidden = Change second contact telephone number
-secondContactPhoneNumber.hint = For international numbers, include the country code.
-
-contactName.title = What is the name of the person or team we should contact?
-contactName.heading = What is the name of the person or team we should contact at {0}?
-contactName.hint = For example, ‘Ashley Smith’ or ‘Tax team’.
-contactName.checkYourAnswersLabel = What is the name of the person or team we should contact?
-contactName.error.required = Enter a name for the first contact
-contactName.error.invalid = The name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, backslashes, carets (^), grave accents (`), hyphens and spaces
-contactName.error.length = The name must be 35 characters or less
-contactName.change.hidden = ContactName
+firstContactName.title = What is the name of the person or team we should contact?
+firstContactName.heading = What is the name of the person or team we should contact at {0}?
+firstContactName.hint = For example, ‘Ashley Smith’ or ‘Tax team’.
+firstContactName.checkYourAnswersLabel = First contact name
+firstContactName.error.required = Enter a name for the first contact
+firstContactName.error.invalid = The name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, backslashes, carets (^), grave accents (`), hyphens and spaces
+firstContactName.error.length = The name must be 35 characters or less
+firstContactName.change.hidden = Change first contact name
 
 firstContactHavePhone.title.business = Can we contact the first contact by telephone?
 firstContactHavePhone.heading.business = Can we contact {0} by telephone?
@@ -145,9 +121,9 @@ firstContactHavePhone.error.required.business = Select yes if they can be contac
 haveUniqueTaxpayerReference.title = Is there a Unique Taxpayer Reference (UTR)?
 haveUniqueTaxpayerReference.heading = Does {0} have a Unique Taxpayer Reference (UTR)?
 haveUniqueTaxpayerReference.hint = This is 10 numbers, for example 1234567890. It will be on tax returns and other letters about Corporation Tax. It may be called ‘reference’, ‘UTR’ or ‘official use’.
-haveUniqueTaxpayerReference.checkYourAnswersLabel = Is there a Unique Taxpayer Reference (UTR)?
+haveUniqueTaxpayerReference.checkYourAnswersLabel = Do they have a Unique Taxpayer Reference?
 haveUniqueTaxpayerReference.error.required = Select yes if the financial institution has a Unique Taxpayer Reference
-haveUniqueTaxpayerReference.change.hidden = Change if there a Unique Taxpayer Reference (UTR)
+haveUniqueTaxpayerReference.change.hidden = Change if they have a Unique Taxpayer Reference
 
 nameOfFinancialInstitution.title = What is the name of the financial institution?
 nameOfFinancialInstitution.heading = What is the name of the financial institution?
@@ -155,16 +131,17 @@ nameOfFinancialInstitution.checkYourAnswersLabel = What is the name of the finan
 nameOfFinancialInstitution.error.required = Enter the name of the financial institution
 nameOfFinancialInstitution.error.length = Financial institution name must be 105 characters or less
 nameOfFinancialInstitution.error.invalid = Financial institution name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, backslashes, carets (^), grave accents (`), hyphens and spaces
+nameOfFinancialInstitution.change.hidden = Change financial institution name
 
 whatIsUniqueTaxpayerReference.title = What is the Corporation Tax Unique Taxpayer Reference (UTR)?
 whatIsUniqueTaxpayerReference.heading = What is the Corporation Tax Unique Taxpayer Reference (UTR) for {0}?
-whatIsUniqueTaxpayerReference.checkYourAnswersLabel = What is the Corporation Tax Unique Taxpayer Reference (UTR)?
+whatIsUniqueTaxpayerReference.checkYourAnswersLabel = Unique Taxpayer Reference
 whatIsUniqueTaxpayerReference.error.required = Enter the financial institution’s Unique Taxpayer Reference
 whatIsUniqueTaxpayerReference.error.invalid = Unique Taxpayer Reference must only include numbers 0 to 9
 whatIsUniqueTaxpayerReference.error.invalidFormat = Unique Taxpayer Reference must include 10 numbers, for example 1234567890
 whatIsUniqueTaxpayerReference.p1 = You can
 whatIsUniqueTaxpayerReference.p1.link = find a lost UTR
-
+whatIsUniqueTaxpayerReference.change.hidden = Change Unique Taxpayer Reference
 
 haveGIIN.title = Global Intermediary Identification Number (GIIN)
 haveGIIN.heading = Global Intermediary Identification Number (GIIN)
@@ -173,61 +150,39 @@ haveGIIN.para.1 = If you need to send FATCA reports for {0} in the future, then 
 haveGIIN.para.2 = A GIIN is a number from the United States of America’s Internal Revenue Service (IRS). {0} must have registered with the IRS to receive a number.
 haveGIIN.para.3 = If {0} already has a GIIN, then you can provide it now to save time later.
 haveGIIN.error.required = Select yes if you would like to provide a GIIN for the financial institution
-haveGIIN.checkYourAnswersLabel = haveGIIN
-haveGIIN.change.hidden = HaveGIIN
-
-postcode.title = What is the financial institution’s postcode?
-postcode.heading = What is the postcode for {0}?
-postcode.checkYourAnswersLabel = What is the financial institution’s postcode?
-postcode.p1 = Enter the postcode to find the address automatically.
-postcode.manualLink = Or enter the address manually
-postcode.error.required = Enter a postcode, like AA1 1AA
-postcode.error.length = Postcode must be 10 characters or less
-postcode.error.chars = Postcode must only include letters a to z and numbers 0 to 9
-postcode.error.invalid = Enter a real postcode or enter the address manually
-postcode.error.notFound = Postcode not found — enter a different postcode or enter the address manually
-postcode.continue = Find address
-
-selectAddress.title = What is the financial institution’s address?
-selectAddress.heading = What is the address for {0}?
-selectAddress.error.required = Select the address for the financial institution or enter it manually
-selectAddress.p1.part1 = Select from the list or {0}
-selectAddress.p1.part2 = enter your address manually
-
-isThisAddress.title = Is this the address?
-isThisAddress.heading = Is this the address for {0}?
-isThisAddress.checkYourAnswersLabel = Is this the address
-isThisAddress.error.required = Select yes if this is the financial institution’s address
-isThisAddress.change.hidden = Is this the address
+haveGIIN.checkYourAnswersLabel = Would you like to provide their Global Intermediary Identification number?
+haveGIIN.change.hidden = Change if you would like to provide a Global Intermediary Identification number
 
 sendReports.title = Does the financial institution need to send FATCA reports?
 sendReports.heading = Does {0} need to send FATCA reports?
 sendReports.checkYourAnswersLabel = Does the financial institution need to send FATCA reports?
 sendReports.error.required = Select yes if the financial institution needs to send FATCA reports
+sendReports.change.hidden = Change if they need to send FATCA reports
 
 whatIsGIIN.title = What is the financial institution’s GIIN?
 whatIsGIIN.heading = What is the Global Intermediary Identification Number (GIIN) for {0}?
 whatIsGIIN.p1 = This is a number from the United States of America’s Internal Revenue Service (IRS). {0} must have registered with the IRS to receive a number.
-whatIsGIIN.checkYourAnswersLabel = What is the financial institution’s GIIN?
+whatIsGIIN.checkYourAnswersLabel = Global Intermediary Identification Number
 whatIsGIIN.error.required = Enter the financial institution’s GIIN
 whatIsGIIN.error.length = GIIN must include 19 characters
 whatIsGIIN.error.format = GIIN must be in the right format
 whatIsGIIN.error.char = GIIN must only include letters a to z, numbers 0 to 9 and full stops
 whatIsGIIN.error.invalid = Enter a real GIIN
 whatIsGIIN.hint = For example, ‘98O96B.00000.LE.350’.
+whatIsGIIN.change.hidden = Change the Global Intermediary Identification number
 
 secondContact.title = Is there someone else we can contact if your first contact is not available?
 secondContact.heading = Is there someone else we can contact if {0} is not available?
 secondContact.p1 = This can be a team mailbox or another contact.
-secondContact.checkYourAnswersLabel = Do you have a second contact?
-secondContact.checkYourAnswersLabel.hiddenText = Change if you have a second contact
+secondContact.checkYourAnswersLabel = Do they have a second contact?
+secondContact.change.hidden  = Change if they have a second contact
 secondContact.error.required = Select yes if there is someone else we can contact
 
 secondContactEmail.title = What is the email address for the second contact?
 secondContactEmail.heading = What is the email address for {0}?
 secondContactEmail.p1 =We will use this email address to send confirmation of reports for {0} or if we have any questions about them.
 secondContactEmail.checkYourAnswersLabel = Second contact email address
-secondContactEmail.checkYourAnswersLabel.hiddenText = Change second contact email address
+secondContactEmail.change.hidden = Change second contact email address
 secondContactEmail.error.required = Enter an email address for the second contact
 secondContactEmail.error.length = The email address must be 132 characters or less
 secondContactEmail.error.invalid = Enter an email address in the right format, like yourname@example.com
@@ -236,10 +191,26 @@ secondContactName.title = What is the name of the person or team we should conta
 secondContactName.heading = What is the name of the person or team we should contact at {0}?
 secondContactName.p1 = For example, '‘Ashley Smith’' or '‘Tax team’'.
 secondContactName.checkYourAnswersLabel = Second contact name
-secondContactName.checkYourAnswersLabel.hiddenText = Change second contact name
+secondContactName.change.hidden = Change second contact name
 secondContactName.error.required = Enter a name for the second contact
 secondContactName.error.invalid = The name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, backslashes, carets (^), grave accents (`), hyphens and spaces
 secondContactName.error.length = The name must be 35 characters or less
+
+secondContactCanWePhone.title = Can we contact the second contact by telephone?
+secondContactCanWePhone.heading = Can we contact {0} by telephone?
+secondContactCanWePhone.p1 = We will call if we have any questions about reports for {0}.
+secondContactCanWePhone.checkYourAnswersLabel = Can we contact {0} by telephone?
+secondContactCanWePhone.error.required = Select yes if they can be contacted by telephone
+secondContactCanWePhone.change.hidden = Change can we contact {0} by telephone?
+
+secondContactPhoneNumber.title = What is the telephone number for the second contact?
+secondContactPhoneNumber.heading = What is the telephone number for {0}?
+secondContactPhoneNumber.checkYourAnswersLabel = Second contact telephone number
+secondContactPhoneNumber.error.required = Enter a telephone number for the second contact
+secondContactPhoneNumber.error.invalid = The telephone number must only include numbers 0 to 9 and a plus sign, like 01632 960 001, 07700 900 982 or +44 808 157 0192
+secondContactPhoneNumber.error.length = The telephone number must be 24 characters or less
+secondContactPhoneNumber.change.hidden = Change second contact telephone number
+secondContactPhoneNumber.hint = For international numbers, include the country code.
 
 pageNotFound.title = Page not found
 pageNotFound.heading = Page not found
@@ -297,8 +268,9 @@ isThisYourBusinessName.error.required = Select yes if this is the correct name f
 reportForRegisteredBusiness.title = Would you like to add your business as a financial institution?
 reportForRegisteredBusiness.heading = Would you like to add your business as a financial institution?
 reportForRegisteredBusiness.p1 = If you need to report for the business you registered as, then you can add them as a financial institution now. If you would prefer to add another financial institution first, then you can still add the registered business later.
-reportForRegisteredBusiness.checkYourAnswersLabel = reportForRegisteredBusiness
+reportForRegisteredBusiness.checkYourAnswersLabel = Do you need to report for the business you registered as?
 reportForRegisteredBusiness.error.required = Select yes if you would like to add your business as a financial institution
+reportForRegisteredBusiness.change.hidden = Change if you need to report for the business you registered as
 
 nonUkAddress.title = What is the financial institution’s registered address?
 nonUkAddress.heading = What is the registered address for {0}?
@@ -321,3 +293,31 @@ nonUkAddress.error.addressLine4.invalid = Region must only include letters a to 
 nonUkAddress.error.addressLine4.length = Region must be 35 characters or less
 nonUkAddress.error.postcode.length = Postcode must be 10 characters or less
 nonUkAddress.error.country.required = Select country
+
+selectAddress.title = What is the financial institution’s address?
+selectAddress.heading = What is the address for {0}?
+selectAddress.error.required = Select the address for the financial institution or enter it manually
+selectAddress.p1.part1 = Select from the list or {0}
+selectAddress.p1.part2 = enter your address manually
+
+isThisAddress.title = Is this the address?
+isThisAddress.heading = Is this the address for {0}?
+isThisAddress.checkYourAnswersLabel = Is this the address
+isThisAddress.error.required = Select yes if this is the financial institution’s address
+isThisAddress.change.hidden = Is this the address
+
+postcode.title = What is the financial institution’s postcode?
+postcode.heading = What is the postcode for {0}?
+postcode.checkYourAnswersLabel = What is the financial institution’s postcode?
+postcode.p1 = Enter the postcode to find the address automatically.
+postcode.manualLink = Or enter the address manually
+postcode.error.required = Enter a postcode, like AA1 1AA
+postcode.error.length = Postcode must be 10 characters or less
+postcode.error.chars = Postcode must only include letters a to z and numbers 0 to 9
+postcode.error.invalid = Enter a real postcode or enter the address manually
+postcode.error.notFound = Postcode not found — enter a different postcode or enter the address manually
+postcode.continue = Find address
+
+mainAddress.checkYourAnswersLabel = Main business address
+mainAddress.change.hidden = Change main business address
+

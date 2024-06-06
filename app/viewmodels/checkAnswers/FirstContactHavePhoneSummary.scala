@@ -20,6 +20,7 @@ import models.{CheckMode, UserAnswers}
 import pages.addFinancialInstitution.FirstContactHavePhonePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.CheckYourAnswersViewModel.accessibleActionItem
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
@@ -34,7 +35,7 @@ object FirstContactHavePhoneSummary {
           key = "firstContactHavePhone.checkYourAnswersLabel",
           value = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.addFinancialInstitution.routes.FirstContactHavePhoneController.onPageLoad(CheckMode).url)
+            accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.FirstContactHavePhoneController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("firstContactHavePhone.change.hidden"))
           )
         )

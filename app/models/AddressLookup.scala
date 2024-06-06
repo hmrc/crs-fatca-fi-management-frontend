@@ -30,18 +30,20 @@ case class AddressLookup(addressLine1: Option[String],
                          postcode: String
 ) {
 
-  val toAddress: Option[Address] =
-    for {
-      line1 <- addressLine1
-      line2 = addressLine2
-      line3 = addressLine3
-        .map(
-          l => s"$l $town"
-        )
-        .getOrElse(town)
-      line4        = addressLine4
-      safePostcode = Option(postcode)
-    } yield Address(line1, line2, line3, line4, safePostcode, Country.GB)
+  val toAddress: Address = {
+
+    val line1 = addressLine1.getOrElse("")
+    val line2 = addressLine2
+    val line3 = addressLine3
+      .map(
+        l => s"$l $town"
+      )
+      .getOrElse(town)
+    val line4        = addressLine4
+    val safePostcode = Option(postcode)
+
+    Address(line1, line2, line3, line4, safePostcode, Country.GB)
+  }
 
 }
 

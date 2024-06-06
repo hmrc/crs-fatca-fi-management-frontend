@@ -28,6 +28,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.AddressHelper.formatAddress
 import utils.ContactHelper
 import views.html.addFinancialInstitution.SelectAddressView
 
@@ -95,15 +96,6 @@ class SelectAddressController @Inject() (
 
         case None => Future.successful(Redirect(routes.UkAddressController.onPageLoad(mode)))
       }
-  }
-
-  private def formatAddress(address: AddressLookup): String = {
-    val lines = Seq(address.addressLine1, address.addressLine2, address.addressLine3, address.addressLine4).flatten.mkString(", ")
-    val county = address.county.fold("")(
-      county => s"$county, "
-    )
-
-    s"$lines, ${address.town}, $county${address.postcode}"
   }
 
 }
