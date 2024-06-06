@@ -35,8 +35,7 @@ import scala.concurrent.Future
 
 class SecondContactCanWePhoneControllerSpec extends SpecBase with MockitoSugar {
 
-  val FinancialInstitutionName = "Foo Financial Institution"
-  val SecondContactName        = "Fred Flintstone"
+  val SecondContactName = "Fred Flintstone"
 
   def onwardRoute = Call("GET", "/foo")
 
@@ -50,7 +49,7 @@ class SecondContactCanWePhoneControllerSpec extends SpecBase with MockitoSugar {
     "must return OK and the correct view for a GET" in {
 
       val userAnswers = emptyUserAnswers
-        .withPage(NameOfFinancialInstitutionPage, FinancialInstitutionName)
+        .withPage(NameOfFinancialInstitutionPage, fiName)
         .withPage(SecondContactNamePage, SecondContactName)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -63,14 +62,14 @@ class SecondContactCanWePhoneControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[SecondContactCanWePhoneView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, FinancialInstitutionName, SecondContactName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, fiName, SecondContactName)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers = UserAnswers(userAnswersId)
-        .withPage(NameOfFinancialInstitutionPage, FinancialInstitutionName)
+        .withPage(NameOfFinancialInstitutionPage, fiName)
         .withPage(SecondContactNamePage, SecondContactName)
         .withPage(SecondContactCanWePhonePage, true)
 
@@ -87,7 +86,7 @@ class SecondContactCanWePhoneControllerSpec extends SpecBase with MockitoSugar {
         contentAsString(result) mustEqual view(
           form.fill(true),
           NormalMode,
-          FinancialInstitutionName,
+          fiName,
           SecondContactName
         )(request, messages(application)).toString
       }
@@ -122,7 +121,7 @@ class SecondContactCanWePhoneControllerSpec extends SpecBase with MockitoSugar {
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val userAnswers = emptyUserAnswers
-        .withPage(NameOfFinancialInstitutionPage, FinancialInstitutionName)
+        .withPage(NameOfFinancialInstitutionPage, fiName)
         .withPage(SecondContactNamePage, SecondContactName)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -139,7 +138,7 @@ class SecondContactCanWePhoneControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, FinancialInstitutionName, SecondContactName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, fiName, SecondContactName)(request, messages(application)).toString
       }
     }
 

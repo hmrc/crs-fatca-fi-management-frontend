@@ -43,11 +43,11 @@ class FirstContactEmailControllerSpec extends SpecBase with MockitoSugar {
   private lazy val firstContactEmailRoute = routes.FirstContactEmailController.onPageLoad(NormalMode).url
 
   val contactName          = "Mr Test"
-  val financialInstitution = "Placeholder Financial Institution"
+  val financialInstitution = fiName
 
   private val ua = emptyUserAnswers
     .withPage(FirstContactNamePage, contactName)
-    .withPage(NameOfFinancialInstitutionPage, financialInstitution)
+    .withPage(NameOfFinancialInstitutionPage, fiName)
 
   "FirstContactEmail Controller" - {
 
@@ -63,7 +63,7 @@ class FirstContactEmailControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[FirstContactEmailView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, financialInstitution, contactName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, fiName, contactName)(request, messages(application)).toString
       }
     }
 
@@ -81,7 +81,7 @@ class FirstContactEmailControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode, financialInstitution, contactName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode, fiName, contactName)(request, messages(application)).toString
       }
     }
 
@@ -127,7 +127,7 @@ class FirstContactEmailControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, financialInstitution, contactName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, fiName, contactName)(request, messages(application)).toString
       }
     }
 

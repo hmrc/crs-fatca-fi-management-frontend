@@ -61,8 +61,6 @@ class IsThisAddressControllerSpec extends SpecBase with MockitoSugar {
 
   val userAnswers: UserAnswers = emptyUserAnswers.set(AddressLookupPage, Seq(addressLookup)).success.value
 
-  val fiName = "Financial Institution"
-
   lazy val isThisAddressRoute = routes.IsThisAddressController.onPageLoad(NormalMode).url
 
   "IsThisAddress Controller" - {
