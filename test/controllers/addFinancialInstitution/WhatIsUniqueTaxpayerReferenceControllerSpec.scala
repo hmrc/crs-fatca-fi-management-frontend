@@ -39,7 +39,6 @@ class WhatIsUniqueTaxpayerReferenceControllerSpec extends SpecBase with MockitoS
 
   val formProvider          = new WhatIsUniqueTaxpayerReferenceFormProvider()
   val form                  = formProvider()
-  val fiName                = "FI name"
   private val ua            = emptyUserAnswers.set(NameOfFinancialInstitutionPage, fiName).get
   val mockSessionRepository = mock[SessionRepository]
   when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -60,7 +59,7 @@ class WhatIsUniqueTaxpayerReferenceControllerSpec extends SpecBase with MockitoS
         val view = application.injector.instanceOf[WhatIsUniqueTaxpayerReferenceView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, "FI name")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, fiName)(request, messages(application)).toString
       }
     }
 
@@ -78,7 +77,7 @@ class WhatIsUniqueTaxpayerReferenceControllerSpec extends SpecBase with MockitoS
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(UniqueTaxpayerReference("answer")), NormalMode, "FI name")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(UniqueTaxpayerReference("answer")), NormalMode, fiName)(request, messages(application)).toString
       }
     }
 
@@ -120,7 +119,7 @@ class WhatIsUniqueTaxpayerReferenceControllerSpec extends SpecBase with MockitoS
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, "FI name")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, fiName)(request, messages(application)).toString
       }
     }
 

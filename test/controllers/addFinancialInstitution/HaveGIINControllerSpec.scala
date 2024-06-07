@@ -39,9 +39,8 @@ class HaveGIINControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider       = new HaveGIINFormProvider()
   val form               = formProvider()
-  val fiName             = "Big business"
   lazy val haveGIINRoute = routes.HaveGIINController.onPageLoad(NormalMode).url
-  val ua                 = emptyUserAnswers.set(NameOfFinancialInstitutionPage, "Big business").success.value
+  val ua                 = emptyUserAnswers.set(NameOfFinancialInstitutionPage, fiName).success.value
 
   "HaveGIIN Controller" - {
 

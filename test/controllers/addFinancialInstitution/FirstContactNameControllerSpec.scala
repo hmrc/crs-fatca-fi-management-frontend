@@ -40,7 +40,6 @@ class FirstContactNameControllerSpec extends SpecBase with MockitoSugar {
   val formProvider                  = new FirstContactNameFormProvider()
   val form                          = formProvider()
   lazy val contactNameRoute         = routes.FirstContactNameController.onPageLoad(NormalMode).url
-  val fiName                        = "FI name"
   private val ua                    = emptyUserAnswers.set(NameOfFinancialInstitutionPage, fiName).get
   private val mockSessionRepository = mock[SessionRepository]
   when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -59,7 +58,7 @@ class FirstContactNameControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[FirstContactNameView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, "FI name")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, fiName)(request, messages(application)).toString
       }
     }
 
@@ -77,7 +76,7 @@ class FirstContactNameControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode, "FI name")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode, fiName)(request, messages(application)).toString
       }
     }
 
@@ -119,7 +118,7 @@ class FirstContactNameControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, "FI name")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, fiName)(request, messages(application)).toString
       }
     }
 

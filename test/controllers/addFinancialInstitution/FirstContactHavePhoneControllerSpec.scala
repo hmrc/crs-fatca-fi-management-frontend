@@ -42,12 +42,11 @@ class FirstContactHavePhoneControllerSpec extends SpecBase with MockitoSugar {
 
   lazy val contactHavePhoneRoute = routes.FirstContactHavePhoneController.onPageLoad(NormalMode).url
   val contactName                = "Mr Test"
-  val financialInstitution       = "Placeholder Financial Institution"
 
   private val ua =
     emptyUserAnswers
       .withPage(FirstContactNamePage, contactName)
-      .withPage(NameOfFinancialInstitutionPage, financialInstitution)
+      .withPage(NameOfFinancialInstitutionPage, fiName)
 
   "ContactHavePhone Controller" - {
 
@@ -63,7 +62,7 @@ class FirstContactHavePhoneControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[FirstContactHavePhoneView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, financialInstitution, contactName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, fiName, contactName)(request, messages(application)).toString
       }
     }
 
@@ -80,7 +79,7 @@ class FirstContactHavePhoneControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, financialInstitution, contactName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, fiName, contactName)(request, messages(application)).toString
       }
     }
 
@@ -126,7 +125,7 @@ class FirstContactHavePhoneControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, financialInstitution, contactName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, fiName, contactName)(request, messages(application)).toString
       }
     }
 

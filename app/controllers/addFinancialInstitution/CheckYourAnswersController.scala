@@ -22,6 +22,7 @@ import models.UserAnswers
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.ContactHelper
 import viewmodels.checkAnswers.CheckYourAnswersViewModel._
 import viewmodels.govuk.summarylist._
 import views.html.addFinancialInstitution.CheckYourAnswersView
@@ -34,17 +35,18 @@ class CheckYourAnswersController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view: CheckYourAnswersView
 ) extends FrontendBaseController
+    with ContactHelper
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val ua: UserAnswers = request.userAnswers
-
+      val ua: UserAnswers          = request.userAnswers
+      val fiName                   = getFinancialInstitutionName(ua)
       val financialInstitutionList = SummaryListViewModel(getFinancialInstitutionSummaries(ua))
       val firstContactList         = SummaryListViewModel(getFirstContactSummaries(ua))
       val secondContactList        = SummaryListViewModel(getSecondContactSummaries(ua))
 
-      Ok(view(financialInstitutionList, firstContactList, secondContactList))
+      Ok(view(fiName, financialInstitutionList, firstContactList, secondContactList))
   }
 
   def confirmAndAdd(): Action[AnyContent] = (identify andThen getData andThen requireData) {

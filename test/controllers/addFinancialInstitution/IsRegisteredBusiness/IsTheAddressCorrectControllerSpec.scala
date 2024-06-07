@@ -41,7 +41,6 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new IsTheAddressCorrectFormProvider()
   val form         = formProvider()
-  val fiName       = "fi name"
 
   lazy val isTheAddressCorrectRoute: String =
     controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(NormalMode).url

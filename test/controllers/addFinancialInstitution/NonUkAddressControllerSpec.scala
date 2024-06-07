@@ -44,8 +44,6 @@ class NonUkAddressControllerSpec extends SpecBase with GuiceOneAppPerSuite with 
   private val AddressLine3 = "value 3"
   private val AddressLine4 = "value 4"
 
-  private val TestFinancialInstitutionName = "Some Financial Institution"
-
   private val testCountry: Country             = Country("valid", "AG", "Antigua and Barbuda")
   private val testCountryList: Seq[Country]    = Seq(testCountry)
   private val mockAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
@@ -66,7 +64,7 @@ class NonUkAddressControllerSpec extends SpecBase with GuiceOneAppPerSuite with 
 
     "must return OK and the correct view for a GET" in {
 
-      val userAnswers = emptyUserAnswers.withPage(NameOfFinancialInstitutionPage, TestFinancialInstitutionName)
+      val userAnswers = emptyUserAnswers.withPage(NameOfFinancialInstitutionPage, fiName)
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[CountryListFactory].to(countryListFactory))
         .build()
@@ -81,7 +79,7 @@ class NonUkAddressControllerSpec extends SpecBase with GuiceOneAppPerSuite with 
         contentAsString(result) mustEqual view(
           form,
           countryListFactory.countrySelectList(form.data, testCountryList),
-          TestFinancialInstitutionName,
+          fiName,
           NormalMode
         )(request, messages(application)).toString
       }
@@ -89,7 +87,7 @@ class NonUkAddressControllerSpec extends SpecBase with GuiceOneAppPerSuite with 
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
       val userAnswers = emptyUserAnswers
-        .withPage(NameOfFinancialInstitutionPage, TestFinancialInstitutionName)
+        .withPage(NameOfFinancialInstitutionPage, fiName)
         .withPage(NonUkAddressPage, address)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
@@ -106,7 +104,7 @@ class NonUkAddressControllerSpec extends SpecBase with GuiceOneAppPerSuite with 
         contentAsString(result) mustEqual view(
           form.fill(address),
           countryListFactory.countrySelectList(form.data, testCountryList),
-          TestFinancialInstitutionName,
+          fiName,
           NormalMode
         )(request, messages(application)).toString
       }
@@ -117,7 +115,7 @@ class NonUkAddressControllerSpec extends SpecBase with GuiceOneAppPerSuite with 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers.withPage(NameOfFinancialInstitutionPage, TestFinancialInstitutionName)))
+        applicationBuilder(userAnswers = Some(emptyUserAnswers.withPage(NameOfFinancialInstitutionPage, fiName)))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository),
@@ -145,7 +143,7 @@ class NonUkAddressControllerSpec extends SpecBase with GuiceOneAppPerSuite with 
     }
 
     "must return a Bad Request and corresponding view when invalid data is submitted" in {
-      val userAnswers = emptyUserAnswers.withPage(NameOfFinancialInstitutionPage, TestFinancialInstitutionName)
+      val userAnswers = emptyUserAnswers.withPage(NameOfFinancialInstitutionPage, fiName)
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[CountryListFactory].to(countryListFactory))
         .build()
@@ -161,7 +159,7 @@ class NonUkAddressControllerSpec extends SpecBase with GuiceOneAppPerSuite with 
         contentAsString(result) mustEqual view(
           boundForm,
           countryListFactory.countrySelectList(form.data, testCountryList),
-          TestFinancialInstitutionName,
+          fiName,
           NormalMode
         )(request, messages(application)).toString
       }
