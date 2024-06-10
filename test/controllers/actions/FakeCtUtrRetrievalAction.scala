@@ -16,24 +16,19 @@
 
 package controllers.actions
 
-import models.UniqueTaxpayerReference
 import models.requests.IdentifierRequest
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeCtUtrRetrievalActionProvider(
-  utr: Option[UniqueTaxpayerReference] = None
-) extends CtUtrRetrievalAction {
+class FakeCtUtrRetrievalActionProvider extends CtUtrRetrievalAction {
 
   def apply(): ActionFunction[IdentifierRequest, IdentifierRequest] =
-    new FakeCtUtrRetrievalAction(utr)
+    new FakeCtUtrRetrievalAction()
 
 }
 
-class FakeCtUtrRetrievalAction(
-  utr: Option[UniqueTaxpayerReference] = None
-) extends ActionFunction[IdentifierRequest, IdentifierRequest] {
+class FakeCtUtrRetrievalAction extends ActionFunction[IdentifierRequest, IdentifierRequest] {
 
   override def invokeBlock[A](request: IdentifierRequest[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] =
     block(request.copy(autoMatched = true))

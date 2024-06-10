@@ -19,6 +19,8 @@ GET         /account/signed-out                          controllers.auth.Signed
 
 GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad
 
+GET         /add                                         controllers.addFinancialInstitution.AddFIController.onPageLoad
+
 GET         /contact-name                                controllers.addFinancialInstitution.FirstContactNameController.onPageLoad(mode: Mode = NormalMode)
 POST        /contact-name                                controllers.addFinancialInstitution.FirstContactNameController.onSubmit(mode: Mode = NormalMode)
 GET         /change/contact-name                         controllers.addFinancialInstitution.FirstContactNameController.onPageLoad(mode: Mode = CheckMode)
