@@ -30,7 +30,7 @@ class AddFIControllerSpec extends SpecBase {
   "Add FI Controller" - {
 
     "if has CT UTR" - {
-      "must redirect to name of report for registered business page" in {
+      "must redirect to report for registered business page" in {
         val mockCtUtrRetrievalAction: CtUtrRetrievalAction = mock[CtUtrRetrievalAction]
         when(mockCtUtrRetrievalAction.apply()).thenReturn(new FakeCtUtrRetrievalAction())
 
