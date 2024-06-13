@@ -36,26 +36,19 @@ class IndexController @Inject() (
   identify: IdentifierAction,
   subscriptionService: SubscriptionService,
   conf: FrontendAppConfig,
-  retrieveCtUTR: CtUtrRetrievalAction,
   view: IndexView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with Logging
     with I18nSupport {
 
-  private lazy val addFIUrl =
-    controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url
-
-  private lazy val addUserAsFIUrl =
-    controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(NormalMode).url
-
-  def onPageLoad(): Action[AnyContent] = (identify andThen retrieveCtUTR()).async {
+  def onPageLoad(): Action[AnyContent] = identify.async {
     implicit request =>
       val fatcaId = request.fatcaId
       subscriptionService.getSubscription(fatcaId).flatMap {
         sub =>
           val changeContactDetailsUrl = if (sub.isBusiness) conf.changeOrganisationDetailsUrl else conf.changeIndividualDetailsUrl
-          val addNewFIUrl             = if (request.autoMatched) addUserAsFIUrl else addFIUrl
+          val addNewFIUrl             = controllers.addFinancialInstitution.routes.AddFIController.onPageLoad.url
 
           sessionRepository.get(request.userId) flatMap {
             case Some(_) => Future.successful(Ok(view(sub.isBusiness, sub.businessName, fatcaId, addNewFIUrl, changeContactDetailsUrl)))
