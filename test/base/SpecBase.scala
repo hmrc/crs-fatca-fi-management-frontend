@@ -36,6 +36,58 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
   val userAnswersId: String = "FATCAID"
   val fiName                = "Financial Institution"
 
+  private val safeId    = "XE0000123456789"
+  private val OrgName   = "Some Test Org"
+  private val TestEmail = "test@test.com"
+
+  val orgRegWithUtrResponse: String =
+    s"""
+       |{
+       |"registerWithIDResponse": {
+       |"responseCommon": {
+       |"status": "OK",
+       |"statusText": "Sample status text",
+       |"processingDate": "2016-08-16T15:55:30Z",
+       |"returnParameters": [
+       |{
+       |"paramName":
+       |"SAP_NUMBER",
+       |"paramValue":
+       |"0123456789"
+       |}
+       |]
+       |},
+       |"responseDetail": {
+       |"SAFEID": "$safeId",
+       |"ARN": "WARN8764123",
+       |"isEditable": true,
+       |"isAnAgent": false,
+       |"isAnIndividual": true,
+       |"organisation": {
+       |"organisationName": "$OrgName",
+       |"isAGroup": false,
+       |"organisationType": "0001"
+       |},
+       |"address": {
+       |"addressLine1": "100 Parliament Street",
+       |"addressLine4": "London",
+       |"postalCode": "SW1A 2BQ",
+       |"countryCode": "GB"
+       |},
+       |"contactDetails": {
+       |"phoneNumber":
+       |"1111111",
+       |"mobileNumber":
+       |"2222222",
+       |"faxNumber":
+       |"1111111",
+       |"emailAddress":
+       |"$TestEmail"
+       |}
+       |}
+       |}
+       |}""".stripMargin
+
   implicit val hc: HeaderCarrier    = HeaderCarrier()
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
 
