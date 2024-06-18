@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,27 +14,21 @@
  * limitations under the License.
  */
 
-package connectors
+package services
 
-import config.FrontendAppConfig
-import models.RegistrationInfo
+import connectors.RegistrationWithUtrConnector
+import models.{AddressResponse, UniqueTaxpayerReference}
 import play.api.Logging
-import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.HeaderCarrier
 
-import java.net.URL
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RegistrationWithUtrConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient) extends Logging {
+class RegistrationWithUtrService @Inject()(val connector: RegistrationWithUtrConnector) extends Logging {
 
-  def sendAndRetrieveRegWithUtr(
-    uniqueTaxpayerReference: String
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[RegistrationInfo] = {
+  def fetchAddress(utr: UniqueTaxpayerReference)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[AddressResponse] =
+    connector.sendAndRetrieveRegWithUtr(utr.value).map(_.address)
 
-    val endpoint = new URL(s"${config.registrationUrl}/crs-fatca-registration/registration/v2/organisation/utr")
 
-    http.POST[String, RegistrationInfo](endpoint, uniqueTaxpayerReference)
-
-  }
 
 }
