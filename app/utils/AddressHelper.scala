@@ -16,7 +16,7 @@
 
 package utils
 
-import models.{Address, AddressLookup}
+import models.{Address, AddressLookup, AddressResponse}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 
 object AddressHelper {
@@ -67,6 +67,20 @@ object AddressHelper {
         case s: String => s
         case Some(s)   => s
       }
+    createHtmlBlock(lines)
+
+  }
+
+  def formatAddressBlock(address: AddressResponse): HtmlContent = {
+    val lines = Seq(address.addressLine1, address.addressLine2, address.addressLine3, address.addressLine4, address.postalCode) // missing country
+      .collect {
+        case s: String => s
+        case Some(s)   => s
+      }
+    createHtmlBlock(lines)
+  }
+
+  private def createHtmlBlock(lines: Seq[Any]) = {
     val block = lines
       .map(
         line => s"<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>$line</p>"
