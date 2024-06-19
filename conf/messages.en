@@ -321,3 +321,5 @@ postcode.continue = Find address
 mainAddress.checkYourAnswersLabel = Main business address
 mainAddress.change.hidden = Change main business address
 
+checkDetails.title = checkDetails
+checkDetails.heading = checkDetails
