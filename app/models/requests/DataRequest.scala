@@ -17,8 +17,14 @@
 package models.requests
 
 import play.api.mvc.{Request, WrappedRequest}
-import models.UserAnswers
+import models.{UniqueTaxpayerReference, UserAnswers}
 
-case class OptionalDataRequest[A](request: Request[A], userId: String, fatcaId: String, userAnswers: Option[UserAnswers]) extends WrappedRequest[A](request)
+case class OptionalDataRequest[A](request: Request[A],
+                                  userId: String,
+                                  fatcaId: String,
+                                  userAnswers: Option[UserAnswers],
+                                  ctutr: Option[UniqueTaxpayerReference]
+) extends WrappedRequest[A](request)
 
-case class DataRequest[A](request: Request[A], userId: String, fatcaId: String, userAnswers: UserAnswers) extends WrappedRequest[A](request)
+case class DataRequest[A](request: Request[A], userId: String, fatcaId: String, userAnswers: UserAnswers, ctutr: Option[UniqueTaxpayerReference])
+    extends WrappedRequest[A](request)

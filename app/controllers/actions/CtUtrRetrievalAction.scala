@@ -51,7 +51,7 @@ class CtUtrRetrievalActionProvider @Inject() (
 
     ctUtr match {
       case Some(_) =>
-        block(request.copy(autoMatched = true))
+        block(request.copy(autoMatched = true, ctutr = ctUtr))
       case _ =>
         block(request)
     }
