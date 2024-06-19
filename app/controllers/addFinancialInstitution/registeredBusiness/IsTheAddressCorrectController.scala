@@ -73,7 +73,6 @@ class IsTheAddressCorrectController @Inject() (
 
           }
         case None =>
-          println("SOMMIT WENT WRONG")
           Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
       }
 
@@ -81,20 +80,26 @@ class IsTheAddressCorrectController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val address = getFetchedAddress(request.userAnswers)
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors =>
-            Future
-              .successful(BadRequest(view(formWithErrors, mode, getFinancialInstitutionName(request.userAnswers), formatAddressBlock(address).value))),
-          value =>
-            for {
+      request.userAnswers
+        .get(FetchedRegisteredAddressPage)
+        .fold {
+          Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+        } {
+          address =>
+            form
+              .bindFromRequest()
+              .fold(
+                formWithErrors =>
+                  Future
+                    .successful(BadRequest(view(formWithErrors, mode, getFinancialInstitutionName(request.userAnswers), formatAddressBlock(address).value))),
+                value =>
+                  for {
 
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(IsTheAddressCorrectPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(IsTheAddressCorrectPage, mode, updatedAnswers))
-        )
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(IsTheAddressCorrectPage, value))
+                    _              <- sessionRepository.set(updatedAnswers)
+                  } yield Redirect(navigator.nextPage(IsTheAddressCorrectPage, mode, updatedAnswers))
+              )
+        }
   }
 
 }

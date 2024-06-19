@@ -47,7 +47,7 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar {
   val form         = formProvider()
   val address      = formatAddressBlock(testAddressResponse).value
 
-  val uaWithNameAndUtr = UserAnswers(userAnswersId)
+  val userAnswersWithName = UserAnswers(userAnswersId)
     .withPage(NameOfFinancialInstitutionPage, fiName)
 
   lazy val isTheAddressCorrectRoute: String =
@@ -67,9 +67,7 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar {
 
     "must return OK and the correct view for a GET" in {
 
-      val userAnswers = uaWithNameAndUtr
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithName))
         .overrides(bind[CtUtrRetrievalAction].toInstance(mockCtUtrRetrievalAction))
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .overrides(bind[RegistrationWithUtrService].toInstance(mockRegService))
@@ -88,7 +86,7 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val userAnswers = uaWithNameAndUtr
+      val userAnswers = userAnswersWithName
         .withPage(IsTheAddressCorrectPage, true)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
@@ -110,9 +108,11 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must redirect to the next page when valid data is submitted" in {
+      val userAnswers = userAnswersWithName
+        .withPage(FetchedRegisteredAddressPage, testAddressResponse)
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
@@ -132,7 +132,8 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-      val userAnswers = uaWithNameAndUtr.withPage(FetchedRegisteredAddressPage, testAddressResponse)
+      val userAnswers = userAnswersWithName
+        .withPage(FetchedRegisteredAddressPage, testAddressResponse)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
