@@ -38,7 +38,7 @@ class RegistrationWithUtrService @Inject() (val connector: RegistrationWithUtrCo
   private def extractAddress(body: String): AddressResponse = {
     val json: JsValue                            = Json.parse(body)
     val addressResult: JsResult[AddressResponse] = (json \ "registerWithIDResponse" \ "responseDetail" \ "address").validate[AddressResponse]
-    addressResult.get // is need to cover the error?
+    addressResult.get
 
   }
 

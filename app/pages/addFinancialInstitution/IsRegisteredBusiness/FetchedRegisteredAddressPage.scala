@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package controllers.actions
+package pages.addFinancialInstitution.IsRegisteredBusiness
 
-import models.UserAnswers
-import models.requests.{IdentifierRequest, OptionalDataRequest}
+import models.AddressResponse
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-import scala.concurrent.{ExecutionContext, Future}
+case object FetchedRegisteredAddressPage extends QuestionPage[AddressResponse] {
 
-class FakeDataRetrievalAction(dataToReturn: Option[UserAnswers]) extends DataRetrievalAction {
-
-  override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] =
-    Future(OptionalDataRequest(request.request, request.userId, request.fatcaId, dataToReturn, request.ctutr))
-
-  implicit override protected val executionContext: ExecutionContext =
-    scala.concurrent.ExecutionContext.Implicits.global
+  override def path: JsPath = JsPath \ toString
 
 }

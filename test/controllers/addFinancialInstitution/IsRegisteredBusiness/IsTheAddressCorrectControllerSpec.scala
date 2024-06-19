@@ -17,6 +17,7 @@
 package controllers.addFinancialInstitution.IsRegisteredBusiness
 
 import base.SpecBase
+import controllers.actions.{CtUtrRetrievalAction, FakeCtUtrRetrievalAction}
 import controllers.routes
 import forms.addFinancialInstitution.IsRegisteredBusiness.IsTheAddressCorrectFormProvider
 import models.{NormalMode, UserAnswers}
@@ -24,16 +25,19 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.addFinancialInstitution.IsRegisteredBusiness.IsTheAddressCorrectPage
+import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, IsTheAddressCorrectPage}
 import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
+import services.RegistrationWithUtrService
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.AddressHelper.formatAddressBlock
 import views.html.addFinancialInstitution.IsRegisteredBusiness.IsTheAddressCorrectView
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar {
 
@@ -41,17 +45,35 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new IsTheAddressCorrectFormProvider()
   val form         = formProvider()
+  val address      = formatAddressBlock(testAddressResponse).value
+
+  val uaWithNameAndUtr = UserAnswers(userAnswersId)
+    .withPage(NameOfFinancialInstitutionPage, fiName)
 
   lazy val isTheAddressCorrectRoute: String =
     controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(NormalMode).url
 
+  val mockRegService: RegistrationWithUtrService     = mock[RegistrationWithUtrService]
+  val mockCtUtrRetrievalAction: CtUtrRetrievalAction = mock[CtUtrRetrievalAction]
+  val mockSessionRepository: SessionRepository       = mock[SessionRepository]
+
+  when(mockRegService.fetchAddress(any())(any[HeaderCarrier](), any[ExecutionContext]()))
+    .thenReturn(Future.successful(testAddressResponse))
+
+  when(mockCtUtrRetrievalAction.apply()).thenReturn(new FakeCtUtrRetrievalAction())
+  when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
   "IsTheAddressCorrect Controller" - {
 
     "must return OK and the correct view for a GET" in {
-      val userAnswers = UserAnswers(userAnswersId)
-        .withPage(NameOfFinancialInstitutionPage, fiName)
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val userAnswers = uaWithNameAndUtr
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[CtUtrRetrievalAction].toInstance(mockCtUtrRetrievalAction))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .overrides(bind[RegistrationWithUtrService].toInstance(mockRegService))
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, isTheAddressCorrectRoute)
@@ -61,16 +83,19 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[IsTheAddressCorrectView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, fiName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, fiName, address)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val userAnswers = UserAnswers(userAnswersId)
+      val userAnswers = uaWithNameAndUtr
         .withPage(IsTheAddressCorrectPage, true)
-        .withPage(NameOfFinancialInstitutionPage, fiName)
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[CtUtrRetrievalAction].toInstance(mockCtUtrRetrievalAction))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .overrides(bind[RegistrationWithUtrService].toInstance(mockRegService))
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, isTheAddressCorrectRoute)
@@ -80,14 +105,11 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, fiName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, fiName, address)(request, messages(application)).toString
       }
     }
 
     "must redirect to the next page when valid data is submitted" in {
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -110,8 +132,7 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-      val userAnswers = UserAnswers(userAnswersId)
-        .withPage(NameOfFinancialInstitutionPage, fiName)
+      val userAnswers = uaWithNameAndUtr.withPage(FetchedRegisteredAddressPage, testAddressResponse)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -127,7 +148,7 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, fiName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, fiName, address)(request, messages(application)).toString
       }
     }
 

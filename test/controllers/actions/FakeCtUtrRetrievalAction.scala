@@ -16,6 +16,7 @@
 
 package controllers.actions
 
+import models.UniqueTaxpayerReference
 import models.requests.IdentifierRequest
 import play.api.mvc._
 
@@ -31,7 +32,7 @@ class FakeCtUtrRetrievalActionProvider extends CtUtrRetrievalAction {
 class FakeCtUtrRetrievalAction extends ActionFunction[IdentifierRequest, IdentifierRequest] {
 
   override def invokeBlock[A](request: IdentifierRequest[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] =
-    block(request.copy(autoMatched = true))
+    block(request.copy(autoMatched = true, ctutr = Some(UniqueTaxpayerReference("1234567890"))))
 
   implicit override protected val executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global
