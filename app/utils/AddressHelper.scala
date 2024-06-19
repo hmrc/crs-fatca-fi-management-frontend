@@ -72,7 +72,7 @@ object AddressHelper {
   }
 
   def formatAddressBlock(address: AddressResponse): HtmlContent = {
-    val lines = Seq(address.addressLine1, address.addressLine2, address.addressLine3, address.addressLine4, address.postalCode) // missing country
+    val lines = Seq(address.addressLine1, address.addressLine2, address.addressLine3, address.addressLine4, address.postalCode, address.countryCode)
       .collect {
         case s: String => s
         case Some(s)   => s

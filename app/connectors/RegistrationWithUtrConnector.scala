@@ -17,7 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.RegistrationInfo
+import models.UniqueTaxpayerReference
 import play.api.Logging
 import uk.gov.hmrc.http._
 
@@ -28,13 +28,12 @@ import scala.concurrent.{ExecutionContext, Future}
 class RegistrationWithUtrConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient) extends Logging {
 
   def sendAndRetrieveRegWithUtr(
-    uniqueTaxpayerReference: String
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[RegistrationInfo] = {
+    uniqueTaxpayerReference: UniqueTaxpayerReference
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
 
-    val endpoint = new URL(s"${config.registrationUrl}/crs-fatca-registration/registration/v2/organisation/utr")
+    val endpoint = new URL(s"${config.registrationUrl}/crs-fatca-registration/registration/organisation/utr-only")
 
-    http.POST[String, RegistrationInfo](endpoint, uniqueTaxpayerReference)
-
+    http.POST[UniqueTaxpayerReference, HttpResponse](endpoint, uniqueTaxpayerReference)
   }
 
 }

@@ -21,6 +21,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqua
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
 import helpers.WireMockServerHandler
+import models.UniqueTaxpayerReference
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.http.Status._
@@ -37,10 +38,10 @@ class RegistrationWithUtrConnectorSpec extends SpecBase with WireMockServerHandl
     .build()
 
   lazy val connector: RegistrationWithUtrConnector = application.injector.instanceOf[RegistrationWithUtrConnector]
-  val endpoint                                     = "/v2/organisation/utr"
+  val endpoint                                     = "/organisation/utr-only"
 
   "sendAndRetrieveRegWithUtr" - {
-    val utr: String = "1112223330"
+    val utr = UniqueTaxpayerReference("1112223330")
 
     "return 200 and a registration response when organisation is matched by utr" in {
 

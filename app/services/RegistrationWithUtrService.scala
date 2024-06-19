@@ -19,16 +19,27 @@ package services
 import connectors.RegistrationWithUtrConnector
 import models.{AddressResponse, UniqueTaxpayerReference}
 import play.api.Logging
+import play.api.libs.json.{JsError, JsResult, JsSuccess, JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RegistrationWithUtrService @Inject()(val connector: RegistrationWithUtrConnector) extends Logging {
+class RegistrationWithUtrService @Inject() (val connector: RegistrationWithUtrConnector) extends Logging {
 
   def fetchAddress(utr: UniqueTaxpayerReference)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[AddressResponse] =
-    connector.sendAndRetrieveRegWithUtr(utr.value).map(_.address)
+    connector
+      .sendAndRetrieveRegWithUtr(utr)
+      .map {
+        res =>
+          extractAddress(res.body)
+      }
 
+  private def extractAddress(body: String): AddressResponse = {
+    val json: JsValue                            = Json.parse(body)
+    val addressResult: JsResult[AddressResponse] = (json \ "registerWithIDResponse" \ "responseDetail" \ "address").validate[AddressResponse]
+    addressResult.get // is need to cover the error?
 
+  }
 
 }

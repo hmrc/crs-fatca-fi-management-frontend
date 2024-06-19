@@ -18,25 +18,6 @@ package models
 
 import play.api.libs.json._
 
-case class RegistrationInfo(safeId: SafeId, name: String, address: AddressResponse)
-
-object RegistrationInfo {
-
-  implicit val format: OFormat[RegistrationInfo] = Json.format[RegistrationInfo]
-}
-
-case class SafeId(value: String)
-
-object SafeId {
-
-  implicit val reads: Reads[SafeId] = __.read[String].map(SafeId.apply)
-
-  implicit val writes: Writes[SafeId] = Writes(
-    safeId => JsString(safeId.value)
-  )
-
-}
-
 case class AddressResponse(
   addressLine1: String,
   addressLine2: Option[String],
