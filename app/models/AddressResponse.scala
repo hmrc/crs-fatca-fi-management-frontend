@@ -25,9 +25,20 @@ case class AddressResponse(
   addressLine4: Option[String],
   postalCode: Option[String],
   countryCode: String
-)
+) {
+
+  def lines: Seq[String] = Seq(
+    Some(addressLine1),
+    addressLine2,
+    addressLine3,
+    addressLine4,
+    postalCode,
+    Some(countryCode)
+  ).flatten
+
+}
 
 object AddressResponse {
 
-  implicit val format: Format[AddressResponse] = Json.format[AddressResponse]
+  implicit val format: OFormat[AddressResponse] = Json.format[AddressResponse]
 }

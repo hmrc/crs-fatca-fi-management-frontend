@@ -34,7 +34,6 @@ import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.RegistrationWithUtrService
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.AddressHelper.formatAddressBlock
 import views.html.addFinancialInstitution.IsRegisteredBusiness.IsTheAddressCorrectView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,7 +44,7 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new IsTheAddressCorrectFormProvider()
   val form         = formProvider()
-  val address      = formatAddressBlock(testAddressResponse).value
+  val address      = testAddressResponse
 
   val userAnswersWithName = UserAnswers(userAnswersId)
     .withPage(NameOfFinancialInstitutionPage, fiName)

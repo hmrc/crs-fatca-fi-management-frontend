@@ -19,7 +19,7 @@ package services
 import connectors.RegistrationWithUtrConnector
 import models.{AddressResponse, UniqueTaxpayerReference}
 import play.api.Logging
-import play.api.libs.json.{JsError, JsResult, JsSuccess, JsValue, Json}
+import play.api.libs.json.{JsResult, JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject

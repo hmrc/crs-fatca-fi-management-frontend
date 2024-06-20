@@ -23,9 +23,10 @@
     govukRadios: GovukRadios,
     govukButton: GovukButton,
     heading: Heading,
+    addressBlock: AddressBlock
 )
 
-@(form: Form[_], mode: Mode, fiName: String, addressBlock: Html)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, fiName: String, address: AddressResponse)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("isTheAddressCorrect.title", fiName))) {
 
@@ -37,7 +38,7 @@
 
         @heading(messages("isTheAddressCorrect.heading", fiName))
 
-       <div class="govuk-body">@addressBlock</div>
+       @addressBlock(addressRes = Some(address))
 
         @govukRadios(
             RadiosViewModel.yesNo(

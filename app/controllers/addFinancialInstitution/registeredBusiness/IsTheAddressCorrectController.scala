@@ -27,7 +27,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.RegistrationWithUtrService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.AddressHelper.formatAddressBlock
 import utils.ContactHelper
 import views.html.addFinancialInstitution.IsRegisteredBusiness.IsTheAddressCorrectView
 
@@ -67,7 +66,7 @@ class IsTheAddressCorrectController @Inject() (
                       case None        => form
                       case Some(value) => form.fill(value)
                     }
-                    Ok(view(preparedForm, mode, getFinancialInstitutionName(request.userAnswers), formatAddressBlock(address).value))
+                    Ok(view(preparedForm, mode, getFinancialInstitutionName(request.userAnswers), address))
                 }
               } yield result
 
@@ -91,7 +90,7 @@ class IsTheAddressCorrectController @Inject() (
               .fold(
                 formWithErrors =>
                   Future
-                    .successful(BadRequest(view(formWithErrors, mode, getFinancialInstitutionName(request.userAnswers), formatAddressBlock(address).value))),
+                    .successful(BadRequest(view(formWithErrors, mode, getFinancialInstitutionName(request.userAnswers), address))),
                 value =>
                   for {
 

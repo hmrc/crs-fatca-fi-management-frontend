@@ -18,13 +18,22 @@
 
 @this()
 
-@(address: Address, classes: String = "govuk-body")
+@(address: Option[Address] = None, addressRes: Option[AddressResponse]= None, classes: String = "govuk-body")
 
-@lines = @{address.lines.map {
-    case line       => s"<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>$line</p>"
-    case _          => ""
-    }.mkString("")
-}
+
+@lines = @{
+    val rows = (address.isDefined, addressRes.isDefined) match {
+      case (true, _) => address.get.lines
+      case (_, true) => addressRes.get.lines
+    }
+    rows.map {
+        case line => s"<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>$line</p>"
+        case _    => ""
+      }
+      .mkString("")
+  }
+
+
 <div class= "@classes">
     @Html(lines)
 </div>
