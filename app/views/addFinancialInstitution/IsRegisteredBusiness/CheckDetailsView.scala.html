@@ -14,26 +14,14 @@
  * limitations under the License.
  *@
 
-@import models.Address
+@this(
+        layout: templates.Layout,
+        govukButton: GovukButton
+)
 
-@this()
+@()(implicit request: Request[_], messages: Messages)
 
-@(address: Option[Address] = None, addressRes: Option[AddressResponse]= None, classes: String = "govuk-body")
+@layout(pageTitle = titleNoForm(messages("checkDetails.title"))) {
 
-
-@lines = @{
-    val rows = (address.isDefined, addressRes.isDefined) match {
-      case (true, _) => address.get.lines
-      case (_, true) => addressRes.get.lines
-    }
-    rows.map {
-        case line => s"<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>$line</p>"
-        case _    => ""
-      }
-      .mkString("")
-  }
-
-
-<div class= "@classes">
-    @Html(lines)
-</div>
+    <h1 class="govuk-heading-xl">@messages("checkDetails.heading")</h1>
+}

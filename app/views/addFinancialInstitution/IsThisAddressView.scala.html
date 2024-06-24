@@ -40,7 +40,7 @@
 
         @heading(messages("isThisAddress.heading", fiName))
 
-        @addressBlock(address)
+        @addressBlock(address = Some(address))
 
         @govukRadios(
             RadiosViewModel.yesNo(

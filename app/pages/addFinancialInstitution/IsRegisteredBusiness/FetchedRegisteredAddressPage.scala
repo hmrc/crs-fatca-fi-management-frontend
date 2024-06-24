@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,28 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import models.Address
+package pages.addFinancialInstitution.IsRegisteredBusiness
 
-@this()
+import models.AddressResponse
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-@(address: Option[Address] = None, addressRes: Option[AddressResponse]= None, classes: String = "govuk-body")
+case object FetchedRegisteredAddressPage extends QuestionPage[AddressResponse] {
 
+  override def path: JsPath = JsPath \ toString
 
-@lines = @{
-    val rows = (address.isDefined, addressRes.isDefined) match {
-      case (true, _) => address.get.lines
-      case (_, true) => addressRes.get.lines
-    }
-    rows.map {
-        case line => s"<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>$line</p>"
-        case _    => ""
-      }
-      .mkString("")
-  }
-
-
-<div class= "@classes">
-    @Html(lines)
-</div>
+}

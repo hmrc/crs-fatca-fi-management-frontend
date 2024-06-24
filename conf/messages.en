@@ -255,7 +255,7 @@ ukAddress.error.postcode.chars = Postcode must only include letters a to z and n
 ukAddress.error.postcode.invalid = Enter a real postcode
 ukAddress.error.country.required = Select country
 
-isTheAddressCorrect.title = Is this the registered address for {0}?
+isTheAddressCorrect.title = Is this the registered address for the financial institution?
 isTheAddressCorrect.heading = Is this the registered address for {0}?
 isTheAddressCorrect.checkYourAnswersLabel = isTheAddressCorrect
 isTheAddressCorrect.error.required = Select yes if the registered address for the financial institution is correct
@@ -321,3 +321,5 @@ postcode.continue = Find address
 mainAddress.checkYourAnswersLabel = Main business address
 mainAddress.change.hidden = Change main business address
 
+checkDetails.title = checkDetails
+checkDetails.heading = checkDetails

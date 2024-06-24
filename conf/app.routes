@@ -144,4 +144,4 @@ POST       /registered-business/is-this-your-business-name           controllers
 GET        /registered-business/change-is-this-your-business-name    controllers.addFinancialInstitution.registeredBusiness.IsThisYourBusinessNameController.onPageLoad(mode: Mode = CheckMode)
 POST       /registered-business/change-is-this-your-business-name    controllers.addFinancialInstitution.registeredBusiness.IsThisYourBusinessNameController.onSubmit(mode: Mode = CheckMode)
 
-
+GET        /registered-business/check-answers                        controllers.CheckDetailsController.onPageLoad()

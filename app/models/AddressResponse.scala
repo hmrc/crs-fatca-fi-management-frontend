@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,28 +12,33 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import models.Address
+package models
 
-@this()
+import play.api.libs.json._
 
-@(address: Option[Address] = None, addressRes: Option[AddressResponse]= None, classes: String = "govuk-body")
+case class AddressResponse(
+  addressLine1: String,
+  addressLine2: Option[String],
+  addressLine3: Option[String],
+  addressLine4: Option[String],
+  postalCode: Option[String],
+  countryCode: String
+) {
 
+  def lines: Seq[String] = Seq(
+    Some(addressLine1),
+    addressLine2,
+    addressLine3,
+    addressLine4,
+    postalCode,
+    Some(countryCode)
+  ).flatten
 
-@lines = @{
-    val rows = (address.isDefined, addressRes.isDefined) match {
-      case (true, _) => address.get.lines
-      case (_, true) => addressRes.get.lines
-    }
-    rows.map {
-        case line => s"<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>$line</p>"
-        case _    => ""
-      }
-      .mkString("")
-  }
+}
 
+object AddressResponse {
 
-<div class= "@classes">
-    @Html(lines)
-</div>
+  implicit val format: OFormat[AddressResponse] = Json.format[AddressResponse]
+}

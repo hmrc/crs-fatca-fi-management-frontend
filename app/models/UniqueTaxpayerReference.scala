@@ -18,7 +18,7 @@ package models
 
 import play.api.libs.json._
 
-case class UniqueTaxpayerReference(uniqueTaxPayerReference: String)
+case class UniqueTaxpayerReference(value: String)
 
 object UniqueTaxpayerReference {
   implicit val format: OFormat[UniqueTaxpayerReference] = Json.format[UniqueTaxpayerReference]
