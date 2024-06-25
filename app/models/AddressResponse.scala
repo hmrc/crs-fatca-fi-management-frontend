@@ -42,9 +42,10 @@ case class AddressResponse(
 
   private def postCodeFormatter(postcode: Option[String]): Option[String] =
     postcode match {
-      case Some(postcode) =>
-        val tail = postcode.substring(postcode.length - 3)
-        val head = postcode.substring(0, postcode.length - 3)
+      case Some(pc) =>
+        val postCode = pc.replaceAll("\\s", "")
+        val tail     = postCode.substring(postCode.length - 3)
+        val head     = postCode.substring(0, postCode.length - 3)
         Some(s"$head $tail".toUpperCase)
       case _ => None
     }
