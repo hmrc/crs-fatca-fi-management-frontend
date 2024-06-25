@@ -19,7 +19,7 @@ package models.registration.response
 import play.api.http.Status
 import play.api.http.Status.SERVICE_UNAVAILABLE
 import uk.gov.hmrc.http.HttpReads
-import uk.gov.hmrc.http.HttpReads.{is4xx, is5xx}
+import uk.gov.hmrc.http.HttpErrorFunctions.{is4xx, is5xx}
 
 sealed trait ApiError
 
