@@ -33,8 +33,12 @@ case class AddressResponse(
     addressLine3,
     addressLine4,
     postalCode,
-    Some(countryCode)
+    getCountry(countryCode)
   ).flatten
+
+  // to be extended to other countries in future
+  private def getCountry(code: String): Option[String] =
+    if (code == "GB") Some("United Kingdom") else Some(code)
 
 }
 
