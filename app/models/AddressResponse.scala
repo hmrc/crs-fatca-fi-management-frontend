@@ -32,13 +32,23 @@ case class AddressResponse(
     addressLine2,
     addressLine3,
     addressLine4,
-    postalCode,
+    postCodeFormatter(postalCode),
     getCountry(countryCode)
   ).flatten
 
   // to be extended to other countries in future
   private def getCountry(code: String): Option[String] =
     if (code == "GB") Some("United Kingdom") else Some(code)
+
+  private def postCodeFormatter(postcode: Option[String]): Option[String] =
+    postcode match {
+      case Some(pc) =>
+        val postCode = pc.replaceAll("\\s", "")
+        val tail     = postCode.substring(postCode.length - 3)
+        val head     = postCode.substring(0, postCode.length - 3)
+        Some(s"$head $tail".toUpperCase)
+      case _ => None
+    }
 
 }
 
