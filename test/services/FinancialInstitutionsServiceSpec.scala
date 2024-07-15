@@ -42,17 +42,12 @@ class FinancialInstitutionsServiceSpec extends SpecBase {
 
       when(mockConnector.viewFis(subscriptionId)).thenReturn(mockResponse)
       val result: Future[Seq[FIDetail]] = sut.getListOfFinancialInstitutions(subscriptionId)
-      result.map {
-        fiDetails =>
-          fiDetails mustBe Seq(
-            fiDeets
-          )
-      }
-
+      result.futureValue mustBe fiDetails
     }
+
   }
 
-  val fiDeets: Seq[FIDetail] =
+  val fiDetails: Seq[FIDetail] =
     Seq(
       FIDetail(
         "683373339",
