@@ -37,8 +37,7 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
       )
 
   private def extractList(body: String) = {
-    val json: JsValue = Json.parse(body)
-
+    val json: JsValue                        = Json.parse(body)
     val listsResult: JsResult[Seq[FIDetail]] = (json \ "ViewFIDetails" \ "ResponseDetails" \ "FIDetails").validate[Seq[FIDetail]]
     listsResult.get
   }

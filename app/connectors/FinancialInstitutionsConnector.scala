@@ -23,7 +23,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FinancialInstitutionsConnector @Inject() (config: FrontendAppConfig, httpClient: HttpClientV2) {
+class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, val httpClient: HttpClientV2) {
 
   def viewFis(subscriptionId: String)(implicit
     hc: HeaderCarrier,

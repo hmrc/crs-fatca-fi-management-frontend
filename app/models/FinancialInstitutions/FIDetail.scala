@@ -22,7 +22,7 @@ final case class FIDetail(
   FIID: String,
   FIName: String,
   SubscriptionID: String,
-  TINDetails: TINDetails,
+  TINDetails: Seq[TINDetails],
   IsFIUser: Boolean,
   IsFATCAReporting: Boolean,
   AddressDetails: AddressDetails,
