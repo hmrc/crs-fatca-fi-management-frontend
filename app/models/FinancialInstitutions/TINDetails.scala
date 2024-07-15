@@ -14,23 +14,12 @@
  * limitations under the License.
  */
 
-package connectors
+package models.FinancialInstitutions
 
-import config.FrontendAppConfig
-import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+import play.api.libs.json.{Json, OFormat}
 
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+final case class TINDetails(TINType: TINType, TIN: String, IssuedBy: String)
 
-class FinancialInstitutionsConnector @Inject() (config: FrontendAppConfig, httpClient: HttpClientV2) {
-
-  def viewFis(subscriptionId: String)(implicit
-    hc: HeaderCarrier,
-    ec: ExecutionContext
-  ): Future[HttpResponse] =
-    httpClient
-      .get(url"${config.fIManagementUrl}/financial-institutions/$subscriptionId")
-      .execute[HttpResponse]
-
+object TINDetails {
+  implicit val format: OFormat[TINDetails] = Json.format[TINDetails]
 }

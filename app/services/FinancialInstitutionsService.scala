@@ -14,23 +14,33 @@
  * limitations under the License.
  */
 
-package connectors
+package services
 
-import config.FrontendAppConfig
-import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+import connectors.FinancialInstitutionsConnector
+import models.FinancialInstitutions.FIDetail
+import play.api.libs.json.{JsResult, JsValue, Json}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FinancialInstitutionsConnector @Inject() (config: FrontendAppConfig, httpClient: HttpClientV2) {
+class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsConnector) {
 
-  def viewFis(subscriptionId: String)(implicit
+  def getListOfFinancialInstitutions(suscriptionId: String)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[HttpResponse] =
-    httpClient
-      .get(url"${config.fIManagementUrl}/financial-institutions/$subscriptionId")
-      .execute[HttpResponse]
+  ): Future[Seq[FIDetail]] =
+    connector
+      .viewFis(suscriptionId)
+      .map(
+        res => extractList(res.body)
+      )
+
+  private def extractList(body: String) = {
+    val json: JsValue = Json.parse(body)
+
+    val listsResult: JsResult[Seq[FIDetail]] = (json \ "ViewFIDetails" \ "ResponseDetails" \ "FIDetails").validate[Seq[FIDetail]]
+    listsResult.get
+  }
 
 }

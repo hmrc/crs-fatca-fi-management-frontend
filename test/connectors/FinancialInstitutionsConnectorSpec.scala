@@ -17,8 +17,6 @@
 package connectors
 
 import base.SpecBase
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
-import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import helpers.WireMockServerHandler
 import play.api.Application
 import play.api.http.Status.OK
@@ -41,8 +39,9 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
   "FinancialInstitutionsConnector" - {
 
     "viewFinancialInstitutions" - {
+
       "must return status as OK for viewFIs" in {
-        val subscriptionId = "Sub12345"
+        val subscriptionId = "XE512345678"
         stubResponse(
           s"/financial-institutions/$subscriptionId",
           OK
@@ -52,17 +51,5 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
       }
     }
   }
-
-  private def stubResponse(
-    expectedUrl: String,
-    expectedStatus: Int
-  ): StubMapping =
-    server.stubFor(
-      get(urlEqualTo(expectedUrl))
-        .willReturn(
-          aResponse()
-            .withStatus(expectedStatus)
-        )
-    )
 
 }

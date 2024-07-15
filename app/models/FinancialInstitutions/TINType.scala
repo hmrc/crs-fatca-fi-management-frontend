@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-package connectors
+package models.FinancialInstitutions
 
-import config.FrontendAppConfig
-import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+import enumeratum._
 
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+sealed trait TINType extends EnumEntry
 
-class FinancialInstitutionsConnector @Inject() (config: FrontendAppConfig, httpClient: HttpClientV2) {
+object TINType extends PlayEnum[TINType] {
 
-  def viewFis(subscriptionId: String)(implicit
-    hc: HeaderCarrier,
-    ec: ExecutionContext
-  ): Future[HttpResponse] =
-    httpClient
-      .get(url"${config.fIManagementUrl}/financial-institutions/$subscriptionId")
-      .execute[HttpResponse]
+  val values: IndexedSeq[TINType] = findValues
+
+  case object UTR extends TINType
+  case object GIIN extends TINType
+  case object OTHER extends TINType
 
 }
