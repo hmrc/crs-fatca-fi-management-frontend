@@ -299,6 +299,8 @@ selectAddress.heading = What is the address for {0}?
 selectAddress.error.required = Select the address for the financial institution or enter it manually
 selectAddress.p1.part1 = Select from the list or {0}
 selectAddress.p1.part2 = enter your address manually
+selectAddress.checkYourAnswersLabel = Main business address
+selectAddress.change.hidden = Change main business address
 
 isThisAddress.title = Is this the address?
 isThisAddress.heading = Is this the address for {0}?
@@ -317,9 +319,6 @@ postcode.error.chars = Postcode must only include letters a to z and numbers 0 t
 postcode.error.invalid = Enter a real postcode or enter the address manually
 postcode.error.notFound = Postcode not found — enter a different postcode or enter the address manually
 postcode.continue = Find address
-
-mainAddress.checkYourAnswersLabel = Main business address
-mainAddress.change.hidden = Change main business address
 
 checkDetails.title = checkDetails
 checkDetails.heading = checkDetails

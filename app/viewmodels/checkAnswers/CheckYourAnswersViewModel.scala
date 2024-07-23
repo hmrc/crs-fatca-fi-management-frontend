@@ -36,7 +36,7 @@ object CheckYourAnswersViewModel {
     )
 
   private def getAddressRow(ua: UserAnswers)(implicit messages: Messages) = {
-    val addressLookup = AddressLookupSummary.row(ua)
+    val addressLookup = SelectAddressSummary.row(ua)
     val nonUkAddress  = NonUkAddressSummary.row(ua)
     val ukAddress     = UkAddressSummary.row(ua)
 
