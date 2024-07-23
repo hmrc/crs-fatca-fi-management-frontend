@@ -20,21 +20,24 @@ import config.FrontendAppConfig
 import models.subscription.request.ReadSubscriptionRequest
 import models.subscription.response.DisplaySubscriptionResponse
 import play.api.Logging
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import play.api.libs.json.Json
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient) extends Logging {
+class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: HttpClientV2) extends Logging {
 
   def readSubscription(
     readSubscriptionRequest: ReadSubscriptionRequest
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[DisplaySubscriptionResponse] = {
-
     val submissionUrl = s"${config.registrationUrl}/crs-fatca-registration/subscription/read-subscription"
 
-    http.POST[ReadSubscriptionRequest, DisplaySubscriptionResponse](submissionUrl, readSubscriptionRequest)
-
+    http
+      .post(url"$submissionUrl")
+      .withBody(Json.toJson(readSubscriptionRequest))
+      .execute[DisplaySubscriptionResponse]
   }
 
 }

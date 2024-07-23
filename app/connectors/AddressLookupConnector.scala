@@ -20,15 +20,16 @@ import config.FrontendAppConfig
 import models.{AddressLookup, LookupAddressByPostcode}
 import play.api.Logging
 import play.api.http.Status._
-import play.api.libs.json.Reads
+import play.api.libs.json.{Json, Reads}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.client.HttpClientV2
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppConfig) extends Logging {
+class AddressLookupConnector @Inject() (http: HttpClientV2, config: FrontendAppConfig) extends Logging {
 
   def addressLookupByPostcode(postCode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[AddressLookup]] = {
 
@@ -38,7 +39,11 @@ class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppCon
 
     val lookupAddressByPostcode = LookupAddressByPostcode(postCode, None)
 
-    http.POST[LookupAddressByPostcode, HttpResponse](addressLookupUrl, lookupAddressByPostcode, headers = Seq("X-Hmrc-Origin" -> "CRSFATCA")) flatMap {
+    http
+      .post(url"$addressLookupUrl")
+      .withBody(Json.toJson(lookupAddressByPostcode))
+      .setHeader("X-Hmrc-Origin" -> "CRSFATCA")
+      .execute[HttpResponse] flatMap {
       case response if response.status equals OK =>
         Future.successful(
           sortAddresses(
