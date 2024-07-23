@@ -31,15 +31,9 @@ object SelectAddressSummary {
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(SelectAddressPage).map {
       answer =>
-        val value = ValueViewModel(
-          HtmlContent(
-            HtmlFormat.escape(messages(s"selectAddress.$answer"))
-          )
-        )
-
         SummaryListRowViewModel(
           key = "selectAddress.checkYourAnswersLabel",
-          value = value,
+          value = ValueViewModel(HtmlContent(s"${answer.replace(",", "<br>")}")),
           actions = Seq(
             accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.SelectAddressController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("selectAddress.change.hidden"))

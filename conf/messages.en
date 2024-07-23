@@ -299,6 +299,7 @@ selectAddress.heading = What is the address for {0}?
 selectAddress.error.required = Select the address for the financial institution or enter it manually
 selectAddress.p1.part1 = Select from the list or {0}
 selectAddress.p1.part2 = enter your address manually
+selectAddress.checkYourAnswersLabel = Main business address
 
 isThisAddress.title = Is this the address?
 isThisAddress.heading = Is this the address for {0}?
