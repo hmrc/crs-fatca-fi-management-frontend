@@ -32,8 +32,6 @@
 
     @formHelper(action = controllers.addFinancialInstitution.routes.WhatIsGIINController.onSubmit(mode)) {
 
-    @if(haveGIIN == true) {
-
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
@@ -46,27 +44,12 @@
             .withWidth(Fixed20)
             .withHint(HintViewModel(HtmlContent(messages("whatIsGIIN.hint"))))
         )
-    }
-    @if(haveGIIN == false) {
-        @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
-        }
 
-        @heading(messages("whatIsGIIN.heading", fiName))
-        @paragraph(Html(messages("whatIsGIIN.p1", fiName)))
 
-        @govukInput(
-            InputViewModel(
-                field = form("value"),
-                label = LabelViewModel(messages("whatIsGIIN.heading")).visuallyHidden()
-            )
-            .withWidth(Fixed20)
-            .withHint(HintViewModel(HtmlContent(messages("whatIsGIIN.hint"))))
-        )
-    }
 
     @govukButton(
         ButtonViewModel(messages("site.continue")).withAttribute("id" -> "submit")
     )
-  }
+
+    }
 }

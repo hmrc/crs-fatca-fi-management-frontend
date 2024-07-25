@@ -145,11 +145,11 @@ whatIsUniqueTaxpayerReference.change.hidden = Change Unique Taxpayer Reference
 
 haveGIIN.title = Global Intermediary Identification Number (GIIN)
 haveGIIN.heading = Global Intermediary Identification Number (GIIN)
-haveGIIN.subheading = Would you like to provide a GIIN for {0}?
-haveGIIN.para.1 = If you need to send FATCA reports for {0} in the future, then you will need to provide a GIIN.
-haveGIIN.para.2 = A GIIN is a number from the United States of America’s Internal Revenue Service (IRS). {0} must have registered with the IRS to receive a number.
-haveGIIN.para.3 = If {0} already has a GIIN, then you can provide it now to save time later.
-haveGIIN.error.required = Select yes if you would like to provide a GIIN for the financial institution
+haveGIIN.subheading = Would you like to provide a GIIN for {0} now?
+haveGIIN.para.1 = A GIIN is required for FATCA reporting. You can choose to provide it for {0} now or if sending a FATCA report later.
+haveGIIN.para.2 = To receive a GIIN for FATCA, {0} must have registered with the United States of America’s Internal Revenue Service.
+haveGIIN.para.3 = You can also provide a GIIN if you’re reporting for CRS but may report for FATCA later.
+haveGIIN.error.required = Select yes if you would like to provide a GIIN for the financial institution now
 haveGIIN.checkYourAnswersLabel = Would you like to provide their Global Intermediary Identification number?
 haveGIIN.change.hidden = Change if you would like to provide a Global Intermediary Identification number
 
