@@ -50,14 +50,13 @@ object CheckYourAnswersViewModel {
   }
 
   private def getGIINRows(ua: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = {
-    val sendReports = ua.get(SendReportsPage)
-    val haveGIIN    = ua.get(HaveGIINPage)
+    val haveGIIN = ua.get(HaveGIINPage)
 
-    (sendReports, haveGIIN) match {
-      case (Some(true), None)         => Seq(WhatIsGIINSummary.row(ua)).flatten
-      case (Some(false), Some(true))  => Seq(HaveGIINSummary.row(ua), WhatIsGIINSummary.row(ua)).flatten
-      case (Some(false), Some(false)) => Seq(HaveGIINSummary.row(ua)).flatten
-      case (_, _)                     => Seq.empty
+    haveGIIN match {
+      case None        => Seq(WhatIsGIINSummary.row(ua)).flatten
+      case Some(true)  => Seq(HaveGIINSummary.row(ua), WhatIsGIINSummary.row(ua)).flatten
+      case Some(false) => Seq(HaveGIINSummary.row(ua)).flatten
+      case _           => Seq.empty
     }
   }
 
@@ -67,7 +66,6 @@ object CheckYourAnswersViewModel {
       NameOfFinancialInstitutionSummary.row(ua),
       HaveUniqueTaxpayerReferenceSummary.row(ua),
       WhatIsUniqueTaxpayerReferenceSummary.row(ua),
-      SendReportsSummary.row(ua),
       getGIINRows(ua),
       getAddressRow(ua)
     ).flatten

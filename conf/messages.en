@@ -153,12 +153,6 @@ haveGIIN.error.required = Select yes if you would like to provide a GIIN for the
 haveGIIN.checkYourAnswersLabel = Would you like to provide their Global Intermediary Identification number?
 haveGIIN.change.hidden = Change if you would like to provide a Global Intermediary Identification number
 
-sendReports.title = Does the financial institution need to send FATCA reports?
-sendReports.heading = Does {0} need to send FATCA reports?
-sendReports.checkYourAnswersLabel = Do they need to send FATCA reports?
-sendReports.error.required = Select yes if the financial institution needs to send FATCA reports
-sendReports.change.hidden = Change if they need to send FATCA reports
-
 whatIsGIIN.title = What is the financial institution’s GIIN?
 whatIsGIIN.heading = What is the Global Intermediary Identification Number (GIIN) for {0}?
 whatIsGIIN.p1 = This is a number from the United States of America’s Internal Revenue Service (IRS). {0} must have registered with the IRS to receive a number.

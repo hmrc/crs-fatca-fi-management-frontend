@@ -34,19 +34,11 @@ class Navigator @Inject() () {
       userAnswers =>
         isFiUser(
           userAnswers,
-          routes.SendReportsController.onPageLoad(NormalMode),
+          routes.HaveGIINController.onPageLoad(NormalMode),
           routes.HaveUniqueTaxpayerReferenceController.onPageLoad(NormalMode)
         )
     case WhatIsUniqueTaxpayerReferencePage =>
-      _ => routes.SendReportsController.onPageLoad(NormalMode)
-    case SendReportsPage =>
-      userAnswers =>
-        yesNoPage(
-          userAnswers,
-          SendReportsPage,
-          routes.WhatIsGIINController.onPageLoad(NormalMode),
-          routes.HaveGIINController.onPageLoad(NormalMode)
-        )
+      _ => routes.HaveGIINController.onPageLoad(NormalMode)
     case WhatIsGIINPage =>
       userAnswers =>
         isFiUser(
@@ -68,7 +60,7 @@ class Navigator @Inject() () {
           userAnswers,
           HaveUniqueTaxpayerReferencePage,
           routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(NormalMode),
-          routes.SendReportsController.onPageLoad(NormalMode)
+          routes.HaveGIINController.onPageLoad(NormalMode)
         )
     case FirstContactNamePage =>
       _ => routes.FirstContactEmailController.onPageLoad(NormalMode)
@@ -138,7 +130,7 @@ class Navigator @Inject() () {
         yesNoPage(
           userAnswers,
           IsThisYourBusinessNamePage,
-          routes.SendReportsController.onPageLoad(NormalMode),
+          routes.HaveGIINController.onPageLoad(NormalMode),
           routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode)
         )
     case IsTheAddressCorrectPage =>
