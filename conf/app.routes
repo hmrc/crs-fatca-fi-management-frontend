@@ -111,11 +111,6 @@ POST       /is-this-the-address                         controllers.addFinancial
 GET        /change-is-this-the-address                  controllers.addFinancialInstitution.IsThisAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-is-this-the-address                  controllers.addFinancialInstitution.IsThisAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET        /fatca-reports                        controllers.addFinancialInstitution.SendReportsController.onPageLoad(mode: Mode = NormalMode)
-POST       /fatca-reports                        controllers.addFinancialInstitution.SendReportsController.onSubmit(mode: Mode = NormalMode)
-GET        /change-fatca-reports                  controllers.addFinancialInstitution.SendReportsController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-fatca-reports                  controllers.addFinancialInstitution.SendReportsController.onSubmit(mode: Mode = CheckMode)
-
 GET        /giin                        controllers.addFinancialInstitution.WhatIsGIINController.onPageLoad(mode: Mode = NormalMode)
 POST       /giin                        controllers.addFinancialInstitution.WhatIsGIINController.onSubmit(mode: Mode = NormalMode)
 GET        /change-giin                  controllers.addFinancialInstitution.WhatIsGIINController.onPageLoad(mode: Mode = CheckMode)

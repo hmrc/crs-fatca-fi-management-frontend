@@ -31,11 +31,11 @@ object UkAddressSummary {
     answers.get(UkAddressPage).map {
       answer =>
         SummaryListRowViewModel(
-          key = "mainAddress.checkYourAnswersLabel",
+          key = "selectAddress.checkYourAnswersLabel",
           value = ValueViewModel(formatAddressBlock(answer)),
           actions = Seq(
             accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.WhereIsFIBasedController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("mainAddress.change.hidden"))
+              .withVisuallyHiddenText(messages("selectAddress.change.hidden"))
           )
         )
     }

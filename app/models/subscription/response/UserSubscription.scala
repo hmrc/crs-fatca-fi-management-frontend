@@ -20,7 +20,7 @@ import models.subscription.request.{ContactInformation, OrganisationDetails}
 import play.api.libs.json.{Json, OFormat}
 
 case class UserSubscription(
-  subscriptionId: String,
+  id: String,
   tradingName: Option[String],
   gbUser: Boolean,
   primaryContact: ContactInformation,

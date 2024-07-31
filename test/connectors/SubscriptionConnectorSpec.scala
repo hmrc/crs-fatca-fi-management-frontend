@@ -46,7 +46,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
   val exampleResponse = s"""{
     "success": {
       "processingDate": "2023-05-17T09:26:17Z",
-      "subscriptionId": "[subscriptionId]",
+      "id": "[subscriptionId]",
       "tradingName": "James Hank",
       "gbUser": true,
       "primaryContact": {
