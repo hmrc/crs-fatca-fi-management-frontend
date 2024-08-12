@@ -45,6 +45,26 @@ class RegisteredBusinessCheckYourAnswersControllerSpec extends SpecBase with Sum
         contentAsString(result) mustEqual view(fiName, list)(request, messages(application)).toString
       }
     }
+
+    "confirmAndAdd" - {
+      "must redirect to self (until the PUT endpoint exists)" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          val request =
+            FakeRequest(POST, controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.confirmAndAdd().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController
+            .onPageLoad()
+            .url
+
+        }
+      }
+    }
+
   }
 
 }
