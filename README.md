@@ -1,5 +1,4 @@
 
-
 # crs-fatca-fi-management-frontend
 
 This service is used to manage financial institutions details.
