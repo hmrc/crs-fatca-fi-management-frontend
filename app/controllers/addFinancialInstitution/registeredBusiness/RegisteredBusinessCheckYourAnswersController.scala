@@ -14,28 +14,41 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.addFinancialInstitution.registeredBusiness
 
+import com.google.inject.Inject
 import controllers.actions._
-import javax.inject.Inject
+import models.UserAnswers
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.addFinancialInstitution.IsRegisteredBusiness.CheckDetailsView
+import utils.ContactHelper
+import viewmodels.checkAnswers.CheckYourAnswersViewModel._
+import viewmodels.govuk.summarylist._
+import views.html.addFinancialInstitution.IsRegisteredBusiness.RegisteredBusinessCheckYourAnswersView
 
-class CheckDetailsController @Inject() (
+class RegisteredBusinessCheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
-  view: CheckDetailsView
+  view: RegisteredBusinessCheckYourAnswersView
 ) extends FrontendBaseController
+    with ContactHelper
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      Ok(view())
+      val ua: UserAnswers          = request.userAnswers
+      val fiName                   = getFinancialInstitutionName(ua)
+      val financialInstitutionList = SummaryListViewModel(getFinancialInstitutionSummaries(ua))
+
+      Ok(view(fiName, financialInstitutionList))
+  }
+
+  def confirmAndAdd(): Action[AnyContent] = (identify andThen getData andThen requireData) {
+    Redirect(routes.RegisteredBusinessCheckYourAnswersController.onPageLoad())
   }
 
 }

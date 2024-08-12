@@ -84,4 +84,12 @@ object CheckYourAnswersViewModel {
       SecondContactPhoneNumberSummary.row(ua)
     ).flatten
 
+  def getRegisteredBusinessSummaries(ua: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] =
+    Seq(
+      ReportForRegisteredBusinessSummary.row(ua),
+      NameOfFinancialInstitutionSummary.row(ua),
+      getGIINRows(ua),
+      getAddressRow(ua)
+    ).flatten
+
 }

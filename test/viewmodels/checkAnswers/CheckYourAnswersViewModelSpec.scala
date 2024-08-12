@@ -17,7 +17,10 @@
 package viewmodels.checkAnswers
 
 import base.SpecBase
+import models.Address
+import models.Country.GB
 import org.scalatestplus.mockito.MockitoSugar.mock
+import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
 import pages.addFinancialInstitution._
 import play.api.i18n.Messages
 
@@ -68,6 +71,19 @@ class CheckYourAnswersViewModelSpec extends SpecBase {
 
         sut.getSecondContactSummaries(emptyUserAnswers).length mustBe 0
         sut.getSecondContactSummaries(ans).length mustBe 1
+      }
+    }
+
+    "getRegisteredBusinessSummaries must" - {
+      "only return rows for relevant populated answers" in {
+        val ans = ua
+          .withPage(ReportForRegisteredBusinessPage, true)
+          .withPage(HaveGIINPage, true)
+          .withPage(WhatIsGIINPage, "somegiin")
+          .withPage(UkAddressPage, Address("test", None, "test", None, None, GB))
+
+        sut.getRegisteredBusinessSummaries(emptyUserAnswers).length mustBe 0
+        sut.getRegisteredBusinessSummaries(ans).length mustBe 4
       }
     }
   }

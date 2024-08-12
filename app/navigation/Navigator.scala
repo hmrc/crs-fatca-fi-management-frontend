@@ -138,7 +138,7 @@ class Navigator @Inject() () {
         yesNoPage(
           userAnswers,
           IsTheAddressCorrectPage,
-          controllers.routes.CheckDetailsController.onPageLoad(),
+          controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
           routes.WhereIsFIBasedController.onPageLoad(NormalMode)
         )
     case UkAddressPage    => _ => routes.FirstContactNameController.onPageLoad(NormalMode)

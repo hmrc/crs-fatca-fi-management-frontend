@@ -14,30 +14,35 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.addFinancialInstitution.IsRegisteredBusiness
 
 import base.SpecBase
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.addFinancialInstitution.IsRegisteredBusiness.CheckDetailsView
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import viewmodels.govuk.SummaryListFluency
+import views.html.addFinancialInstitution.IsRegisteredBusiness.RegisteredBusinessCheckYourAnswersView
 
-class CheckDetailsControllerSpec extends SpecBase {
+class RegisteredBusinessCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
-  "CheckDetails Controller" - {
+  val list: SummaryList = SummaryListViewModel(Seq.empty)
+
+  "RegisteredBusinessCheckYourAnswers Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.CheckDetailsController.onPageLoad().url)
+        val request =
+          FakeRequest(GET, controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad().url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[CheckDetailsView]
+        val view = application.injector.instanceOf[RegisteredBusinessCheckYourAnswersView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, messages(application)).toString
+        contentAsString(result) mustEqual view(fiName, list)(request, messages(application)).toString
       }
     }
   }

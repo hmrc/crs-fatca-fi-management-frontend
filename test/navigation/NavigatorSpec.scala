@@ -236,10 +236,10 @@ class NavigatorSpec extends SpecBase {
       }
 
       "must go from IsTheAddressCorrect" - {
-        " to checkDetails if Yes" in {
+        " to RegisteredBusinessCheckYourAnswers if Yes" in {
           val userAnswers = emptyUserAnswers.set(IsTheAddressCorrectPage, true).get
           navigator.nextPage(IsTheAddressCorrectPage, NormalMode, userAnswers) mustBe
-            controllers.routes.CheckDetailsController.onPageLoad()
+            controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad()
         }
         " to WhereIsFiBased if No" in {
           val userAnswers = emptyUserAnswers.set(IsTheAddressCorrectPage, false).get
