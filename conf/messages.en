@@ -315,11 +315,17 @@ postcode.error.invalid = Enter a real postcode or enter the address manually
 postcode.error.notFound = No addresses found — enter a different postcode or enter the address manually
 postcode.continue = Find address
 
-checkDetails.title = checkDetails
-checkDetails.heading = checkDetails
-
 registeredBusinessCheckYourAnswers.title = Check the details for the registered business
 registeredBusinessCheckYourAnswers.heading = Check the details for {0}
 registeredBusinessCheckYourAnswers.subheading = Now send these details for the registered business
 registeredBusinessCheckYourAnswers.para = By sending these details, you are confirming that the information is correct and complete to the best of your knowledge.
 registeredBusinessCheckYourAnswers.submit.button = Confirm and send
+
+financialInstitutionAddedConfirmation.title = Financial institution added
+financialInstitutionAddedConfirmation.heading = Financial institution added
+financialInstitutionAddedConfirmation.p1 = You will need to provide the FI ID in every file you send to HMRC for {0}.
+financialInstitutionAddedConfirmation.p2 = Back to manage your financial institutions
+financialInstitutionAddedConfirmation.p3 = Back to manage your CRS and FATCA reports
+
+yourFinancialInstitutions.title = Your Financial Institutions (Please update as part of DAC6-3048)
+yourFinancialInstitutions.heading = Your Financial Institutions (Please update as part of DAC6-3048)

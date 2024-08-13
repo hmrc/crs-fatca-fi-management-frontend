@@ -22,6 +22,7 @@ import pages._
 import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 import play.api.mvc.Call
+import viewmodels.checkAnswers.CheckYourAnswersViewModel
 
 import javax.inject.{Inject, Singleton}
 
