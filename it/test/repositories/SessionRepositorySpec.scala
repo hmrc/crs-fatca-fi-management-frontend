@@ -17,7 +17,8 @@
 package test.repositories
 
 import config.{CryptoProvider, FrontendAppConfig}
-import models.{CryptoType, UserAnswers}
+import models.CryptoType.{CryptoT, randomAesKey}
+import models.UserAnswers
 import org.mockito.Mockito.when
 import org.mongodb.scala.model.Filters
 import org.scalatest.OptionValues
@@ -28,13 +29,11 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
 import play.api.libs.json.Json
 import repositories.SessionRepository
-import uk.gov.hmrc.crypto.{Crypted, Decrypter, Encrypter}
+import uk.gov.hmrc.crypto.Crypted
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 
-import java.security.SecureRandom
 import java.time.temporal.ChronoUnit
 import java.time.{Clock, Instant, ZoneId}
-import java.util.Base64
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class SessionRepositorySpec
@@ -56,7 +55,7 @@ class SessionRepositorySpec
 
   when(mockAppConfig.encryptionEnabled) thenReturn true
 
-  implicit val crypto: CryptoType = new CryptoProvider(Configuration("crypto.key" -> randomAesKey)).get()
+  implicit val crypto: CryptoT = new CryptoProvider(Configuration("crypto.key" -> randomAesKey)).get()
 
   override protected val repository = new SessionRepository(
     mongoComponent = mongoComponent,

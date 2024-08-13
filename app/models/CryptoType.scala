@@ -16,8 +16,6 @@
 
 package models
 
-import config.CryptoProvider
-import play.api.Configuration
 import uk.gov.hmrc.crypto.{Decrypter, Encrypter}
 
 import java.security.SecureRandom
@@ -26,11 +24,10 @@ import java.util.Base64
 object CryptoType {
   type CryptoT = Encrypter with Decrypter
 
-  private val randomAesKey: String = {
+  val randomAesKey: String = {
     val aesKey = new Array[Byte](32)
     new SecureRandom().nextBytes(aesKey)
     Base64.getEncoder.encodeToString(aesKey)
   }
 
-  implicit val crypto: CryptoT = new CryptoProvider(Configuration("crypto.key" -> randomAesKey)).get()
 }
