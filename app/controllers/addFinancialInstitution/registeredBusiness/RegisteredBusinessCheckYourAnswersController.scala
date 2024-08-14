@@ -42,7 +42,7 @@ class RegisteredBusinessCheckYourAnswersController @Inject() (
     implicit request =>
       val ua: UserAnswers          = request.userAnswers
       val fiName                   = getFinancialInstitutionName(ua)
-      val financialInstitutionList = SummaryListViewModel(getFinancialInstitutionSummaries(ua))
+      val financialInstitutionList = SummaryListViewModel(getRegisteredBusinessSummaries(ua))
 
       Ok(view(fiName, financialInstitutionList))
   }

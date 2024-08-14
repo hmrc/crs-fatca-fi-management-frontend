@@ -17,10 +17,9 @@
 package viewmodels.checkAnswers
 
 import base.SpecBase
-import models.Address
-import models.Country.GB
+import models.AddressResponse
 import org.scalatestplus.mockito.MockitoSugar.mock
-import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
+import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 import play.api.i18n.Messages
 
@@ -79,8 +78,8 @@ class CheckYourAnswersViewModelSpec extends SpecBase {
         val ans = ua
           .withPage(ReportForRegisteredBusinessPage, true)
           .withPage(HaveGIINPage, true)
-          .withPage(WhatIsGIINPage, "somegiin")
-          .withPage(UkAddressPage, Address("test", None, "test", None, None, GB))
+          .withPage(WhatIsGIINPage, "someGIIN")
+          .withPage(FetchedRegisteredAddressPage, AddressResponse("line1", Some("line2"), Some("line3"), Some("line4"), Some("ab12cd"), "GB"))
 
         sut.getRegisteredBusinessSummaries(emptyUserAnswers).length mustBe 0
         sut.getRegisteredBusinessSummaries(ans).length mustBe 4
