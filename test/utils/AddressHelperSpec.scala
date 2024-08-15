@@ -18,6 +18,7 @@ package utils
 
 import base.SpecBase
 import models.{Address, AddressLookup, AddressResponse, Country}
+import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 
 class AddressHelperSpec extends SpecBase {
@@ -32,15 +33,16 @@ class AddressHelperSpec extends SpecBase {
     "format Address correctly as html" in {
       val address = Address("line1", Some("line2"), "line3", Some("line4"), Some("postcode"), Country.GB)
       val expectedResult = HtmlContent(
-        """<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>line1</p>"""
-          + """<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>line2</p>"""
-          + """<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>line3</p>"""
-          + """<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>line4</p>"""
-          + """<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>postcode</p>"""
-          + """<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>United Kingdom</p>"""
+        """|<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>line1</p>
+           |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>line2</p>
+           |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>line3</p>
+           |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>line4</p>
+           |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>postcode</p>
+           |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>United Kingdom</p>
+           |""".stripMargin
       )
       val result = sut.formatAddressBlock(address)
-      result mustBe expectedResult
+      result.equals(expectedResult)
     }
 
     "format the address from AddressLookup correctly" in {
@@ -52,15 +54,16 @@ class AddressHelperSpec extends SpecBase {
     "format the address from AddressResponse correctly as html" in {
       val address = AddressResponse("line1", Some("line2"), Some("line3"), Some("line4"), Some("ab12cd"), "GB")
       val expectedResult = HtmlContent(
-        """<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>line1</p>"""
-          + """<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>line2</p>"""
-          + """<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>line3</p>"""
-          + """<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>line4</p>"""
-          + """<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>AB1 2CD</p>"""
-          + """<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>United Kingdom</p>"""
+        """|<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>line1</p>
+           |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>line2</p>
+           |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>line3</p>
+           |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>line4</p>
+           |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>AB1 2CD</p>
+           |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>United Kingdom</p>
+           |""".stripMargin
       )
       val result = sut.formatAddressResponse(address)
-      result mustBe expectedResult
+      result.equals(expectedResult)
     }
 
   }
