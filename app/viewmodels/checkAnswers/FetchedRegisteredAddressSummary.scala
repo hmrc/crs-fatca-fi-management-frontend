@@ -17,30 +17,27 @@
 package viewmodels.checkAnswers
 
 import models.{CheckMode, UserAnswers}
-import pages.addFinancialInstitution.HaveGIINPage
+import pages.addFinancialInstitution.IsRegisteredBusiness.FetchedRegisteredAddressPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import utils.AddressHelper.formatAddressResponse
 import viewmodels.checkAnswers.CheckYourAnswersViewModel.accessibleActionItem
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object HaveGIINSummary {
+object FetchedRegisteredAddressSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    val labelKey = if (true) "haveGIIN.checkYourAnswersLabel.2" else "haveGIIN.checkYourAnswersLabel"
-    answers.get(HaveGIINPage).map {
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(FetchedRegisteredAddressPage).map {
       answer =>
-        val value = if (answer) "site.yes" else "site.no"
-
         SummaryListRowViewModel(
-          key = labelKey,
-          value = ValueViewModel(value),
+          key = "selectAddress.checkYourAnswersLabel",
+          value = ValueViewModel(formatAddressResponse(answer)),
           actions = Seq(
-            accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.HaveGIINController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("haveGIIN.change.hidden"))
+            accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.WhereIsFIBasedController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("selectAddress.change.hidden"))
           )
         )
     }
-  }
 
 }

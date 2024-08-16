@@ -36,15 +36,17 @@ object CheckYourAnswersViewModel {
     )
 
   private def getAddressRow(ua: UserAnswers)(implicit messages: Messages) = {
-    val addressLookup = SelectAddressSummary.row(ua)
-    val nonUkAddress  = NonUkAddressSummary.row(ua)
-    val ukAddress     = UkAddressSummary.row(ua)
+    val addressLookup  = SelectAddressSummary.row(ua)
+    val nonUkAddress   = NonUkAddressSummary.row(ua)
+    val ukAddress      = UkAddressSummary.row(ua)
+    val fetchedAddress = FetchedRegisteredAddressSummary.row(ua)
 
-    (addressLookup.isDefined, nonUkAddress.isDefined, ukAddress.isDefined) match {
-      case (false, false, true) => ukAddress
-      case (false, true, false) => nonUkAddress
-      case (true, false, false) => addressLookup
-      case (_, _, _)            => None
+    (addressLookup.isDefined, nonUkAddress.isDefined, ukAddress.isDefined, fetchedAddress.isDefined) match {
+      case (false, false, false, true) => fetchedAddress
+      case (false, false, true, false) => ukAddress
+      case (false, true, false, false) => nonUkAddress
+      case (true, false, false, false) => addressLookup
+      case (_, _, _, _)                => None
     }
 
   }
@@ -82,6 +84,14 @@ object CheckYourAnswersViewModel {
       SecondContactNameSummary.row(ua),
       SecondContactEmailSummary.row(ua),
       SecondContactPhoneNumberSummary.row(ua)
+    ).flatten
+
+  def getRegisteredBusinessSummaries(ua: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] =
+    Seq(
+      ReportForRegisteredBusinessSummary.row(ua),
+      NameOfFinancialInstitutionSummary.row(ua),
+      getGIINRows(ua),
+      getAddressRow(ua)
     ).flatten
 
 }

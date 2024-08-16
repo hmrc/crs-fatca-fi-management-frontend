@@ -16,7 +16,7 @@
 
 package utils
 
-import models.{Address, AddressLookup}
+import models.{Address, AddressLookup, AddressResponse}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 
 object AddressHelper {
@@ -68,6 +68,15 @@ object AddressHelper {
         case Some(s)   => s
       }
     val block = lines
+      .map(
+        line => s"<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>$line</p>"
+      )
+      .mkString("")
+    HtmlContent(block)
+  }
+
+  def formatAddressResponse(address: AddressResponse): HtmlContent = {
+    val block = address.lines
       .map(
         line => s"<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>$line</p>"
       )
