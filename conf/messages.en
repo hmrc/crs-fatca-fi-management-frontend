@@ -150,9 +150,9 @@ haveGIIN.para.1 = A GIIN is required for FATCA reporting. You can choose to prov
 haveGIIN.para.2 = To receive a GIIN for FATCA, {0} must have registered with the United States of America’s Internal Revenue Service.
 haveGIIN.para.3 = You can also provide a GIIN if you’re reporting for CRS but may report for FATCA later.
 haveGIIN.error.required = Select yes if you would like to provide a GIIN for the financial institution now
-haveGIIN.checkYourAnswersLabel = Would you like to provide their Global Intermediary Identification number?
-haveGIIN.checkYourAnswersLabel.2 = Would you like to provide a Global Intermediary Identification number?
-haveGIIN.change.hidden = Change if you would like to provide a Global Intermediary Identification number
+haveGIIN.checkYourAnswersLabel = Would you like to provide their Global Intermediary Identification Number?
+haveGIIN.checkYourAnswersLabel.2 = Would you like to provide a Global Intermediary Identification Number?
+haveGIIN.change.hidden = Change if you would like to provide a Global Intermediary Identification Number
 
 whatIsGIIN.title = What is the financial institution’s GIIN?
 whatIsGIIN.heading = What is the Global Intermediary Identification Number (GIIN) for {0}?
@@ -164,7 +164,7 @@ whatIsGIIN.error.format = GIIN must be in the right format
 whatIsGIIN.error.char = GIIN must only include letters a to z, numbers 0 to 9 and full stops
 whatIsGIIN.error.invalid = Enter a real GIIN
 whatIsGIIN.hint = For example, ‘98O96B.00000.LE.350’.
-whatIsGIIN.change.hidden = Change the Global Intermediary Identification number
+whatIsGIIN.change.hidden = Change the Global Intermediary Identification Number
 
 secondContact.title = Is there someone else we can contact if your first contact is not available?
 secondContact.heading = Is there someone else we can contact if {0} is not available?
@@ -322,3 +322,4 @@ registeredBusinessCheckYourAnswers.title = Check the details for the registered 
 registeredBusinessCheckYourAnswers.heading = Check the details for {0}
 registeredBusinessCheckYourAnswers.subheading = Now send these details for the registered business
 registeredBusinessCheckYourAnswers.para = By sending these details, you are confirming that the information is correct and complete to the best of your knowledge.
+registeredBusinessCheckYourAnswers.submit.button = Confirm and Send

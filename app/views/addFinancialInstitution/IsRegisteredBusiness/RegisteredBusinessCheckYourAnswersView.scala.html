@@ -38,7 +38,7 @@
 
     @formHelper(action =  controllers.addFinancialInstitution.routes.CheckYourAnswersController.confirmAndAdd()) {
         @govukButton(
-            ButtonViewModel(messages("checkYourAnswers.submit.button")).withAttribute("id" -> "submit").preventingDoubleClick()
+            ButtonViewModel(messages("registeredBusinessCheckYourAnswers.submit.button")).withAttribute("id" -> "submit").preventingDoubleClick()
         )
     }
 }
