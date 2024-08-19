@@ -322,4 +322,4 @@ registeredBusinessCheckYourAnswers.title = Check the details for the registered 
 registeredBusinessCheckYourAnswers.heading = Check the details for {0}
 registeredBusinessCheckYourAnswers.subheading = Now send these details for the registered business
 registeredBusinessCheckYourAnswers.para = By sending these details, you are confirming that the information is correct and complete to the best of your knowledge.
-registeredBusinessCheckYourAnswers.submit.button = Confirm and Send
+registeredBusinessCheckYourAnswers.submit.button = Confirm and send
