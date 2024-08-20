@@ -141,3 +141,7 @@ POST       /registered-business/change-is-this-your-business-name    controllers
 
 GET        /registered-business/check-answers                        controllers.addFinancialInstitution.registeredBusiness.RegisteredBusinessCheckYourAnswersController.onPageLoad()
 POST       /registered-business/check-answers                        controllers.addFinancialInstitution.registeredBusiness.RegisteredBusinessCheckYourAnswersController.confirmAndAdd()
+
+GET        /financial-institution-added                              controllers.addFinancialInstitution.FinancialInstitutionAddedConfirmationController.onPageLoad
+
+GET        /your-fis                                                 controllers.YourFinancialInstitutionsController.onPageLoad
