@@ -22,7 +22,6 @@ import pages._
 import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 import play.api.mvc.Call
-import viewmodels.checkAnswers.CheckYourAnswersViewModel
 
 import javax.inject.{Inject, Singleton}
 
@@ -97,13 +96,23 @@ class Navigator @Inject() () {
         )
     case SecondContactPhoneNumberPage => _ => routes.CheckYourAnswersController.onPageLoad
     case PostcodePage                 => addressLookupNavigation(NormalMode)
-    case SelectAddressPage            => _ => routes.FirstContactNameController.onPageLoad(NormalMode)
+    case SelectAddressPage =>
+      userAnswers =>
+        isFiUser(
+          userAnswers,
+          controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
+          routes.FirstContactNameController.onPageLoad(NormalMode)
+        )
     case IsThisAddressPage =>
       userAnswers =>
         yesNoPage(
           userAnswers,
           IsThisAddressPage,
-          routes.FirstContactNameController.onPageLoad(NormalMode),
+          isFiUser(
+            userAnswers,
+            controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
+            routes.FirstContactNameController.onPageLoad(NormalMode)
+          ),
           routes.UkAddressController.onPageLoad(NormalMode)
         )
     case HaveGIINPage =>
@@ -142,8 +151,20 @@ class Navigator @Inject() () {
           controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
           routes.WhereIsFIBasedController.onPageLoad(NormalMode)
         )
-    case UkAddressPage    => _ => routes.FirstContactNameController.onPageLoad(NormalMode)
-    case NonUkAddressPage => _ => routes.FirstContactNameController.onPageLoad(NormalMode)
+    case UkAddressPage =>
+      userAnswers =>
+        isFiUser(
+          userAnswers,
+          controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
+          routes.FirstContactNameController.onPageLoad(NormalMode)
+        )
+    case NonUkAddressPage =>
+      userAnswers =>
+        isFiUser(
+          userAnswers,
+          controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
+          routes.FirstContactNameController.onPageLoad(NormalMode)
+        )
     case _ =>
       _ => controllers.routes.IndexController.onPageLoad()
   }
