@@ -17,7 +17,7 @@
 package base
 
 import controllers.actions._
-import models.{Address, AddressResponse, Country, UserAnswers}
+import models.{Address, AddressLookup, AddressResponse, Country, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -90,6 +90,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
 
   val testAddress: Address                 = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"), Country.GB)
   val testAddressResponse: AddressResponse = AddressResponse("value 1", Some("value 2"), Some("value 3"), Some("value 4"), Some("XX9 9XX"), Country.GB.code)
+  val testAddressLookup: AddressLookup     = AddressLookup(Some("1 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ")
 
   implicit val hc: HeaderCarrier    = HeaderCarrier()
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)

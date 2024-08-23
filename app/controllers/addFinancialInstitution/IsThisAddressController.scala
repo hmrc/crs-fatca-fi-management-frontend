@@ -21,6 +21,7 @@ import forms.addFinancialInstitution.IsThisAddressFormProvider
 import models.{Address, Country, Mode}
 import navigation.Navigator
 import pages.addFinancialInstitution.{AddressLookupPage, IsThisAddressPage}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -46,15 +47,7 @@ class IsThisAddressController @Inject() (
     with I18nSupport
     with ContactHelper {
 
-  val form = formProvider()
-
-  val egAddress = Address("1 address street",
-                          addressLine2 = None,
-                          addressLine3 = "Address town",
-                          addressLine4 = None,
-                          postCode = None,
-                          country = Country("Great Britannia", "GB", "UK")
-  )
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
