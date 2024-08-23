@@ -77,7 +77,7 @@ class IsThisAddressController @Inject() (
                 for {
                   updatedAnswers                    <- Future.fromTry(ua.set(IsThisAddressPage, value))
                   updatedAnswersWithSelectedAddress <- Future.fromTry(updatedAnswers.set(SelectedAddressLookupPage, address.head))
-                  _ <- sessionRepository.set(updatedAnswersWithSelectedAddress)
+                  _                                 <- sessionRepository.set(updatedAnswersWithSelectedAddress)
                 } yield Redirect(navigator.nextPage(IsThisAddressPage, mode, updatedAnswersWithSelectedAddress))
             )
         case None => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))

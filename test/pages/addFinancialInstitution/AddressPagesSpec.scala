@@ -22,12 +22,6 @@ import pages.addFinancialInstitution.IsRegisteredBusiness.FetchedRegisteredAddre
 
 class AddressPagesSpec extends SpecBase {
 
-  val uaWithAllAddresses: UserAnswers = emptyUserAnswers
-    .withPage(FetchedRegisteredAddressPage, testAddressResponse)
-    .withPage(SelectedAddressLookupPage, testAddressLookup)
-    .withPage(NonUkAddressPage, testAddress)
-    .withPage(UkAddressPage, testAddress)
-
   "cleanup for" - {
     "UkAddressPage" - {
       "must remove other address answers from UserAnswers" - {
