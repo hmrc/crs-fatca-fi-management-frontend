@@ -16,12 +16,35 @@
 
 @this(
         layout: templates.Layout,
-        govukButton: GovukButton
+        formHelper: FormWithCSRF,
+        govukRadios: GovukRadios,
+        govukButton: GovukButton,
+        govukSummaryList: GovukSummaryList,
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@(form: Form[_], institutions: SummaryList)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("yourFinancialInstitutions.title"))) {
-   <!--TODO: This is a placeholder page. Will be implemented as part of DAC6-3048-->
-    <h1 class="govuk-heading-xl">@messages("yourFinancialInstitutions.heading")</h1>
+@layout(pageTitle = title(form, messages("yourFinancialInstitutions.title"))) {
+    @if(institutions.rows.isEmpty) {
+        <h1 class="govuk-heading-xl">@messages("yourFinancialInstitutions.heading.noFinancialInstitutions")</h1>
+    } else if (institutions.rows.size == 1) {
+        <h1 class="govuk-heading-xl">@messages("yourFinancialInstitutions.heading.singleFinancialInstitution")</h1>
+    } else {
+        <h1 class="govuk-heading-xl">@messages("yourFinancialInstitutions.heading.multipleFinancialInstitutions", institutions.rows.size)</h1>
+    }
+    <div class="user-financial-institutions-summary">
+        @govukSummaryList(institutions)
+    </div>
+    @formHelper(action = controllers.routes.YourFinancialInstitutionsController.onSubmit(), Symbol("autoComplete") -> "off") {
+        @govukRadios(
+            RadiosViewModel.yesNo(
+                field = form("value"),
+                legend = LegendViewModel(if(institutions.rows.isEmpty) messages("yourFinancialInstitutions.addFinancialInstitution") else messages("yourFinancialInstitutions.addAnotherFinancialInstitution")).asPageHeading()
+            )
+        )
+
+        @govukButton(
+            ButtonViewModel(messages("site.continue")).withAttribute("id" -> "submit")
+        )
+    }
 }

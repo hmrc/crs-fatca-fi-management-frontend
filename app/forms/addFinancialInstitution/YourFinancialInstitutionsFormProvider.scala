@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-package connectors
+package forms.addFinancialInstitution
 
-import config.FrontendAppConfig
-import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+import forms.mappings.Mappings
+import play.api.data.Form
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 
-class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, val httpClient: HttpClientV2) {
+class YourFinancialInstitutionsFormProvider @Inject() extends Mappings {
 
-  def viewFis(subscriptionId: String)(implicit
-    hc: HeaderCarrier,
-    ec: ExecutionContext
-  ): Future[HttpResponse] =
-    httpClient
-      .get(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/$subscriptionId")
-      .execute[HttpResponse]
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("yourFinancialInstitutions.error.required")
+    )
 
 }
