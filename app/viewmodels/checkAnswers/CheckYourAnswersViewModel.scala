@@ -36,17 +36,17 @@ object CheckYourAnswersViewModel {
     )
 
   private def getAddressRow(ua: UserAnswers)(implicit messages: Messages) = {
-    val addressLookup  = SelectAddressSummary.row(ua)
+    val addressLookup  = SelectedAddressLookupSummary.row(ua) // SelectedAddressLookupPage!!
     val nonUkAddress   = NonUkAddressSummary.row(ua)
     val ukAddress      = UkAddressSummary.row(ua)
     val fetchedAddress = FetchedRegisteredAddressSummary.row(ua)
 
     (addressLookup.isDefined, nonUkAddress.isDefined, ukAddress.isDefined, fetchedAddress.isDefined) match {
-      case (false, false, false, true) => fetchedAddress
       case (false, false, true, false) => ukAddress
       case (false, true, false, false) => nonUkAddress
-      case (true, false, false, false) => addressLookup
-      case (_, _, _, _)                => None
+      case (true, false, false, _)     => addressLookup
+      case (_, _, _, true)             => fetchedAddress
+      case (_, _, _, false)            => None
     }
 
   }
