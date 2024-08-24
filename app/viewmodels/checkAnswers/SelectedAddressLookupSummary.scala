@@ -16,12 +16,12 @@
 
 package viewmodels.checkAnswers
 
-import models.{CheckMode, UserAnswers}
+import models.UserAnswers
 import pages.addFinancialInstitution.SelectedAddressLookupPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.AddressHelper.formatAddress
-import viewmodels.checkAnswers.CheckYourAnswersViewModel.accessibleActionItem
+import viewmodels.checkAnswers.CheckYourAnswersViewModel.{accessibleActionItem, getAddressChangeRoute}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
@@ -34,7 +34,7 @@ object SelectedAddressLookupSummary {
           key = "selectAddress.checkYourAnswersLabel",
           value = ValueViewModel(formatAddress(answer)),
           actions = Seq(
-            accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.SelectAddressController.onPageLoad(CheckMode).url)
+            accessibleActionItem("site.change", getAddressChangeRoute(answers))
               .withVisuallyHiddenText(messages("selectAddress.change.hidden"))
           )
         )

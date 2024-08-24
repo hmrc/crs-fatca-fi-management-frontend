@@ -16,7 +16,8 @@
 
 package viewmodels.checkAnswers
 
-import models.UserAnswers
+import models.{CheckMode, UserAnswers}
+import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
 import pages.addFinancialInstitution._
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -50,6 +51,14 @@ object CheckYourAnswersViewModel {
     }
 
   }
+
+  def getAddressChangeRoute(answers: UserAnswers): String =
+    answers
+      .get(ReportForRegisteredBusinessPage) match {
+      case Some(true)  => controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(CheckMode).url
+      case Some(false) => controllers.addFinancialInstitution.routes.WhereIsFIBasedController.onPageLoad(CheckMode).url
+      case None        => controllers.routes.IndexController.onPageLoad().url
+    }
 
   private def getGIINRows(ua: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = {
     val haveGIIN = ua.get(HaveGIINPage)

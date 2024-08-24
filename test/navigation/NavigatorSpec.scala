@@ -300,6 +300,74 @@ class NavigatorSpec extends SpecBase {
     }
 
     "in Check mode" - {
+      "when FI=USER" - {
+        val userAnswers = UserAnswers("id").withPage(ReportForRegisteredBusinessPage, true)
+
+        "must go from IsTheAddressCorrect" - {
+          "to RegisteredBusinessCheckYourAnswers when Yes" in {
+            val ua = userAnswers.withPage(IsTheAddressCorrectPage, true)
+            navigator.nextPage(IsTheAddressCorrectPage, CheckMode, ua) mustBe
+              controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad()
+          }
+          "to WhereIsFIBased when No" in {
+            val ua = userAnswers.withPage(IsTheAddressCorrectPage, false)
+            navigator.nextPage(IsTheAddressCorrectPage, CheckMode, ua) mustBe
+              routes.WhereIsFIBasedController.onPageLoad(CheckMode)
+          }
+        }
+        "must go from WhereIsFIBased" - {
+          "to Postcode page when Yes" in {
+            val ua = userAnswers.withPage(WhereIsFIBasedPage, true)
+            navigator.nextPage(WhereIsFIBasedPage, CheckMode, ua) mustBe
+              routes.PostcodeController.onPageLoad(CheckMode)
+          }
+          "to NonUkAddress page when No " in {
+            val ua = userAnswers.withPage(WhereIsFIBasedPage, false)
+            navigator.nextPage(WhereIsFIBasedPage, CheckMode, ua) mustBe
+              routes.NonUkAddressController.onPageLoad(CheckMode)
+          }
+        }
+        "must go from Postcode page" - {
+          "to SelectAddress when lookup returns 1 address" in {
+            val ua = userAnswers.withPage(AddressLookupPage, Seq(testAddressLookup))
+            navigator.nextPage(PostcodePage, CheckMode, ua) mustBe
+              routes.IsThisAddressController.onPageLoad(CheckMode)
+          }
+          "to IsThisAddress page when lookup returns >1 addresses" in {
+            val ua = userAnswers.withPage(AddressLookupPage, Seq(testAddressLookup, testAddressLookup))
+            navigator.nextPage(PostcodePage, CheckMode, ua) mustBe
+              routes.SelectAddressController.onPageLoad(CheckMode)
+          }
+        }
+        "must go from IsThisAddress" - {
+          "to RegisteredBusinessCheckYourAnswers page when Yes" in {
+            val ua = userAnswers
+              .withPage(IsThisAddressPage, true)
+            navigator.nextPage(IsThisAddressPage, CheckMode, ua) mustBe
+              controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad()
+          }
+          "to UkAddress page when No " in {
+            val ua = userAnswers
+              .withPage(IsThisAddressPage, false)
+            navigator.nextPage(IsThisAddressPage, CheckMode, ua) mustBe
+              routes.UkAddressController.onPageLoad(CheckMode)
+          }
+        }
+        "must return to RegisteredBusinessCheckYourAnswers from" - {
+          "NonUkAddress" in {
+            navigator.nextPage(NonUkAddressPage, CheckMode, userAnswers) mustBe
+              controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad()
+          }
+          "UkAddress" in {
+            navigator.nextPage(UkAddressPage, CheckMode, userAnswers) mustBe
+              controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad()
+          }
+          "SelectAddress" in {
+            navigator.nextPage(SelectAddressPage, CheckMode, userAnswers) mustBe
+              controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad()
+          }
+        }
+      }
 
       "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
 
