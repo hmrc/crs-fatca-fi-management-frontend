@@ -19,6 +19,7 @@ package controllers.addFinancialInstitution
 import base.SpecBase
 import models.CheckMode
 import org.scalatestplus.mockito.MockitoSugar.mock
+import pages.InformationSentPage
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -67,6 +68,20 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         }
       }
 
+      "must redirect to information-sent page for a GET when the information-sent flag is true" in {
+        val userAnswers = emptyUserAnswers.withPage(InformationSentPage, true)
+        val application = applicationBuilder(userAnswers = Option(userAnswers)).build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.InformationSentController.onPageLoad.url
+        }
+      }
+
       "must redirect to Journey Recovery for a GET if no existing data is found" in {
 
         val application = applicationBuilder(userAnswers = None).build()
@@ -93,6 +108,20 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
 
+        }
+      }
+
+      "must redirect to information-sent page for a POST when the information-sent flag is true" in {
+        val userAnswers = emptyUserAnswers.withPage(InformationSentPage, true)
+        val application = applicationBuilder(userAnswers = Option(userAnswers)).build()
+
+        running(application) {
+          val request = FakeRequest(POST, routes.CheckYourAnswersController.confirmAndAdd().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.InformationSentController.onPageLoad.url
         }
       }
     }

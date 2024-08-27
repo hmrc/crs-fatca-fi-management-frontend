@@ -17,6 +17,8 @@
 package controllers.addFinancialInstitution.IsRegisteredBusiness
 
 import base.SpecBase
+import controllers.routes
+import pages.InformationSentPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -46,6 +48,21 @@ class RegisteredBusinessCheckYourAnswersControllerSpec extends SpecBase with Sum
       }
     }
 
+    "must redirect to information-sent page for a GET when the information-sent flag is true" in {
+      val userAnswers = emptyUserAnswers.withPage(InformationSentPage, true)
+      val application = applicationBuilder(userAnswers = Option(userAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(GET, controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad().url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.InformationSentController.onPageLoad.url
+      }
+    }
+
     "confirmAndAdd" - {
       "must redirect to self (until the PUT endpoint exists)" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
@@ -61,6 +78,21 @@ class RegisteredBusinessCheckYourAnswersControllerSpec extends SpecBase with Sum
             .onPageLoad()
             .url
 
+        }
+      }
+
+      "must redirect to information-sent page for a GET when the information-sent flag is true" in {
+        val userAnswers = emptyUserAnswers.withPage(InformationSentPage, true)
+        val application = applicationBuilder(userAnswers = Option(userAnswers)).build()
+
+        running(application) {
+          val request =
+            FakeRequest(POST, controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.confirmAndAdd().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.InformationSentController.onPageLoad.url
         }
       }
     }
