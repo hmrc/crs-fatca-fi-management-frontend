@@ -20,33 +20,43 @@ import controllers.actions._
 import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.{FinancialInstitutionAddedConfirmationView, ThereIsAProblemView}
 
 import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class FinancialInstitutionAddedConfirmationController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
+  sessionRepository: SessionRepository,
   val controllerComponents: MessagesControllerComponents,
   view: FinancialInstitutionAddedConfirmationView,
   errorView: ThereIsAProblemView
-) extends FrontendBaseController
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) async {
     implicit request =>
       val fiId = "ABC00000122" // TODO: Replace placeholder FI ID with actual implementation when determined
       request.userAnswers.get(NameOfFinancialInstitutionPage) match {
         case Some(fiName) =>
-          Ok(view(fiName, fiId))
+          sessionRepository.set(request.userAnswers.copy(data = Json.obj())).flatMap {
+            case true => Future.successful(Ok(view(fiName, fiId)))
+            case false =>
+              logger.error(s"Failed to clear user answers after adding an FI for userId: [${request.userId}]")
+              Future.successful(Ok(errorView()))
+          }
         case None =>
           logger.error("Failed to get the name of financial institution from user answers")
-          Ok(errorView())
+          Future.successful(Ok(errorView()))
       }
   }
 
