@@ -18,9 +18,9 @@ package controllers.addFinancialInstitution
 
 import controllers.actions._
 import forms.addFinancialInstitution.IsThisAddressFormProvider
-import models.{Address, Country, Mode}
+import models.{AddressLookup, Mode}
 import navigation.Navigator
-import pages.addFinancialInstitution.{AddressLookupPage, IsThisAddressPage}
+import pages.addFinancialInstitution.{AddressLookupPage, IsThisAddressPage, SelectedAddressLookupPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -47,14 +47,6 @@ class IsThisAddressController @Inject() (
     with ContactHelper {
 
   val form = formProvider()
-
-  val egAddress = Address("1 address street",
-                          addressLine2 = None,
-                          addressLine3 = "Address town",
-                          addressLine4 = None,
-                          postCode = None,
-                          country = Country("Great Britannia", "GB", "UK")
-  )
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -83,9 +75,10 @@ class IsThisAddressController @Inject() (
                 Future.successful(BadRequest(view(formWithErrors, mode, getFinancialInstitutionName(request.userAnswers), address.head.toAddress))),
               value =>
                 for {
-                  updatedAnswers <- Future.fromTry(ua.set(IsThisAddressPage, value))
-                  _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(navigator.nextPage(IsThisAddressPage, mode, updatedAnswers))
+                  updatedAnswers                    <- Future.fromTry(ua.set(IsThisAddressPage, value))
+                  updatedAnswersWithSelectedAddress <- Future.fromTry(updatedAnswers.set(SelectedAddressLookupPage, address.head))
+                  _                                 <- sessionRepository.set(updatedAnswersWithSelectedAddress)
+                } yield Redirect(navigator.nextPage(IsThisAddressPage, mode, updatedAnswersWithSelectedAddress))
             )
         case None => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
