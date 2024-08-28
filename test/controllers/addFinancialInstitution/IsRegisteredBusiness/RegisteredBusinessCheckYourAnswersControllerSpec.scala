@@ -18,7 +18,7 @@ package controllers.addFinancialInstitution.IsRegisteredBusiness
 
 import base.SpecBase
 import controllers.routes
-import pages.InformationSentPage
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -33,7 +33,7 @@ class RegisteredBusinessCheckYourAnswersControllerSpec extends SpecBase with Sum
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(data = Json.obj(("key", "value"))))).build()
 
       running(application) {
         val request =
@@ -48,9 +48,8 @@ class RegisteredBusinessCheckYourAnswersControllerSpec extends SpecBase with Sum
       }
     }
 
-    "must redirect to information-sent page for a GET when the information-sent flag is true" in {
-      val userAnswers = emptyUserAnswers.withPage(InformationSentPage, true)
-      val application = applicationBuilder(userAnswers = Option(userAnswers)).build()
+    "must redirect to information-sent page for a GET when the user answers data is empty" in {
+      val application = applicationBuilder(userAnswers = Option(emptyUserAnswers)).build()
 
       running(application) {
         val request =
@@ -65,7 +64,7 @@ class RegisteredBusinessCheckYourAnswersControllerSpec extends SpecBase with Sum
 
     "confirmAndAdd" - {
       "must redirect to self (until the PUT endpoint exists)" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(data = Json.obj(("key", "value"))))).build()
 
         running(application) {
           val request =
@@ -81,9 +80,8 @@ class RegisteredBusinessCheckYourAnswersControllerSpec extends SpecBase with Sum
         }
       }
 
-      "must redirect to information-sent page for a GET when the information-sent flag is true" in {
-        val userAnswers = emptyUserAnswers.withPage(InformationSentPage, true)
-        val application = applicationBuilder(userAnswers = Option(userAnswers)).build()
+      "must redirect to information-sent page for a GET when the user answers data is empty" in {
+        val application = applicationBuilder(userAnswers = Option(emptyUserAnswers)).build()
 
         running(application) {
           val request =

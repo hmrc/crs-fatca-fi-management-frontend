@@ -18,7 +18,6 @@ package controllers.actions
 
 import controllers.routes
 import models.requests.DataRequest
-import pages.InformationSentPage
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
 
@@ -28,7 +27,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class CheckForInformationSentActionImpl @Inject() (implicit val executionContext: ExecutionContext) extends CheckForInformationSentAction {
 
   override protected def refine[A](request: DataRequest[A]): Future[Either[Result, DataRequest[A]]] =
-    if (request.userAnswers.get(InformationSentPage).contains(true)) {
+    if (request.userAnswers.data.keys.isEmpty) {
       Future.successful(Left(Redirect(routes.InformationSentController.onPageLoad)))
     } else {
       Future.successful(Right(request))

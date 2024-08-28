@@ -23,9 +23,9 @@ import org.mockito.MockitoSugar.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
-import pages.InformationSentPage
 import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
 import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
@@ -54,7 +54,7 @@ class FinancialInstitutionAddedConfirmationControllerSpec extends SpecBase with 
             .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
             .build()
 
-          when(mockSessionRepository.set(userAnswers.withPage(InformationSentPage, true)))
+          when(mockSessionRepository.set(userAnswers.copy(data = Json.obj())))
             .thenReturn(Future.successful(true))
 
           running(application) {
@@ -70,7 +70,7 @@ class FinancialInstitutionAddedConfirmationControllerSpec extends SpecBase with 
       }
     }
 
-    "must return OK and the there-is-a-problem view for a GET when unable to mark information as sent" in {
+    "must return OK and the there-is-a-problem view for a GET when unable to empty user answers data" in {
       forAll {
         fiName: String =>
           val userAnswers = emptyUserAnswers.withPage(NameOfFinancialInstitutionPage, fiName)

@@ -17,11 +17,10 @@
 package controllers.addFinancialInstitution
 
 import controllers.actions._
-import models.UserAnswers
-import pages.InformationSentPage
 import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -49,7 +48,7 @@ class FinancialInstitutionAddedConfirmationController @Inject() (
       val fiId = "ABC00000122" // TODO: Replace placeholder FI ID with actual implementation when determined
       request.userAnswers.get(NameOfFinancialInstitutionPage) match {
         case Some(fiName) =>
-          setInformationSentFlag(request.userAnswers).flatMap {
+          sessionRepository.set(request.userAnswers.copy(data = Json.obj())).flatMap {
             case true => Future.successful(Ok(view(fiName, fiId)))
             case false =>
               logger.error(s"Failed to clear user answers after adding an FI for userId: [${request.userId}]")
@@ -60,10 +59,5 @@ class FinancialInstitutionAddedConfirmationController @Inject() (
           Future.successful(Ok(errorView()))
       }
   }
-
-  private def setInformationSentFlag(userAnswers: UserAnswers): Future[Boolean] =
-    Future.fromTry(userAnswers.set(InformationSentPage, true)).flatMap {
-      updatedAnswers => sessionRepository.set(updatedAnswers)
-    }
 
 }
