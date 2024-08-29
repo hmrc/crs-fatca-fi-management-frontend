@@ -14,32 +14,47 @@
  * limitations under the License.
  *@
 
+@import components._
+
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
         govukRadios: GovukRadios,
         govukButton: GovukButton,
         govukSummaryList: GovukSummaryList,
+        heading: Heading
 )
 
 @(form: Form[_], institutions: SummaryList)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("yourFinancialInstitutions.title"))) {
+
     @if(institutions.rows.isEmpty) {
-        <h1 class="govuk-heading-xl">@messages("yourFinancialInstitutions.heading.noFinancialInstitutions")</h1>
+        @heading(messages("yourFinancialInstitutions.heading.noFinancialInstitutions"))
     } else if (institutions.rows.size == 1) {
-        <h1 class="govuk-heading-xl">@messages("yourFinancialInstitutions.heading.singleFinancialInstitution")</h1>
+        @heading(messages("yourFinancialInstitutions.heading.singleFinancialInstitution"))
     } else {
-        <h1 class="govuk-heading-xl">@messages("yourFinancialInstitutions.heading.multipleFinancialInstitutions", institutions.rows.size)</h1>
+        @heading(messages("yourFinancialInstitutions.heading.multipleFinancialInstitutions", institutions.rows.size))
     }
-    <div class="user-financial-institutions-summary">
-        @govukSummaryList(institutions)
-    </div>
+
+    @if(institutions.rows.isEmpty) {
+        @heading(messages("yourFinancialInstitutions.addFinancialInstitution"), size = "m", extraClasses = "govuk-fieldset__legend govuk-fieldset__legend--m")
+    } else {
+        <div class="user-financial-institutions-summary">
+            @govukSummaryList(institutions)
+        </div>
+        @heading(messages("yourFinancialInstitutions.addAnotherFinancialInstitution"), size = "m", extraClasses = "govuk-fieldset__legend govuk-fieldset__legend--m")
+    }
+
     @formHelper(action = controllers.routes.YourFinancialInstitutionsController.onSubmit(), Symbol("autoComplete") -> "off") {
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(if(institutions.rows.isEmpty) messages("yourFinancialInstitutions.addFinancialInstitution") else messages("yourFinancialInstitutions.addAnotherFinancialInstitution")).asPageHeading()
+                legend = LegendViewModel(if (institutions.rows.isEmpty) {
+                    messages("yourFinancialInstitutions.addFinancialInstitution")
+                } else {
+                    messages("yourFinancialInstitutions.addAnotherFinancialInstitution")
+                }).withCssClass("govuk-visually-hidden").asPageHeading()
             )
         )
 
