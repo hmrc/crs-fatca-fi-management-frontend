@@ -55,9 +55,8 @@ object CheckYourAnswersViewModel {
   def getAddressChangeRoute(answers: UserAnswers): String =
     answers
       .get(ReportForRegisteredBusinessPage) match {
-      case Some(true)  => controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(CheckMode).url
-      case Some(false) => controllers.addFinancialInstitution.routes.WhereIsFIBasedController.onPageLoad(CheckMode).url
-      case None        => controllers.routes.IndexController.onPageLoad().url
+      case Some(true) => controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(CheckMode).url
+      case _          => controllers.addFinancialInstitution.routes.WhereIsFIBasedController.onPageLoad(CheckMode).url
     }
 
   private def getGIINRows(ua: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = {

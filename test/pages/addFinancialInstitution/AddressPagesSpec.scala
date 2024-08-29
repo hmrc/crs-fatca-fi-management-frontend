@@ -99,6 +99,31 @@ class AddressPagesSpec extends SpecBase {
       }
 
     }
+    "FetchedRegisteredAddressPage" - {
+      "must remove other address answers from UserAnswers" in {
+        val res1: UserAnswers = emptyUserAnswers
+          .withPage(SelectedAddressLookupPage, testAddressLookup)
+          .withPage(FetchedRegisteredAddressPage, testAddressResponse)
+
+        val res2: UserAnswers = emptyUserAnswers
+          .withPage(UkAddressPage, testAddress)
+          .withPage(FetchedRegisteredAddressPage, testAddressResponse)
+
+        val res3: UserAnswers = emptyUserAnswers
+          .withPage(NonUkAddressPage, testAddress)
+          .withPage(FetchedRegisteredAddressPage, testAddressResponse)
+
+        res1.get(FetchedRegisteredAddressPage) mustBe defined
+        res1.data.fields.size mustBe 1
+
+        res2.get(FetchedRegisteredAddressPage) mustBe defined
+        res2.data.fields.size mustBe 1
+
+        res3.get(FetchedRegisteredAddressPage) mustBe defined
+        res3.data.fields.size mustBe 1
+
+      }
+    }
 
   }
 

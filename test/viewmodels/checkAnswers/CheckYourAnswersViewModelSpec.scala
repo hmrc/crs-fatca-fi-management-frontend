@@ -87,6 +87,9 @@ class CheckYourAnswersViewModelSpec extends SpecBase {
     "getAddressChangeRoute" - {
       "must be WhereIsFIBased when adding another business" in {
         val answers = ua.withPage(ReportForRegisteredBusinessPage, false)
+
+        sut.getAddressChangeRoute(ua) mustBe
+          controllers.addFinancialInstitution.routes.WhereIsFIBasedController.onPageLoad(CheckMode).url
         sut.getAddressChangeRoute(answers) mustBe
           controllers.addFinancialInstitution.routes.WhereIsFIBasedController.onPageLoad(CheckMode).url
       }

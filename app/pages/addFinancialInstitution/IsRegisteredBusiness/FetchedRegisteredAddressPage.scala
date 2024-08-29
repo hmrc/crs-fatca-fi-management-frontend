@@ -16,12 +16,27 @@
 
 package pages.addFinancialInstitution.IsRegisteredBusiness
 
-import models.AddressResponse
+import models.{AddressResponse, UserAnswers}
 import pages.QuestionPage
+import pages.addFinancialInstitution.{NonUkAddressPage, SelectedAddressLookupPage, UkAddressPage}
 import play.api.libs.json.JsPath
+
+import scala.util.Try
 
 case object FetchedRegisteredAddressPage extends QuestionPage[AddressResponse] {
 
   override def path: JsPath = JsPath \ toString
+
+  override def cleanup(value: Option[AddressResponse], userAnswers: UserAnswers): Try[UserAnswers] =
+    value.fold(Try(userAnswers))(
+      _ =>
+        List(
+          SelectedAddressLookupPage,
+          UkAddressPage,
+          NonUkAddressPage
+        ).foldLeft(Try(userAnswers))(
+          (ua: Try[UserAnswers], page: QuestionPage[_]) => ua.flatMap(_.remove(page))
+        )
+    )
 
 }
