@@ -17,27 +17,54 @@
 package controllers
 
 import controllers.actions._
+import forms.addFinancialInstitution.YourFinancialInstitutionsFormProvider
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.FinancialInstitutionsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.govuk.all.SummaryListViewModel
+import viewmodels.yourFinancialInstitutions.YourFinancialInstitutionsViewModel.getYourFinancialInstitutionsRows
 import views.html.YourFinancialInstitutionsView
 
 import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class YourFinancialInstitutionsController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
+  formProvider: YourFinancialInstitutionsFormProvider,
   val controllerComponents: MessagesControllerComponents,
+  val financialInstitutionsService: FinancialInstitutionsService,
   view: YourFinancialInstitutionsView
-) extends FrontendBaseController
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
+  val form = formProvider()
+
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      // TODO: This is a placeholder controller. Will be implemented as part of DAC6-3048
-      Ok(view())
+      financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId) map {
+        institutions => Ok(view(form, SummaryListViewModel(getYourFinancialInstitutionsRows(institutions))))
+      }
+  }
+
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+    implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors =>
+            financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId) map {
+              institutions => Ok(view(formWithErrors, SummaryListViewModel(getYourFinancialInstitutionsRows(institutions))))
+            },
+          {
+            case true  => Future.successful(Redirect(controllers.addFinancialInstitution.routes.AddFIController.onPageLoad))
+            case false => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad()))
+          }
+        )
   }
 
 }

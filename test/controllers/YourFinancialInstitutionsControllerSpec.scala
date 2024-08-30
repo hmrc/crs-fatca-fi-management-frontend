@@ -17,17 +17,38 @@
 package controllers
 
 import base.SpecBase
+import forms.addFinancialInstitution.YourFinancialInstitutionsFormProvider
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.FinancialInstitutionsService
+import uk.gov.hmrc.http.HeaderCarrier
+import viewmodels.govuk.all.SummaryListViewModel
 import views.html.YourFinancialInstitutionsView
 
-class YourFinancialInstitutionsControllerSpec extends SpecBase {
+import scala.concurrent.{ExecutionContext, Future}
+
+class YourFinancialInstitutionsControllerSpec extends SpecBase with MockitoSugar {
+
+  val formProvider = new YourFinancialInstitutionsFormProvider()
+  val form         = formProvider()
 
   "YourFinancialInstitutionsControllerSpec" - {
 
     "must return ok and correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Option(emptyUserAnswers)).build()
+      val mockFinancialInstitutionsService = mock[FinancialInstitutionsService]
+      when(mockFinancialInstitutionsService.getListOfFinancialInstitutions(any())(any[HeaderCarrier](), any[ExecutionContext]()))
+        .thenReturn(Future.successful(Seq.empty))
+
+      val application = applicationBuilder(userAnswers = Option(emptyUserAnswers))
+        .overrides(
+          bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService)
+        )
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, routes.YourFinancialInstitutionsController.onPageLoad.url)
@@ -37,7 +58,37 @@ class YourFinancialInstitutionsControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[YourFinancialInstitutionsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, SummaryListViewModel(Seq.empty))(request, messages(application)).toString
+      }
+    }
+
+    "must redirect to Add new FI when user selects yes" in {
+
+      val application = applicationBuilder(userAnswers = Option(emptyUserAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, routes.YourFinancialInstitutionsController.onSubmit().url).withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.addFinancialInstitution.routes.AddFIController.onPageLoad.url
+      }
+    }
+
+    "must redirect to Index Page when user selects no" in {
+
+      val application = applicationBuilder(userAnswers = Option(emptyUserAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, routes.YourFinancialInstitutionsController.onSubmit().url).withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad().url
       }
     }
   }

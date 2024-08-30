@@ -327,5 +327,14 @@ financialInstitutionAddedConfirmation.p1 = You will need to provide the FI ID in
 financialInstitutionAddedConfirmation.p2 = Back to manage your financial institutions
 financialInstitutionAddedConfirmation.p3 = Back to manage your CRS and FATCA reports
 
-yourFinancialInstitutions.title = Your Financial Institutions (Please update as part of DAC6-3048)
-yourFinancialInstitutions.heading = Your Financial Institutions (Please update as part of DAC6-3048)
+yourFinancialInstitutions.title = Manage your financial institutions
+yourFinancialInstitutions.heading.noFinancialInstitutions = You have not added any financial institutions
+yourFinancialInstitutions.heading.singleFinancialInstitution = You have added 1 financial institution
+yourFinancialInstitutions.heading.multipleFinancialInstitutions = You have added {0} financial institutions
+yourFinancialInstitutions.addFinancialInstitution = Do you need to add a financial institution?
+yourFinancialInstitutions.addAnotherFinancialInstitution = Do you need to add another financial institution?
+yourFinancialInstitutions.link.manageReports = Manage Reports
+yourFinancialInstitutions.error.required = Select yes if you need to add a financial institution
+yourFinancialInstitutions.change.hidden = Change the details for {0}
+yourFinancialInstitutions.remove.hidden = Remove {0} from the list
+yourFinancialInstitutions.manageReports.hidden = Manage reports for {0}
