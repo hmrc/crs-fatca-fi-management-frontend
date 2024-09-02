@@ -25,7 +25,7 @@ class InformationSentControllerSpec extends SpecBase {
 
   "InformationSent Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view with back link to financial-institution-added page for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -38,6 +38,9 @@ class InformationSentControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view()(request, messages(application)).toString
+
+        val fiAddedUrl = addFinancialInstitution.routes.FinancialInstitutionAddedConfirmationController.onPageLoad.url
+        contentAsString(result) must include(s"""<a href="$fiAddedUrl" class="govuk-back-link  js-visible">Back</a>""")
       }
     }
   }
