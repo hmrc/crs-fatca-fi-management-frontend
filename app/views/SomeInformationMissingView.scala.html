@@ -1,0 +1,13 @@
+@this(
+        layout: templates.Layout,
+        govukButton: GovukButton
+)
+
+@()(implicit request: Request[_], messages: Messages)
+
+@layout(pageTitle = titleNoForm(messages("someInformationMissing.title"))) {
+
+    <h1 class="govuk-heading-xl">@messages("someInformationMissing.heading")</h1>
+
+    <p class="govuk-body">@messages("someInformationMissing.p1")</p>
+}
