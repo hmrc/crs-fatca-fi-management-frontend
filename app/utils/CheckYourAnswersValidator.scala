@@ -25,15 +25,15 @@ sealed trait AddFIValidator {
   self: CheckYourAnswersValidator =>
 
   private def firstContactPhoneMissingAnswers: Seq[Page] = (userAnswers.get(FirstContactHavePhonePage) match {
-    case Some(true) => checkPage(FirstContactPhoneNumberPage)
+    case Some(true)  => checkPage(FirstContactPhoneNumberPage)
     case Some(false) => None
-    case _ => Some(FirstContactPhoneNumberPage)
+    case _           => Some(FirstContactPhoneNumberPage)
   }).toSeq
 
   private def secContactPhoneMissingAnswers: Seq[Page] = (userAnswers.get(SecondContactCanWePhonePage) match {
-    case Some(true) => checkPage(SecondContactPhoneNumberPage)
+    case Some(true)  => checkPage(SecondContactPhoneNumberPage)
     case Some(false) => None
-    case _ => Some(SecondContactPhoneNumberPage)
+    case _           => Some(SecondContactPhoneNumberPage)
   }).toSeq
 
   private def checkFirstContactMissingAnswers: Seq[Page] = Seq(
@@ -43,45 +43,48 @@ sealed trait AddFIValidator {
 
   private def checkChangeSecContactDetailsMissingAnswers: Seq[Page] =
     userAnswers.get(SecondContactExistsPage) match {
-      case Some(true) => Seq(
-        checkPage(SecondContactNamePage),
-        checkPage(SecondContactEmailPage)
-      ).flatten ++ secContactPhoneMissingAnswers
+      case Some(true) =>
+        Seq(
+          checkPage(SecondContactNamePage),
+          checkPage(SecondContactEmailPage)
+        ).flatten ++ secContactPhoneMissingAnswers
       case Some(false) => Seq.empty
-      case _ => Seq(SecondContactExistsPage)
+      case _           => Seq(SecondContactExistsPage)
     }
 
   private[utils] def checkContactDetailsMissingAnswers = checkFirstContactMissingAnswers ++ checkChangeSecContactDetailsMissingAnswers
 
   private[utils] def checkAddressMissingAnswers: Seq[Page] = (userAnswers.get(WhereIsFIBasedPage) match {
-    case Some(true) => checkPage(PostcodePage)
-      .orElse(
-        any(
-          checkPage(SelectAddressPage),
-          checkPage(UkAddressPage)
-        ).map(
-          _ => PostcodePage
+    case Some(true) =>
+      checkPage(PostcodePage)
+        .orElse(
+          any(
+            checkPage(SelectAddressPage),
+            checkPage(UkAddressPage)
+          ).map(
+            _ => PostcodePage
+          )
         )
-      )
     case Some(false) => checkPage(NonUkAddressPage)
-    case _ => Some(WhereIsFIBasedPage)
+    case _           => Some(WhereIsFIBasedPage)
   }).toSeq
 
   private def fiUTRMissingAnswers: Seq[Page] = (userAnswers.get(HaveUniqueTaxpayerReferencePage) match {
-    case Some(true) => checkPage(WhatIsUniqueTaxpayerReferencePage)
+    case Some(true)  => checkPage(WhatIsUniqueTaxpayerReferencePage)
     case Some(false) => None
-    case _ => Some(HaveUniqueTaxpayerReferencePage)
+    case _           => Some(HaveUniqueTaxpayerReferencePage)
   }).toSeq
 
   private def fiGIINMissingAnswers: Seq[Page] = (userAnswers.get(HaveGIINPage) match {
-    case Some(true) => checkPage(WhatIsGIINPage)
+    case Some(true)  => checkPage(WhatIsGIINPage)
     case Some(false) => None
-    case _ => Some(HaveGIINPage)
+    case _           => Some(HaveGIINPage)
   }).toSeq
 
   private[utils] def checkNameUTRGIINMissingAnswers: Seq[Page] = Seq(
     checkPage(NameOfFinancialInstitutionPage)
   ).flatten ++ fiUTRMissingAnswers ++ fiGIINMissingAnswers
+
 }
 
 class CheckYourAnswersValidator(val userAnswers: UserAnswers) extends AddFIValidator {
