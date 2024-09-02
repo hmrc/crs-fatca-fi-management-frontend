@@ -329,3 +329,8 @@ financialInstitutionAddedConfirmation.p3 = Back to manage your CRS and FATCA rep
 
 yourFinancialInstitutions.title = Your Financial Institutions (Please update as part of DAC6-3048)
 yourFinancialInstitutions.heading = Your Financial Institutions (Please update as part of DAC6-3048)
+removeAreYouSure.title = removeAreYouSure
+removeAreYouSure.heading = removeAreYouSure
+removeAreYouSure.checkYourAnswersLabel = removeAreYouSure
+removeAreYouSure.error.required = Select yes if removeAreYouSure
+removeAreYouSure.change.hidden = RemoveAreYouSure

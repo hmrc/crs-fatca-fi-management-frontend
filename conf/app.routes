@@ -145,3 +145,8 @@ POST       /registered-business/check-answers                        controllers
 GET        /financial-institution-added                              controllers.addFinancialInstitution.FinancialInstitutionAddedConfirmationController.onPageLoad
 
 GET        /your-fis                                                 controllers.YourFinancialInstitutionsController.onPageLoad
+
+GET        /removeAreYouSure                        controllers.RemoveAreYouSureController.onPageLoad(mode: Mode = NormalMode)
+POST       /removeAreYouSure                        controllers.RemoveAreYouSureController.onSubmit(mode: Mode = NormalMode)
+GET        /changeRemoveAreYouSure                  controllers.RemoveAreYouSureController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeRemoveAreYouSure                  controllers.RemoveAreYouSureController.onSubmit(mode: Mode = CheckMode)
