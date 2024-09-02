@@ -16,26 +16,26 @@
 
 package viewmodels.checkAnswers
 
-import models.{CheckMode, UserAnswers}
-import pages.addFinancialInstitution.PostcodePage
+import models.UserAnswers
+import pages.addFinancialInstitution.SelectedAddressLookupPage
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.checkAnswers.CheckYourAnswersViewModel.accessibleActionItem
+import utils.AddressHelper.formatAddress
+import viewmodels.checkAnswers.CheckYourAnswersViewModel.{accessibleActionItem, getAddressChangeRoute}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object PostcodeSummary {
+object SelectedAddressLookupSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(PostcodePage).map {
+    answers.get(SelectedAddressLookupPage).map {
       answer =>
         SummaryListRowViewModel(
-          key = "postcode.checkYourAnswersLabel",
-          value = ValueViewModel(HtmlFormat.escape(answer).toString),
+          key = "selectAddress.checkYourAnswersLabel",
+          value = ValueViewModel(formatAddress(answer)),
           actions = Seq(
-            accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.PostcodeController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("postcode.change.hidden"))
+            accessibleActionItem("site.change", getAddressChangeRoute(answers))
+              .withVisuallyHiddenText(messages("selectAddress.change.hidden"))
           )
         )
     }

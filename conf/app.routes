@@ -146,4 +146,4 @@ GET        /financial-institution-added                              controllers
 
 GET        /your-fis                                                 controllers.YourFinancialInstitutionsController.onPageLoad
 
-GET        /someInformationMissing                       controllers.SomeInformationMissingController.onPageLoad()
+GET        /problem/some-information-is-missing                      controllers.SomeInformationMissingController.onPageLoad()

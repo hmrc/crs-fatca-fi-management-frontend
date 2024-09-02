@@ -32,13 +32,14 @@ class CheckYourAnswersController @Inject() (
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
+  checkForInformationSent: CheckForInformationSentAction,
   val controllerComponents: MessagesControllerComponents,
   view: CheckYourAnswersView
 ) extends FrontendBaseController
     with ContactHelper
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkForInformationSent) {
     implicit request =>
       val ua: UserAnswers          = request.userAnswers
       val fiName                   = getFinancialInstitutionName(ua)
@@ -49,7 +50,7 @@ class CheckYourAnswersController @Inject() (
       Ok(view(fiName, financialInstitutionList, firstContactList, secondContactList))
   }
 
-  def confirmAndAdd(): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def confirmAndAdd(): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkForInformationSent) {
     Redirect(routes.CheckYourAnswersController.onPageLoad())
   }
 

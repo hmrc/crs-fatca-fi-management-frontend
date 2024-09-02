@@ -26,12 +26,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsConnector) {
 
-  def getListOfFinancialInstitutions(suscriptionId: String)(implicit
+  def getListOfFinancialInstitutions(subscriptionId: String)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Seq[FIDetail]] =
     connector
-      .viewFis(suscriptionId)
+      .viewFis(subscriptionId)
       .map(
         res => extractList(res.body)
       )
