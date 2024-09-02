@@ -41,7 +41,7 @@ sealed trait AddFIValidator {
     checkPage(FirstContactEmailPage)
   ).flatten ++ firstContactPhoneMissingAnswers
 
-  private def checkChangeSecContactDetailsMissingAnswers: Seq[Page] =
+  private def checkSecContactDetailsMissingAnswers: Seq[Page] =
     userAnswers.get(SecondContactExistsPage) match {
       case Some(true) =>
         Seq(
@@ -52,7 +52,7 @@ sealed trait AddFIValidator {
       case _           => Seq(SecondContactExistsPage)
     }
 
-  private[utils] def checkContactDetailsMissingAnswers = checkFirstContactMissingAnswers ++ checkChangeSecContactDetailsMissingAnswers
+  private[utils] def checkContactDetailsMissingAnswers = checkFirstContactMissingAnswers ++ checkSecContactDetailsMissingAnswers
 
   private[utils] def checkAddressMissingAnswers: Seq[Page] = (userAnswers.get(WhereIsFIBasedPage) match {
     case Some(true) =>
