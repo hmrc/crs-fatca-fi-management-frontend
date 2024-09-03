@@ -146,7 +146,7 @@ GET        /financial-institution-added                              controllers
 
 GET        /your-fis                                                 controllers.YourFinancialInstitutionsController.onPageLoad
 
-GET        /removeAreYouSure                        controllers.RemoveAreYouSureController.onPageLoad(mode: Mode = NormalMode)
-POST       /removeAreYouSure                        controllers.RemoveAreYouSureController.onSubmit(mode: Mode = NormalMode)
-GET        /changeRemoveAreYouSure                  controllers.RemoveAreYouSureController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeRemoveAreYouSure                  controllers.RemoveAreYouSureController.onSubmit(mode: Mode = CheckMode)
+GET        /remove-fi                        controllers.RemoveAreYouSureController.onPageLoad()
+POST       /remove-fi                        controllers.RemoveAreYouSureController.onSubmit()
+GET        /remove-fi                  controllers.RemoveAreYouSureController.onPageLoad()
+POST       /remove-fi                  controllers.RemoveAreYouSureController.onSubmit()

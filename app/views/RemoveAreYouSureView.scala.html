@@ -28,11 +28,11 @@
     warning: Warning
 )
 
-@(form: Form[_], mode: Mode, id: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], id: String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("removeAreYouSure.title"))) {
 
-    @formHelper(action = routes.RemoveAreYouSureController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = routes.RemoveAreYouSureController.onSubmit(), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

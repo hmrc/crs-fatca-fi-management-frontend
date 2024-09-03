@@ -22,7 +22,6 @@ import pages._
 import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 import play.api.mvc.Call
-import viewmodels.checkAnswers.CheckYourAnswersViewModel
 
 import javax.inject.{Inject, Singleton}
 
@@ -173,5 +172,11 @@ class Navigator @Inject() () {
     case CheckMode =>
       checkRouteMap(page)(userAnswers)
   }
+
+  def removeNavigation(confirmRemove: Boolean): Call =
+    confirmRemove match {
+      case true  => controllers.routes.YourFinancialInstitutionsController.onPageLoad // add parameter for id being removed, to use in banner
+      case false => controllers.routes.YourFinancialInstitutionsController.onPageLoad
+    }
 
 }

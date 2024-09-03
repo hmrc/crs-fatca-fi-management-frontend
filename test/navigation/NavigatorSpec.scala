@@ -262,6 +262,14 @@ class NavigatorSpec extends SpecBase {
         ) mustBe routes.CheckYourAnswersController.onPageLoad
       }
     }
+
+    "removeNavigation must" - {
+      "navigate to YourFinancialInstitutions regardless of answer" in {
+        navigator.removeNavigation(true) mustBe controllers.routes.YourFinancialInstitutionsController.onPageLoad
+        navigator.removeNavigation(false) mustBe controllers.routes.YourFinancialInstitutionsController.onPageLoad
+      }
+
+    }
   }
 
 }
