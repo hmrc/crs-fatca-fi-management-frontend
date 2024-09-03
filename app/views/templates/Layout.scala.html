@@ -35,7 +35,7 @@
     autocompleteJavascript: HmrcAccessibleAutocompleteJavascript
 )
 
-@(pageTitle: String, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true)(contentBlock: Html)(implicit request: RequestHeader, messages: Messages)
+@(pageTitle: String, showBackLink: Boolean = true, backLink: String = "#", timeout: Boolean = true, showSignOut: Boolean = true)(contentBlock: Html)(implicit request: RequestHeader, messages: Messages)
 
 @head = {
 
@@ -76,8 +76,11 @@
         ))
     }
 
-    @if(showBackLink) {
-        @govukBackLink(BackLinkViewModel(href = "#").withCssClass(".govuk-default-back-link js-visible"))
+    @{
+        if (showBackLink) {
+            val backLinkCssClass = if (backLink.equalsIgnoreCase("#")) ".govuk-default-back-link js-visible" else "js-visible"
+            govukBackLink(BackLinkViewModel(href = backLink).withCssClass(backLinkCssClass))
+        }
     }
 }
 

@@ -22,8 +22,7 @@
 
 @()(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("informationSent.title")), showBackLink = false) {
-    @govukBackLink(BackLinkViewModel(href = controllers.addFinancialInstitution.routes.FinancialInstitutionAddedConfirmationController.onPageLoad.url).withCssClass("js-visible"))
+@layout(pageTitle = titleNoForm(messages("informationSent.title")), backLink = controllers.addFinancialInstitution.routes.FinancialInstitutionAddedConfirmationController.onPageLoad.url) {
 
     <h1 class="govuk-heading-l">@messages("informationSent.heading")</h1>
 
