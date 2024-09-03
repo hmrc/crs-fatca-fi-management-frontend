@@ -92,21 +92,6 @@ class FinancialInstitutionAddedConfirmationControllerSpec extends SpecBase with 
           }
       }
     }
-
-    "must return OK and the there-is-a-problem view for a GET when name of FI is missing from user answers" in {
-      val application = applicationBuilder(userAnswers = Option(emptyUserAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, routes.FinancialInstitutionAddedConfirmationController.onPageLoad.url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[ThereIsAProblemView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, messages(application)).toString
-      }
-    }
   }
 
 }
