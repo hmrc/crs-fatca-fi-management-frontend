@@ -22,7 +22,7 @@ class RemoveAreYouSureControllerSpec extends SpecBase with MockitoSugar {
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new RemoveAreYouSureFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   lazy val removeAreYouSureRoute = routes.RemoveAreYouSureController.onPageLoad(NormalMode).url
 
@@ -138,4 +138,5 @@ class RemoveAreYouSureControllerSpec extends SpecBase with MockitoSugar {
       }
     }
   }
+
 }

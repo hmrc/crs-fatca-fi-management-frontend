@@ -1,5 +1,5 @@
-/*
- * Copyright 2024 HM Revenue & Customs
+@*
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,20 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package forms
+@this()
 
-import javax.inject.Inject
+@(elements: Seq[Html], classes: String = "govuk-list govuk-list--bullet", id: Option[String] = None)
 
-import forms.mappings.Mappings
-import play.api.data.Form
-
-class RemoveAreYouSureFormProvider @Inject() extends Mappings {
-
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("removeAreYouSure.error.required")
-    )
-
-}
+<ul class="@classes" @id.map{id => id="@id"}>
+    @elements.map { element =>
+        <li class="dashed-list-item">
+            @element
+        </li>
+    }
+</ul>
