@@ -1,148 +1,150 @@
 # microservice specific routes
 
-->          /hmrc-frontend                                                hmrcfrontend.Routes
+->          /hmrc-frontend                               hmrcfrontend.Routes
 
-GET         /                                                             controllers.IndexController.onPageLoad()
+GET         /                                            controllers.IndexController.onPageLoad()
 
-GET         /assets/*file                                                 controllers.Assets.versioned(path="/public", file: Asset)
+GET         /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
 
-GET         /language/:lang                                               controllers.LanguageSwitchController.switchToLanguage(lang: String)
+GET         /language/:lang                              controllers.LanguageSwitchController.switchToLanguage(lang: String)
 
-GET         /refresh-session                                              controllers.KeepAliveController.keepAlive
+GET         /refresh-session                             controllers.KeepAliveController.keepAlive
 
-GET         /problem/there-is-a-problem                                   controllers.JourneyRecoveryController.onPageLoad()
-GET         /problem/information-sent                                     controllers.InformationSentController.onPageLoad
+GET         /problem/there-is-a-problem                  controllers.JourneyRecoveryController.onPageLoad()
+GET         /problem/information-sent                    controllers.InformationSentController.onPageLoad
 
-GET         /account/sign-out-survey                                      controllers.auth.AuthController.signOut
-GET         /account/sign-out                                             controllers.auth.AuthController.signOutNoSurvey
-GET         /account/signed-out                                           controllers.auth.SignedOutController.onPageLoad
+GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut
+GET         /account/sign-out                            controllers.auth.AuthController.signOutNoSurvey
+GET         /account/signed-out                          controllers.auth.SignedOutController.onPageLoad
 
-GET         /unauthorised                                                 controllers.UnauthorisedController.onPageLoad
+GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad
 
-GET         /add                                                          controllers.addFinancialInstitution.AddFIController.onPageLoad
+GET         /add                                         controllers.addFinancialInstitution.AddFIController.onPageLoad
 
-GET         /contact-name                                                 controllers.addFinancialInstitution.FirstContactNameController.onPageLoad(mode: Mode = NormalMode)
-POST        /contact-name                                                 controllers.addFinancialInstitution.FirstContactNameController.onSubmit(mode: Mode = NormalMode)
-GET         /change/contact-name                                          controllers.addFinancialInstitution.FirstContactNameController.onPageLoad(mode: Mode = CheckMode)
-POST        /change/contact-name                                          controllers.addFinancialInstitution.FirstContactNameController.onSubmit(mode: Mode = CheckMode)
+GET         /contact-name                                controllers.addFinancialInstitution.FirstContactNameController.onPageLoad(mode: Mode = NormalMode)
+POST        /contact-name                                controllers.addFinancialInstitution.FirstContactNameController.onSubmit(mode: Mode = NormalMode)
+GET         /change/contact-name                         controllers.addFinancialInstitution.FirstContactNameController.onPageLoad(mode: Mode = CheckMode)
+POST        /change/contact-name                         controllers.addFinancialInstitution.FirstContactNameController.onSubmit(mode: Mode = CheckMode)
 
-GET         /email                                                        controllers.addFinancialInstitution.FirstContactEmailController.onPageLoad(mode: Mode = NormalMode)
-POST        /email                                                        controllers.addFinancialInstitution.FirstContactEmailController.onSubmit(mode: Mode = NormalMode)
-GET         /change-email                                                 controllers.addFinancialInstitution.FirstContactEmailController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-email                                                 controllers.addFinancialInstitution.FirstContactEmailController.onSubmit(mode: Mode = CheckMode)
+GET         /email                                       controllers.addFinancialInstitution.FirstContactEmailController.onPageLoad(mode: Mode = NormalMode)
+POST        /email                                       controllers.addFinancialInstitution.FirstContactEmailController.onSubmit(mode: Mode = NormalMode)
+GET         /change-email                                controllers.addFinancialInstitution.FirstContactEmailController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-email                                controllers.addFinancialInstitution.FirstContactEmailController.onSubmit(mode: Mode = CheckMode)
 
-GET         /phone                                                        controllers.addFinancialInstitution.FirstContactPhoneNumberController.onPageLoad(mode: Mode = NormalMode)
-POST        /phone                                                        controllers.addFinancialInstitution.FirstContactPhoneNumberController.onSubmit(mode: Mode = NormalMode)
-GET         /change-phone                                                 controllers.addFinancialInstitution.FirstContactPhoneNumberController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-phone                                                 controllers.addFinancialInstitution.FirstContactPhoneNumberController.onSubmit(mode: Mode = CheckMode)
+GET         /phone                                       controllers.addFinancialInstitution.FirstContactPhoneNumberController.onPageLoad(mode: Mode = NormalMode)
+POST        /phone                                       controllers.addFinancialInstitution.FirstContactPhoneNumberController.onSubmit(mode: Mode = NormalMode)
+GET         /change-phone                                controllers.addFinancialInstitution.FirstContactPhoneNumberController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-phone                                controllers.addFinancialInstitution.FirstContactPhoneNumberController.onSubmit(mode: Mode = CheckMode)
 
-GET         /have-second-contact                                          controllers.addFinancialInstitution.SecondContactExistsController.onPageLoad(mode: Mode = NormalMode)
-POST        /have-second-contact                                          controllers.addFinancialInstitution.SecondContactExistsController.onSubmit(mode: Mode = NormalMode)
-GET         /change-have-second-contact                                   controllers.addFinancialInstitution.SecondContactExistsController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-have-second-contact                                   controllers.addFinancialInstitution.SecondContactExistsController.onSubmit(mode: Mode = CheckMode)
+GET         /have-second-contact                          controllers.addFinancialInstitution.SecondContactExistsController.onPageLoad(mode: Mode = NormalMode)
+POST        /have-second-contact                          controllers.addFinancialInstitution.SecondContactExistsController.onSubmit(mode: Mode = NormalMode)
+GET         /change-have-second-contact                   controllers.addFinancialInstitution.SecondContactExistsController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-have-second-contact                   controllers.addFinancialInstitution.SecondContactExistsController.onSubmit(mode: Mode = CheckMode)
 
-GET         /second-contact-name                                          controllers.addFinancialInstitution.SecondContactNameController.onPageLoad(mode: Mode = NormalMode)
-POST        /second-contact-name                                          controllers.addFinancialInstitution.SecondContactNameController.onSubmit(mode: Mode = NormalMode)
-GET         /change-second-contact-name                                   controllers.addFinancialInstitution.SecondContactNameController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-second-contact-name                                   controllers.addFinancialInstitution.SecondContactNameController.onSubmit(mode: Mode = CheckMode)
+GET         /second-contact-name                           controllers.addFinancialInstitution.SecondContactNameController.onPageLoad(mode: Mode = NormalMode)
+POST        /second-contact-name                          controllers.addFinancialInstitution.SecondContactNameController.onSubmit(mode: Mode = NormalMode)
+GET         /change-second-contact-name                     controllers.addFinancialInstitution.SecondContactNameController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-second-contact-name                     controllers.addFinancialInstitution.SecondContactNameController.onSubmit(mode: Mode = CheckMode)
 
-GET         /second-contact-email                                         controllers.addFinancialInstitution.SecondContactEmailController.onPageLoad(mode: Mode = NormalMode)
-POST        /second-contact-email                                         controllers.addFinancialInstitution.SecondContactEmailController.onSubmit(mode: Mode = NormalMode)
-GET         /change-second-contact-email                                  controllers.addFinancialInstitution.SecondContactEmailController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-second-contact-email                                  controllers.addFinancialInstitution.SecondContactEmailController.onSubmit(mode: Mode = CheckMode)
+GET         /second-contact-email                        controllers.addFinancialInstitution.SecondContactEmailController.onPageLoad(mode: Mode = NormalMode)
+POST        /second-contact-email                        controllers.addFinancialInstitution.SecondContactEmailController.onSubmit(mode: Mode = NormalMode)
+GET         /change-second-contact-email                 controllers.addFinancialInstitution.SecondContactEmailController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-second-contact-email                 controllers.addFinancialInstitution.SecondContactEmailController.onSubmit(mode: Mode = CheckMode)
 
-GET         /second-contact-have-phone                                    controllers.addFinancialInstitution.SecondContactCanWePhoneController.onPageLoad(mode: Mode = NormalMode)
-POST        /second-contact-have-phone                                    controllers.addFinancialInstitution.SecondContactCanWePhoneController.onSubmit(mode: Mode = NormalMode)
-GET         /change-second-contact-have-phone                             controllers.addFinancialInstitution.SecondContactCanWePhoneController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-second-contact-have-phone                             controllers.addFinancialInstitution.SecondContactCanWePhoneController.onSubmit(mode: Mode = CheckMode)
+GET         /second-contact-have-phone                   controllers.addFinancialInstitution.SecondContactCanWePhoneController.onPageLoad(mode: Mode = NormalMode)
+POST        /second-contact-have-phone                   controllers.addFinancialInstitution.SecondContactCanWePhoneController.onSubmit(mode: Mode = NormalMode)
+GET         /change-second-contact-have-phone            controllers.addFinancialInstitution.SecondContactCanWePhoneController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-second-contact-have-phone            controllers.addFinancialInstitution.SecondContactCanWePhoneController.onSubmit(mode: Mode = CheckMode)
 
-GET         /second-contact-phone                                         controllers.addFinancialInstitution.SecondContactPhoneNumberController.onPageLoad(mode: Mode = NormalMode)
-POST        /second-contact-phone                                         controllers.addFinancialInstitution.SecondContactPhoneNumberController.onSubmit(mode: Mode = NormalMode)
-GET         /change-second-contact-phone                                  controllers.addFinancialInstitution.SecondContactPhoneNumberController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-second-contact-phone                                  controllers.addFinancialInstitution.SecondContactPhoneNumberController.onSubmit(mode: Mode = CheckMode)
+GET         /second-contact-phone                        controllers.addFinancialInstitution.SecondContactPhoneNumberController.onPageLoad(mode: Mode = NormalMode)
+POST        /second-contact-phone                        controllers.addFinancialInstitution.SecondContactPhoneNumberController.onSubmit(mode: Mode = NormalMode)
+GET         /change-second-contact-phone                 controllers.addFinancialInstitution.SecondContactPhoneNumberController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-second-contact-phone                 controllers.addFinancialInstitution.SecondContactPhoneNumberController.onSubmit(mode: Mode = CheckMode)
 
-GET         /have-phone                                                   controllers.addFinancialInstitution.FirstContactHavePhoneController.onPageLoad(mode: models.Mode = models.NormalMode)
-POST        /have-phone                                                   controllers.addFinancialInstitution.FirstContactHavePhoneController.onSubmit(mode: models.Mode = models.NormalMode)
-GET         /change-have-phone                                            controllers.addFinancialInstitution.FirstContactHavePhoneController.onPageLoad(mode: models.Mode = models.CheckMode)
-POST        /change-have-phone                                            controllers.addFinancialInstitution.FirstContactHavePhoneController.onSubmit(mode: models.Mode = models.CheckMode)
+GET        /have-phone                          controllers.addFinancialInstitution.FirstContactHavePhoneController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /have-phone                          controllers.addFinancialInstitution.FirstContactHavePhoneController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /change-have-phone                   controllers.addFinancialInstitution.FirstContactHavePhoneController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /change-have-phone                   controllers.addFinancialInstitution.FirstContactHavePhoneController.onSubmit(mode: models.Mode = models.CheckMode)
 
-GET         /have-utr                                                     controllers.addFinancialInstitution.HaveUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = NormalMode)
-POST        /have-utr                                                     controllers.addFinancialInstitution.HaveUniqueTaxpayerReferenceController.onSubmit(mode: Mode = NormalMode)
-GET         /change-have-utr                                              controllers.addFinancialInstitution.HaveUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-have-utr                                              controllers.addFinancialInstitution.HaveUniqueTaxpayerReferenceController.onSubmit(mode: Mode = CheckMode)
+GET        /have-utr                              controllers.addFinancialInstitution.HaveUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = NormalMode)
+POST       /have-utr                              controllers.addFinancialInstitution.HaveUniqueTaxpayerReferenceController.onSubmit(mode: Mode = NormalMode)
+GET        /change-have-utr                       controllers.addFinancialInstitution.HaveUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-have-utr                       controllers.addFinancialInstitution.HaveUniqueTaxpayerReferenceController.onSubmit(mode: Mode = CheckMode)
 
-GET         /name                                                         controllers.addFinancialInstitution.NameOfFinancialInstitutionController.onPageLoad(mode: Mode = NormalMode)
-POST        /name                                                         controllers.addFinancialInstitution.NameOfFinancialInstitutionController.onSubmit(mode: Mode = NormalMode)
-GET         /change-name                                                  controllers.addFinancialInstitution.NameOfFinancialInstitutionController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-name                                                  controllers.addFinancialInstitution.NameOfFinancialInstitutionController.onSubmit(mode: Mode = CheckMode)
+GET        /name                        controllers.addFinancialInstitution.NameOfFinancialInstitutionController.onPageLoad(mode: Mode = NormalMode)
+POST       /name                        controllers.addFinancialInstitution.NameOfFinancialInstitutionController.onSubmit(mode: Mode = NormalMode)
+GET        /change-name                  controllers.addFinancialInstitution.NameOfFinancialInstitutionController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-name                  controllers.addFinancialInstitution.NameOfFinancialInstitutionController.onSubmit(mode: Mode = CheckMode)
 
-GET         /utr                                                          controllers.addFinancialInstitution.WhatIsUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = NormalMode)
-POST        /utr                                                          controllers.addFinancialInstitution.WhatIsUniqueTaxpayerReferenceController.onSubmit(mode: Mode = NormalMode)
-GET         /change-utr                                                   controllers.addFinancialInstitution.WhatIsUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-utr                                                   controllers.addFinancialInstitution.WhatIsUniqueTaxpayerReferenceController.onSubmit(mode: Mode = CheckMode)
+GET        /utr                        controllers.addFinancialInstitution.WhatIsUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = NormalMode)
+POST       /utr                        controllers.addFinancialInstitution.WhatIsUniqueTaxpayerReferenceController.onSubmit(mode: Mode = NormalMode)
+GET        /change-utr                  controllers.addFinancialInstitution.WhatIsUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-utr                  controllers.addFinancialInstitution.WhatIsUniqueTaxpayerReferenceController.onSubmit(mode: Mode = CheckMode)
 
-GET         /have-giin                                                    controllers.addFinancialInstitution.HaveGIINController.onPageLoad(mode: Mode = NormalMode)
-POST        /have-giin                                                    controllers.addFinancialInstitution.HaveGIINController.onSubmit(mode: Mode = NormalMode)
-GET         /change-have-giin                                             controllers.addFinancialInstitution.HaveGIINController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-have-giin                                             controllers.addFinancialInstitution.HaveGIINController.onSubmit(mode: Mode = CheckMode)
+GET        /have-giin                         controllers.addFinancialInstitution.HaveGIINController.onPageLoad(mode: Mode = NormalMode)
+POST       /have-giin                         controllers.addFinancialInstitution.HaveGIINController.onSubmit(mode: Mode = NormalMode)
+GET        /change-have-giin                  controllers.addFinancialInstitution.HaveGIINController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-have-giin                  controllers.addFinancialInstitution.HaveGIINController.onSubmit(mode: Mode = CheckMode)
 
-GET         /uk-postcode                                                  controllers.addFinancialInstitution.PostcodeController.onPageLoad(mode: Mode = NormalMode)
-POST        /uk-postcode                                                  controllers.addFinancialInstitution.PostcodeController.onSubmit(mode: Mode = NormalMode)
-GET         /change-uk-postcode                                           controllers.addFinancialInstitution.PostcodeController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-uk-postcode                                           controllers.addFinancialInstitution.PostcodeController.onSubmit(mode: Mode = CheckMode)
+GET        /uk-postcode                        controllers.addFinancialInstitution.PostcodeController.onPageLoad(mode: Mode = NormalMode)
+POST       /uk-postcode                        controllers.addFinancialInstitution.PostcodeController.onSubmit(mode: Mode = NormalMode)
+GET        /change-uk-postcode                  controllers.addFinancialInstitution.PostcodeController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-uk-postcode                  controllers.addFinancialInstitution.PostcodeController.onSubmit(mode: Mode = CheckMode)
 
-GET         /select-address                                               controllers.addFinancialInstitution.SelectAddressController.onPageLoad(mode: Mode = NormalMode)
-POST        /select-address                                               controllers.addFinancialInstitution.SelectAddressController.onSubmit(mode: Mode = NormalMode)
-GET         /change-select-address                                        controllers.addFinancialInstitution.SelectAddressController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-select-address                                        controllers.addFinancialInstitution.SelectAddressController.onSubmit(mode: Mode = CheckMode)
+GET        /select-address                             controllers.addFinancialInstitution.SelectAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /select-address                             controllers.addFinancialInstitution.SelectAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /change-select-address                      controllers.addFinancialInstitution.SelectAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-select-address                      controllers.addFinancialInstitution.SelectAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET         /address-non-uk                                               controllers.addFinancialInstitution.NonUkAddressController.onPageLoad(mode: Mode = NormalMode)
-POST        /address-non-uk                                               controllers.addFinancialInstitution.NonUkAddressController.onSubmit(mode: Mode = NormalMode)
-GET         /change-address-non-uk                                        controllers.addFinancialInstitution.NonUkAddressController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-address-non-uk                                        controllers.addFinancialInstitution.NonUkAddressController.onSubmit(mode: Mode = CheckMode)
+GET        /address-non-uk                        controllers.addFinancialInstitution.NonUkAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /address-non-uk                        controllers.addFinancialInstitution.NonUkAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /change-address-non-uk                  controllers.addFinancialInstitution.NonUkAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-address-non-uk                  controllers.addFinancialInstitution.NonUkAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET         /address-uk                                                   controllers.addFinancialInstitution.UkAddressController.onPageLoad(mode: Mode = NormalMode)
-POST        /address-uk                                                   controllers.addFinancialInstitution.UkAddressController.onSubmit(mode: Mode = NormalMode)
-GET         /change-address-uk                                            controllers.addFinancialInstitution.UkAddressController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-address-uk                                            controllers.addFinancialInstitution.UkAddressController.onSubmit(mode: Mode = CheckMode)
+GET        /address-uk                        controllers.addFinancialInstitution.UkAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /address-uk                        controllers.addFinancialInstitution.UkAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /change-address-uk                  controllers.addFinancialInstitution.UkAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-address-uk                  controllers.addFinancialInstitution.UkAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET         /is-this-the-address                                          controllers.addFinancialInstitution.IsThisAddressController.onPageLoad(mode: Mode = NormalMode)
-POST        /is-this-the-address                                          controllers.addFinancialInstitution.IsThisAddressController.onSubmit(mode: Mode = NormalMode)
-GET         /change-is-this-the-address                                   controllers.addFinancialInstitution.IsThisAddressController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-is-this-the-address                                   controllers.addFinancialInstitution.IsThisAddressController.onSubmit(mode: Mode = CheckMode)
+GET        /is-this-the-address                         controllers.addFinancialInstitution.IsThisAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /is-this-the-address                         controllers.addFinancialInstitution.IsThisAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /change-is-this-the-address                  controllers.addFinancialInstitution.IsThisAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-is-this-the-address                  controllers.addFinancialInstitution.IsThisAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET         /giin                                                         controllers.addFinancialInstitution.WhatIsGIINController.onPageLoad(mode: Mode = NormalMode)
-POST        /giin                                                         controllers.addFinancialInstitution.WhatIsGIINController.onSubmit(mode: Mode = NormalMode)
-GET         /change-giin                                                  controllers.addFinancialInstitution.WhatIsGIINController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-giin                                                  controllers.addFinancialInstitution.WhatIsGIINController.onSubmit(mode: Mode = CheckMode)
+GET        /giin                        controllers.addFinancialInstitution.WhatIsGIINController.onPageLoad(mode: Mode = NormalMode)
+POST       /giin                        controllers.addFinancialInstitution.WhatIsGIINController.onSubmit(mode: Mode = NormalMode)
+GET        /change-giin                  controllers.addFinancialInstitution.WhatIsGIINController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-giin                  controllers.addFinancialInstitution.WhatIsGIINController.onSubmit(mode: Mode = CheckMode)
 
-GET         /where-is-fi-based                                            controllers.addFinancialInstitution.WhereIsFIBasedController.onPageLoad(mode: Mode = NormalMode)
-POST        /where-is-fi-based                                            controllers.addFinancialInstitution.WhereIsFIBasedController.onSubmit(mode: Mode = NormalMode)
-GET         /change-where-is-fi-based                                     controllers.addFinancialInstitution.WhereIsFIBasedController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-where-is-fi-based                                     controllers.addFinancialInstitution.WhereIsFIBasedController.onSubmit(mode: Mode = CheckMode)
+GET        /where-is-fi-based                        controllers.addFinancialInstitution.WhereIsFIBasedController.onPageLoad(mode: Mode = NormalMode)
+POST       /where-is-fi-based                        controllers.addFinancialInstitution.WhereIsFIBasedController.onSubmit(mode: Mode = NormalMode)
+GET        /change-where-is-fi-based                  controllers.addFinancialInstitution.WhereIsFIBasedController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-where-is-fi-based                  controllers.addFinancialInstitution.WhereIsFIBasedController.onSubmit(mode: Mode = CheckMode)
 
-GET         /check-your-answers                                           controllers.addFinancialInstitution.CheckYourAnswersController.onPageLoad()
-POST        /check-your-answers                                           controllers.addFinancialInstitution.CheckYourAnswersController.confirmAndAdd()
+GET        /check-your-answers                controllers.addFinancialInstitution.CheckYourAnswersController.onPageLoad()
+POST       /check-your-answers                controllers.addFinancialInstitution.CheckYourAnswersController.confirmAndAdd()
 
-GET         /report-for-registered-business                               controllers.addFinancialInstitution.registeredBusiness.ReportForRegisteredBusinessController.onPageLoad(mode: Mode = NormalMode)
-POST        /report-for-registered-business                               controllers.addFinancialInstitution.registeredBusiness.ReportForRegisteredBusinessController.onSubmit(mode: Mode = NormalMode)
-GET         /change-report-for-registered-business                        controllers.addFinancialInstitution.registeredBusiness.ReportForRegisteredBusinessController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-report-for-registered-business                        controllers.addFinancialInstitution.registeredBusiness.ReportForRegisteredBusinessController.onSubmit(mode: Mode = CheckMode)
+GET        /report-for-registered-business                          controllers.addFinancialInstitution.registeredBusiness.ReportForRegisteredBusinessController.onPageLoad(mode: Mode = NormalMode)
+POST       /report-for-registered-business                          controllers.addFinancialInstitution.registeredBusiness.ReportForRegisteredBusinessController.onSubmit(mode: Mode = NormalMode)
+GET        /change-report-for-registered-business                   controllers.addFinancialInstitution.registeredBusiness.ReportForRegisteredBusinessController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-report-for-registered-business                   controllers.addFinancialInstitution.registeredBusiness.ReportForRegisteredBusinessController.onSubmit(mode: Mode = CheckMode)
 
-GET         /registered-business/is-the-address-correct                   controllers.addFinancialInstitution.registeredBusiness.IsTheAddressCorrectController.onPageLoad(mode: Mode = NormalMode)
-POST        /registered-business/is-the-address-correct                   controllers.addFinancialInstitution.registeredBusiness.IsTheAddressCorrectController.onSubmit(mode: Mode = NormalMode)
-GET         /registered-business/change-is-the-address-correct            controllers.addFinancialInstitution.registeredBusiness.IsTheAddressCorrectController.onPageLoad(mode: Mode = CheckMode)
-POST        /registered-business/change-is-the-address-correct            controllers.addFinancialInstitution.registeredBusiness.IsTheAddressCorrectController.onSubmit(mode: Mode = CheckMode)
+GET        /registered-business/is-the-address-correct              controllers.addFinancialInstitution.registeredBusiness.IsTheAddressCorrectController.onPageLoad(mode: Mode = NormalMode)
+POST       /registered-business/is-the-address-correct              controllers.addFinancialInstitution.registeredBusiness.IsTheAddressCorrectController.onSubmit(mode: Mode = NormalMode)
+GET        /registered-business/change-is-the-address-correct       controllers.addFinancialInstitution.registeredBusiness.IsTheAddressCorrectController.onPageLoad(mode: Mode = CheckMode)
+POST       /registered-business/change-is-the-address-correct       controllers.addFinancialInstitution.registeredBusiness.IsTheAddressCorrectController.onSubmit(mode: Mode = CheckMode)
 
-GET         /registered-business/is-this-your-business-name               controllers.addFinancialInstitution.registeredBusiness.IsThisYourBusinessNameController.onPageLoad(mode: Mode = NormalMode)
-POST        /registered-business/is-this-your-business-name               controllers.addFinancialInstitution.registeredBusiness.IsThisYourBusinessNameController.onSubmit(mode: Mode = NormalMode)
-GET         /registered-business/change-is-this-your-business-name        controllers.addFinancialInstitution.registeredBusiness.IsThisYourBusinessNameController.onPageLoad(mode: Mode = CheckMode)
-POST        /registered-business/change-is-this-your-business-name        controllers.addFinancialInstitution.registeredBusiness.IsThisYourBusinessNameController.onSubmit(mode: Mode = CheckMode)
+GET        /registered-business/is-this-your-business-name           controllers.addFinancialInstitution.registeredBusiness.IsThisYourBusinessNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /registered-business/is-this-your-business-name           controllers.addFinancialInstitution.registeredBusiness.IsThisYourBusinessNameController.onSubmit(mode: Mode = NormalMode)
+GET        /registered-business/change-is-this-your-business-name    controllers.addFinancialInstitution.registeredBusiness.IsThisYourBusinessNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /registered-business/change-is-this-your-business-name    controllers.addFinancialInstitution.registeredBusiness.IsThisYourBusinessNameController.onSubmit(mode: Mode = CheckMode)
 
-GET         /registered-business/check-answers                            controllers.addFinancialInstitution.registeredBusiness.RegisteredBusinessCheckYourAnswersController.onPageLoad()
-POST        /registered-business/check-answers                            controllers.addFinancialInstitution.registeredBusiness.RegisteredBusinessCheckYourAnswersController.confirmAndAdd()
+GET        /registered-business/check-answers                        controllers.addFinancialInstitution.registeredBusiness.RegisteredBusinessCheckYourAnswersController.onPageLoad()
+POST       /registered-business/check-answers                        controllers.addFinancialInstitution.registeredBusiness.RegisteredBusinessCheckYourAnswersController.confirmAndAdd()
 
-GET         /financial-institution-added                                  controllers.addFinancialInstitution.FinancialInstitutionAddedConfirmationController.onPageLoad
+GET        /financial-institution-added                              controllers.addFinancialInstitution.FinancialInstitutionAddedConfirmationController.onPageLoad
 
-GET         /your-fis                                                     controllers.YourFinancialInstitutionsController.onPageLoad
-POST        /your-fis                                                     controllers.YourFinancialInstitutionsController.onSubmit()
+GET        /your-fis                                                 controllers.YourFinancialInstitutionsController.onPageLoad
+POST        /your-fis                                                 controllers.YourFinancialInstitutionsController.onSubmit()
+
+GET        /problem/some-information-is-missing                      controllers.SomeInformationMissingController.onPageLoad()

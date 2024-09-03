@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package models
+@this(
+        layout: templates.Layout,
+        govukButton: GovukButton
+)
 
-import play.api.libs.json._
+@()(implicit request: Request[_], messages: Messages)
 
-//strings between 1 and 35 inclusive ^[a-zA-Z &`\\-\\'^]{1,35}$
-case class Name(firstName: String, lastName: String) {
+@layout(pageTitle = titleNoForm(messages("someInformationMissing.title"))) {
 
-  val fullName: String = s"$firstName $lastName"
-}
+    <h1 class="govuk-heading-xl">@messages("someInformationMissing.heading")</h1>
 
-object Name {
-
-  implicit val format: OFormat[Name] = Json.format[Name]
+    <p class="govuk-body">@messages("someInformationMissing.p1")</p>
 }
