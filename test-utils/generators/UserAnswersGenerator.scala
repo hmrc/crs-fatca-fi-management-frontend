@@ -50,22 +50,6 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
       arbitrary[(WhereIsFIBasedPage.type, JsValue)] ::
       Nil
 
-  implicit lazy val arbitraryUserData: Arbitrary[UserAnswers] = Arbitrary {
-    for {
-      id <- nonEmptyString
-      data <- generators match {
-        case Nil => Gen.const(Map[QuestionPage[_], JsValue]())
-        case _   => Gen.mapOf(oneOf(generators))
-      }
-    } yield UserAnswers(
-      id = id,
-      data = data.foldLeft(Json.obj()) {
-        case (obj, (path, value)) =>
-          obj.setObject(path.path, value).get
-      }
-    )
-  }
-
   private def genJsObj(gens: Gen[(QuestionPage[_], JsValue)]*): Gen[JsObject] =
     Gen.sequence[Seq[(QuestionPage[_], JsValue)], (QuestionPage[_], JsValue)](gens).map {
       seq =>

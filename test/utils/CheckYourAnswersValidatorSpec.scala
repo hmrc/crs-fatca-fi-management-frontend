@@ -21,25 +21,7 @@ import models.UserAnswers
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.addFinancialInstitution.{
-  FirstContactEmailPage,
-  FirstContactHavePhonePage,
-  FirstContactNamePage,
-  FirstContactPhoneNumberPage,
-  HaveGIINPage,
-  HaveUniqueTaxpayerReferencePage,
-  IsThisAddressPage,
-  PostcodePage,
-  SecondContactEmailPage,
-  SecondContactExistsPage,
-  SecondContactNamePage,
-  SecondContactPhoneNumberPage,
-  SelectAddressPage,
-  UkAddressPage,
-  WhatIsGIINPage,
-  WhatIsUniqueTaxpayerReferencePage,
-  WhereIsFIBasedPage
-}
+import pages.addFinancialInstitution._
 
 class CheckYourAnswersValidatorSpec extends AnyFreeSpec with Matchers with ModelGenerators with UserAnswersGenerator with ScalaCheckPropertyChecks {
 
