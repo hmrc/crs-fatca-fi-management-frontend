@@ -64,6 +64,16 @@ class CheckYourAnswersValidatorSpec extends AnyFreeSpec with Matchers with Model
         }
       }
     }
+    "registered add FI journey" - {
+
+      "return an empty list if no answers are missing" in {
+        forAll(fiRegistered.arbitrary) {
+          (userAnswers: UserAnswers) =>
+            val result = CheckYourAnswersValidator(userAnswers).validateRegisteredBusiness
+            result mustBe Nil
+        }
+      }
+    }
   }
 
 }

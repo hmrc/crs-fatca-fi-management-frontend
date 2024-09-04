@@ -18,12 +18,14 @@ package controllers.addFinancialInstitution.registeredBusiness
 
 import com.google.inject.Inject
 import controllers.actions._
+import controllers.routes
 import models.UserAnswers
+import pages.Page
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.FinancialInstitutionsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.ContactHelper
+import utils.{CheckYourAnswersValidator, ContactHelper}
 import viewmodels.checkAnswers.CheckYourAnswersViewModel._
 import viewmodels.govuk.summarylist._
 import views.html.addFinancialInstitution.IsRegisteredBusiness.RegisteredBusinessCheckYourAnswersView
@@ -50,7 +52,10 @@ class RegisteredBusinessCheckYourAnswersController @Inject() (
       val fiName                   = getFinancialInstitutionName(ua)
       val financialInstitutionList = SummaryListViewModel(getRegisteredBusinessSummaries(ua))
 
-      Ok(view(fiName, financialInstitutionList))
+      getMissingAnswers(ua) match {
+        case Nil => Ok(view(fiName, financialInstitutionList))
+        case _   => Redirect(routes.SomeInformationMissingController.onPageLoad())
+      }
   }
 
   def confirmAndAdd(): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkForInformationSent).async {
@@ -61,5 +66,7 @@ class RegisteredBusinessCheckYourAnswersController @Inject() (
           _ => Redirect(controllers.addFinancialInstitution.routes.FinancialInstitutionAddedConfirmationController.onPageLoad)
         )
   }
+
+  private def getMissingAnswers(userAnswers: UserAnswers): Seq[Page] = CheckYourAnswersValidator(userAnswers).validateRegisteredBusiness
 
 }
