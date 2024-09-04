@@ -17,6 +17,8 @@
 package controllers
 
 import base.SpecBase
+import models.NormalMode
+import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.SomeInformationMissingView
@@ -25,7 +27,7 @@ class SomeInformationMissingControllerSpec extends SpecBase {
 
   "SomeInformationMissing Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET when fi is not user" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -37,7 +39,33 @@ class SomeInformationMissingControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SomeInformationMissingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, messages(application)).toString
+        contentAsString(result) mustEqual view(controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url)(
+          request,
+          messages(application)
+        ).toString
+      }
+    }
+
+    "must return OK and the correct view for a GET when fi is user" in {
+
+      val application = applicationBuilder(userAnswers =
+        Some(
+          emptyUserAnswers
+            .withPage(ReportForRegisteredBusinessPage, true)
+        )
+      ).build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.SomeInformationMissingController.onPageLoad().url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[SomeInformationMissingView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(
+          controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(NormalMode).url
+        )(request, messages(application)).toString
       }
     }
   }

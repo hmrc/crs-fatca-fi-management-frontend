@@ -17,6 +17,9 @@
 package controllers
 
 import controllers.actions._
+import models.NormalMode
+import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
+
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -35,7 +38,11 @@ class SomeInformationMissingController @Inject() (
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      Ok(view())
+      if (request.userAnswers.get(ReportForRegisteredBusinessPage).isEmpty) {
+        Ok(view(controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url))
+      } else {
+        Ok(view(controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(NormalMode).url))
+      }
   }
 
 }
