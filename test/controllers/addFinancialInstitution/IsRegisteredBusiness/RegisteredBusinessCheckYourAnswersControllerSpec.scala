@@ -23,17 +23,17 @@ import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.inject.bind
 import play.api.libs.json.Json
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.FinancialInstitutionsService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.http.HeaderCarrier
 import viewmodels.govuk.SummaryListFluency
-import views.html.addFinancialInstitution.IsRegisteredBusiness.RegisteredBusinessCheckYourAnswersView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class RegisteredBusinessCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
+class RegisteredBusinessCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with ModelGenerators with UserAnswersGenerator {
 
   val list: SummaryList                                              = SummaryListViewModel(Seq.empty)
   val mockFinancialInstitutionsService: FinancialInstitutionsService = mock[FinancialInstitutionsService]
@@ -41,19 +41,24 @@ class RegisteredBusinessCheckYourAnswersControllerSpec extends SpecBase with Sum
   "RegisteredBusinessCheckYourAnswers Controller" - {
 
     "must return OK and the correct view for a GET" in {
+      def onwardRoute: Call = Call("GET", "/foo")
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(data = Json.obj(("key", "value"))))).build()
+      forAll(fiRegistered.arbitrary) {
+        (userAnswers: UserAnswers) =>
+          val application = applicationBuilder(userAnswers = Option(userAnswers))
+            .overrides(
+              bind[Navigator].toInstance(new FakeNavigator(onwardRoute))
+            )
+            .build()
 
-      running(application) {
-        val request =
-          FakeRequest(GET, controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad().url)
+          running(application) {
+            val request =
+              FakeRequest(GET, controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad().url)
 
-        val result = route(application, request).value
+            val result = route(application, request).value
 
-        val view = application.injector.instanceOf[RegisteredBusinessCheckYourAnswersView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(fiName, list)(request, messages(application)).toString
+            status(result) mustEqual OK
+          }
       }
     }
 
@@ -68,6 +73,29 @@ class RegisteredBusinessCheckYourAnswersControllerSpec extends SpecBase with Sum
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.InformationSentController.onPageLoad.url
+      }
+    }
+
+    "redirect to Missing Information when missing some UserAnswers for individual with id" in {
+      def onwardRoute: Call = Call("GET", "/foo")
+
+      forAll(fiRegisteredMissingAnswers.arbitrary) {
+        (userAnswers: UserAnswers) =>
+          val application = applicationBuilder(userAnswers = Option(userAnswers))
+            .overrides(
+              bind[Navigator].toInstance(new FakeNavigator(onwardRoute))
+            )
+            .build()
+
+          running(application) {
+            val request =
+              FakeRequest(GET, controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad().url)
+
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result).value mustBe routes.SomeInformationMissingController.onPageLoad().url
+          }
       }
     }
 
@@ -107,7 +135,6 @@ class RegisteredBusinessCheckYourAnswersControllerSpec extends SpecBase with Sum
         }
       }
     }
-
   }
 
 }

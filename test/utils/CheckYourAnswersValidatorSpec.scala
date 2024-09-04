@@ -21,6 +21,7 @@ import models.UserAnswers
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 
 class CheckYourAnswersValidatorSpec extends AnyFreeSpec with Matchers with ModelGenerators with UserAnswersGenerator with ScalaCheckPropertyChecks {
@@ -71,6 +72,21 @@ class CheckYourAnswersValidatorSpec extends AnyFreeSpec with Matchers with Model
           (userAnswers: UserAnswers) =>
             val result = CheckYourAnswersValidator(userAnswers).validateRegisteredBusiness
             result mustBe Nil
+        }
+      }
+
+      "return missing answers" in {
+        forAll(fiRegisteredMissingAnswers.arbitrary) {
+          (userAnswers: UserAnswers) =>
+            val result = CheckYourAnswersValidator(userAnswers).validateRegisteredBusiness
+            result mustNot be(empty)
+            Set(
+              HaveGIINPage,
+              WhatIsGIINPage,
+              ReportForRegisteredBusinessPage,
+              IsThisYourBusinessNamePage,
+              IsTheAddressCorrectPage
+            ) must contain allElementsOf result
         }
       }
     }

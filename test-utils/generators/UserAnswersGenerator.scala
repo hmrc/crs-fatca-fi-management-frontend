@@ -296,7 +296,7 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
 
   lazy val fiRegisteredMissingAnswers: Arbitrary[UserAnswers] =
     missingAnswersArb(
-      fiNotRegistered,
+      fiRegistered,
       Seq(
         HaveGIINPage,
         WhatIsGIINPage,
