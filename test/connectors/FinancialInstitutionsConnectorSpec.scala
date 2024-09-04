@@ -43,7 +43,7 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
       "must return status as OK for viewFIs" in {
         val subscriptionId = "XE512345678"
         stubResponse(
-          s"/financial-institutions/$subscriptionId",
+          s"/crs-fatca-fi-management/financial-institutions/$subscriptionId",
           OK
         )
         val result = connector.viewFis(subscriptionId)

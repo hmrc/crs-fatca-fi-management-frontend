@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers
 
 import base.SpecBase
-import models.AddressResponse
+import models.{AddressResponse, CheckMode, UserAnswers}
 import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
@@ -25,9 +25,9 @@ import play.api.i18n.Messages
 
 class CheckYourAnswersViewModelSpec extends SpecBase {
 
-  implicit val mockMessages: Messages = mock[Messages]
-  val sut                             = CheckYourAnswersViewModel
-  val ua                              = emptyUserAnswers
+  implicit val mockMessages: Messages     = mock[Messages]
+  val sut: CheckYourAnswersViewModel.type = CheckYourAnswersViewModel
+  val ua: UserAnswers                     = emptyUserAnswers
 
   "CheckYourAnswersViewModel" - {
     "getFinancialInstitutionSummaries must" - {
@@ -72,7 +72,6 @@ class CheckYourAnswersViewModelSpec extends SpecBase {
         sut.getSecondContactSummaries(ans).length mustBe 1
       }
     }
-
     "getRegisteredBusinessSummaries must" - {
       "only return rows for relevant populated answers" in {
         val ans = ua
@@ -84,6 +83,22 @@ class CheckYourAnswersViewModelSpec extends SpecBase {
         sut.getRegisteredBusinessSummaries(emptyUserAnswers).length mustBe 0
         sut.getRegisteredBusinessSummaries(ans).length mustBe 4
       }
+    }
+    "getAddressChangeRoute" - {
+      "must be WhereIsFIBased when adding another business" in {
+        val answers = ua.withPage(ReportForRegisteredBusinessPage, false)
+
+        sut.getAddressChangeRoute(ua) mustBe
+          controllers.addFinancialInstitution.routes.WhereIsFIBasedController.onPageLoad(CheckMode).url
+        sut.getAddressChangeRoute(answers) mustBe
+          controllers.addFinancialInstitution.routes.WhereIsFIBasedController.onPageLoad(CheckMode).url
+      }
+      "must be IsTheAddressCorrect when the user is adding themselves as an FI" in {
+        val answers = ua.withPage(ReportForRegisteredBusinessPage, true)
+        sut.getAddressChangeRoute(answers) mustBe
+          controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(CheckMode).url
+      }
+
     }
   }
 

@@ -14,8 +14,16 @@
  * limitations under the License.
  *@
 
-@this()
+@this(
+        layout: templates.Layout,
+        govukButton: GovukButton
+)
 
-@(headingContent: String, size: String = "l", extraClasses: String = "")
+@()(implicit request: Request[_], messages: Messages)
 
-<h1 class="govuk-heading-@size wrappable @extraClasses" >@headingContent</h1>
+@layout(pageTitle = titleNoForm(messages("someInformationMissing.title"))) {
+
+    <h1 class="govuk-heading-xl">@messages("someInformationMissing.heading")</h1>
+
+    <p class="govuk-body">@messages("someInformationMissing.p1")</p>
+}

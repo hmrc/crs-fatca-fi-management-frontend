@@ -17,23 +17,45 @@
 package controllers.addFinancialInstitution
 
 import base.SpecBase
+import models.UserAnswers
+import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.MockitoSugar.{reset, when}
+import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
+import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.SessionRepository
 import views.html.{FinancialInstitutionAddedConfirmationView, ThereIsAProblemView}
 
-class FinancialInstitutionAddedConfirmationControllerSpec extends SpecBase {
+import scala.concurrent.Future
+
+class FinancialInstitutionAddedConfirmationControllerSpec extends SpecBase with BeforeAndAfterEach {
+
+  private val mockSessionRepository = mock[SessionRepository]
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockSessionRepository)
+  }
+
+  private val fiId = "ABC00000122" // TODO: Replace placeholder FI ID with actual implementation when determined
 
   "FinancialInstitutionAddedConfirmationController" - {
 
     "must return OK and the correct view for a GET" in {
       forAll {
         fiName: String =>
-          val fiId = "ABC00000122" // TODO: Replace placeholder FI ID with actual implementation when determined
-
           val userAnswers = emptyUserAnswers.withPage(NameOfFinancialInstitutionPage, fiName)
-          val application = applicationBuilder(userAnswers = Option(userAnswers)).build()
+          val application = applicationBuilder(userAnswers = Option(userAnswers))
+            .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+            .build()
+
+          when(mockSessionRepository.set(userAnswers.copy(data = Json.obj())))
+            .thenReturn(Future.successful(true))
 
           running(application) {
             val request = FakeRequest(GET, routes.FinancialInstitutionAddedConfirmationController.onPageLoad.url)
@@ -48,18 +70,26 @@ class FinancialInstitutionAddedConfirmationControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the there-is-a-problem view for a GET when name of FI is missing from user answers" in {
-      val application = applicationBuilder(userAnswers = Option(emptyUserAnswers)).build()
+    "must return OK and the there-is-a-problem view for a GET when unable to empty user answers data" in {
+      forAll {
+        fiName: String =>
+          val userAnswers = emptyUserAnswers.withPage(NameOfFinancialInstitutionPage, fiName)
+          val application = applicationBuilder(userAnswers = Option(userAnswers))
+            .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+            .build()
 
-      running(application) {
-        val request = FakeRequest(GET, routes.FinancialInstitutionAddedConfirmationController.onPageLoad.url)
+          when(mockSessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(false))
 
-        val result = route(application, request).value
+          running(application) {
+            val request = FakeRequest(GET, routes.FinancialInstitutionAddedConfirmationController.onPageLoad.url)
 
-        val view = application.injector.instanceOf[ThereIsAProblemView]
+            val result = route(application, request).value
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, messages(application)).toString
+            val view = application.injector.instanceOf[ThereIsAProblemView]
+
+            status(result) mustEqual OK
+            contentAsString(result) mustEqual view()(request, messages(application)).toString
+          }
       }
     }
   }

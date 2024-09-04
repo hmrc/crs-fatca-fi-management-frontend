@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,28 +19,25 @@ package controllers
 import base.SpecBase
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.InformationSentView
+import views.html.SomeInformationMissingView
 
-class InformationSentControllerSpec extends SpecBase {
+class SomeInformationMissingControllerSpec extends SpecBase {
 
-  "InformationSent Controller" - {
+  "SomeInformationMissing Controller" - {
 
-    "must return OK and the correct view with back link to financial-institution-added page for a GET" in {
+    "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.InformationSentController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.SomeInformationMissingController.onPageLoad().url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[InformationSentView]
+        val view = application.injector.instanceOf[SomeInformationMissingView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view()(request, messages(application)).toString
-
-        val fiAddedUrl = addFinancialInstitution.routes.FinancialInstitutionAddedConfirmationController.onPageLoad.url
-        contentAsString(result) must include(s"""<a href="$fiAddedUrl" class="govuk-back-link  js-visible">Back</a>""")
       }
     }
   }

@@ -20,6 +20,7 @@ import base.SpecBase
 import models.CheckMode
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.i18n.Messages
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -34,7 +35,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
     "onPageLoad" - {
 
       "must return OK and the correct view for a GET" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(data = Json.obj(("key", "value"))))).build()
 
         running(application) {
           val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
@@ -67,6 +68,19 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         }
       }
 
+      "must redirect to information-sent page for a GET when the user answers is empty" in {
+        val application = applicationBuilder(userAnswers = Option(emptyUserAnswers)).build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.InformationSentController.onPageLoad.url
+        }
+      }
+
       "must redirect to Journey Recovery for a GET if no existing data is found" in {
 
         val application = applicationBuilder(userAnswers = None).build()
@@ -83,7 +97,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
     }
     "confirmAndAdd" - {
       "must redirect to self (until the PUT endpoint exists)" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(data = Json.obj(("key", "value"))))).build()
 
         running(application) {
           val request = FakeRequest(POST, routes.CheckYourAnswersController.confirmAndAdd().url)
@@ -93,6 +107,19 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
 
+        }
+      }
+
+      "must redirect to information-sent page for a POST when the user answers is empty" in {
+        val application = applicationBuilder(userAnswers = Option(emptyUserAnswers)).build()
+
+        running(application) {
+          val request = FakeRequest(POST, routes.CheckYourAnswersController.confirmAndAdd().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.InformationSentController.onPageLoad.url
         }
       }
     }

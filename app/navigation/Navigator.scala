@@ -96,13 +96,23 @@ class Navigator @Inject() () {
         )
     case SecondContactPhoneNumberPage => _ => routes.CheckYourAnswersController.onPageLoad
     case PostcodePage                 => addressLookupNavigation(NormalMode)
-    case SelectAddressPage            => _ => routes.FirstContactNameController.onPageLoad(NormalMode)
+    case SelectAddressPage =>
+      userAnswers =>
+        isFiUser(
+          userAnswers,
+          controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
+          routes.FirstContactNameController.onPageLoad(NormalMode)
+        )
     case IsThisAddressPage =>
       userAnswers =>
         yesNoPage(
           userAnswers,
           IsThisAddressPage,
-          routes.FirstContactNameController.onPageLoad(NormalMode),
+          isFiUser(
+            userAnswers,
+            controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
+            routes.FirstContactNameController.onPageLoad(NormalMode)
+          ),
           routes.UkAddressController.onPageLoad(NormalMode)
         )
     case HaveGIINPage =>
@@ -141,13 +151,56 @@ class Navigator @Inject() () {
           controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
           routes.WhereIsFIBasedController.onPageLoad(NormalMode)
         )
-    case UkAddressPage    => _ => routes.FirstContactNameController.onPageLoad(NormalMode)
-    case NonUkAddressPage => _ => routes.FirstContactNameController.onPageLoad(NormalMode)
+    case UkAddressPage =>
+      userAnswers =>
+        isFiUser(
+          userAnswers,
+          controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
+          routes.FirstContactNameController.onPageLoad(NormalMode)
+        )
+    case NonUkAddressPage =>
+      userAnswers =>
+        isFiUser(
+          userAnswers,
+          controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
+          routes.FirstContactNameController.onPageLoad(NormalMode)
+        )
     case _ =>
       _ => controllers.routes.IndexController.onPageLoad()
   }
 
-  private val checkRouteMap: Page => UserAnswers => Call = _ => _ => routes.CheckYourAnswersController.onPageLoad
+  private val checkRouteMap: Page => UserAnswers => Call = {
+
+    case IsTheAddressCorrectPage =>
+      userAnswers =>
+        yesNoPage(
+          userAnswers,
+          IsTheAddressCorrectPage,
+          controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
+          routes.WhereIsFIBasedController.onPageLoad(CheckMode)
+        )
+    case WhereIsFIBasedPage =>
+      userAnswers =>
+        yesNoPage(
+          userAnswers,
+          WhereIsFIBasedPage,
+          routes.PostcodeController.onPageLoad(CheckMode),
+          routes.NonUkAddressController.onPageLoad(CheckMode)
+        )
+    case IsThisAddressPage =>
+      userAnswers =>
+        yesNoPage(
+          userAnswers,
+          IsThisAddressPage,
+          controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
+          routes.UkAddressController.onPageLoad(CheckMode)
+        )
+    case PostcodePage      => addressLookupNavigation(CheckMode)
+    case NonUkAddressPage  => _ => controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad()
+    case UkAddressPage     => _ => controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad()
+    case SelectAddressPage => _ => controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad()
+    case _                 => _ => routes.CheckYourAnswersController.onPageLoad()
+  }
 
   private def isFiUser(ua: UserAnswers, yesCall: => Call, noCall: => Call): Call =
     ua.get(ReportForRegisteredBusinessPage) match {
