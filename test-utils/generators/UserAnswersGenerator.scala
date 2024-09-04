@@ -20,9 +20,9 @@ import models.{RichJsObject, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.TryValues
-import pages._
+import pages.{addFinancialInstitution, _}
 import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
-import pages.addFinancialInstitution._
+import pages.addFinancialInstitution.{IsRegisteredBusiness, _}
 import play.api.libs.json.{JsObject, JsPath, JsValue, Json}
 
 trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
@@ -200,27 +200,29 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
         }
       businessName <-
         if (isThisBusinessName) {
-          pageArbitrary(HaveGIINPage).arbitrary
+          Gen.const(Json.obj())
         } else {
           pageArbitrary(NameOfFinancialInstitutionPage).arbitrary
         }
-      haveGIIN <-
+      whatIsGIIN <-
         if (haveGIIN) {
           pageArbitrary(WhatIsGIINPage).arbitrary
         } else {
           Gen.const(Json.obj())
         }
-      isAddressCorrect <-
+      whereIsFIBased <-
         if (isAddressCorrect) {
-          pageArbitrary(IsTheAddressCorrectPage).arbitrary
+          Gen.const(Json.obj())
         } else {
           pageArbitrary(WhereIsFIBasedPage).arbitrary
         }
       obj = setFields(
         Json.obj(),
-        ReportForRegisteredBusinessPage.path -> Json.toJson(reportForRegisteredBusiness),
-        IsThisYourBusinessNamePage.path      -> Json.toJson(isThisBusinessName)
-      ) ++ fiName ++ report ++ businessName ++ haveGIIN ++ isAddressCorrect ++ address
+        ReportForRegisteredBusinessPage.path              -> Json.toJson(reportForRegisteredBusiness),
+        IsThisYourBusinessNamePage.path                   -> Json.toJson(isThisBusinessName),
+        IsRegisteredBusiness.IsTheAddressCorrectPage.path -> Json.toJson(isAddressCorrect),
+        HaveGIINPage.path                                 -> Json.toJson(haveGIIN)
+      ) ++ fiName ++ report ++ businessName ++ whatIsGIIN ++ whereIsFIBased ++ address
     } yield obj
   }
 
