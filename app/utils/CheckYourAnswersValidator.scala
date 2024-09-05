@@ -61,7 +61,8 @@ sealed trait AddFIValidator {
         .orElse(
           any(
             checkPage(SelectedAddressLookupPage),
-            checkPage(UkAddressPage)
+            checkPage(UkAddressPage),
+            checkPage(IsThisAddressPage)
           ).map(
             _ => PostcodePage
           )
