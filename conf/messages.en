@@ -345,6 +345,7 @@ yourFinancialInstitutions.error.required = Select yes if you need to add a finan
 yourFinancialInstitutions.change.hidden = Change the details for {0}
 yourFinancialInstitutions.remove.hidden = Remove {0} from the list
 yourFinancialInstitutions.manageReports.hidden = Manage reports for {0}
+yourFinancialInstitutions.notification = {0} removed.
 
 removeAreYouSure.title = Removing a financial institution
 removeAreYouSure.heading = Are you sure you want to remove {0}?

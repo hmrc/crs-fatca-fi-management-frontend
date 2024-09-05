@@ -32,11 +32,11 @@ object YourFinancialInstitutionsViewModel {
           key = Key("", "govuk-!-display-none"),
           value = ValueViewModel(institution.FIName),
           actions = Seq(
-            accessibleActionItem("site.change", controllers.routes.YourFinancialInstitutionsController.onPageLoad.url)
+            accessibleActionItem("site.change", controllers.routes.YourFinancialInstitutionsController.onPageLoad().url)
               .withVisuallyHiddenText(messages("yourFinancialInstitutions.change.hidden", institution.FIName)),
-            accessibleActionItem("site.remove", controllers.routes.YourFinancialInstitutionsController.onPageLoad.url)
+            accessibleActionItem("site.remove", controllers.routes.RemoveAreYouSureController.onPageLoad().url)
               .withVisuallyHiddenText(messages("yourFinancialInstitutions.remove.hidden", institution.FIName)),
-            accessibleActionItem("yourFinancialInstitutions.link.manageReports", controllers.routes.YourFinancialInstitutionsController.onPageLoad.url)
+            accessibleActionItem("yourFinancialInstitutions.link.manageReports", controllers.routes.YourFinancialInstitutionsController.onPageLoad().url)
               .withVisuallyHiddenText(messages("yourFinancialInstitutions.manageReports.hidden", institution.FIName))
           )
         )

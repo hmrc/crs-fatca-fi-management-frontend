@@ -28,7 +28,7 @@
     warning: Warning
 )
 
-@(form: Form[_], id: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], id: String, name: String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("removeAreYouSure.title"))) {
 
@@ -48,7 +48,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("removeAreYouSure.heading", id)).withCssClass("govuk-fieldset__legend govuk-fieldset__legend--m")
+                legend = LegendViewModel(messages("removeAreYouSure.heading", name)).withCssClass("govuk-fieldset__legend govuk-fieldset__legend--m")
             )
         )
 

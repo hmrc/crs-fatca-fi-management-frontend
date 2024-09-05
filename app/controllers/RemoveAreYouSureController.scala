@@ -24,6 +24,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.ContactHelper
 import views.html.RemoveAreYouSureView
 
 import javax.inject.Inject
@@ -38,10 +39,12 @@ class RemoveAreYouSureController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view: RemoveAreYouSureView
 ) extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with ContactHelper {
 
-  val form: Form[Boolean]   = formProvider()
-  private val placeholderId = "ABC00000122"
+  val form: Form[Boolean]     = formProvider()
+  private val placeholderId   = "ABC00000122"
+  private val placeholderName = "SomeFI"
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -50,7 +53,7 @@ class RemoveAreYouSureController @Inject() (
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, placeholderId))
+      Ok(view(preparedForm, placeholderId, placeholderName))
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) {
@@ -58,8 +61,8 @@ class RemoveAreYouSureController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => BadRequest(view(formWithErrors, placeholderId)),
-          value => Redirect(navigator.removeNavigation(value))
+          formWithErrors => BadRequest(view(formWithErrors, placeholderId, placeholderName)),
+          value => Redirect(navigator.removeNavigation(value, getFinancialInstitutionName(request.userAnswers)))
         )
   }
 

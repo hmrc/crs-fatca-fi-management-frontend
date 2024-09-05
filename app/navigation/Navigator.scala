@@ -80,7 +80,7 @@ class Navigator @Inject() () {
           userAnswers,
           SecondContactExistsPage,
           routes.SecondContactNameController.onPageLoad(NormalMode),
-          routes.CheckYourAnswersController.onPageLoad
+          routes.CheckYourAnswersController.onPageLoad()
         )
     case SecondContactNamePage =>
       _ => routes.SecondContactEmailController.onPageLoad(NormalMode)
@@ -92,9 +92,9 @@ class Navigator @Inject() () {
           userAnswers,
           SecondContactCanWePhonePage,
           routes.SecondContactPhoneNumberController.onPageLoad(NormalMode),
-          routes.CheckYourAnswersController.onPageLoad
+          routes.CheckYourAnswersController.onPageLoad()
         )
-    case SecondContactPhoneNumberPage => _ => routes.CheckYourAnswersController.onPageLoad
+    case SecondContactPhoneNumberPage => _ => routes.CheckYourAnswersController.onPageLoad()
     case PostcodePage                 => addressLookupNavigation(NormalMode)
     case SelectAddressPage =>
       userAnswers =>
@@ -226,10 +226,11 @@ class Navigator @Inject() () {
       checkRouteMap(page)(userAnswers)
   }
 
-  def removeNavigation(confirmRemove: Boolean): Call =
-    confirmRemove match {
-      case true  => controllers.routes.YourFinancialInstitutionsController.onPageLoad // add parameter for id being removed, to use in banner
-      case false => controllers.routes.YourFinancialInstitutionsController.onPageLoad
+  def removeNavigation(confirmRemove: Boolean, removedInstitutionName: String): Call =
+    if (confirmRemove) {
+      controllers.routes.YourFinancialInstitutionsController.onPageLoad(Some(removedInstitutionName))
+    } else {
+      controllers.routes.YourFinancialInstitutionsController.onPageLoad()
     }
 
 }

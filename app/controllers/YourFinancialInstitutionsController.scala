@@ -44,10 +44,10 @@ class YourFinancialInstitutionsController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(removedInstitutionName: Option[String] = None): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId) map {
-        institutions => Ok(view(form, SummaryListViewModel(getYourFinancialInstitutionsRows(institutions))))
+        institutions => Ok(view(form, SummaryListViewModel(getYourFinancialInstitutionsRows(institutions)), removedInstitutionName))
       }
   }
 

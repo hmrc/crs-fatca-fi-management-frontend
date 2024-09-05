@@ -1,5 +1,4 @@
 # microservice specific routes
-
 ->          /hmrc-frontend                               hmrcfrontend.Routes
 
 GET         /                                            controllers.IndexController.onPageLoad()
@@ -144,7 +143,7 @@ POST       /registered-business/check-answers                        controllers
 
 GET        /financial-institution-added                              controllers.addFinancialInstitution.FinancialInstitutionAddedConfirmationController.onPageLoad
 
-GET        /your-fis                                                 controllers.YourFinancialInstitutionsController.onPageLoad
+GET        /your-fis                                                 controllers.YourFinancialInstitutionsController.onPageLoad(removedInstitutionName: Option[String] ?= None)
 POST       /your-fis                                                 controllers.YourFinancialInstitutionsController.onSubmit()
 
 GET        /problem/some-information-is-missing                      controllers.SomeInformationMissingController.onPageLoad()
