@@ -18,8 +18,11 @@ package controllers
 
 import controllers.actions._
 import forms.addFinancialInstitution.YourFinancialInstitutionsFormProvider
+import models.UserAnswers
+import pages.RemoveInstitutionDetail
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import services.FinancialInstitutionsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.govuk.all.SummaryListViewModel
@@ -31,6 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class YourFinancialInstitutionsController @Inject() (
   override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
@@ -65,6 +69,24 @@ class YourFinancialInstitutionsController @Inject() (
             case false => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad()))
           }
         )
+  }
+
+  def onRemove(index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+    implicit request =>
+      financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId).flatMap {
+        institutions =>
+          institutions
+            .lift(index) match {
+            case None => Future.successful(Redirect(controllers.routes.YourFinancialInstitutionsController.onPageLoad()))
+            case Some(institutionToRemove) =>
+              for {
+                updatedAnswers <- Future.fromTry(UserAnswers(id = request.userId).set(RemoveInstitutionDetail, institutionToRemove))
+                _              <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(controllers.routes.RemoveAreYouSureController.onPageLoad())
+          }
+
+      }
+
   }
 
 }
