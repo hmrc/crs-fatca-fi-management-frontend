@@ -382,8 +382,8 @@ class NavigatorSpec extends SpecBase {
 
     "removeNavigation must" - {
       "navigate to YourFinancialInstitutions regardless of answer" in {
-        navigator.removeNavigation(true) mustBe controllers.routes.YourFinancialInstitutionsController.onPageLoad
-        navigator.removeNavigation(false) mustBe controllers.routes.YourFinancialInstitutionsController.onPageLoad
+        navigator.removeNavigation(true) mustBe controllers.routes.YourFinancialInstitutionsController.onPageLoad()
+        navigator.removeNavigation(false) mustBe controllers.routes.YourFinancialInstitutionsController.onPageLoad()
       }
 
     }

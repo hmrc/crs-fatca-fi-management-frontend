@@ -51,7 +51,7 @@ class YourFinancialInstitutionsControllerSpec extends SpecBase with MockitoSugar
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.YourFinancialInstitutionsController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.YourFinancialInstitutionsController.onPageLoad().url)
 
         val result = route(application, request).value
 

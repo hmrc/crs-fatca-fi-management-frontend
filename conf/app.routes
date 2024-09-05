@@ -143,12 +143,10 @@ POST       /registered-business/check-answers                        controllers
 
 GET        /financial-institution-added                              controllers.addFinancialInstitution.FinancialInstitutionAddedConfirmationController.onPageLoad
 
-GET        /your-fis                                                 controllers.YourFinancialInstitutionsController.onPageLoad(removedInstitutionName: Option[String] ?= None)
+GET        /your-fis                                                 controllers.YourFinancialInstitutionsController.onPageLoad()
 POST       /your-fis                                                 controllers.YourFinancialInstitutionsController.onSubmit()
 
 GET        /problem/some-information-is-missing                      controllers.SomeInformationMissingController.onPageLoad()
 
 GET        /remove-fi                        controllers.RemoveAreYouSureController.onPageLoad()
 POST       /remove-fi                        controllers.RemoveAreYouSureController.onSubmit()
-GET        /remove-fi                  controllers.RemoveAreYouSureController.onPageLoad()
-POST       /remove-fi                  controllers.RemoveAreYouSureController.onSubmit()

@@ -44,7 +44,7 @@ class RemoveAreYouSureController @Inject() (
 
   val form: Form[Boolean]     = formProvider()
   private val placeholderId   = "ABC00000122"
-  private val placeholderName = "SomeFI"
+  private val placeholderName = "Financial Institution"
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -62,7 +62,7 @@ class RemoveAreYouSureController @Inject() (
         .bindFromRequest()
         .fold(
           formWithErrors => BadRequest(view(formWithErrors, placeholderId, placeholderName)),
-          value => Redirect(navigator.removeNavigation(value, getFinancialInstitutionName(request.userAnswers)))
+          value => Redirect(navigator.removeNavigation(value))
         )
   }
 

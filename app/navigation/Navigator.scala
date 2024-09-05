@@ -226,9 +226,9 @@ class Navigator @Inject() () {
       checkRouteMap(page)(userAnswers)
   }
 
-  def removeNavigation(confirmRemove: Boolean, removedInstitutionName: String): Call =
+  def removeNavigation(confirmRemove: Boolean): Call =
     if (confirmRemove) {
-      controllers.routes.YourFinancialInstitutionsController.onPageLoad(Some(removedInstitutionName))
+      controllers.routes.YourFinancialInstitutionsController.onPageLoad()
     } else {
       controllers.routes.YourFinancialInstitutionsController.onPageLoad()
     }
