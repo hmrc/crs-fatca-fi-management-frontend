@@ -33,12 +33,8 @@ case class AddressResponse(
     addressLine3,
     addressLine4,
     postCodeFormatter(postalCode),
-    getCountry(countryCode)
+    Option(countryCode)
   ).flatten
-
-  // to be extended to other countries in future
-  private def getCountry(code: String): Option[String] =
-    if (code == "GB") Some("United Kingdom") else Some(code)
 
   private def postCodeFormatter(postcode: Option[String]): Option[String] =
     postcode match {

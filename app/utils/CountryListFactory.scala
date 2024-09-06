@@ -64,4 +64,6 @@ class CountryListFactory @Inject() (environment: Environment, appConfig: Fronten
     SelectItem(None, "") +: countryJsonList
   }
 
+  def findCountryWithCode(code: String): Option[Country] = countryList.find(_.code.equalsIgnoreCase(code))
+
 }
