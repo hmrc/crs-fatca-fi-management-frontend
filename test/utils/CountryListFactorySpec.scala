@@ -135,4 +135,37 @@ class CountryListFactorySpec extends SpecBase with GuiceOneAppPerSuite with Befo
     }
   }
 
+  "findCountryWithCode" - {
+    "must find country with the given code" in {
+      val countries = Json.arr(
+        Json.obj("state" -> "valid", "code" -> "AB", "description" -> "Country_1"),
+        Json.obj("state" -> "valid", "code" -> "BC", "description" -> "Country_2"),
+        Json.obj("state" -> "valid", "code" -> "CD", "description" -> "Country_3")
+      )
+
+      when(conf.countryCodeJson).thenReturn("some-countries-list.json")
+      val byteArrayInputStream = new ByteArrayInputStream(countries.toString.getBytes)
+      when(env.resourceAsStream(any())).thenReturn(Some(byteArrayInputStream))
+
+      val countryListFactory = new CountryListFactory(env, conf)
+
+      countryListFactory.findCountryWithCode("BC") mustBe Option(Country("valid", "BC", "Country_2"))
+    }
+
+    "must return None when unable to find country with the given code" in {
+      val countries = Json.arr(
+        Json.obj("state" -> "valid", "code" -> "AB", "description" -> "Country_1"),
+        Json.obj("state" -> "valid", "code" -> "CD", "description" -> "Country_3")
+      )
+
+      when(conf.countryCodeJson).thenReturn("some-countries-list.json")
+      val byteArrayInputStream = new ByteArrayInputStream(countries.toString.getBytes)
+      when(env.resourceAsStream(any())).thenReturn(Some(byteArrayInputStream))
+
+      val countryListFactory = new CountryListFactory(env, conf)
+
+      countryListFactory.findCountryWithCode("BC") mustBe None
+    }
+  }
+
 }
