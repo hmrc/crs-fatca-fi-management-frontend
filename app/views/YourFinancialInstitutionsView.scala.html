@@ -19,6 +19,7 @@
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
         govukRadios: GovukRadios,
         govukButton: GovukButton,
         govukSummaryList: GovukSummaryList,
@@ -29,6 +30,10 @@
 @(form: Form[_], institutions: SummaryList, removedInstitutionName: Option[String] = None)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("yourFinancialInstitutions.title"))) {
+
+    @if(form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummaryViewModel(form))
+    }
 
     @if(removedInstitutionName.isDefined) {
         @notification(messages("yourFinancialInstitutions.notification",removedInstitutionName.get))}
@@ -41,13 +46,10 @@
         @heading(messages("yourFinancialInstitutions.heading.multipleFinancialInstitutions", institutions.rows.size))
     }
 
-    @if(institutions.rows.isEmpty) {
-        @heading(messages("yourFinancialInstitutions.addFinancialInstitution"), size = "m", extraClasses = "govuk-fieldset__legend govuk-fieldset__legend--m")
-    } else {
+    @if(institutions.rows.nonEmpty) {
         <div class="user-financial-institutions-summary">
             @govukSummaryList(institutions)
         </div>
-        @heading(messages("yourFinancialInstitutions.addAnotherFinancialInstitution"), size = "m", extraClasses = "govuk-fieldset__legend govuk-fieldset__legend--m")
     }
 
     @formHelper(action = controllers.routes.YourFinancialInstitutionsController.onSubmit(), Symbol("autoComplete") -> "off") {
@@ -58,7 +60,7 @@
                     messages("yourFinancialInstitutions.addFinancialInstitution")
                 } else {
                     messages("yourFinancialInstitutions.addAnotherFinancialInstitution")
-                }).withCssClass("govuk-visually-hidden").asPageHeading()
+                }).withCssClass("govuk-fieldset__legend--m")
             )
         )
 
