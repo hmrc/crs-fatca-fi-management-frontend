@@ -17,6 +17,8 @@
 package base
 
 import controllers.actions._
+import models.FinancialInstitutions.TINType.GIIN
+import models.FinancialInstitutions.{AddressDetails, ContactDetails, FIDetail, TINDetails}
 import models.{Address, AddressLookup, AddressResponse, Country, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
@@ -88,6 +90,120 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
        |}
        |}
        |}""".stripMargin
+
+  val testFiDetail: FIDetail =
+    FIDetail(
+      "683373339",
+      "First FI",
+      "[subscriptionId]",
+      List(TINDetails(GIIN, "689355555", "GB")),
+      true,
+      true,
+      AddressDetails("22", "High Street", "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
+      ContactDetails("Jane Doe", "janedoe@example.com", "0444458888"),
+      ContactDetails("John Doe", "johndoe@example.com", "0333458888")
+    )
+
+  val testFiDetails: Seq[FIDetail] =
+    Seq(
+      FIDetail(
+        "683373339",
+        "First FI",
+        "[subscriptionId]",
+        List(TINDetails(GIIN, "689355555", "GB")),
+        true,
+        true,
+        AddressDetails("22", "High Street", "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
+        ContactDetails("Jane Doe", "janedoe@example.com", "0444458888"),
+        ContactDetails("John Doe", "johndoe@example.com", "0333458888")
+      ),
+      FIDetail(
+        "683373300",
+        "Second FI",
+        "[subscriptionId]",
+        List(TINDetails(GIIN, "689344444", "GB")),
+        true,
+        true,
+        AddressDetails("22", "High Street", "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
+        ContactDetails("Foo Bar", "fbar@example.com", "0223458888"),
+        ContactDetails("Foobar Baz", "fbaz@example.com", "0123456789")
+      )
+    )
+
+  val testViewFIDetailsBody =
+    """{
+    "ViewFIDetails": {
+      "ResponseDetails": {
+        "FIDetails": [
+          {
+            "FIID": "683373339",
+            "FIName": "First FI",
+            "SubscriptionID": "[subscriptionId]",
+            "TINDetails": [
+              {
+                "TINType": "GIIN",
+                "TIN": "689355555",
+                "IssuedBy": "GB"
+              }
+            ],
+            "IsFIUser": true,
+            "IsFATCAReporting": true,
+            "AddressDetails": {
+              "AddressLine1": "22",
+              "AddressLine2": "High Street",
+              "AddressLine3": "Dawley",
+              "AddressLine4": "Dawley",
+              "CountryCode": "GB",
+              "PostalCode": "TF22 2RE"
+            },
+            "PrimaryContactDetails": {
+              "ContactName": "Jane Doe",
+              "EmailAddress": "janedoe@example.com",
+              "PhoneNumber": "0444458888"
+            },
+            "SecondaryContactDetails": {
+              "ContactName": "John Doe",
+              "EmailAddress": "johndoe@example.com",
+              "PhoneNumber": "0333458888"
+            }
+          },
+          {
+            "FIID": "683373300",
+            "FIName": "Second FI",
+            "SubscriptionID": "[subscriptionId]",
+            "TINDetails": [
+              {
+                "TINType": "GIIN",
+                "TIN": "689344444",
+                "IssuedBy": "GB"
+              }
+            ],
+            "IsFIUser": true,
+            "IsFATCAReporting": true,
+            "AddressDetails": {
+              "AddressLine1": "22",
+              "AddressLine2": "High Street",
+              "AddressLine3": "Dawley",
+              "AddressLine4": "Dawley",
+              "CountryCode": "GB",
+              "PostalCode": "TF22 2RE"
+            },
+            "PrimaryContactDetails": {
+              "ContactName": "Foo Bar",
+              "EmailAddress": "fbar@example.com",
+              "PhoneNumber": "0223458888"
+            },
+            "SecondaryContactDetails": {
+              "ContactName": "Foobar Baz",
+              "EmailAddress": "fbaz@example.com",
+              "PhoneNumber": "0123456789"
+            }
+          }
+        ]
+      }
+    }
+  }
+"""
 
   val testAddress: Address                 = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"), Country.GB)
   val testAddressResponse: AddressResponse = AddressResponse("value 1", Some("value 2"), Some("value 3"), Some("value 4"), Some("XX9 9XX"), Country.GB.code)

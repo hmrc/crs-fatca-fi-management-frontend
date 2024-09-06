@@ -18,8 +18,7 @@ package services
 
 import base.SpecBase
 import connectors.FinancialInstitutionsConnector
-import models.FinancialInstitutions.TINType.GIIN
-import models.FinancialInstitutions.{AddressDetails, ContactDetails, FIDetail, TINDetails}
+import models.FinancialInstitutions.FIDetail
 import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
@@ -38,112 +37,13 @@ class FinancialInstitutionsServiceSpec extends SpecBase {
 
     "getListOfFinancialInstitutions extracts list of FI details" in {
       val subscriptionId = "XE5123456789"
-      val mockResponse   = Future.successful(HttpResponse(200, viewFIDetailsBody))
+      val mockResponse   = Future.successful(HttpResponse(200, testViewFIDetailsBody))
 
       when(mockConnector.viewFis(subscriptionId)).thenReturn(mockResponse)
       val result: Future[Seq[FIDetail]] = sut.getListOfFinancialInstitutions(subscriptionId)
-      result.futureValue mustBe fiDetails
+      result.futureValue mustBe testFiDetails
     }
 
   }
 
-  val fiDetails: Seq[FIDetail] =
-    Seq(
-      FIDetail(
-        "683373339",
-        "First FI",
-        "[subscriptionId]",
-        List(TINDetails(GIIN, "689355555", "GB")),
-        true,
-        true,
-        AddressDetails("22", "High Street", "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
-        ContactDetails("Jane Doe", "janedoe@example.com", "0444458888"),
-        ContactDetails("John Doe", "johndoe@example.com", "0333458888")
-      ),
-      FIDetail(
-        "683373300",
-        "Second FI",
-        "[subscriptionId]",
-        List(TINDetails(GIIN, "689344444", "GB")),
-        true,
-        true,
-        AddressDetails("22", "High Street", "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
-        ContactDetails("Foo Bar", "fbar@example.com", "0223458888"),
-        ContactDetails("Foobar Baz", "fbaz@example.com", "0123456789")
-      )
-    )
-
-  val viewFIDetailsBody = """{
-    "ViewFIDetails": {
-      "ResponseDetails": {
-        "FIDetails": [
-          {
-            "FIID": "683373339",
-            "FIName": "First FI",
-            "SubscriptionID": "[subscriptionId]",
-            "TINDetails": [
-              {
-                "TINType": "GIIN",
-                "TIN": "689355555",
-                "IssuedBy": "GB"
-              }
-            ],
-            "IsFIUser": true,
-            "IsFATCAReporting": true,
-            "AddressDetails": {
-              "AddressLine1": "22",
-              "AddressLine2": "High Street",
-              "AddressLine3": "Dawley",
-              "AddressLine4": "Dawley",
-              "CountryCode": "GB",
-              "PostalCode": "TF22 2RE"
-            },
-            "PrimaryContactDetails": {
-              "ContactName": "Jane Doe",
-              "EmailAddress": "janedoe@example.com",
-              "PhoneNumber": "0444458888"
-            },
-            "SecondaryContactDetails": {
-              "ContactName": "John Doe",
-              "EmailAddress": "johndoe@example.com",
-              "PhoneNumber": "0333458888"
-            }
-          },
-          {
-            "FIID": "683373300",
-            "FIName": "Second FI",
-            "SubscriptionID": "[subscriptionId]",
-            "TINDetails": [
-              {
-                "TINType": "GIIN",
-                "TIN": "689344444",
-                "IssuedBy": "GB"
-              }
-            ],
-            "IsFIUser": true,
-            "IsFATCAReporting": true,
-            "AddressDetails": {
-              "AddressLine1": "22",
-              "AddressLine2": "High Street",
-              "AddressLine3": "Dawley",
-              "AddressLine4": "Dawley",
-              "CountryCode": "GB",
-              "PostalCode": "TF22 2RE"
-            },
-            "PrimaryContactDetails": {
-              "ContactName": "Foo Bar",
-              "EmailAddress": "fbar@example.com",
-              "PhoneNumber": "0223458888"
-            },
-            "SecondaryContactDetails": {
-              "ContactName": "Foobar Baz",
-              "EmailAddress": "fbaz@example.com",
-              "PhoneNumber": "0123456789"
-            }
-          }
-        ]
-      }
-    }
-  }
-"""
 }

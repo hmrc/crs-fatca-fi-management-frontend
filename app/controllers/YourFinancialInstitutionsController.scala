@@ -18,7 +18,6 @@ package controllers
 
 import controllers.actions._
 import forms.addFinancialInstitution.YourFinancialInstitutionsFormProvider
-import models.UserAnswers
 import pages.RemoveInstitutionDetail
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -48,11 +47,21 @@ class YourFinancialInstitutionsController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(removedInstitutionName: Option[String] = None): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId) map {
-        institutions => Ok(view(form, SummaryListViewModel(getYourFinancialInstitutionsRows(institutions)), removedInstitutionName))
-      }
+      val ua = request.userAnswers
+      val removedInstitutionName: Option[String] = ua
+        .get(RemoveInstitutionDetail)
+        .fold[Option[String]](None) {
+          removedInstitution =>
+            Some(removedInstitution.FIName)
+        }
+
+      for {
+        institutions   <- financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId)
+        updatedAnswers <- Future.fromTry(request.userAnswers.remove(RemoveInstitutionDetail))
+        _              <- sessionRepository.set(updatedAnswers)
+      } yield Ok(view(form, SummaryListViewModel(getYourFinancialInstitutionsRows(institutions)), removedInstitutionName))
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -69,24 +78,6 @@ class YourFinancialInstitutionsController @Inject() (
             case false => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad()))
           }
         )
-  }
-
-  def onRemove(index: Int): Action[AnyContent] = (identify andThen getData andThen requireData).async {
-    implicit request =>
-      financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId).flatMap {
-        institutions =>
-          institutions
-            .lift(index) match {
-            case None => Future.successful(Redirect(controllers.routes.YourFinancialInstitutionsController.onPageLoad()))
-            case Some(institutionToRemove) =>
-              for {
-                updatedAnswers <- Future.fromTry(UserAnswers(id = request.userId).set(RemoveInstitutionDetail, institutionToRemove))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(controllers.routes.RemoveAreYouSureController.onPageLoad())
-          }
-
-      }
-
   }
 
 }

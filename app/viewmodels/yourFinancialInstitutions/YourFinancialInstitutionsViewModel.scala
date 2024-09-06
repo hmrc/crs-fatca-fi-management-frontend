@@ -34,7 +34,7 @@ object YourFinancialInstitutionsViewModel {
           actions = Seq(
             accessibleActionItem("site.change", controllers.routes.YourFinancialInstitutionsController.onPageLoad().url)
               .withVisuallyHiddenText(messages("yourFinancialInstitutions.change.hidden", institution.FIName)),
-            accessibleActionItem("site.remove", controllers.routes.YourFinancialInstitutionsController.onRemove(index).url)
+            accessibleActionItem("site.remove", controllers.routes.RemoveAreYouSureController.onPageLoad(index).url)
               .withVisuallyHiddenText(messages("yourFinancialInstitutions.remove.hidden", institution.FIName)),
             accessibleActionItem("yourFinancialInstitutions.link.manageReports", controllers.routes.YourFinancialInstitutionsController.onPageLoad().url)
               .withVisuallyHiddenText(messages("yourFinancialInstitutions.manageReports.hidden", institution.FIName))

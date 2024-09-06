@@ -165,6 +165,7 @@ class Navigator @Inject() () {
           controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
           routes.FirstContactNameController.onPageLoad(NormalMode)
         )
+    case RemoveAreYouSurePage => _ => controllers.routes.YourFinancialInstitutionsController.onPageLoad()
     case _ =>
       _ => controllers.routes.IndexController.onPageLoad()
   }
@@ -225,12 +226,5 @@ class Navigator @Inject() () {
     case CheckMode =>
       checkRouteMap(page)(userAnswers)
   }
-
-  def removeNavigation(confirmRemove: Boolean): Call =
-    if (confirmRemove) {
-      controllers.routes.YourFinancialInstitutionsController.onPageLoad()
-    } else {
-      controllers.routes.YourFinancialInstitutionsController.onPageLoad()
-    }
 
 }

@@ -23,79 +23,72 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.RemoveAreYouSurePage
+import pages.RemoveInstitutionDetail
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
+import services.FinancialInstitutionsService
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.RemoveAreYouSureView
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class RemoveAreYouSureControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute: Call = Call("GET", "/foo")
 
-  val formProvider        = new RemoveAreYouSureFormProvider()
-  val form: Form[Boolean] = formProvider()
+  val formProvider                                                   = new RemoveAreYouSureFormProvider()
+  val form: Form[Boolean]                                            = formProvider()
+  val mockFinancialInstitutionsService: FinancialInstitutionsService = mock[FinancialInstitutionsService]
+  val mockSessionRepository: SessionRepository                       = mock[SessionRepository]
 
-  lazy val removeAreYouSureRoute: String = routes.RemoveAreYouSureController.onPageLoad().url
+  def removeAreYouSureRoute(index: Int = 0): String = routes.RemoveAreYouSureController.onPageLoad(index).url
 
   "RemoveAreYouSure Controller" - {
+    when(mockFinancialInstitutionsService.getListOfFinancialInstitutions(any())(any[HeaderCarrier](), any[ExecutionContext]()))
+      .thenReturn(Future.successful(testFiDetails))
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Option(emptyUserAnswers))
+        .overrides(
+          bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService)
+        )
+        .build()
 
       running(application) {
-        val request = FakeRequest(GET, removeAreYouSureRoute)
+        val request = FakeRequest(GET, removeAreYouSureRoute())
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[RemoveAreYouSureView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, testFiid, fiName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, testFiDetail.FIID, testFiDetail.FIName)(request, messages(application)).toString
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "must redirect to the next page when valid data is submitted" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(RemoveAreYouSurePage, true).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, removeAreYouSureRoute)
-
-        val view = application.injector.instanceOf[RemoveAreYouSureView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), testFiid, fiName)(request, messages(application)).toString
-      }
-    }
-
-    "must redirect to the next page when valid data is submitted" ignore {
-
-      val mockSessionRepository = mock[SessionRepository]
+      val userAnswers = UserAnswers(userAnswersId).set(RemoveInstitutionDetail, testFiDetail).success.value
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService)
           )
           .build()
 
       running(application) {
         val request =
-          FakeRequest(POST, removeAreYouSureRoute)
+          FakeRequest(POST, removeAreYouSureRoute())
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
@@ -107,11 +100,17 @@ class RemoveAreYouSureControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers = UserAnswers(userAnswersId).set(RemoveInstitutionDetail, testFiDetail).success.value
+
+      val application = applicationBuilder(userAnswers = Option(userAnswers))
+        .overrides(
+          bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService)
+        )
+        .build()
 
       running(application) {
         val request =
-          FakeRequest(POST, removeAreYouSureRoute)
+          FakeRequest(POST, removeAreYouSureRoute())
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
@@ -121,21 +120,23 @@ class RemoveAreYouSureControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, testFiid, fiName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, testFiDetail.FIID, testFiDetail.FIName)(request, messages(application)).toString
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
+    "must initiate userAnswers for a GET if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
-
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(
+          bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService)
+        )
+        .build()
       running(application) {
-        val request = FakeRequest(GET, removeAreYouSureRoute)
+        val request = FakeRequest(GET, removeAreYouSureRoute())
 
         val result = route(application, request).value
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        status(result) mustEqual OK
       }
     }
 
@@ -145,7 +146,7 @@ class RemoveAreYouSureControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, removeAreYouSureRoute)
+          FakeRequest(POST, removeAreYouSureRoute())
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value

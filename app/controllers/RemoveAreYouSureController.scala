@@ -18,51 +18,69 @@ package controllers
 
 import controllers.actions._
 import forms.RemoveAreYouSureFormProvider
+import models.{NormalMode, UserAnswers}
 import navigation.Navigator
-import pages.RemoveAreYouSurePage
+import pages.{RemoveAreYouSurePage, RemoveInstitutionDetail}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
+import services.FinancialInstitutionsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ContactHelper
 import views.html.RemoveAreYouSureView
 
 import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class RemoveAreYouSureController @Inject() (
   override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: RemoveAreYouSureFormProvider,
   val controllerComponents: MessagesControllerComponents,
+  val financialInstitutionsService: FinancialInstitutionsService,
   view: RemoveAreYouSureView
-) extends FrontendBaseController
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
     with I18nSupport
     with ContactHelper {
 
-  val form: Form[Boolean]     = formProvider()
-  private val placeholderId   = "ABC00000122"
-  private val placeholderName = "Financial Institution"
+  val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(index: Int): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(RemoveAreYouSurePage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
+      financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId).flatMap {
+        institutions =>
+          institutions
+            .lift(index) match {
+            case None =>
+              Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+            case Some(institutionToRemove) =>
+              for {
+                updatedAnswers <- Future.fromTry(UserAnswers(id = request.userId).set(RemoveInstitutionDetail, institutionToRemove))
+                _              <- sessionRepository.set(updatedAnswers)
+              } yield Ok(view(form, institutionToRemove.FIID, institutionToRemove.FIName))
+          }
       }
 
-      Ok(view(preparedForm, placeholderId, placeholderName))
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+      val institutionToRemove = request.userAnswers.get(RemoveInstitutionDetail).get // todo avoid None.get, DAC6-3187 will implement here
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => BadRequest(view(formWithErrors, placeholderId, placeholderName)),
-          value => Redirect(navigator.removeNavigation(value))
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, institutionToRemove.FIID, institutionToRemove.FIName))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveAreYouSurePage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(RemoveAreYouSurePage, NormalMode, updatedAnswers))
         )
   }
 

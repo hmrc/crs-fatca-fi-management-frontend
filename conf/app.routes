@@ -145,9 +145,8 @@ GET        /financial-institution-added                              controllers
 
 GET        /your-fis                                                 controllers.YourFinancialInstitutionsController.onPageLoad()
 POST       /your-fis                                                 controllers.YourFinancialInstitutionsController.onSubmit()
-POST       /your-fis                                                 controllers.YourFinancialInstitutionsController.onRemove(index:Int)
 
 GET        /problem/some-information-is-missing                      controllers.SomeInformationMissingController.onPageLoad()
 
-GET        /remove-fi                                                controllers.RemoveAreYouSureController.onPageLoad()
+GET        /remove-fi                                                controllers.RemoveAreYouSureController.onPageLoad(index:Int)
 POST       /remove-fi                                                controllers.RemoveAreYouSureController.onSubmit()
