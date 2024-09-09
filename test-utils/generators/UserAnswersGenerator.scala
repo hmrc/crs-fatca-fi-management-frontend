@@ -71,7 +71,7 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
         isThisYourAddress <- arbitrary[Boolean]
         data <-
           if (isThisYourAddress) {
-            genJsObj(arbitrary[(SelectAddressPage.type, JsValue)])
+            genJsObj(arbitrary[(SelectedAddressLookupPage.type, JsValue)])
           } else {
             genJsObj(arbitrary[(UkAddressPage.type, JsValue)])
           }

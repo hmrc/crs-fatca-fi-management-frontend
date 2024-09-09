@@ -59,7 +59,7 @@ sealed trait AddFIValidator {
       checkPage(PostcodePage)
         .orElse(
           any(
-            checkPage(SelectAddressPage),
+            checkPage(SelectedAddressLookupPage),
             checkPage(UkAddressPage)
           ).map(
             _ => PostcodePage

@@ -18,16 +18,21 @@ package services
 
 import base.SpecBase
 import connectors.FinancialInstitutionsConnector
+import generators.{ModelGenerators, UserAnswersGenerator}
 import models.FinancialInstitutions.TINType.GIIN
 import models.FinancialInstitutions.{AddressDetails, ContactDetails, FIDetail, TINDetails}
+import models.UserAnswers
+import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar._
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.http.Status.OK
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class FinancialInstitutionsServiceSpec extends SpecBase {
+class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators with UserAnswersGenerator with ScalaCheckPropertyChecks {
 
   val mockConnector: FinancialInstitutionsConnector = mock[FinancialInstitutionsConnector]
   val sut                                           = new FinancialInstitutionsService(mockConnector)
@@ -38,11 +43,23 @@ class FinancialInstitutionsServiceSpec extends SpecBase {
 
     "getListOfFinancialInstitutions extracts list of FI details" in {
       val subscriptionId = "XE5123456789"
-      val mockResponse   = Future.successful(HttpResponse(200, viewFIDetailsBody))
+      val mockResponse   = Future.successful(HttpResponse(OK, viewFIDetailsBody))
 
       when(mockConnector.viewFis(subscriptionId)).thenReturn(mockResponse)
       val result: Future[Seq[FIDetail]] = sut.getListOfFinancialInstitutions(subscriptionId)
       result.futureValue mustBe fiDetails
+    }
+
+    "addFinancialInstitution adds FI details" in {
+      val mockResponse   = Future.successful(HttpResponse(OK, "{}"))
+      val subscriptionId = "XE5123456789"
+      forAll(fiNotRegistered.arbitrary) {
+        (userAnswers: UserAnswers) =>
+          when(mockConnector.addFi(any())(any[HeaderCarrier](), any[ExecutionContext]())).thenReturn(mockResponse)
+          val result = sut.addFinancialInstitution(subscriptionId, userAnswers)
+          result.futureValue mustBe ()
+      }
+
     }
 
   }
@@ -56,9 +73,9 @@ class FinancialInstitutionsServiceSpec extends SpecBase {
         List(TINDetails(GIIN, "689355555", "GB")),
         true,
         true,
-        AddressDetails("22", "High Street", "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
-        ContactDetails("Jane Doe", "janedoe@example.com", "0444458888"),
-        ContactDetails("John Doe", "johndoe@example.com", "0333458888")
+        AddressDetails("22", Some("High Street"), "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
+        ContactDetails("Jane Doe", "janedoe@example.com", Some("0444458888")),
+        Some(ContactDetails("John Doe", "johndoe@example.com", Some("0333458888")))
       ),
       FIDetail(
         "683373300",
@@ -67,9 +84,9 @@ class FinancialInstitutionsServiceSpec extends SpecBase {
         List(TINDetails(GIIN, "689344444", "GB")),
         true,
         true,
-        AddressDetails("22", "High Street", "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
-        ContactDetails("Foo Bar", "fbar@example.com", "0223458888"),
-        ContactDetails("Foobar Baz", "fbaz@example.com", "0123456789")
+        AddressDetails("22", Some("High Street"), "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
+        ContactDetails("Foo Bar", "fbar@example.com", Some("0223458888")),
+        Some(ContactDetails("Foobar Baz", "fbaz@example.com", Some("0123456789")))
       )
     )
 
