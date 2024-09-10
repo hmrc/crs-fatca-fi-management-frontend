@@ -43,6 +43,15 @@ class FinancialInstitutionsServiceSpec extends SpecBase {
       val result: Future[Seq[FIDetail]] = sut.getListOfFinancialInstitutions(subscriptionId)
       result.futureValue mustBe testFiDetails
     }
+    "getInstitutionById extracts details matching given FIID" in {
+      val fiid      = "683373339"
+      val noFiid    = "000000000"
+      val fiDetails = testFiDetails
+
+      sut.getInstitutionById(fiDetails, fiid) mustBe Some(testFiDetail)
+      sut.getInstitutionById(fiDetails, noFiid) mustBe None
+
+    }
 
   }
 

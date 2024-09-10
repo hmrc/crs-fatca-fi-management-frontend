@@ -32,7 +32,7 @@
 
 @layout(pageTitle = title(form, messages("removeAreYouSure.title"))) {
 
-    @formHelper(action = routes.RemoveAreYouSureController.onSubmit(), Symbol("autoComplete") -> "off") {
+    @formHelper(action = routes.RemoveAreYouSureController.onSubmit(id), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

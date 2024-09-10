@@ -148,5 +148,5 @@ POST       /your-fis                                                 controllers
 
 GET        /problem/some-information-is-missing                      controllers.SomeInformationMissingController.onPageLoad()
 
-GET        /remove-fi                                                controllers.RemoveAreYouSureController.onPageLoad(index:Int)
-POST       /remove-fi                                                controllers.RemoveAreYouSureController.onSubmit()
+GET        /remove-fi                                                controllers.RemoveAreYouSureController.onPageLoad(fiid:String)
+POST       /remove-fi                                                controllers.RemoveAreYouSureController.onSubmit(fiid:String)

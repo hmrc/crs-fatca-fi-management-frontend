@@ -36,6 +36,13 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
         res => extractList(res.body)
       )
 
+  def getInstitutionById(details: Seq[FIDetail], fiid: String): Option[FIDetail] =
+    details
+      .find(
+        detail => detail.FIID == fiid
+      )
+      .fold[Option[FIDetail]](None)(Some(_))
+
   private def extractList(body: String) = {
     val json: JsValue                        = Json.parse(body)
     val listsResult: JsResult[Seq[FIDetail]] = (json \ "ViewFIDetails" \ "ResponseDetails" \ "FIDetails").validate[Seq[FIDetail]]

@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.addFinancialInstitution.YourFinancialInstitutionsFormProvider
-import pages.RemoveInstitutionDetail
+import pages.{RemoveAreYouSurePage, RemoveInstitutionDetail}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -50,13 +50,20 @@ class YourFinancialInstitutionsController @Inject() (
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       val ua = request.userAnswers
-      val removedInstitutionName: Option[String] = ua
-        .get(RemoveInstitutionDetail)
-        .fold[Option[String]](None) {
-          removedInstitution =>
-            Some(removedInstitution.FIName)
-        }
 
+      val removedInstitutionName: Option[String] = {
+        val hasRemoved = ua.get(RemoveAreYouSurePage).fold[Option[Boolean]](None)(Some(_))
+        hasRemoved match {
+          case Some(true) =>
+            ua
+              .get(RemoveInstitutionDetail)
+              .fold[Option[String]](None) {
+                removedInstitution =>
+                  Some(removedInstitution.FIName)
+              }
+          case _ => None
+        }
+      }
       for {
         institutions   <- financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId)
         updatedAnswers <- Future.fromTry(request.userAnswers.remove(RemoveInstitutionDetail))

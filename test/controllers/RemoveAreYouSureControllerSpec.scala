@@ -45,22 +45,24 @@ class RemoveAreYouSureControllerSpec extends SpecBase with MockitoSugar {
   val mockFinancialInstitutionsService: FinancialInstitutionsService = mock[FinancialInstitutionsService]
   val mockSessionRepository: SessionRepository                       = mock[SessionRepository]
 
-  def removeAreYouSureRoute(index: Int = 0): String = routes.RemoveAreYouSureController.onPageLoad(index).url
+  lazy val removeAreYouSureRoute: String = routes.RemoveAreYouSureController.onPageLoad(testFiDetail.FIID).url
 
   "RemoveAreYouSure Controller" - {
+    when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
     when(mockFinancialInstitutionsService.getListOfFinancialInstitutions(any())(any[HeaderCarrier](), any[ExecutionContext]()))
       .thenReturn(Future.successful(testFiDetails))
+    when(mockFinancialInstitutionsService.getInstitutionById(Seq(any()), any())).thenReturn(Some(testFiDetail))
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Option(emptyUserAnswers))
         .overrides(
-          bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService)
+          bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService),
+          bind[SessionRepository].toInstance(mockSessionRepository)
         )
         .build()
-
       running(application) {
-        val request = FakeRequest(GET, removeAreYouSureRoute())
+        val request = FakeRequest(GET, removeAreYouSureRoute)
 
         val result = route(application, request).value
 
@@ -88,7 +90,7 @@ class RemoveAreYouSureControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, removeAreYouSureRoute())
+          FakeRequest(POST, removeAreYouSureRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
@@ -110,7 +112,7 @@ class RemoveAreYouSureControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, removeAreYouSureRoute())
+          FakeRequest(POST, removeAreYouSureRoute)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
@@ -132,7 +134,7 @@ class RemoveAreYouSureControllerSpec extends SpecBase with MockitoSugar {
         )
         .build()
       running(application) {
-        val request = FakeRequest(GET, removeAreYouSureRoute())
+        val request = FakeRequest(GET, removeAreYouSureRoute)
 
         val result = route(application, request).value
 
@@ -146,7 +148,7 @@ class RemoveAreYouSureControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, removeAreYouSureRoute())
+          FakeRequest(POST, removeAreYouSureRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value

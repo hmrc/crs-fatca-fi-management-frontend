@@ -51,12 +51,11 @@ class RemoveAreYouSureController @Inject() (
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(index: Int): Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(fiid: String): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
       financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId).flatMap {
         institutions =>
-          institutions
-            .lift(index) match {
+          financialInstitutionsService.getInstitutionById(institutions, fiid) match {
             case None =>
               Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
             case Some(institutionToRemove) =>
@@ -69,19 +68,26 @@ class RemoveAreYouSureController @Inject() (
 
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(fiid: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val institutionToRemove = request.userAnswers.get(RemoveInstitutionDetail).get // todo avoid None.get, DAC6-3187 will implement here
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, institutionToRemove.FIID, institutionToRemove.FIName))),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveAreYouSurePage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(RemoveAreYouSurePage, NormalMode, updatedAnswers))
-        )
+      financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId).flatMap {
+        institutions =>
+          financialInstitutionsService.getInstitutionById(institutions, fiid) match {
+            case None =>
+              Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+            case Some(institutionToRemove) =>
+              form
+                .bindFromRequest()
+                .fold(
+                  formWithErrors => Future.successful(BadRequest(view(formWithErrors, institutionToRemove.FIID, institutionToRemove.FIName))),
+                  value =>
+                    for {
+                      updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveAreYouSurePage, value))
+                      _              <- sessionRepository.set(updatedAnswers)
+                    } yield Redirect(navigator.nextPage(RemoveAreYouSurePage, NormalMode, updatedAnswers))
+                )
+          }
+      }
   }
 
 }

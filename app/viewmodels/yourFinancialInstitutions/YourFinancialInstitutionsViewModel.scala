@@ -26,15 +26,15 @@ import viewmodels.implicits._
 object YourFinancialInstitutionsViewModel {
 
   def getYourFinancialInstitutionsRows(institutions: Seq[FIDetail])(implicit messages: Messages): Seq[SummaryListRow] =
-    institutions.zipWithIndex.map {
-      case (institution, index) =>
+    institutions.map {
+      institution =>
         SummaryListRowViewModel(
           key = Key("", "govuk-!-display-none"),
           value = ValueViewModel(institution.FIName),
           actions = Seq(
             accessibleActionItem("site.change", controllers.routes.YourFinancialInstitutionsController.onPageLoad().url)
               .withVisuallyHiddenText(messages("yourFinancialInstitutions.change.hidden", institution.FIName)),
-            accessibleActionItem("site.remove", controllers.routes.RemoveAreYouSureController.onPageLoad(index).url)
+            accessibleActionItem("site.remove", controllers.routes.RemoveAreYouSureController.onPageLoad(institution.FIID).url)
               .withVisuallyHiddenText(messages("yourFinancialInstitutions.remove.hidden", institution.FIName)),
             accessibleActionItem("yourFinancialInstitutions.link.manageReports", controllers.routes.YourFinancialInstitutionsController.onPageLoad().url)
               .withVisuallyHiddenText(messages("yourFinancialInstitutions.manageReports.hidden", institution.FIName))
