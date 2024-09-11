@@ -22,12 +22,13 @@ import forms.addFinancialInstitution.IsRegisteredBusiness.IsTheAddressCorrectFor
 import models.Mode
 import navigation.Navigator
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, IsTheAddressCorrectPage}
+import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.RegistrationWithUtrService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.ContactHelper
+import utils.{ContactHelper, CountryListFactory}
 import views.html.addFinancialInstitution.IsRegisteredBusiness.IsTheAddressCorrectView
 
 import javax.inject.Inject
@@ -43,11 +44,13 @@ class IsTheAddressCorrectController @Inject() (
   formProvider: IsTheAddressCorrectFormProvider,
   regService: RegistrationWithUtrService,
   retrieveCtUTR: CtUtrRetrievalAction,
+  countryListFactory: CountryListFactory,
   val controllerComponents: MessagesControllerComponents,
   view: IsTheAddressCorrectView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
+    with Logging
     with ContactHelper {
 
   val form = formProvider()
@@ -66,7 +69,14 @@ class IsTheAddressCorrectController @Inject() (
                       case None        => form
                       case Some(value) => form.fill(value)
                     }
-                    Ok(view(preparedForm, mode, getFinancialInstitutionName(request.userAnswers), address))
+                    countryListFactory.findCountryWithCode(address.countryCode) match {
+                      case Some(country) =>
+                        val addressWithCountryName = address.copy(countryCode = country.description)
+                        Ok(view(preparedForm, mode, getFinancialInstitutionName(request.userAnswers), addressWithCountryName))
+                      case None =>
+                        logger.error(s"Country with code ${address.countryCode} not found in list of countries")
+                        Redirect(routes.JourneyRecoveryController.onPageLoad())
+                    }
                 }
               } yield result
 

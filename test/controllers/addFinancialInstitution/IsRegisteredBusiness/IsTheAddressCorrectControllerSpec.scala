@@ -20,11 +20,13 @@ import base.SpecBase
 import controllers.actions.{CtUtrRetrievalAction, FakeCtUtrRetrievalAction}
 import controllers.routes
 import forms.addFinancialInstitution.IsRegisteredBusiness.IsTheAddressCorrectFormProvider
-import models.{NormalMode, UserAnswers}
+import generators.ModelGenerators
+import models.{AddressResponse, Country, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, IsTheAddressCorrectPage}
 import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
 import play.api.inject.bind
@@ -38,7 +40,7 @@ import views.html.addFinancialInstitution.IsRegisteredBusiness.IsTheAddressCorre
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar {
+class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar with ModelGenerators with ScalaCheckPropertyChecks {
 
   def onwardRoute = Call("GET", "/foo")
 
@@ -64,45 +66,58 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar {
 
   "IsTheAddressCorrect Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view with the country name for a GET" in {
+      forAll {
+        addressResponse: AddressResponse =>
+          val application = applicationBuilder(userAnswers = Some(userAnswersWithName))
+            .overrides(bind[CtUtrRetrievalAction].toInstance(mockCtUtrRetrievalAction))
+            .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+            .overrides(bind[RegistrationWithUtrService].toInstance(mockRegService))
+            .build()
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithName))
-        .overrides(bind[CtUtrRetrievalAction].toInstance(mockCtUtrRetrievalAction))
-        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-        .overrides(bind[RegistrationWithUtrService].toInstance(mockRegService))
-        .build()
+          when(mockRegService.fetchAddress(any())(any[HeaderCarrier](), any[ExecutionContext]()))
+            .thenReturn(Future.successful(addressResponse.copy(countryCode = Country.GB.code)))
 
-      running(application) {
-        val request = FakeRequest(GET, isTheAddressCorrectRoute)
+          running(application) {
+            val request = FakeRequest(GET, isTheAddressCorrectRoute)
 
-        val result = route(application, request).value
+            val result = route(application, request).value
 
-        val view = application.injector.instanceOf[IsTheAddressCorrectView]
+            val view = application.injector.instanceOf[IsTheAddressCorrectView]
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, fiName, address)(request, messages(application)).toString
+            status(result) mustEqual OK
+            val addressResponseWithCountryName = addressResponse.copy(countryCode = Country.GB.description)
+            contentAsString(result) mustEqual view(form, NormalMode, fiName, addressResponseWithCountryName)(request, messages(application)).toString
+          }
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val userAnswers = userAnswersWithName
-        .withPage(IsTheAddressCorrectPage, true)
+      forAll {
+        addressResponse: AddressResponse =>
+          val userAnswers = userAnswersWithName
+            .withPage(IsTheAddressCorrectPage, true)
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[CtUtrRetrievalAction].toInstance(mockCtUtrRetrievalAction))
-        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-        .overrides(bind[RegistrationWithUtrService].toInstance(mockRegService))
-        .build()
+          val application = applicationBuilder(userAnswers = Some(userAnswers))
+            .overrides(bind[CtUtrRetrievalAction].toInstance(mockCtUtrRetrievalAction))
+            .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+            .overrides(bind[RegistrationWithUtrService].toInstance(mockRegService))
+            .build()
 
-      running(application) {
-        val request = FakeRequest(GET, isTheAddressCorrectRoute)
+          when(mockRegService.fetchAddress(any())(any[HeaderCarrier](), any[ExecutionContext]()))
+            .thenReturn(Future.successful(addressResponse.copy(countryCode = Country.GB.code)))
 
-        val view = application.injector.instanceOf[IsTheAddressCorrectView]
+          running(application) {
+            val request = FakeRequest(GET, isTheAddressCorrectRoute)
 
-        val result = route(application, request).value
+            val view = application.injector.instanceOf[IsTheAddressCorrectView]
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, fiName, address)(request, messages(application)).toString
+            val result = route(application, request).value
+
+            status(result) mustEqual OK
+            val addressResponseWithCountryName = addressResponse.copy(countryCode = Country.GB.description)
+            contentAsString(result) mustEqual view(form.fill(true), NormalMode, fiName, addressResponseWithCountryName)(request, messages(application)).toString
+          }
       }
     }
 
@@ -162,6 +177,29 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must redirect to Journey Recovery page for a GET when a country could not be found for the country code" in {
+      forAll {
+        addressResponse: AddressResponse =>
+          val application = applicationBuilder(userAnswers = Some(userAnswersWithName))
+            .overrides(bind[CtUtrRetrievalAction].toInstance(mockCtUtrRetrievalAction))
+            .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+            .overrides(bind[RegistrationWithUtrService].toInstance(mockRegService))
+            .build()
+
+          when(mockRegService.fetchAddress(any())(any[HeaderCarrier](), any[ExecutionContext]()))
+            .thenReturn(Future.successful(addressResponse.copy(countryCode = "InvalidCountryCode")))
+
+          running(application) {
+            val request = FakeRequest(GET, isTheAddressCorrectRoute)
+
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+          }
       }
     }
 
