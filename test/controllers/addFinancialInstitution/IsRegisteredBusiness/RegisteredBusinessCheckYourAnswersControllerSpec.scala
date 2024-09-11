@@ -18,16 +18,25 @@ package controllers.addFinancialInstitution.IsRegisteredBusiness
 
 import base.SpecBase
 import controllers.routes
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar.when
+import org.scalatestplus.mockito.MockitoSugar.mock
+import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.FinancialInstitutionsService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import uk.gov.hmrc.http.HeaderCarrier
 import viewmodels.govuk.SummaryListFluency
 import views.html.addFinancialInstitution.IsRegisteredBusiness.RegisteredBusinessCheckYourAnswersView
 
+import scala.concurrent.{ExecutionContext, Future}
+
 class RegisteredBusinessCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
-  val list: SummaryList = SummaryListViewModel(Seq.empty)
+  val list: SummaryList                                              = SummaryListViewModel(Seq.empty)
+  val mockFinancialInstitutionsService: FinancialInstitutionsService = mock[FinancialInstitutionsService]
 
   "RegisteredBusinessCheckYourAnswers Controller" - {
 
@@ -63,8 +72,14 @@ class RegisteredBusinessCheckYourAnswersControllerSpec extends SpecBase with Sum
     }
 
     "confirmAndAdd" - {
-      "must redirect to self (until the PUT endpoint exists)" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(data = Json.obj(("key", "value"))))).build()
+      "must redirect to financial-institution-added when create fi call is successful" in {
+        when(mockFinancialInstitutionsService.addFinancialInstitution(any(), any())(any[HeaderCarrier](), any[ExecutionContext]()))
+          .thenReturn(Future.successful(()))
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(data = Json.obj(("key", "value")))))
+          .overrides(
+            bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService)
+          )
+          .build()
 
         running(application) {
           val request =
@@ -73,9 +88,7 @@ class RegisteredBusinessCheckYourAnswersControllerSpec extends SpecBase with Sum
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController
-            .onPageLoad()
-            .url
+          redirectLocation(result).value mustEqual controllers.addFinancialInstitution.routes.FinancialInstitutionAddedConfirmationController.onPageLoad.url
 
         }
       }

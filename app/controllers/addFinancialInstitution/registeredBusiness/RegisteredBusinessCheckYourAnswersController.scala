@@ -21,11 +21,14 @@ import controllers.actions._
 import models.UserAnswers
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.FinancialInstitutionsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ContactHelper
 import viewmodels.checkAnswers.CheckYourAnswersViewModel._
 import viewmodels.govuk.summarylist._
 import views.html.addFinancialInstitution.IsRegisteredBusiness.RegisteredBusinessCheckYourAnswersView
+
+import scala.concurrent.ExecutionContext
 
 class RegisteredBusinessCheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
@@ -34,8 +37,10 @@ class RegisteredBusinessCheckYourAnswersController @Inject() (
   requireData: DataRequiredAction,
   checkForInformationSent: CheckForInformationSentAction,
   val controllerComponents: MessagesControllerComponents,
+  val financialInstitutionsService: FinancialInstitutionsService,
   view: RegisteredBusinessCheckYourAnswersView
-) extends FrontendBaseController
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
     with ContactHelper
     with I18nSupport {
 
@@ -48,8 +53,13 @@ class RegisteredBusinessCheckYourAnswersController @Inject() (
       Ok(view(fiName, financialInstitutionList))
   }
 
-  def confirmAndAdd(): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkForInformationSent) {
-    Redirect(routes.RegisteredBusinessCheckYourAnswersController.onPageLoad())
+  def confirmAndAdd(): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkForInformationSent).async {
+    implicit request =>
+      financialInstitutionsService
+        .addFinancialInstitution(request.fatcaId, request.userAnswers)
+        .map(
+          _ => Redirect(controllers.addFinancialInstitution.routes.FinancialInstitutionAddedConfirmationController.onPageLoad)
+        )
   }
 
 }

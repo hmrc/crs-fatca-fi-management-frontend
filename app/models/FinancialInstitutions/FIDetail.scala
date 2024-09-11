@@ -27,7 +27,7 @@ final case class FIDetail(
   IsFATCAReporting: Boolean,
   AddressDetails: AddressDetails,
   PrimaryContactDetails: ContactDetails,
-  SecondaryContactDetails: ContactDetails
+  SecondaryContactDetails: Option[ContactDetails]
 )
 
 object FIDetail {
@@ -40,15 +40,30 @@ object AddressDetails {
 
 final case class AddressDetails(
   AddressLine1: String,
-  AddressLine2: String,
+  AddressLine2: Option[String],
   AddressLine3: String,
   AddressLine4: Option[String],
   CountryCode: Option[String],
   PostalCode: Option[String]
 )
 
-final case class ContactDetails(ContactName: String, EmailAddress: String, PhoneNumber: String)
+final case class ContactDetails(ContactName: String, EmailAddress: String, PhoneNumber: Option[String])
 
 object ContactDetails {
   implicit val format: OFormat[ContactDetails] = Json.format[ContactDetails]
+}
+
+final case class CreateFIDetails(
+  FIName: String,
+  SubscriptionID: String,
+  TINDetails: Seq[TINDetails],
+  IsFIUser: Boolean,
+  IsFATCAReporting: Boolean,
+  AddressDetails: AddressDetails,
+  PrimaryContactDetails: Option[ContactDetails],
+  SecondaryContactDetails: Option[ContactDetails]
+)
+
+object CreateFIDetails {
+  implicit val format: OFormat[CreateFIDetails] = Json.format[CreateFIDetails]
 }
