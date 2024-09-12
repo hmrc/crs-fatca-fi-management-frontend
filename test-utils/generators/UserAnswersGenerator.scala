@@ -20,9 +20,9 @@ import models.{RichJsObject, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.TryValues
-import pages.{addFinancialInstitution, _}
+import pages._
 import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
-import pages.addFinancialInstitution.{IsRegisteredBusiness, _}
+import pages.addFinancialInstitution._
 import play.api.libs.json.{JsObject, JsPath, JsValue, Json}
 
 trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {

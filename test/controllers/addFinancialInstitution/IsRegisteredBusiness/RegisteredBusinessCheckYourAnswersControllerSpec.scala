@@ -18,9 +18,13 @@ package controllers.addFinancialInstitution.IsRegisteredBusiness
 
 import base.SpecBase
 import controllers.routes
+import generators.{ModelGenerators, UserAnswersGenerator}
+import models.UserAnswers
+import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar.mock
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
