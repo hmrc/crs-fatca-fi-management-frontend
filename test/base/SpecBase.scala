@@ -97,11 +97,11 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
       "First FI",
       "[subscriptionId]",
       List(TINDetails(GIIN, "689355555", "GB")),
-      true,
-      true,
-      AddressDetails("22", "High Street", "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
-      ContactDetails("Jane Doe", "janedoe@example.com", "0444458888"),
-      ContactDetails("John Doe", "johndoe@example.com", "0333458888")
+      IsFIUser = true,
+      IsFATCAReporting = true,
+      AddressDetails("22", Some("High Street"), "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
+      ContactDetails("Jane Doe", "janedoe@example.com", Some("0444458888")),
+      Some(ContactDetails("John Doe", "johndoe@example.com", Some("0333458888")))
     )
 
   val testFiDetails: Seq[FIDetail] =
@@ -111,22 +111,22 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
         "First FI",
         "[subscriptionId]",
         List(TINDetails(GIIN, "689355555", "GB")),
-        true,
-        true,
-        AddressDetails("22", "High Street", "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
-        ContactDetails("Jane Doe", "janedoe@example.com", "0444458888"),
-        ContactDetails("John Doe", "johndoe@example.com", "0333458888")
+        IsFIUser = true,
+        IsFATCAReporting = true,
+        AddressDetails("22", Some("High Street"), "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
+        ContactDetails("Jane Doe", "janedoe@example.com", Some("0444458888")),
+        Some(ContactDetails("John Doe", "johndoe@example.com", Some("0333458888")))
       ),
       FIDetail(
         "683373300",
         "Second FI",
         "[subscriptionId]",
         List(TINDetails(GIIN, "689344444", "GB")),
-        true,
-        true,
-        AddressDetails("22", "High Street", "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
-        ContactDetails("Foo Bar", "fbar@example.com", "0223458888"),
-        ContactDetails("Foobar Baz", "fbaz@example.com", "0123456789")
+        IsFIUser = true,
+        IsFATCAReporting = true,
+        AddressDetails("22", Some("High Street"), "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
+        ContactDetails("Foo Bar", "fbar@example.com", Some("0223458888")),
+        Some(ContactDetails("Foobar Baz", "fbaz@example.com", Some("0123456789")))
       )
     )
 

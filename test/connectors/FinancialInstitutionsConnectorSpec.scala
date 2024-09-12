@@ -18,6 +18,7 @@ package connectors
 
 import base.SpecBase
 import helpers.WireMockServerHandler
+import models.FinancialInstitutions.{AddressDetails, ContactDetails, CreateFIDetails}
 import play.api.Application
 import play.api.http.Status.OK
 
@@ -36,6 +37,30 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
   lazy val connector: FinancialInstitutionsConnector =
     app.injector.instanceOf[FinancialInstitutionsConnector]
 
+  val createFIDetails = CreateFIDetails(
+    FIName = "financial-institution",
+    SubscriptionID = "XE512345678",
+    TINDetails = Seq.empty,
+    IsFIUser = true,
+    IsFATCAReporting = false,
+    AddressDetails = AddressDetails(
+      AddressLine1 = "line 1",
+      AddressLine2 = None,
+      AddressLine3 = "line 3",
+      AddressLine4 = None,
+      CountryCode = Some("GB"),
+      PostalCode = Some("AA1 1AA")
+    ),
+    PrimaryContactDetails = Some(
+      ContactDetails(
+        ContactName = "contact-name",
+        EmailAddress = "john.doe@test.com",
+        PhoneNumber = None
+      )
+    ),
+    SecondaryContactDetails = None
+  )
+
   "FinancialInstitutionsConnector" - {
 
     "viewFinancialInstitutions" - {
@@ -47,6 +72,18 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
           OK
         )
         val result = connector.viewFis(subscriptionId)
+        result.futureValue.status mustBe OK
+      }
+    }
+
+    "addFinancialInstitution" - {
+      "must return status as OK for addFi" in {
+        stubPostResponse(
+          s"/crs-fatca-fi-management/ASMService/v1/FIManagement",
+          OK,
+          "{}"
+        )
+        val result = connector.addFi(createFIDetails)
         result.futureValue.status mustBe OK
       }
     }

@@ -27,6 +27,17 @@ case class AddressResponse(
   countryCode: String
 ) {
 
+  val toAddress: Address = {
+
+    val line1        = addressLine1
+    val line2        = addressLine2
+    val line3        = addressLine3.getOrElse("")
+    val line4        = addressLine4
+    val safePostcode = postalCode
+
+    Address(line1, line2, line3, line4, safePostcode, Country.GB)
+  }
+
   def lines: Seq[String] = Seq(
     Some(addressLine1),
     addressLine2,

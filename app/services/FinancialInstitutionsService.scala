@@ -17,7 +17,11 @@
 package services
 
 import connectors.FinancialInstitutionsConnector
-import models.FinancialInstitutions.FIDetail
+import models.FinancialInstitutions.TINType.UTR
+import models.FinancialInstitutions._
+import models.UserAnswers
+import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, ReportForRegisteredBusinessPage}
+import pages.addFinancialInstitution._
 import play.api.libs.json.{JsResult, JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -48,5 +52,81 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
     val listsResult: JsResult[Seq[FIDetail]] = (json \ "ViewFIDetails" \ "ResponseDetails" \ "FIDetails").validate[Seq[FIDetail]]
     listsResult.get
   }
+
+  def addFinancialInstitution(subscriptionId: String, userAnswers: UserAnswers)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[Unit] =
+    connector
+      .addFi(buildFiDetailsRequest(subscriptionId, userAnswers))
+      .map(
+        _ => ()
+      )
+
+  private def buildFiDetailsRequest(subscriptionId: String, userAnswers: UserAnswers): CreateFIDetails =
+    (for {
+      fiName  <- userAnswers.get(NameOfFinancialInstitutionPage)
+      address <- extractAddress(userAnswers)
+    } yield CreateFIDetails(
+      FIName = fiName,
+      SubscriptionID = subscriptionId,
+      TINDetails = extractTinDetails(userAnswers),
+      IsFIUser = userAnswers.get(ReportForRegisteredBusinessPage).contains(true),
+      IsFATCAReporting = true,
+      AddressDetails = address,
+      PrimaryContactDetails = extractPrimaryContactDetails(userAnswers),
+      SecondaryContactDetails = extractSecondaryContactDetails(userAnswers)
+    )).getOrElse(throw new IllegalStateException("Unable to build FIDetail"))
+
+  private def extractTinDetails(userAnswers: UserAnswers): Seq[TINDetails] = {
+    val utr = userAnswers.get(WhatIsUniqueTaxpayerReferencePage) match {
+      case Some(utr) => Seq(TINDetails(UTR, utr.value, "GB"))
+      case _         => Seq.empty
+    }
+
+    val giin = userAnswers.get(WhatIsGIINPage) match {
+      case Some(giin) => Seq(TINDetails(UTR, giin, "US"))
+      case _          => Seq.empty
+    }
+
+    utr ++ giin
+  }
+
+  private def extractPrimaryContactDetails(userAnswers: UserAnswers): Option[ContactDetails] = for {
+    contactName  <- userAnswers.get(FirstContactNamePage)
+    contactEmail <- userAnswers.get(FirstContactEmailPage)
+  } yield ContactDetails(
+    ContactName = contactName,
+    EmailAddress = contactEmail,
+    PhoneNumber = userAnswers.get(FirstContactPhoneNumberPage)
+  )
+
+  private def extractSecondaryContactDetails(userAnswers: UserAnswers): Option[ContactDetails] = for {
+    contactName  <- userAnswers.get(SecondContactNamePage)
+    contactEmail <- userAnswers.get(SecondContactEmailPage)
+  } yield ContactDetails(
+    ContactName = contactName,
+    EmailAddress = contactEmail,
+    PhoneNumber = userAnswers.get(SecondContactPhoneNumberPage)
+  )
+
+  private def extractAddress(userAnswers: UserAnswers): Option[AddressDetails] =
+    userAnswers
+      .get(FetchedRegisteredAddressPage)
+      .map(_.toAddress)
+      .orElse(userAnswers.get(UkAddressPage))
+      .orElse(userAnswers.get(NonUkAddressPage))
+      .orElse(userAnswers.get(SelectedAddressLookupPage).map(_.toAddress))
+      .map(
+        address =>
+          AddressDetails(
+            AddressLine1 = address.addressLine1,
+            AddressLine2 = address.addressLine2,
+            AddressLine3 = address.addressLine3,
+            AddressLine4 = address.addressLine4,
+            CountryCode = Some(address.country.code),
+            PostalCode = address.postCode
+          )
+      )
 
 }

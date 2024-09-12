@@ -17,6 +17,8 @@
 package connectors
 
 import config.FrontendAppConfig
+import models.FinancialInstitutions.CreateFIDetails
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
@@ -31,6 +33,15 @@ class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, v
   ): Future[HttpResponse] =
     httpClient
       .get(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/$subscriptionId")
+      .execute[HttpResponse]
+
+  def addFi(fiDetails: CreateFIDetails)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[HttpResponse] =
+    httpClient
+      .post(url"${config.fIManagementUrl}/crs-fatca-fi-management/ASMService/v1/FIManagement")
+      .withBody(Json.toJson(fiDetails))
       .execute[HttpResponse]
 
 }

@@ -36,7 +36,7 @@
     @heading(messages("registeredBusinessCheckYourAnswers.subheading"),"m")
     @para(Html(messages("registeredBusinessCheckYourAnswers.para")))
 
-    @formHelper(action =  controllers.addFinancialInstitution.routes.CheckYourAnswersController.confirmAndAdd()) {
+    @formHelper(action =  controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.confirmAndAdd()) {
         @govukButton(
             ButtonViewModel(messages("registeredBusinessCheckYourAnswers.submit.button")).withAttribute("id" -> "submit").preventingDoubleClick()
         )
