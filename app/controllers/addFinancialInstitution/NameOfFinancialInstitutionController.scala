@@ -71,7 +71,7 @@ class NameOfFinancialInstitutionController @Inject() (
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
           value =>
             for {
-              updatedAnswers <- Future.fromTry(
+              updatedAnswers: UserAnswers <- Future.fromTry(
                 request.userAnswers
                   .getOrElse(
                     UserAnswers(

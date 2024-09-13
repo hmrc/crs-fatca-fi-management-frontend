@@ -345,3 +345,12 @@ yourFinancialInstitutions.error.required = Select yes if you need to add a finan
 yourFinancialInstitutions.change.hidden = Change the details for {0}
 yourFinancialInstitutions.remove.hidden = Remove {0} from the list
 yourFinancialInstitutions.manageReports.hidden = Manage reports for {0}
+yourFinancialInstitutions.notification = {0} removed.
+
+removeAreYouSure.title = Removing a financial institution
+removeAreYouSure.heading = Are you sure you want to remove {0}?
+removeAreYouSure.error.required = Select yes if you are sure you want to remove the financial institution
+removeAreYouSure.para = This will permanently remove this financial institution with the FI ID {0}. It will no longer be possible for anyone to:
+removeAreYouSure.para.list.1 = send, access, update or delete reports for the FI ID {0}
+removeAreYouSure.para.list.2 = access or change details for the FI ID {0}
+removeAreYouSure.warning = Removing a financial institution that has inaccurate or incomplete reports could result in a penalty for that financial institution.

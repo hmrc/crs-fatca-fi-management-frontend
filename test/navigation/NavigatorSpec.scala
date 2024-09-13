@@ -379,6 +379,20 @@ class NavigatorSpec extends SpecBase {
         ) mustBe routes.CheckYourAnswersController.onPageLoad
       }
     }
+
+    "removeNavigation must" - {
+      "navigate to YourFinancialInstitutions regardless of answer" in {
+        navigator.nextPage(RemoveAreYouSurePage,
+                           NormalMode,
+                           UserAnswers("id").withPage(RemoveAreYouSurePage, true)
+        ) mustBe controllers.routes.YourFinancialInstitutionsController.onPageLoad()
+        navigator.nextPage(RemoveAreYouSurePage,
+                           NormalMode,
+                           UserAnswers("id").withPage(RemoveAreYouSurePage, false)
+        ) mustBe controllers.routes.YourFinancialInstitutionsController.onPageLoad()
+      }
+
+    }
   }
 
 }

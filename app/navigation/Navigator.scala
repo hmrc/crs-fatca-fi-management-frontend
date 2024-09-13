@@ -80,7 +80,7 @@ class Navigator @Inject() () {
           userAnswers,
           SecondContactExistsPage,
           routes.SecondContactNameController.onPageLoad(NormalMode),
-          routes.CheckYourAnswersController.onPageLoad
+          routes.CheckYourAnswersController.onPageLoad()
         )
     case SecondContactNamePage =>
       _ => routes.SecondContactEmailController.onPageLoad(NormalMode)
@@ -92,9 +92,9 @@ class Navigator @Inject() () {
           userAnswers,
           SecondContactCanWePhonePage,
           routes.SecondContactPhoneNumberController.onPageLoad(NormalMode),
-          routes.CheckYourAnswersController.onPageLoad
+          routes.CheckYourAnswersController.onPageLoad()
         )
-    case SecondContactPhoneNumberPage => _ => routes.CheckYourAnswersController.onPageLoad
+    case SecondContactPhoneNumberPage => _ => routes.CheckYourAnswersController.onPageLoad()
     case PostcodePage                 => addressLookupNavigation(NormalMode)
     case SelectAddressPage =>
       userAnswers =>
@@ -165,6 +165,7 @@ class Navigator @Inject() () {
           controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
           routes.FirstContactNameController.onPageLoad(NormalMode)
         )
+    case RemoveAreYouSurePage => _ => controllers.routes.YourFinancialInstitutionsController.onPageLoad()
     case _ =>
       _ => controllers.routes.IndexController.onPageLoad()
   }

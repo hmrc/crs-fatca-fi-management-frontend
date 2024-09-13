@@ -18,8 +18,10 @@ package controllers
 
 import controllers.actions._
 import forms.addFinancialInstitution.YourFinancialInstitutionsFormProvider
+import pages.{RemoveAreYouSurePage, RemoveInstitutionDetail}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import services.FinancialInstitutionsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.govuk.all.SummaryListViewModel
@@ -31,6 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class YourFinancialInstitutionsController @Inject() (
   override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
@@ -44,11 +47,28 @@ class YourFinancialInstitutionsController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId) map {
-        institutions => Ok(view(form, SummaryListViewModel(getYourFinancialInstitutionsRows(institutions))))
+      val ua = request.userAnswers
+
+      val removedInstitutionName: Option[String] = {
+        val hasRemoved = ua.get(RemoveAreYouSurePage).fold[Option[Boolean]](None)(Some(_))
+        hasRemoved match {
+          case Some(true) =>
+            ua
+              .get(RemoveInstitutionDetail)
+              .fold[Option[String]](None) {
+                removedInstitution =>
+                  Some(removedInstitution.FIName)
+              }
+          case _ => None
+        }
       }
+      for {
+        institutions   <- financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId)
+        updatedAnswers <- Future.fromTry(request.userAnswers.remove(RemoveInstitutionDetail))
+        _              <- sessionRepository.set(updatedAnswers)
+      } yield Ok(view(form, SummaryListViewModel(getYourFinancialInstitutionsRows(institutions)), removedInstitutionName))
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {

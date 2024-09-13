@@ -19,8 +19,7 @@ package services
 import base.SpecBase
 import connectors.FinancialInstitutionsConnector
 import generators.{ModelGenerators, UserAnswersGenerator}
-import models.FinancialInstitutions.TINType.GIIN
-import models.FinancialInstitutions.{AddressDetails, ContactDetails, FIDetail, TINDetails}
+import models.FinancialInstitutions.FIDetail
 import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.when
@@ -43,13 +42,21 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
 
     "getListOfFinancialInstitutions extracts list of FI details" in {
       val subscriptionId = "XE5123456789"
-      val mockResponse   = Future.successful(HttpResponse(OK, viewFIDetailsBody))
+      val mockResponse   = Future.successful(HttpResponse(OK, testViewFIDetailsBody))
 
       when(mockConnector.viewFis(subscriptionId)).thenReturn(mockResponse)
       val result: Future[Seq[FIDetail]] = sut.getListOfFinancialInstitutions(subscriptionId)
-      result.futureValue mustBe fiDetails
+      result.futureValue mustBe testFiDetails
     }
+    "getInstitutionById extracts details matching given FIID" in {
+      val fiid      = "683373339"
+      val noFiid    = "000000000"
+      val fiDetails = testFiDetails
 
+      sut.getInstitutionById(fiDetails, fiid) mustBe Some(testFiDetail)
+      sut.getInstitutionById(fiDetails, noFiid) mustBe None
+
+    }
     "addFinancialInstitution adds FI details" in {
       val mockResponse   = Future.successful(HttpResponse(OK, "{}"))
       val subscriptionId = "XE5123456789"
@@ -64,103 +71,4 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
 
   }
 
-  val fiDetails: Seq[FIDetail] =
-    Seq(
-      FIDetail(
-        "683373339",
-        "First FI",
-        "[subscriptionId]",
-        List(TINDetails(GIIN, "689355555", "GB")),
-        true,
-        true,
-        AddressDetails("22", Some("High Street"), "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
-        ContactDetails("Jane Doe", "janedoe@example.com", Some("0444458888")),
-        Some(ContactDetails("John Doe", "johndoe@example.com", Some("0333458888")))
-      ),
-      FIDetail(
-        "683373300",
-        "Second FI",
-        "[subscriptionId]",
-        List(TINDetails(GIIN, "689344444", "GB")),
-        true,
-        true,
-        AddressDetails("22", Some("High Street"), "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
-        ContactDetails("Foo Bar", "fbar@example.com", Some("0223458888")),
-        Some(ContactDetails("Foobar Baz", "fbaz@example.com", Some("0123456789")))
-      )
-    )
-
-  val viewFIDetailsBody = """{
-    "ViewFIDetails": {
-      "ResponseDetails": {
-        "FIDetails": [
-          {
-            "FIID": "683373339",
-            "FIName": "First FI",
-            "SubscriptionID": "[subscriptionId]",
-            "TINDetails": [
-              {
-                "TINType": "GIIN",
-                "TIN": "689355555",
-                "IssuedBy": "GB"
-              }
-            ],
-            "IsFIUser": true,
-            "IsFATCAReporting": true,
-            "AddressDetails": {
-              "AddressLine1": "22",
-              "AddressLine2": "High Street",
-              "AddressLine3": "Dawley",
-              "AddressLine4": "Dawley",
-              "CountryCode": "GB",
-              "PostalCode": "TF22 2RE"
-            },
-            "PrimaryContactDetails": {
-              "ContactName": "Jane Doe",
-              "EmailAddress": "janedoe@example.com",
-              "PhoneNumber": "0444458888"
-            },
-            "SecondaryContactDetails": {
-              "ContactName": "John Doe",
-              "EmailAddress": "johndoe@example.com",
-              "PhoneNumber": "0333458888"
-            }
-          },
-          {
-            "FIID": "683373300",
-            "FIName": "Second FI",
-            "SubscriptionID": "[subscriptionId]",
-            "TINDetails": [
-              {
-                "TINType": "GIIN",
-                "TIN": "689344444",
-                "IssuedBy": "GB"
-              }
-            ],
-            "IsFIUser": true,
-            "IsFATCAReporting": true,
-            "AddressDetails": {
-              "AddressLine1": "22",
-              "AddressLine2": "High Street",
-              "AddressLine3": "Dawley",
-              "AddressLine4": "Dawley",
-              "CountryCode": "GB",
-              "PostalCode": "TF22 2RE"
-            },
-            "PrimaryContactDetails": {
-              "ContactName": "Foo Bar",
-              "EmailAddress": "fbar@example.com",
-              "PhoneNumber": "0223458888"
-            },
-            "SecondaryContactDetails": {
-              "ContactName": "Foobar Baz",
-              "EmailAddress": "fbaz@example.com",
-              "PhoneNumber": "0123456789"
-            }
-          }
-        ]
-      }
-    }
-  }
-"""
 }

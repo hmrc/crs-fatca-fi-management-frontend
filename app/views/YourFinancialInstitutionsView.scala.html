@@ -23,16 +23,20 @@
         govukRadios: GovukRadios,
         govukButton: GovukButton,
         govukSummaryList: GovukSummaryList,
-        heading: Heading
+        heading: Heading,
+        notification: Notification
 )
 
-@(form: Form[_], institutions: SummaryList)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], institutions: SummaryList, removedInstitutionName: Option[String] = None)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("yourFinancialInstitutions.title"))) {
 
     @if(form.errors.nonEmpty) {
         @govukErrorSummary(ErrorSummaryViewModel(form))
     }
+
+    @if(removedInstitutionName.isDefined) {
+        @notification(messages("yourFinancialInstitutions.notification",removedInstitutionName.get))}
 
     @if(institutions.rows.isEmpty) {
         @heading(messages("yourFinancialInstitutions.heading.noFinancialInstitutions"))

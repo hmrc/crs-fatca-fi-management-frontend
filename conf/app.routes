@@ -144,7 +144,10 @@ POST        /registered-business/check-answers                            contro
 
 GET         /financial-institution-added                                  controllers.addFinancialInstitution.FinancialInstitutionAddedConfirmationController.onPageLoad
 
-GET         /your-fis                                                     controllers.YourFinancialInstitutionsController.onPageLoad
+GET         /your-fis                                                     controllers.YourFinancialInstitutionsController.onPageLoad()
 POST        /your-fis                                                     controllers.YourFinancialInstitutionsController.onSubmit()
 
 GET         /problem/some-information-is-missing                          controllers.SomeInformationMissingController.onPageLoad()
+
+GET         /remove-fi/:fiid                                              controllers.RemoveAreYouSureController.onPageLoad(fiid:String)
+POST        /remove-fi/:fiid                                              controllers.RemoveAreYouSureController.onSubmit(fiid:String)
