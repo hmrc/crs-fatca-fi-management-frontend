@@ -82,7 +82,7 @@ class RemoveAreYouSureController @Inject() (
                   formWithErrors => Future.successful(BadRequest(view(formWithErrors, institutionToRemove.FIID, institutionToRemove.FIName))),
                   value => {
                     if (value) {
-                      financialInstitutionsService.removeFinancialInstitution()
+                      financialInstitutionsService.removeFinancialInstitution(institutionToRemove)
                     }
                     for {
                       updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveAreYouSurePage, value))

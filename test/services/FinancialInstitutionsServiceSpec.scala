@@ -66,7 +66,12 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
           val result = sut.addFinancialInstitution(subscriptionId, userAnswers)
           result.futureValue mustBe ()
       }
-
+    }
+    "removeFinancialInstitution triggers removeFi" in {
+      val mockResponse = Future.successful(HttpResponse(OK, "{}"))
+      when(mockConnector.removeFi(any())(any[HeaderCarrier](), any[ExecutionContext]())).thenReturn(mockResponse)
+      val result = sut.removeFinancialInstitution(testFiDetail)
+      result.futureValue mustBe ()
     }
 
   }
