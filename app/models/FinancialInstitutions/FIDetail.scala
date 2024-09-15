@@ -34,6 +34,16 @@ object FIDetail {
   implicit val format: OFormat[FIDetail] = Json.format[FIDetail]
 }
 
+final case class RemoveFIDetail(
+  SubscriptionID: String,
+  FIID: String,
+  FIName: String
+)
+
+object RemoveFIDetail {
+  implicit val format: OFormat[RemoveFIDetail] = Json.format[RemoveFIDetail]
+}
+
 object AddressDetails {
   implicit val format: OFormat[AddressDetails] = Json.format[AddressDetails]
 }
