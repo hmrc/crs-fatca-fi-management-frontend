@@ -49,7 +49,7 @@ class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, v
     ec: ExecutionContext
   ): Future[HttpResponse] =
     httpClient
-      .post(url"${config.fIManagementUrl}/crs-fatca-fi-management/ASMService/v1/FIManagement/remove")
+      .post(url"${config.fIManagementUrl}/crs-fatca-fi-management/ASMService/v1/FIManagement")
       .withBody(Json.toJson(fiDetails))
       .execute[HttpResponse]
 
