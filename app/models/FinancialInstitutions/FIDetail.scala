@@ -36,8 +36,7 @@ object FIDetail {
 
 final case class RemoveFIDetail(
   SubscriptionID: String,
-  FIID: String,
-  FIName: String
+  FIID: String
 )
 
 object RemoveFIDetail {

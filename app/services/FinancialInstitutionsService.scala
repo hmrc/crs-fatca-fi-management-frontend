@@ -68,7 +68,7 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
     ec: ExecutionContext
   ): Future[Unit] = {
     val removeFIDetail =
-      RemoveFIDetail(details.SubscriptionID, details.FIName, details.FIID)
+      RemoveFIDetail(details.SubscriptionID, details.FIID)
     connector.removeFi(removeFIDetail).map(_.body)
   }
 
