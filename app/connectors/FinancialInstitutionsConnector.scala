@@ -40,7 +40,7 @@ class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, v
     ec: ExecutionContext
   ): Future[HttpResponse] =
     httpClient
-      .post(url"${config.fIManagementUrl}/crs-fatca-fi-management/ASMService/v1/FIManagement")
+      .post(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/create")
       .withBody(Json.toJson(fiDetails))
       .execute[HttpResponse]
 
@@ -49,7 +49,7 @@ class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, v
     ec: ExecutionContext
   ): Future[HttpResponse] =
     httpClient
-      .post(url"${config.fIManagementUrl}/crs-fatca-fi-management/ASMService/v1/FIManagement")
+      .post(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/remove")
       .withBody(Json.toJson(fiDetails))
       .execute[HttpResponse]
 

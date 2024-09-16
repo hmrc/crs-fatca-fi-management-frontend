@@ -75,7 +75,7 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
 
     "must return status as OK for addFi" in {
       stubPostResponse(
-        s"/crs-fatca-fi-management/ASMService/v1/FIManagement",
+        s"/crs-fatca-fi-management/financial-institutions/create",
         OK,
         "{}"
       )
@@ -86,7 +86,7 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
     "must return status as OK for removeFi" in {
       val removeFIDetail = RemoveFIDetail("FIID", "FIName", "SubscriptionID")
       stubPostResponse(
-        s"/crs-fatca-fi-management/ASMService/v1/FIManagement/remove",
+        s"/crs-fatca-fi-management/financial-institutions/remove",
         OK,
         "{}"
       )
