@@ -44,6 +44,7 @@ class CheckYourAnswersValidatorSpec extends AnyFreeSpec with Matchers with Model
             val result = CheckYourAnswersValidator(userAnswers).validate
             result mustNot be(empty)
             Set(
+              NameOfFinancialInstitutionPage,
               FirstContactEmailPage,
               FirstContactHavePhonePage,
               FirstContactNamePage,
@@ -53,6 +54,8 @@ class CheckYourAnswersValidatorSpec extends AnyFreeSpec with Matchers with Model
               IsThisAddressPage,
               PostcodePage,
               SelectAddressPage,
+              SelectedAddressLookupPage,
+              NonUkAddressPage,
               UkAddressPage,
               WhatIsGIINPage,
               WhatIsUniqueTaxpayerReferencePage,

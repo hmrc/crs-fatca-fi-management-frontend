@@ -274,16 +274,13 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
     missingAnswersArb(
       fiNotRegistered,
       Seq(
+        NameOfFinancialInstitutionPage,
         FirstContactEmailPage,
         FirstContactHavePhonePage,
         FirstContactNamePage,
         FirstContactPhoneNumberPage,
         HaveGIINPage,
         HaveUniqueTaxpayerReferencePage,
-        IsThisAddressPage,
-        PostcodePage,
-        SelectAddressPage,
-        UkAddressPage,
         WhatIsGIINPage,
         WhatIsUniqueTaxpayerReferencePage,
         WhereIsFIBasedPage,
