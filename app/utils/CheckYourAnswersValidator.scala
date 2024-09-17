@@ -57,16 +57,14 @@ sealed trait AddFIValidator {
 
   private[utils] def checkAddressMissingAnswers: Seq[Page] = (userAnswers.get(WhereIsFIBasedPage) match {
     case Some(true) =>
-      checkPage(PostcodePage)
-        .orElse(
-          any(
-            checkPage(SelectedAddressLookupPage),
-            checkPage(UkAddressPage),
-            checkPage(IsThisAddressPage)
-          ).map(
-            _ => PostcodePage
-          )
-        )
+      any(
+        checkPage(PostcodePage),
+        checkPage(SelectedAddressLookupPage),
+        checkPage(UkAddressPage),
+        checkPage(IsThisAddressPage)
+      ).map(
+        _ => PostcodePage
+      )
     case Some(false) => checkPage(NonUkAddressPage)
     case _           => Some(WhereIsFIBasedPage)
   }).toSeq
