@@ -18,6 +18,7 @@ package utils
 
 import models.UserAnswers
 import pages._
+import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 import play.api.libs.json.Reads
 
@@ -60,7 +61,8 @@ sealed trait AddFIValidator {
         .orElse(
           any(
             checkPage(SelectedAddressLookupPage),
-            checkPage(UkAddressPage)
+            checkPage(UkAddressPage),
+            checkPage(IsThisAddressPage)
           ).map(
             _ => PostcodePage
           )
@@ -81,9 +83,31 @@ sealed trait AddFIValidator {
     case _           => Some(HaveGIINPage)
   }).toSeq
 
+  private def checkRegisteredBusinessName: Seq[Page] = (userAnswers.get(IsThisYourBusinessNamePage) match {
+    case Some(true)  => checkPage(HaveGIINPage)
+    case Some(false) => checkPage(NameOfFinancialInstitutionPage)
+    case _           => Some(ReportForRegisteredBusinessPage)
+  }).toSeq
+
+  private def checkReportForRegisteredMissingAnswers: Seq[Page] = (userAnswers.get(ReportForRegisteredBusinessPage) match {
+    case Some(true)  => checkPage(IsThisYourBusinessNamePage)
+    case Some(false) => None
+    case _           => Some(ReportForRegisteredBusinessPage)
+  }).toSeq
+
+  private def checkRegisteredBusinessAddress: Seq[Page] = (userAnswers.get(IsTheAddressCorrectPage) match {
+    case Some(true)  => None
+    case Some(false) => checkPage(WhereIsFIBasedPage)
+    case _           => Some(IsTheAddressCorrectPage)
+  }).toSeq
+
   private[utils] def checkNameUTRGIINMissingAnswers: Seq[Page] = Seq(
     checkPage(NameOfFinancialInstitutionPage)
   ).flatten ++ fiUTRMissingAnswers ++ fiGIINMissingAnswers
+
+  private[utils] def checkRegisteredBusiness: Seq[Page] = Seq(
+    checkReportForRegisteredMissingAnswers ++ checkRegisteredBusinessName ++ fiGIINMissingAnswers ++ checkRegisteredBusinessAddress
+  ).flatten
 
 }
 
@@ -98,6 +122,9 @@ class CheckYourAnswersValidator(val userAnswers: UserAnswers) extends AddFIValid
   private[utils] def any(checkPages: Option[Page]*): Option[Page] = checkPages.find(_.isEmpty).getOrElse(checkPages.last)
 
   def validate: Seq[Page] = checkNameUTRGIINMissingAnswers ++ checkAddressMissingAnswers ++ checkContactDetailsMissingAnswers
+
+  def validateRegisteredBusiness: Seq[Page] =
+    if (userAnswers.get(IsTheAddressCorrectPage).contains(true)) checkRegisteredBusiness else checkRegisteredBusiness ++ checkAddressMissingAnswers
 
 }
 

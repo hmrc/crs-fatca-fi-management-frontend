@@ -172,12 +172,53 @@ class Navigator @Inject() () {
 
   private val checkRouteMap: Page => UserAnswers => Call = {
 
+    case HaveUniqueTaxpayerReferencePage =>
+      userAnswers =>
+        yesNoPage(
+          userAnswers,
+          HaveUniqueTaxpayerReferencePage,
+          routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(CheckMode),
+          redirectToCheckYouAnswers(userAnswers)
+        )
+    case FirstContactNamePage =>
+      _ => routes.FirstContactEmailController.onPageLoad(CheckMode)
+    case FirstContactEmailPage => _ => routes.FirstContactHavePhoneController.onPageLoad(CheckMode)
+    case FirstContactHavePhonePage =>
+      userAnswers =>
+        yesNoPage(
+          userAnswers,
+          FirstContactHavePhonePage,
+          routes.FirstContactPhoneNumberController.onPageLoad(CheckMode),
+          routes.SecondContactExistsController.onPageLoad(CheckMode)
+        )
+    case FirstContactPhoneNumberPage => _ => routes.SecondContactExistsController.onPageLoad(CheckMode)
+    case SecondContactExistsPage =>
+      userAnswers =>
+        yesNoPage(
+          userAnswers,
+          SecondContactExistsPage,
+          routes.SecondContactNameController.onPageLoad(CheckMode),
+          redirectToCheckYouAnswers(userAnswers)
+        )
+    case SecondContactNamePage =>
+      _ => routes.SecondContactEmailController.onPageLoad(CheckMode)
+    case SecondContactEmailPage =>
+      _ => routes.SecondContactCanWePhoneController.onPageLoad(CheckMode)
+    case SecondContactCanWePhonePage =>
+      userAnswers =>
+        yesNoPage(
+          userAnswers,
+          SecondContactCanWePhonePage,
+          routes.SecondContactPhoneNumberController.onPageLoad(CheckMode),
+          redirectToCheckYouAnswers(userAnswers)
+        )
+    case SecondContactPhoneNumberPage => redirectToCheckYouAnswers
     case IsTheAddressCorrectPage =>
       userAnswers =>
         yesNoPage(
           userAnswers,
           IsTheAddressCorrectPage,
-          controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
+          redirectToCheckYouAnswers(userAnswers),
           routes.WhereIsFIBasedController.onPageLoad(CheckMode)
         )
     case WhereIsFIBasedPage =>
@@ -193,15 +234,37 @@ class Navigator @Inject() () {
         yesNoPage(
           userAnswers,
           IsThisAddressPage,
-          controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
+          redirectToCheckYouAnswers(userAnswers),
           routes.UkAddressController.onPageLoad(CheckMode)
         )
     case PostcodePage      => addressLookupNavigation(CheckMode)
-    case NonUkAddressPage  => _ => controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad()
-    case UkAddressPage     => _ => controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad()
-    case SelectAddressPage => _ => controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad()
-    case _                 => _ => routes.CheckYourAnswersController.onPageLoad()
+    case NonUkAddressPage  => redirectToCheckYouAnswers
+    case UkAddressPage     => redirectToCheckYouAnswers
+    case SelectAddressPage => redirectToCheckYouAnswers
+    case HaveGIINPage =>
+      userAnswers =>
+        yesNoPage(
+          userAnswers,
+          HaveGIINPage,
+          routes.WhatIsGIINController.onPageLoad(CheckMode),
+          redirectToCheckYouAnswers(userAnswers)
+        )
+    case IsThisYourBusinessNamePage =>
+      userAnswers =>
+        yesNoPage(
+          userAnswers,
+          IsThisYourBusinessNamePage,
+          redirectToCheckYouAnswers(userAnswers),
+          routes.NameOfFinancialInstitutionController.onPageLoad(CheckMode)
+        )
+    case _ => redirectToCheckYouAnswers
   }
+
+  private def redirectToCheckYouAnswers(ua: UserAnswers): Call =
+    ua.get(ReportForRegisteredBusinessPage) match {
+      case Some(value) if value => controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad()
+      case _                    => routes.CheckYourAnswersController.onPageLoad()
+    }
 
   private def isFiUser(ua: UserAnswers, yesCall: => Call, noCall: => Call): Call =
     ua.get(ReportForRegisteredBusinessPage) match {

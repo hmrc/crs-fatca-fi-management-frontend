@@ -21,6 +21,24 @@ import play.api.libs.json.{JsValue, Json, Writes}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
+  implicit lazy val arbitraryIsTheAddressCorrectUserAnswersEntry
+    : Arbitrary[(pages.addFinancialInstitution.IsRegisteredBusiness.IsTheAddressCorrectPage.type, JsValue)] =
+    modelArbitrary[pages.addFinancialInstitution.IsRegisteredBusiness.IsTheAddressCorrectPage.type, Boolean](
+      pages.addFinancialInstitution.IsRegisteredBusiness.IsTheAddressCorrectPage
+    )
+
+  implicit lazy val arbitraryReportForRegisteredBusinessUserAnswersEntry
+    : Arbitrary[(pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage.type, JsValue)] =
+    modelArbitrary[pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage.type, Boolean](
+      pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
+    )
+
+  implicit lazy val arbitraryIsThisYourBusinessNameUserAnswersEntry
+    : Arbitrary[(pages.addFinancialInstitution.IsRegisteredBusiness.IsThisYourBusinessNamePage.type, JsValue)] =
+    modelArbitrary[pages.addFinancialInstitution.IsRegisteredBusiness.IsThisYourBusinessNamePage.type, Boolean](
+      pages.addFinancialInstitution.IsRegisteredBusiness.IsThisYourBusinessNamePage
+    )
+
   implicit lazy val arbitraryFirstContactEmailUserAnswersEntry: Arbitrary[(pages.addFinancialInstitution.FirstContactEmailPage.type, JsValue)] =
     alphaStrNonEmptyPageArbitrary(pages.addFinancialInstitution.FirstContactEmailPage)
 

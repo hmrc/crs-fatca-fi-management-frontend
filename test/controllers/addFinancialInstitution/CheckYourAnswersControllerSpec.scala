@@ -17,17 +17,21 @@
 package controllers.addFinancialInstitution
 
 import base.SpecBase
-import models.CheckMode
+import controllers.routes
+import generators.{ModelGenerators, UserAnswersGenerator}
+import models.UserAnswers
+import navigation.{FakeNavigator, Navigator}
 import org.scalatestplus.mockito.MockitoSugar.mock
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import play.api.i18n.Messages
+import play.api.inject.bind
 import play.api.libs.json.Json
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import viewmodels.govuk.SummaryListFluency
-import views.html.addFinancialInstitution.CheckYourAnswersView
 
-class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
+class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with ModelGenerators with UserAnswersGenerator {
   implicit val mockMessages: Messages = mock[Messages]
 
   "Check Your Answers Controller" - {
@@ -35,77 +39,87 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
     "onPageLoad" - {
 
       "must return OK and the correct view for a GET" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(data = Json.obj(("key", "value"))))).build()
+        def onwardRoute: Call = Call("GET", "/foo")
 
-        running(application) {
-          val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
-
-          val result = route(application, request).value
-
-          val view = application.injector.instanceOf[CheckYourAnswersView]
-          val list = SummaryListViewModel(Seq.empty)
-
-          val firstContactList = SummaryListViewModel(
-            Seq(
-              SummaryListRowViewModel(
-                key = KeyViewModel(HtmlContent("First contact telephone number")),
-                value = ValueViewModel(HtmlContent("Not provided")),
-                actions = Seq(
-                  ActionItemViewModel(
-                    content = HtmlContent(
-                      s"""
-                         |<span aria-hidden="true">Change</span>
-                         |""".stripMargin
-                    ),
-                    href = controllers.addFinancialInstitution.routes.FirstContactHavePhoneController.onPageLoad(CheckMode).url
-                  ).withVisuallyHiddenText("Change first contact telephone number")
-                )
+        forAll(fiNotRegistered.arbitrary) {
+          (userAnswers: UserAnswers) =>
+            val application = applicationBuilder(userAnswers = Option(userAnswers))
+              .overrides(
+                bind[Navigator].toInstance(new FakeNavigator(onwardRoute))
               )
-            )
-          )
-          status(result) mustEqual OK
-          contentAsString(result) mustEqual view(fiName, list, firstContactList, list)(request, messages(application)).toString
-        }
-      }
+              .build()
 
-      "must redirect to information-sent page for a GET when the user answers is empty" in {
-        val application = applicationBuilder(userAnswers = Option(emptyUserAnswers)).build()
+            running(application) {
+              val request = FakeRequest(GET, controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad().url)
 
-        running(application) {
-          val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+              val result = route(application, request).value
 
-          val result = route(application, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.InformationSentController.onPageLoad.url
-        }
-      }
-
-      "must redirect to Journey Recovery for a GET if no existing data is found" in {
-
-        val application = applicationBuilder(userAnswers = None).build()
-
-        running(application) {
-          val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
-
-          val result = route(application, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+              status(result) mustEqual OK
+            }
         }
       }
     }
+
+    "must redirect to information-sent page for a GET when the user answers is empty" in {
+      val application = applicationBuilder(userAnswers = Option(emptyUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad().url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.InformationSentController.onPageLoad.url
+      }
+    }
+
+    "redirect to Missing Information when missing some UserAnswers for individual with id" in {
+      def onwardRoute: Call = Call("GET", "/foo")
+
+      forAll(fiNotRegisteredMissingAnswers.arbitrary) {
+        (userAnswers: UserAnswers) =>
+          val application = applicationBuilder(userAnswers = Option(userAnswers))
+            .overrides(
+              bind[Navigator].toInstance(new FakeNavigator(onwardRoute))
+            )
+            .build()
+
+          running(application) {
+            val request = FakeRequest(GET, controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad().url)
+
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result).value mustBe routes.SomeInformationMissingController.onPageLoad().url
+          }
+      }
+    }
+
+    "must redirect to Journey Recovery for a GET if no existing data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad().url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
     "confirmAndAdd" - {
       "must redirect to self (until the PUT endpoint exists)" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(data = Json.obj(("key", "value"))))).build()
 
         running(application) {
-          val request = FakeRequest(POST, routes.CheckYourAnswersController.confirmAndAdd().url)
+          val request = FakeRequest(POST, controllers.addFinancialInstitution.routes.CheckYourAnswersController.confirmAndAdd().url)
 
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad().url
 
         }
       }
@@ -114,7 +128,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         val application = applicationBuilder(userAnswers = Option(emptyUserAnswers)).build()
 
         running(application) {
-          val request = FakeRequest(POST, routes.CheckYourAnswersController.confirmAndAdd().url)
+          val request = FakeRequest(POST, controllers.addFinancialInstitution.routes.CheckYourAnswersController.confirmAndAdd().url)
 
           val result = route(application, request).value
 

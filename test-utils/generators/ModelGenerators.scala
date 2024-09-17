@@ -39,7 +39,7 @@ trait ModelGenerators extends RegexConstants with Generators {
       } yield Country(state, code.mkString, name)
     }
 
-  implicit lazy val arbitraryAddressWithoutId: Arbitrary[models.Address] =
+  implicit lazy val arbitraryAddress: Arbitrary[models.Address] =
     Arbitrary {
       for {
         addressLine1 <- arbitrary[String].suchThat(_.nonEmpty)

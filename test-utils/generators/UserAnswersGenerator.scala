@@ -21,6 +21,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.TryValues
 import pages._
+import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 import play.api.libs.json.{JsObject, JsPath, JsValue, Json}
 
@@ -28,7 +29,10 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
   self: Generators =>
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
-    arbitrary[(FirstContactEmailPage.type, JsValue)] ::
+    arbitrary[(IsTheAddressCorrectPage.type, JsValue)] ::
+      arbitrary[(IsThisYourBusinessNamePage.type, JsValue)] ::
+      arbitrary[(ReportForRegisteredBusinessPage.type, JsValue)] ::
+      arbitrary[(FirstContactEmailPage.type, JsValue)] ::
       arbitrary[(FirstContactHavePhonePage.type, JsValue)] ::
       arbitrary[(FirstContactNamePage.type, JsValue)] ::
       arbitrary[(FirstContactPhoneNumberPage.type, JsValue)] ::
@@ -179,6 +183,49 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
     } yield obj
   }
 
+  private lazy val registeredBusinessDetails = Arbitrary {
+    for {
+      reportForRegisteredBusiness <- arbitrary[Boolean]
+      isThisBusinessName          <- arbitrary[Boolean]
+      haveGIIN                    <- arbitrary[Boolean]
+      isAddressCorrect            <- arbitrary[Boolean]
+      address                     <- address.arbitrary
+      fiName <-
+        pageArbitrary(NameOfFinancialInstitutionPage).arbitrary
+      report <-
+        if (reportForRegisteredBusiness) {
+          pageArbitrary(IsThisYourBusinessNamePage).arbitrary
+        } else {
+          Gen.const(Json.obj())
+        }
+      businessName <-
+        if (isThisBusinessName) {
+          Gen.const(Json.obj())
+        } else {
+          pageArbitrary(NameOfFinancialInstitutionPage).arbitrary
+        }
+      whatIsGIIN <-
+        if (haveGIIN) {
+          pageArbitrary(WhatIsGIINPage).arbitrary
+        } else {
+          Gen.const(Json.obj())
+        }
+      whereIsFIBased <-
+        if (isAddressCorrect) {
+          Gen.const(Json.obj())
+        } else {
+          pageArbitrary(WhereIsFIBasedPage).arbitrary
+        }
+      obj = setFields(
+        Json.obj(),
+        ReportForRegisteredBusinessPage.path              -> Json.toJson(reportForRegisteredBusiness),
+        IsThisYourBusinessNamePage.path                   -> Json.toJson(isThisBusinessName),
+        IsRegisteredBusiness.IsTheAddressCorrectPage.path -> Json.toJson(isAddressCorrect),
+        HaveGIINPage.path                                 -> Json.toJson(haveGIIN)
+      ) ++ fiName ++ report ++ businessName ++ whatIsGIIN ++ whereIsFIBased ++ address
+    } yield obj
+  }
+
   lazy val fiNotRegistered: Arbitrary[UserAnswers] = Arbitrary {
     for {
       id             <- nonEmptyString
@@ -189,6 +236,20 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
         setFields(
           Json.obj()
         ) ++ address ++ contactDetails ++ nameUTRandGIIN
+    } yield UserAnswers(
+      id = id,
+      data = obj
+    )
+  }
+
+  lazy val fiRegistered: Arbitrary[UserAnswers] = Arbitrary {
+    for {
+      id             <- nonEmptyString
+      isThisBusiness <- registeredBusinessDetails.arbitrary
+      obj =
+        setFields(
+          Json.obj()
+        ) ++ isThisBusiness
     } yield UserAnswers(
       id = id,
       data = obj
@@ -230,6 +291,18 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
         SecondContactExistsPage,
         SecondContactNamePage,
         SecondContactPhoneNumberPage
+      )
+    )
+
+  lazy val fiRegisteredMissingAnswers: Arbitrary[UserAnswers] =
+    missingAnswersArb(
+      fiRegistered,
+      Seq(
+        HaveGIINPage,
+        WhatIsGIINPage,
+        ReportForRegisteredBusinessPage,
+        IsThisYourBusinessNamePage,
+        IsTheAddressCorrectPage
       )
     )
 
