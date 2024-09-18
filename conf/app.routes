@@ -121,8 +121,8 @@ POST        /where-is-fi-based                                            contro
 GET         /change-where-is-fi-based                                     controllers.addFinancialInstitution.WhereIsFIBasedController.onPageLoad(mode: Mode = CheckMode)
 POST        /change-where-is-fi-based                                     controllers.addFinancialInstitution.WhereIsFIBasedController.onSubmit(mode: Mode = CheckMode)
 
-GET         /check-your-answers                                           controllers.addFinancialInstitution.CheckYourAnswersController.onPageLoad()
-POST        /check-your-answers                                           controllers.addFinancialInstitution.CheckYourAnswersController.confirmAndAdd()
+GET         /check-answers                                                controllers.addFinancialInstitution.CheckYourAnswersController.onPageLoad()
+POST        /check-answers                                                controllers.addFinancialInstitution.CheckYourAnswersController.confirmAndAdd()
 
 GET         /report-for-registered-business                               controllers.addFinancialInstitution.registeredBusiness.ReportForRegisteredBusinessController.onPageLoad(mode: Mode = NormalMode)
 POST        /report-for-registered-business                               controllers.addFinancialInstitution.registeredBusiness.ReportForRegisteredBusinessController.onSubmit(mode: Mode = NormalMode)
