@@ -18,7 +18,7 @@ package connectors
 
 import base.SpecBase
 import helpers.WireMockServerHandler
-import models.FinancialInstitutions.{AddressDetails, ContactDetails, CreateFIDetails}
+import models.FinancialInstitutions.{AddressDetails, ContactDetails, CreateFIDetails, RemoveFIDetail}
 import play.api.Application
 import play.api.http.Status.OK
 
@@ -63,30 +63,37 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
 
   "FinancialInstitutionsConnector" - {
 
-    "viewFinancialInstitutions" - {
-
-      "must return status as OK for viewFIs" in {
-        val subscriptionId = "XE512345678"
-        stubResponse(
-          s"/crs-fatca-fi-management/financial-institutions/$subscriptionId",
-          OK
-        )
-        val result = connector.viewFis(subscriptionId)
-        result.futureValue.status mustBe OK
-      }
+    "must return status as OK for viewFIs" in {
+      val subscriptionId = "XE512345678"
+      stubResponse(
+        s"/crs-fatca-fi-management/financial-institutions/$subscriptionId",
+        OK
+      )
+      val result = connector.viewFis(subscriptionId)
+      result.futureValue.status mustBe OK
     }
 
-    "addFinancialInstitution" - {
-      "must return status as OK for addFi" in {
-        stubPostResponse(
-          s"/crs-fatca-fi-management/ASMService/v1/FIManagement",
-          OK,
-          "{}"
-        )
-        val result = connector.addFi(createFIDetails)
-        result.futureValue.status mustBe OK
-      }
+    "must return status as OK for addFi" in {
+      stubPostResponse(
+        s"/crs-fatca-fi-management/financial-institutions/create",
+        OK,
+        "{}"
+      )
+      val result = connector.addFi(createFIDetails)
+      result.futureValue.status mustBe OK
     }
+
+    "must return status as OK for removeFi" in {
+      val removeFIDetail = RemoveFIDetail("FIID", "SubscriptionID")
+      stubPostResponse(
+        s"/crs-fatca-fi-management/financial-institutions/remove",
+        OK,
+        "{}"
+      )
+      val result = connector.removeFi(removeFIDetail)
+      result.futureValue.status mustBe OK
+    }
+
   }
 
 }

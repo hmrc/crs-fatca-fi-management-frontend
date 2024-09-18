@@ -82,6 +82,7 @@ class RemoveAreYouSureController @Inject() (
                   formWithErrors => Future.successful(BadRequest(view(formWithErrors, institutionToRemove.FIID, institutionToRemove.FIName))),
                   value =>
                     for {
+                      _              <- if (value) financialInstitutionsService.removeFinancialInstitution(institutionToRemove) else Future.successful(())
                       updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveAreYouSurePage, value))
                       _              <- sessionRepository.set(updatedAnswers)
                     } yield Redirect(navigator.nextPage(RemoveAreYouSurePage, NormalMode, updatedAnswers))

@@ -63,6 +63,15 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
         _ => ()
       )
 
+  def removeFinancialInstitution(details: FIDetail)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[Unit] = {
+    val removeFIDetail =
+      RemoveFIDetail(details.SubscriptionID, details.FIID)
+    connector.removeFi(removeFIDetail).map(_.body)
+  }
+
   private def buildFiDetailsRequest(subscriptionId: String, userAnswers: UserAnswers): CreateFIDetails =
     (for {
       fiName  <- userAnswers.get(NameOfFinancialInstitutionPage)

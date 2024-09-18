@@ -31,7 +31,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.FinancialInstitutionsService
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import views.html.RemoveAreYouSureView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,8 +44,7 @@ class RemoveAreYouSureControllerSpec extends SpecBase with MockitoSugar {
   val form: Form[Boolean]                                            = formProvider()
   val mockFinancialInstitutionsService: FinancialInstitutionsService = mock[FinancialInstitutionsService]
   val mockSessionRepository: SessionRepository                       = mock[SessionRepository]
-
-  lazy val removeAreYouSureRoute: String = routes.RemoveAreYouSureController.onPageLoad(testFiDetail.FIID).url
+  lazy val removeAreYouSureRoute: String                             = routes.RemoveAreYouSureController.onPageLoad(testFiDetail.FIID).url
 
   "RemoveAreYouSure Controller" - {
     when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -78,6 +77,7 @@ class RemoveAreYouSureControllerSpec extends SpecBase with MockitoSugar {
       val userAnswers = UserAnswers(userAnswersId).set(RemoveInstitutionDetail, testFiDetail).success.value
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockFinancialInstitutionsService.removeFinancialInstitution(any())(any(), any())) thenReturn Future.successful(HttpResponse(OK, ""))
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
