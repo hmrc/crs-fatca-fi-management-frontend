@@ -25,4 +25,5 @@ class DetailsUpdatedControllerSpec extends SpecBase {
       }
     }
   }
+
 }
