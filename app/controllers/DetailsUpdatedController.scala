@@ -18,16 +18,15 @@ package controllers
 
 import controllers.actions._
 import play.api.Logging
-
-import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ContactHelper
-import views.html.{DetailsUpdatedView, FinancialInstitutionAddedConfirmationView, ThereIsAProblemView}
+import views.html.{DetailsUpdatedView, ThereIsAProblemView}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DetailsUpdatedController @Inject() (
