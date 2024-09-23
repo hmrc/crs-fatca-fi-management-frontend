@@ -19,7 +19,7 @@ package viewmodels.yourFinancialInstitutions
 import models.FinancialInstitutions.FIDetail
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow}
-import viewmodels.checkAnswers.CheckYourAnswersViewModel.accessibleActionItem
+import viewmodels.common.accessibleActionItem
 import viewmodels.govuk.all.{FluentActionItem, SummaryListRowViewModel, ValueViewModel}
 import viewmodels.implicits._
 
@@ -32,7 +32,9 @@ object YourFinancialInstitutionsViewModel {
           key = Key("", "govuk-!-display-none"),
           value = ValueViewModel(institution.FIName),
           actions = Seq(
-            accessibleActionItem("site.change", controllers.routes.YourFinancialInstitutionsController.onPageLoad().url)
+            accessibleActionItem("site.change",
+                                 controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(institution.FIID).url
+            )
               .withVisuallyHiddenText(messages("yourFinancialInstitutions.change.hidden", institution.FIName)),
             accessibleActionItem("site.remove", controllers.routes.RemoveAreYouSureController.onPageLoad(institution.FIID).url)
               .withVisuallyHiddenText(messages("yourFinancialInstitutions.remove.hidden", institution.FIName)),

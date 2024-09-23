@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
-package pages.addFinancialInstitution
+package models
 
-import models.GIINumber
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import play.api.libs.json._
 
-case object WhatIsGIINPage extends QuestionPage[GIINumber] {
+sealed trait TaxIdentificationNumber {
+  def value: String
+}
 
-  override def path: JsPath = JsPath \ toString
+final case class UniqueTaxpayerReference(override val value: String) extends TaxIdentificationNumber
 
-  override def toString: String = "whatIsGIIN"
+final case class GIINumber(override val value: String) extends TaxIdentificationNumber
+
+object UniqueTaxpayerReference {
+  implicit val format: OFormat[UniqueTaxpayerReference] = Json.format[UniqueTaxpayerReference]
+}
+
+object GIINumber {
+  implicit val format: OFormat[GIINumber] = Json.format[GIINumber]
 }

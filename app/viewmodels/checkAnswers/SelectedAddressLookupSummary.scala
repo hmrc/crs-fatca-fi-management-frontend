@@ -21,7 +21,7 @@ import pages.addFinancialInstitution.SelectedAddressLookupPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.AddressHelper.formatAddress
-import viewmodels.checkAnswers.CheckYourAnswersViewModel.{accessibleActionItem, getAddressChangeRoute}
+import viewmodels.common.{accessibleActionItem, getAddressChangeRoute}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 

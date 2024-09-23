@@ -17,14 +17,16 @@
 package connectors
 
 import base.SpecBase
+import generators.Generators
 import helpers.WireMockServerHandler
 import models.FinancialInstitutions.{AddressDetails, ContactDetails, CreateFIDetails, RemoveFIDetail}
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.Application
 import play.api.http.Status.OK
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHandler {
+class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckDrivenPropertyChecks with Generators {
 
   lazy val app: Application = applicationBuilder()
     .configure(
@@ -71,6 +73,18 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
       )
       val result = connector.viewFis(subscriptionId)
       result.futureValue.status mustBe OK
+    }
+
+    "must return status as OK for viewFI" in {
+      forAll(validSubscriptionID, validFiId) {
+        (subscriptionId, fiId) =>
+          stubResponse(
+            s"/crs-fatca-fi-management/financial-institutions/$subscriptionId/$fiId",
+            OK
+          )
+          val result = connector.viewFi(subscriptionId, fiId)
+          result.futureValue.status mustBe OK
+      }
     }
 
     "must return status as OK for addFi" in {

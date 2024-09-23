@@ -21,6 +21,7 @@ import models._
 import pages._
 import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
+import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -181,17 +182,19 @@ class Navigator @Inject() () {
           redirectToCheckYouAnswers(userAnswers)
         )
     case FirstContactNamePage =>
-      _ => routes.FirstContactEmailController.onPageLoad(CheckMode)
-    case FirstContactEmailPage => _ => routes.FirstContactHavePhoneController.onPageLoad(CheckMode)
+      userAnswers => resolveNextRoute(userAnswers, routes.FirstContactEmailController.onPageLoad(CheckMode))
+    case FirstContactEmailPage =>
+      userAnswers => resolveNextRoute(userAnswers, routes.FirstContactHavePhoneController.onPageLoad(CheckMode))
     case FirstContactHavePhonePage =>
       userAnswers =>
         yesNoPage(
           userAnswers,
           FirstContactHavePhonePage,
           routes.FirstContactPhoneNumberController.onPageLoad(CheckMode),
-          routes.SecondContactExistsController.onPageLoad(CheckMode)
+          resolveNextRoute(userAnswers, routes.SecondContactExistsController.onPageLoad(CheckMode))
         )
-    case FirstContactPhoneNumberPage => _ => routes.SecondContactExistsController.onPageLoad(CheckMode)
+    case FirstContactPhoneNumberPage =>
+      userAnswers => resolveNextRoute(userAnswers, routes.SecondContactExistsController.onPageLoad(CheckMode))
     case SecondContactExistsPage =>
       userAnswers =>
         yesNoPage(
@@ -263,7 +266,7 @@ class Navigator @Inject() () {
   private def redirectToCheckYouAnswers(ua: UserAnswers): Call =
     ua.get(ReportForRegisteredBusinessPage) match {
       case Some(value) if value => controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad()
-      case _                    => routes.CheckYourAnswersController.onPageLoad()
+      case _                    => resolveAnswersVerificationRoute(ua)
     }
 
   private def isFiUser(ua: UserAnswers, yesCall: => Call, noCall: => Call): Call =
@@ -289,5 +292,15 @@ class Navigator @Inject() () {
     case CheckMode =>
       checkRouteMap(page)(userAnswers)
   }
+
+  private def resolveAnswersVerificationRoute(userAnswers: UserAnswers): Call =
+    resolveNextRoute(userAnswers, routes.CheckYourAnswersController.onPageLoad())
+
+  private def resolveNextRoute(userAnswers: UserAnswers, checkAnswersOnwardRoute: Call): Call =
+    userAnswers.get(ChangeFiDetailsInProgressId) match {
+      case Some(id) =>
+        controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(id)
+      case None => checkAnswersOnwardRoute
+    }
 
 }

@@ -18,7 +18,7 @@ package controllers.addFinancialInstitution
 
 import base.SpecBase
 import forms.addFinancialInstitution.WhatIsGIINFormProvider
-import models.NormalMode
+import models.{GIINumber, NormalMode}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -65,7 +65,7 @@ class WhatIsGIINControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = ua.set(WhatIsGIINPage, "answer").success.value
+      val userAnswers = ua.set(WhatIsGIINPage, GIINumber("answer")).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -77,7 +77,7 @@ class WhatIsGIINControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode, "fiName", false)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(GIINumber("answer")), NormalMode, "fiName", false)(request, messages(application)).toString
       }
     }
 

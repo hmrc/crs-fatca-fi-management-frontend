@@ -14,28 +14,27 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.common
 
-import models.{CheckMode, UserAnswers}
-import pages.addFinancialInstitution.SecondContactNamePage
+import models.{AnswersReviewPageType, CheckMode, UserAnswers}
+import pages.addFinancialInstitution.WhatIsUniqueTaxpayerReferencePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.checkAnswers.CheckYourAnswersViewModel.accessibleActionItem
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object SecondContactNameSummary {
+object WhatIsUniqueTaxpayerReferenceSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SecondContactNamePage).map {
+  def row(answers: UserAnswers, pageType: AnswersReviewPageType)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(WhatIsUniqueTaxpayerReferencePage).map {
       answer =>
         SummaryListRowViewModel(
-          key = "secondContactName.checkYourAnswersLabel",
-          value = ValueViewModel(HtmlFormat.escape(answer).toString),
+          key = s"whatIsUniqueTaxpayerReference.${pageType.labelPrefix}YourAnswersLabel",
+          value = ValueViewModel(HtmlFormat.escape(answer.value).toString),
           actions = Seq(
-            accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.SecondContactNameController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("secondContactName.change.hidden"))
+            accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("whatIsUniqueTaxpayerReference.change.hidden"))
           )
         )
     }
