@@ -18,12 +18,12 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.IdentifierAction
-import models.UserAnswers
+import models.{IndexViewModel, UserAnswers}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.SubscriptionService
+import services.{FinancialInstitutionsService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.IndexView
 
@@ -36,6 +36,7 @@ class IndexController @Inject() (
   identify: IdentifierAction,
   subscriptionService: SubscriptionService,
   conf: FrontendAppConfig,
+  financialInstitutionsService: FinancialInstitutionsService,
   view: IndexView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -47,17 +48,25 @@ class IndexController @Inject() (
       val fatcaId = request.fatcaId
       subscriptionService.getSubscription(fatcaId).flatMap {
         sub =>
-          val changeContactDetailsUrl = if (sub.isBusiness) conf.changeOrganisationDetailsUrl else conf.changeIndividualDetailsUrl
-          val addNewFIUrl             = controllers.addFinancialInstitution.routes.AddFIController.onPageLoad.url
+          val changeContactDetailsUrl       = if (sub.isBusiness) conf.changeOrganisationDetailsUrl else conf.changeIndividualDetailsUrl
+          val addNewFIUrl                   = controllers.addFinancialInstitution.routes.AddFIController.onPageLoad.url
+          val hasFisFuture: Future[Boolean] = financialInstitutionsService.getListOfFinancialInstitutions(fatcaId).map(_.isEmpty)
 
-          sessionRepository.get(request.userId) flatMap {
-            case Some(_) => Future.successful(Ok(view(sub.isBusiness, sub.businessName, fatcaId, addNewFIUrl, changeContactDetailsUrl)))
-            case None =>
-              sessionRepository.set(UserAnswers(request.userId)) map {
-                case true => Ok(view(sub.isBusiness, sub.businessName, fatcaId, addNewFIUrl, changeContactDetailsUrl))
-                case false =>
-                  logger.error(s"Failed to initialize user answers for userId: [${request.userId}]")
-                  Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+          hasFisFuture.flatMap {
+            hasFis =>
+              val indexPageDetails =
+                IndexViewModel(sub.isBusiness, fatcaId, addNewFIUrl, changeContactDetailsUrl, sub.businessName.getOrElse(""), request.userType, hasFis)
+
+              sessionRepository.get(fatcaId) flatMap {
+                case Some(_) =>
+                  Future.successful(Ok(view(indexPageDetails)))
+                case None =>
+                  sessionRepository.set(UserAnswers(fatcaId)) map {
+                    case true => Ok(view(indexPageDetails))
+                    case false =>
+                      logger.error(s"Failed to initialize user answers for userId: [$fatcaId]")
+                      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+                  }
               }
           }
       }

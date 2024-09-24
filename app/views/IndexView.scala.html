@@ -15,35 +15,40 @@
  *@
 
 @import config.FrontendAppConfig
+@import components._
+@import components.index._
+@import models.IndexViewModel
 
 @this(
     layout: templates.Layout,
-    link: components.Link,
-    conf: FrontendAppConfig
+    link: Link,
+    conf: FrontendAppConfig,
+    heading: Heading,
+    para: Paragraph,
+    changeContactSection: ChangeContactSection,
+    yourReportsSection: YourReportsSection,
+    yourFIsSection: YourFIsSection
 )
 
-@(isBusiness: Boolean, businessName: Option[String], fatcaId: String, addFIUrl: String, changeContactDetailsUrl: String)(implicit request: Request[_], messages: Messages)
+@(details: IndexViewModel)(implicit request: Request[_], messages: Messages)
 
 @emailLink = {@link(href="mailto:aeoi.enquiries@hmrc.gov.uk", "index.p4.link", Some("email-aeoi-enquiries"))}
+@addFILink = {@link(details.addFIUrl, "index.p1.link", Some("add-financial-institute"))}
 
 @layout(
     pageTitle    = titleNoForm(messages("index.title")),
     showBackLink = false
 ) {
+    @heading(messages("index.heading"))
+    @{if(!details.hasFis) para(Html(messages("index.p1", addFILink)))}
+    @para(Html(messages("index.p2", details.fatcaId)))
 
-    <h1 class="govuk-heading-l">@messages("index.heading")</h1>
-
-    <p class="govuk-body">@Html(messages("index.p1", link(addFIUrl, "index.p1.link", Some("add-financial-institute"))))</p>
-
-    <p class="govuk-body">@messages("index.p2", fatcaId)</p>
-
-    @if(isBusiness){
-        <p class="govuk-heading-m">@messages("organisationIndex.h2")</p>
-        <p class="govuk-body">@link(changeContactDetailsUrl, messages("organisationIndex.p3", businessName.get), Some("change-contact-details"))</p>
-    } else {
-        <p class="govuk-heading-m">@messages("index.h2")</p>
-        <p class="govuk-body">@link(changeContactDetailsUrl, "index.p3", Some("change-contact-details"))</p>
+    @if(details.hasFis) {
+      @yourReportsSection()
+      @yourFIsSection(details.addFIUrl)
     }
 
-    <p class="govuk-body govuk-!-padding-top-4">@Html(messages("index.p4", emailLink))</p>
+    @changeContactSection(details.isBusiness, details.businessName, details.changeContactDetailsUrl)
+
+    @para(Html(messages("index.p4", emailLink)),classes="govuk-body govuk-!-padding-top-4")
 }
