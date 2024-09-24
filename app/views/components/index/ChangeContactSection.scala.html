@@ -19,12 +19,15 @@
 
 @(isBusiness: Boolean, businessName: String, changeContactDetailsUrl: String)(implicit messages: Messages)
 
- @changeContactLink = @{if(isBusiness){link(changeContactDetailsUrl, messages("organisationIndex.p3", businessName), Some("change-contact-details"))} else {link(changeContactDetailsUrl, "index.p3", Some("change-contact-details"))}}
+    @changeContactLink = @{if(isBusiness){
+        link(changeContactDetailsUrl, messages("organisationIndex.p3", businessName), Some("change-contact-details"))
+        } else {link(changeContactDetailsUrl, "index.p3", Some("change-contact-details"))}
+    }
 
- @if(isBusiness){
+    @if(isBusiness){
      <p class="govuk-heading-m">@messages("organisationIndex.h2")</p>
      <p class="govuk-body">@changeContactLink</p>
- } else {
+    } else {
      <p class="govuk-heading-m">@messages("index.h2")</p>
      <p class="govuk-body">@changeContactLink</p>
-}
+    }

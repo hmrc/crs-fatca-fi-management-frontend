@@ -15,10 +15,10 @@
  *@
 
 @import components._
-@this(link: Link)
+@this(link: Link, heading: Heading)
 
 @()(implicit messages: Messages)
 
- @uploadLink = {@link(controllers.routes.IndexController.onPageLoad().url, messages("Upload an XML file for a financial institution[add-key]"))}
-     <p class="govuk-heading-m">@messages("Your reports[add-key]")</p>
+ @uploadLink = {@link(controllers.routes.IndexController.onPageLoad().url, messages("index.uploadFile.link"))}
+     @heading(messages("index.yourReports.h2"), "m")
      <p class="govuk-body">@uploadLink</p>

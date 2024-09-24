@@ -49,13 +49,13 @@ class IndexController @Inject() (
       subscriptionService.getSubscription(fatcaId).flatMap {
         sub =>
           val changeContactDetailsUrl       = if (sub.isBusiness) conf.changeOrganisationDetailsUrl else conf.changeIndividualDetailsUrl
-          val addNewFIUrl                   = controllers.addFinancialInstitution.routes.AddFIController.onPageLoad.url
-          val hasFisFuture: Future[Boolean] = financialInstitutionsService.getListOfFinancialInstitutions(fatcaId).map(_.isEmpty)
+          val addNewFIUrl                   = "/manage-your-crs-and-fatca-financial-institutions/add"
+          val hasFisFuture: Future[Boolean] = financialInstitutionsService.getListOfFinancialInstitutions(fatcaId).map(_.nonEmpty)
 
           hasFisFuture.flatMap {
             hasFis =>
               val indexPageDetails =
-                IndexViewModel(sub.isBusiness, fatcaId, addNewFIUrl, changeContactDetailsUrl, sub.businessName.getOrElse(""), request.userType, hasFis)
+                IndexViewModel(sub.isBusiness, fatcaId, addNewFIUrl, changeContactDetailsUrl, sub.businessName.getOrElse(""), hasFis)
 
               sessionRepository.get(fatcaId) flatMap {
                 case Some(_) =>

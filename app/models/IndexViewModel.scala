@@ -25,7 +25,6 @@ case class IndexViewModel(
   addFIUrl: String,
   changeContactDetailsUrl: String,
   businessName: String,
-  affinityGroup: AffinityGroup,
   hasFis: Boolean
 )
 

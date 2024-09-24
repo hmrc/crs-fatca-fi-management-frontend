@@ -19,6 +19,9 @@
 
 @(addFIUrl: String)(implicit messages: Messages)
 
- @addFILink = {@link(addFIUrl, "index.p1.link", Some("add-financial-institute"))}
- @heading(messages("Your financial institutions[add-key]"), "m")
- <p class="govuk-body">@addFILink</p>
+    @addFILink = {@link(addFIUrl, "index.addFi.link", Some("add-financial-institute"))}
+    @manageFILink = {@link(controllers.routes.YourFinancialInstitutionsController.onPageLoad().url, "index.manageFi.link", Some("your-financial-institutions"))}
+
+    @heading(messages("index.yourFis.h2"), "m")
+    <p class="govuk-body">@addFILink</p>
+    <p class="govuk-body">@manageFILink</p>
