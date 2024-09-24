@@ -35,10 +35,9 @@ class IndexController @Inject() (
   sessionRepository: SessionRepository,
   identify: IdentifierAction,
   subscriptionService: SubscriptionService,
-  conf: FrontendAppConfig,
   financialInstitutionsService: FinancialInstitutionsService,
   view: IndexView
-)(implicit ec: ExecutionContext)
+)(implicit ec: ExecutionContext, conf: FrontendAppConfig)
     extends FrontendBaseController
     with Logging
     with I18nSupport {
@@ -49,13 +48,12 @@ class IndexController @Inject() (
       subscriptionService.getSubscription(fatcaId).flatMap {
         sub =>
           val changeContactDetailsUrl       = if (sub.isBusiness) conf.changeOrganisationDetailsUrl else conf.changeIndividualDetailsUrl
-          val addNewFIUrl                   = "/manage-your-crs-and-fatca-financial-institutions/add"
           val hasFisFuture: Future[Boolean] = financialInstitutionsService.getListOfFinancialInstitutions(fatcaId).map(_.nonEmpty)
 
           hasFisFuture.flatMap {
             hasFis =>
               val indexPageDetails =
-                IndexViewModel(sub.isBusiness, fatcaId, addNewFIUrl, changeContactDetailsUrl, sub.businessName.getOrElse(""), hasFis)
+                IndexViewModel(sub.isBusiness, fatcaId, changeContactDetailsUrl, sub.businessName.getOrElse(""), hasFis)
 
               sessionRepository.get(fatcaId) flatMap {
                 case Some(_) =>

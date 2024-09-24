@@ -18,6 +18,7 @@
 @import components._
 @import components.index._
 @import models.IndexViewModel
+@import config.FrontendAppConfig
 
 @this(
     layout: templates.Layout,
@@ -30,10 +31,10 @@
     yourFIsSection: YourFIsSection
 )
 
-@(details: IndexViewModel)(implicit request: Request[_], messages: Messages)
+@(details: IndexViewModel)(implicit request: Request[_], messages: Messages, conf: FrontendAppConfig)
 
 @emailLink = {@link(href="mailto:aeoi.enquiries@hmrc.gov.uk", "index.p4.link", Some("email-aeoi-enquiries"))}
-@addFILink = {@link(details.addFIUrl, "index.p1.link", Some("add-financial-institute"))}
+@addFILink = {@link(conf.addFinancialInstitution, "index.p1.link", Some("add-financial-institute"))}
 
 @layout(
     pageTitle    = titleNoForm(messages("index.title")),
@@ -45,7 +46,7 @@
 
     @if(details.hasFis) {
       @yourReportsSection()
-      @yourFIsSection(details.addFIUrl)
+      @yourFIsSection()
     }
 
     @changeContactSection(details.isBusiness, details.businessName, details.changeContactDetailsUrl)

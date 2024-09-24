@@ -59,7 +59,6 @@ class IndexControllerSpec extends SpecBase {
       val indViewModel = IndexViewModel(
         isBusiness = false,
         "subscriptionId",
-        "/manage-your-crs-and-fatca-financial-institutions/add",
         "/change-contact/individual/details",
         "",
         hasFis = true
@@ -85,7 +84,7 @@ class IndexControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(indViewModel)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(indViewModel)(request, messages(application), mockAppConfig).toString
       }
     }
 
@@ -95,7 +94,6 @@ class IndexControllerSpec extends SpecBase {
       val orgViewModel = IndexViewModel(
         isBusiness = true,
         "subscriptionId",
-        "/manage-your-crs-and-fatca-financial-institutions/add",
         "/change-contact/organisation/details",
         "Test Business inc",
         hasFis = true
@@ -122,7 +120,7 @@ class IndexControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(orgViewModel)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(orgViewModel)(request, messages(application), mockAppConfig).toString
       }
     }
 

@@ -16,18 +16,10 @@
 
 package models
 
-import play.api.libs.json.{Json, Writes}
-import uk.gov.hmrc.auth.core.AffinityGroup
-
 case class IndexViewModel(
   isBusiness: Boolean,
   fatcaId: String,
-  addFIUrl: String,
   changeContactDetailsUrl: String,
   businessName: String,
   hasFis: Boolean
 )
-
-object IndexViewModel {
-  implicit val writes: Writes[IndexViewModel] = Json.writes[IndexViewModel]
-}
