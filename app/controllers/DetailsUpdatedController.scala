@@ -19,27 +19,22 @@ package controllers
 import controllers.actions._
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ContactHelper
-import views.html.{DetailsUpdatedView, ThereIsAProblemView}
+import views.html.DetailsUpdatedView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class DetailsUpdatedController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
-  sessionRepository: SessionRepository,
   val controllerComponents: MessagesControllerComponents,
-  view: DetailsUpdatedView,
-  errorView: ThereIsAProblemView
-)(implicit ec: ExecutionContext)
-    extends FrontendBaseController
+  view: DetailsUpdatedView
+) extends FrontendBaseController
     with ContactHelper
     with I18nSupport
     with Logging {
@@ -47,12 +42,7 @@ class DetailsUpdatedController @Inject() (
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) async {
     implicit request =>
       val fiName = getFinancialInstitutionName(request.userAnswers)
-      sessionRepository.set(request.userAnswers.copy(data = Json.obj())).flatMap {
-        case true => Future.successful(Ok(view(fiName)))
-        case false =>
-          logger.error(s"Failed to clear user answers after adding an FI for userId: [${request.userId}]")
-          Future.successful(Ok(errorView()))
-      }
+      Future.successful(Ok(view(fiName)))
   }
 
 }
