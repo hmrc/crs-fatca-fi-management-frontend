@@ -84,7 +84,7 @@ class IndexControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(indViewModel)(request, messages(application), mockAppConfig).toString
+        contentAsString(result) mustEqual view(indViewModel)(request, messages(application)).toString
       }
     }
 
@@ -120,7 +120,7 @@ class IndexControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(orgViewModel)(request, messages(application), mockAppConfig).toString
+        contentAsString(result) mustEqual view(orgViewModel)(request, messages(application)).toString
       }
     }
 

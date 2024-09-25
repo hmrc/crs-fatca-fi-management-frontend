@@ -15,13 +15,12 @@
  *@
 
 @import components._
-@import config.FrontendAppConfig
 
 @this(link: Link, heading: Heading)
 
-@()(implicit messages: Messages, conf: FrontendAppConfig)
+@()(implicit messages: Messages)
 
-    @addFILink = {@link(conf.addFinancialInstitution, "index.addFi.link", Some("add-financial-institution"))}
+    @addFILink = {@link(controllers.addFinancialInstitution.routes.AddFIController.onPageLoad.url, "index.addFi.link", Some("add-financial-institution"))}
     @manageFILink = {@link(controllers.routes.YourFinancialInstitutionsController.onPageLoad().url, "index.manageFi.link", Some("your-financial-institutions"))}
 
     @heading(messages("index.yourFis.h2"), "m")
