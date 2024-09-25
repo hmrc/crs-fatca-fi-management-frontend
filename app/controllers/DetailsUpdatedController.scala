@@ -39,10 +39,10 @@ class DetailsUpdatedController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) async {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
       val fiName = getFinancialInstitutionName(request.userAnswers)
-      Future.successful(Ok(view(fiName)))
+      Ok(view(fiName))
   }
 
 }
