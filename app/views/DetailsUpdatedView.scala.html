@@ -29,15 +29,13 @@
 
 @(fiName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("financialInstitutionAddedConfirmation.title")), showBackLink = false) {
+@layout(pageTitle = titleNoForm(messages("detailsUpdated.title")), showBackLink = false) {
     @govukPanel(
         Panel(
-            title = Text(messages("financialInstitutionAddedConfirmation.heading", fiName))
+            title = Text(messages("detailsUpdated.heading", fiName))
         )
     )
 
-    @para(Html(messages("financialInstitutionAddedConfirmation.p1", fiName)))
-
-    <p class="govuk-body govuk-!-margin-bottom-2">@link(controllers.routes.YourFinancialInstitutionsController.onPageLoad().url, "detailsUpdated.p2")</p>
-    <p class="govuk-body">@link(controllers.routes.IndexController.onPageLoad.url, "detailsUpdated.p3")</p>
+    <p class="govuk-body govuk-!-margin-bottom-2">@link(controllers.routes.YourFinancialInstitutionsController.onPageLoad().url, "detailsUpdated.p1")</p>
+    <p class="govuk-body">@link(controllers.routes.IndexController.onPageLoad.url, "detailsUpdated.p2")</p>
 }
