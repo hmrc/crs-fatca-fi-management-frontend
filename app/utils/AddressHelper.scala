@@ -76,7 +76,7 @@ object AddressHelper {
   }
 
   def formatAddressResponse(address: AddressResponse): HtmlContent = {
-    val block = address.lines
+    val block = address.toAddress.lines
       .map(
         line => s"<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>$line</p>"
       )
