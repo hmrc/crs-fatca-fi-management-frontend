@@ -490,6 +490,19 @@ class NavigatorSpec extends SpecBase {
           }
         }
 
+        "must navigate from SecondContactNamePage to ChangeFinancialInstitution when SecondContactEmail already exists" in {
+          forAll {
+            (fiId: String, secondContactEmail: String) =>
+              val userAnswers = emptyUserAnswers
+                .withPage(ChangeFiDetailsInProgressId, fiId)
+                .withPage(SecondContactEmailPage, secondContactEmail)
+
+              navigator
+                .nextPage(SecondContactNamePage, CheckMode, userAnswers)
+                .mustBe(controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(fiId))
+          }
+        }
+
         "must navigate from SecondContactNamePage to SecondContactEmail" in {
           forAll {
             fiId: String =>
@@ -498,6 +511,19 @@ class NavigatorSpec extends SpecBase {
               navigator
                 .nextPage(SecondContactNamePage, CheckMode, userAnswers)
                 .mustBe(routes.SecondContactEmailController.onPageLoad(CheckMode))
+          }
+        }
+
+        "must navigate from SecondContactEmailPage to ChangeFinancialInstitution when SecondContactCanWePhonePage already exists" in {
+          forAll {
+            (fiId: String, havePhone: Boolean) =>
+              val userAnswers = emptyUserAnswers
+                .withPage(ChangeFiDetailsInProgressId, fiId)
+                .withPage(SecondContactCanWePhonePage, havePhone)
+
+              navigator
+                .nextPage(SecondContactEmailPage, CheckMode, userAnswers)
+                .mustBe(controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(fiId))
           }
         }
 

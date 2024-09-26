@@ -22,6 +22,7 @@ import pages._
 import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
+import play.api.libs.json.Reads
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -200,13 +201,14 @@ class Navigator @Inject() () {
         yesNoPage(
           userAnswers,
           SecondContactExistsPage,
-          routes.SecondContactNameController.onPageLoad(CheckMode),
-          redirectToCheckYouAnswers(userAnswers)
+          checkNextPageForValueThenRoute(CheckMode, userAnswers, SecondContactNamePage, routes.SecondContactNameController.onPageLoad(CheckMode)),
+          resolveAnswersVerificationRoute(userAnswers)
         )
     case SecondContactNamePage =>
-      _ => routes.SecondContactEmailController.onPageLoad(CheckMode)
+      userAnswers => checkNextPageForValueThenRoute(CheckMode, userAnswers, SecondContactEmailPage, routes.SecondContactEmailController.onPageLoad(CheckMode))
     case SecondContactEmailPage =>
-      _ => routes.SecondContactCanWePhoneController.onPageLoad(CheckMode)
+      userAnswers =>
+        checkNextPageForValueThenRoute(CheckMode, userAnswers, SecondContactCanWePhonePage, routes.SecondContactCanWePhoneController.onPageLoad(CheckMode))
     case SecondContactCanWePhonePage =>
       userAnswers =>
         yesNoPage(
@@ -292,6 +294,9 @@ class Navigator @Inject() () {
     case CheckMode =>
       checkRouteMap(page)(userAnswers)
   }
+
+  def checkNextPageForValueThenRoute[A](mode: Mode, userAnswers: UserAnswers, page: QuestionPage[A], call: Call)(implicit rds: Reads[A]): Call =
+    if (mode.equals(CheckMode) && userAnswers.get(page).isDefined) resolveAnswersVerificationRoute(userAnswers) else call
 
   private def resolveAnswersVerificationRoute(userAnswers: UserAnswers): Call =
     resolveNextRoute(userAnswers, routes.CheckYourAnswersController.onPageLoad())
