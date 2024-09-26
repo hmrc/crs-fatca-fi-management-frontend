@@ -17,10 +17,10 @@
 @import components._
 @this(link: Link)
 
-@(isBusiness: Boolean, businessName: String, changeContactDetailsUrl: String)(implicit messages: Messages)
+@(isBusiness: Boolean, businessName: Option[String], changeContactDetailsUrl: String)(implicit messages: Messages)
 
     @changeContactLink = @{if(isBusiness){
-        link(changeContactDetailsUrl, messages("organisationIndex.p3", businessName), Some("change-contact-details"))
+        link(changeContactDetailsUrl, messages("organisationIndex.p3", businessName.get), Some("change-contact-details"))
         } else {link(changeContactDetailsUrl, "index.p3", Some("change-contact-details"))}
     }
 

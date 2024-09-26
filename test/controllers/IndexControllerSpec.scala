@@ -60,7 +60,7 @@ class IndexControllerSpec extends SpecBase {
         isBusiness = false,
         "subscriptionId",
         "/change-contact/individual/details",
-        "",
+        None,
         hasFis = true
       )
 
@@ -95,7 +95,7 @@ class IndexControllerSpec extends SpecBase {
         isBusiness = true,
         "subscriptionId",
         "/change-contact/organisation/details",
-        "Test Business inc",
+        Some("Test Business inc"),
         hasFis = true
       )
 

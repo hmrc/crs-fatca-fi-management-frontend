@@ -47,27 +47,35 @@ class IndexController @Inject() (
       val fatcaId = request.fatcaId
       subscriptionService.getSubscription(fatcaId).flatMap {
         sub =>
-          val changeContactDetailsUrl       = if (sub.isBusiness) conf.changeOrganisationDetailsUrl else conf.changeIndividualDetailsUrl
-          val hasFisFuture: Future[Boolean] = financialInstitutionsService.getListOfFinancialInstitutions(fatcaId).map(_.nonEmpty)
+          if (sub.isBusiness && sub.businessName.isEmpty) {
+            logger.error(s"BusinessName is missing")
+            Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+          } else {
+            financialInstitutionsService
+              .getListOfFinancialInstitutions(fatcaId)
+              .map(_.nonEmpty)
+              .flatMap {
+                hasFis =>
+                  val changeContactDetailsUrl = if (sub.isBusiness) conf.changeOrganisationDetailsUrl else conf.changeIndividualDetailsUrl
+                  val indexPageDetails =
+                    IndexViewModel(sub.isBusiness, fatcaId, changeContactDetailsUrl, sub.businessName, hasFis)
 
-          hasFisFuture.flatMap {
-            hasFis =>
-              val indexPageDetails =
-                IndexViewModel(sub.isBusiness, fatcaId, changeContactDetailsUrl, sub.businessName.getOrElse(""), hasFis)
-
-              sessionRepository.get(fatcaId) flatMap {
-                case Some(_) =>
-                  Future.successful(Ok(view(indexPageDetails)))
-                case None =>
-                  sessionRepository.set(UserAnswers(fatcaId)) map {
-                    case true => Ok(view(indexPageDetails))
-                    case false =>
-                      logger.error(s"Failed to initialize user answers for userId: [$fatcaId]")
-                      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+                  sessionRepository.get(fatcaId) flatMap {
+                    case Some(_) =>
+                      Future.successful(Ok(view(indexPageDetails)))
+                    case None =>
+                      sessionRepository.set(UserAnswers(fatcaId)) map {
+                        case true => Ok(view(indexPageDetails))
+                        case false =>
+                          logger.error(s"Failed to initialize user answers for userId: [$fatcaId]")
+                          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+                      }
                   }
               }
           }
+
       }
+
   }
 
 }

@@ -20,6 +20,6 @@ case class IndexViewModel(
   isBusiness: Boolean,
   fatcaId: String,
   changeContactDetailsUrl: String,
-  businessName: String,
+  businessName: Option[String] = None,
   hasFis: Boolean
 )
