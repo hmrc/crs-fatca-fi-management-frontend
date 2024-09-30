@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.common
 
-import models.UserAnswers
-import pages.addFinancialInstitution.IsRegisteredBusiness.FetchedRegisteredAddressPage
+import models.{AnswersReviewPageType, CheckMode, UserAnswers}
+import pages.addFinancialInstitution.SecondContactExistsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import utils.AddressHelper.formatAddressResponse
-import viewmodels.checkAnswers.CheckYourAnswersViewModel.{accessibleActionItem, getAddressChangeRoute}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object FetchedRegisteredAddressSummary {
+object SecondContactExistsSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(FetchedRegisteredAddressPage).map {
+  def row(answers: UserAnswers, pageType: AnswersReviewPageType)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(SecondContactExistsPage).map {
       answer =>
+        val value = if (answer) "site.yes" else "site.no"
+
         SummaryListRowViewModel(
-          key = "selectAddress.checkYourAnswersLabel",
-          value = ValueViewModel(formatAddressResponse(answer)),
+          key = s"secondContact.${pageType.labelPrefix}YourAnswersLabel",
+          value = ValueViewModel(value),
           actions = Seq(
-            accessibleActionItem("site.change", getAddressChangeRoute(answers))
-              .withVisuallyHiddenText(messages("selectAddress.change.hidden"))
+            accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.SecondContactExistsController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("secondContact.change.hidden"))
           )
         )
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package models
+package models.FinancialInstitutions
 
-import play.api.libs.json._
+import enumeratum._
 
-case class UniqueTaxpayerReference(value: String)
+sealed trait RequestType extends EnumEntry
 
-object UniqueTaxpayerReference {
-  implicit val format: OFormat[UniqueTaxpayerReference] = Json.format[UniqueTaxpayerReference]
+object RequestType extends PlayEnum[RequestType] {
+
+  val values: IndexedSeq[RequestType] = findValues
+
+  case object CREATE extends RequestType
+  case object UPDATE extends RequestType
+  case object DELETE extends RequestType
+  case object VIEW extends RequestType
 
 }

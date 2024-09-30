@@ -14,30 +14,21 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.changeFinancialInstitution
 
-import models.{CheckMode, UserAnswers}
-import pages.addFinancialInstitution.WhatIsGIINPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.checkAnswers.CheckYourAnswersViewModel.accessibleActionItem
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object WhatIsGIINSummary {
+object FinancialInstitutionIdSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(WhatIsGIINPage).map {
-      answer =>
-        SummaryListRowViewModel(
-          key = "whatIsGIIN.checkYourAnswersLabel",
-          value = ValueViewModel(HtmlFormat.escape(answer).toString),
-          actions = Seq(
-            accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.WhatIsGIINController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("whatIsGIIN.change.hidden"))
-          )
-        )
-    }
+  def row(fiId: String)(implicit messages: Messages): SummaryListRow =
+    SummaryListRowViewModel(
+      key = "financialInstitutionId.changeYourAnswersLabel",
+      value = ValueViewModel(HtmlFormat.escape(fiId).toString),
+      actions = Nil
+    )
 
 }

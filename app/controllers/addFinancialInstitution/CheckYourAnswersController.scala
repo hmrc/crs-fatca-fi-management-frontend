@@ -18,14 +18,14 @@ package controllers.addFinancialInstitution
 
 import com.google.inject.Inject
 import controllers.actions._
-import controllers.routes
-import models.UserAnswers
+import models.{CheckAnswers, UserAnswers}
 import pages.Page
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{CheckYourAnswersValidator, ContactHelper}
 import viewmodels.checkAnswers.CheckYourAnswersViewModel._
+import viewmodels.common.{getFirstContactSummaries, getSecondContactSummaries}
 import viewmodels.govuk.summarylist._
 import views.html.addFinancialInstitution.CheckYourAnswersView
 
@@ -46,12 +46,12 @@ class CheckYourAnswersController @Inject() (
       val ua: UserAnswers          = request.userAnswers
       val fiName                   = getFinancialInstitutionName(ua)
       val financialInstitutionList = SummaryListViewModel(getFinancialInstitutionSummaries(ua))
-      val firstContactList         = SummaryListViewModel(getFirstContactSummaries(ua))
-      val secondContactList        = SummaryListViewModel(getSecondContactSummaries(ua))
+      val firstContactList         = SummaryListViewModel(getFirstContactSummaries(ua, CheckAnswers))
+      val secondContactList        = SummaryListViewModel(getSecondContactSummaries(ua, CheckAnswers))
 
       getMissingAnswers(ua) match {
         case Nil => Ok(view(fiName, financialInstitutionList, firstContactList, secondContactList))
-        case _   => Redirect(routes.SomeInformationMissingController.onPageLoad())
+        case _   => Redirect(controllers.routes.SomeInformationMissingController.onPageLoad())
       }
   }
 

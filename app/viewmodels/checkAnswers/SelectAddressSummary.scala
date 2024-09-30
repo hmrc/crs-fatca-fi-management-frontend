@@ -21,7 +21,7 @@ import pages.addFinancialInstitution.SelectAddressPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.checkAnswers.CheckYourAnswersViewModel.accessibleActionItem
+import viewmodels.common.accessibleActionItem
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 

@@ -35,6 +35,14 @@ class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, v
       .get(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/$subscriptionId")
       .execute[HttpResponse]
 
+  def viewFi(subscriptionId: String, fiId: String)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[HttpResponse] =
+    httpClient
+      .get(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/$subscriptionId/$fiId")
+      .execute[HttpResponse]
+
   def addFi(fiDetails: CreateFIDetails)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext

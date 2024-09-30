@@ -40,6 +40,16 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
         res => extractList(res.body)
       )
 
+  def getFinancialInstitution(subscriptionId: String, fiId: String)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[Option[FIDetail]] =
+    connector
+      .viewFi(subscriptionId, fiId)
+      .map(
+        res => extractList(res.body).headOption
+      )
+
   def getInstitutionById(details: Seq[FIDetail], fiid: String): Option[FIDetail] =
     details
       .find(
@@ -94,7 +104,7 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
     }
 
     val giin = userAnswers.get(WhatIsGIINPage) match {
-      case Some(giin) => Seq(TINDetails(UTR, giin, "US"))
+      case Some(giin) => Seq(TINDetails(UTR, giin.value, "US"))
       case _          => Seq.empty
     }
 

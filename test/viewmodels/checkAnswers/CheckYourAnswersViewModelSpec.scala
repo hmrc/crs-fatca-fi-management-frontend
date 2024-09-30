@@ -17,11 +17,12 @@
 package viewmodels.checkAnswers
 
 import base.SpecBase
-import models.{AddressResponse, CheckMode, UserAnswers}
+import models.{AddressResponse, CheckAnswers, CheckMode, GIINumber, UserAnswers}
 import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 import play.api.i18n.Messages
+import viewmodels.common.{getAddressChangeRoute, getFirstContactSummaries, getSecondContactSummaries}
 
 class CheckYourAnswersViewModelSpec extends SpecBase {
 
@@ -51,8 +52,8 @@ class CheckYourAnswersViewModelSpec extends SpecBase {
           .withPage(FirstContactPhoneNumberPage, "04025429852")
           .withPage(SecondContactEmailPage, "test@email.com")
 
-        sut.getFirstContactSummaries(ans).length mustBe 2
-        sut.getFirstContactSummaries(ans2).length mustBe 1
+        getFirstContactSummaries(ans, CheckAnswers).length mustBe 2
+        getFirstContactSummaries(ans2, CheckAnswers).length mustBe 1
       }
       "display phone number not provided row by default" in {
         val ans = ua
@@ -60,16 +61,16 @@ class CheckYourAnswersViewModelSpec extends SpecBase {
           .withPage(FirstContactPhoneNumberPage, "04025429852")
         val ans2 = ua.withPage(FirstContactNamePage, "MrTest")
 
-        sut.getFirstContactSummaries(ans).length mustBe 2
-        sut.getFirstContactSummaries(ans2).length mustBe 2
+        getFirstContactSummaries(ans, CheckAnswers).length mustBe 2
+        getFirstContactSummaries(ans2, CheckAnswers).length mustBe 2
       }
     }
     "getSecondContactSummaries must" - {
       "only return rows for relevant populated answers" in {
         val ans = ua.withPage(SecondContactNamePage, "SecondContact")
 
-        sut.getSecondContactSummaries(emptyUserAnswers).length mustBe 0
-        sut.getSecondContactSummaries(ans).length mustBe 1
+        getSecondContactSummaries(emptyUserAnswers, CheckAnswers).length mustBe 0
+        getSecondContactSummaries(ans, CheckAnswers).length mustBe 1
       }
     }
     "getRegisteredBusinessSummaries must" - {
@@ -77,7 +78,7 @@ class CheckYourAnswersViewModelSpec extends SpecBase {
         val ans = ua
           .withPage(ReportForRegisteredBusinessPage, true)
           .withPage(HaveGIINPage, true)
-          .withPage(WhatIsGIINPage, "someGIIN")
+          .withPage(WhatIsGIINPage, GIINumber("someGIIN"))
           .withPage(FetchedRegisteredAddressPage, AddressResponse("line1", Some("line2"), Some("line3"), Some("line4"), Some("ab12cd"), "GB"))
 
         sut.getRegisteredBusinessSummaries(emptyUserAnswers).length mustBe 0
@@ -88,14 +89,14 @@ class CheckYourAnswersViewModelSpec extends SpecBase {
       "must be WhereIsFIBased when adding another business" in {
         val answers = ua.withPage(ReportForRegisteredBusinessPage, false)
 
-        sut.getAddressChangeRoute(ua) mustBe
+        getAddressChangeRoute(ua) mustBe
           controllers.addFinancialInstitution.routes.WhereIsFIBasedController.onPageLoad(CheckMode).url
-        sut.getAddressChangeRoute(answers) mustBe
+        getAddressChangeRoute(answers) mustBe
           controllers.addFinancialInstitution.routes.WhereIsFIBasedController.onPageLoad(CheckMode).url
       }
       "must be IsTheAddressCorrect when the user is adding themselves as an FI" in {
         val answers = ua.withPage(ReportForRegisteredBusinessPage, true)
-        sut.getAddressChangeRoute(answers) mustBe
+        getAddressChangeRoute(answers) mustBe
           controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(CheckMode).url
       }
 

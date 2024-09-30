@@ -16,7 +16,9 @@
 
 package models.FinancialInstitutions
 
+import models.Address
 import play.api.libs.json.{Json, OFormat}
+import utils.CountryListFactory
 
 final case class FIDetail(
   FIID: String,
@@ -45,6 +47,24 @@ object RemoveFIDetail {
 
 object AddressDetails {
   implicit val format: OFormat[AddressDetails] = Json.format[AddressDetails]
+
+  implicit class AddressDetailsExtension(addressDetails: AddressDetails) {
+
+    def toAddress(factory: CountryListFactory): Option[Address] =
+      for {
+        countryCode <- addressDetails.CountryCode
+        country     <- factory.findCountryWithCode(countryCode)
+      } yield Address(
+        addressLine1 = addressDetails.AddressLine1,
+        addressLine2 = addressDetails.AddressLine2,
+        addressLine3 = addressDetails.AddressLine3,
+        addressLine4 = addressDetails.AddressLine4,
+        postCode = addressDetails.PostalCode,
+        country = country
+      )
+
+  }
+
 }
 
 final case class AddressDetails(

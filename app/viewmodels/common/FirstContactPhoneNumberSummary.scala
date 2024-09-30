@@ -14,32 +14,31 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.common
 
-import models.{CheckMode, UserAnswers}
-import pages.addFinancialInstitution._
+import models.{AnswersReviewPageType, CheckMode, UserAnswers}
+import pages.addFinancialInstitution.{FirstContactHavePhonePage, FirstContactPhoneNumberPage}
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.checkAnswers.CheckYourAnswersViewModel.accessibleActionItem
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object FirstContactPhoneNumberSummary {
 
-  def row(ua: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+  def row(ua: UserAnswers, pageType: AnswersReviewPageType)(implicit messages: Messages): Option[SummaryListRow] = {
     val canPhoneAnswer = ua.get(FirstContactHavePhonePage)
     val phoneAnswer    = ua.get(FirstContactPhoneNumberPage)
 
     Option((canPhoneAnswer, phoneAnswer) match {
-      case (Some(true), Some(answer)) => createRow(answer)
-      case (_, _)                     => createRow(messages("site.notProvided"))
+      case (Some(true), Some(answer)) => createRow(answer, pageType)
+      case (_, _)                     => createRow(messages("site.notProvided"), pageType)
     })
   }
 
-  private def createRow(answer: String)(implicit messages: Messages) =
+  private def createRow(answer: String, pageType: AnswersReviewPageType)(implicit messages: Messages) =
     SummaryListRowViewModel(
-      key = "firstContactPhoneNumber.checkYourAnswersLabel",
+      key = s"firstContactPhoneNumber.${pageType.labelPrefix}YourAnswersLabel",
       value = ValueViewModel(HtmlContent(answer)),
       actions = Seq(
         accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.FirstContactHavePhoneController.onPageLoad(CheckMode).url)

@@ -20,7 +20,7 @@ import models.{CheckMode, UserAnswers}
 import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.checkAnswers.CheckYourAnswersViewModel.accessibleActionItem
+import viewmodels.common.accessibleActionItem
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 

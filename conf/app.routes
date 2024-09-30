@@ -152,4 +152,7 @@ GET         /problem/some-information-is-missing                          contro
 GET         /remove-fi/:fiid                                              controllers.RemoveAreYouSureController.onPageLoad(fiid:String)
 POST        /remove-fi/:fiid                                              controllers.RemoveAreYouSureController.onSubmit(fiid:String)
 
+GET         /change-answers/:fiid                                         controllers.changeFinancialInstitution.ChangeFinancialInstitutionController.onPageLoad(fiid: String)
+POST        /change-answers                                               controllers.changeFinancialInstitution.ChangeFinancialInstitutionController.confirmAndAdd()
+
 GET        /details-updated                       controllers.DetailsUpdatedController.onPageLoad()
