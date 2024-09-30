@@ -354,3 +354,8 @@ removeAreYouSure.para = This will permanently remove this financial institution 
 removeAreYouSure.para.list.1 = send, access, update or delete reports for the FI ID {0}
 removeAreYouSure.para.list.2 = access or change details for the FI ID {0}
 removeAreYouSure.warning = Removing a financial institution that has inaccurate or incomplete reports could result in a penalty for that financial institution.
+
+detailsUpdated.title = Details updated
+detailsUpdated.heading = Details updated for {0}
+detailsUpdated.p1 = Back to manage your financial institutions
+detailsUpdated.p2 = Back to manage your CRS and FATCA reports
