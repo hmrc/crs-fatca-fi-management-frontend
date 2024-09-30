@@ -20,7 +20,7 @@ import models.UserAnswers
 import pages.addFinancialInstitution.SelectedAddressLookupPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import utils.AddressHelper.formatAddress
+import utils.AddressHelper.formatAddressLookupBlock
 import viewmodels.common.{accessibleActionItem, getAddressChangeRoute}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
@@ -32,7 +32,7 @@ object SelectedAddressLookupSummary {
       answer =>
         SummaryListRowViewModel(
           key = "selectAddress.checkYourAnswersLabel",
-          value = ValueViewModel(formatAddress(answer)),
+          value = ValueViewModel(formatAddressLookupBlock(answer)),
           actions = Seq(
             accessibleActionItem("site.change", getAddressChangeRoute(answers))
               .withVisuallyHiddenText(messages("selectAddress.change.hidden"))

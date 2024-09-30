@@ -16,7 +16,6 @@
 
 package models
 
-import models.FinancialInstitutions.AddressDetails
 import play.api.libs.json._
 
 case class AddressResponse(
@@ -64,15 +63,5 @@ case class AddressResponse(
 object AddressResponse {
 
   implicit val format: OFormat[AddressResponse] = Json.format[AddressResponse]
-
-  implicit def fromAddressDetails(addressDetails: AddressDetails): AddressResponse =
-    AddressResponse(
-      addressLine1 = addressDetails.AddressLine1,
-      addressLine2 = addressDetails.AddressLine2,
-      addressLine3 = Option(addressDetails.AddressLine3),
-      addressLine4 = addressDetails.AddressLine4,
-      postalCode = addressDetails.PostalCode,
-      countryCode = addressDetails.CountryCode.getOrElse(throw new IllegalStateException("CountryCode is empty"))
-    )
 
 }

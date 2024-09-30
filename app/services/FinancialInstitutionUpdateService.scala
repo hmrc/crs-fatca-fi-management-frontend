@@ -18,18 +18,21 @@ package services
 
 import com.google.inject.Inject
 import models.FinancialInstitutions.TINType.{GIIN, UTR}
-import models.FinancialInstitutions.{ContactDetails, FIDetail, TINType}
-import models.{AddressResponse, GIINumber, TaxIdentificationNumber, UniqueTaxpayerReference, UserAnswers}
+import models.FinancialInstitutions._
+import models.{GIINumber, TaxIdentificationNumber, UniqueTaxpayerReference, UserAnswers}
 import pages.QuestionPage
-import pages.addFinancialInstitution.IsRegisteredBusiness.FetchedRegisteredAddressPage
 import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.libs.json.{Json, Reads}
 import repositories.SessionRepository
+import utils.CountryListFactory
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FinancialInstitutionUpdateService @Inject() (sessionRepository: SessionRepository)(implicit ec: ExecutionContext) {
+class FinancialInstitutionUpdateService @Inject() (
+  countryListFactory: CountryListFactory,
+  sessionRepository: SessionRepository
+)(implicit ec: ExecutionContext) {
 
   def populateAndSaveFiDetails(userAnswers: UserAnswers, fiDetails: FIDetail): Future[UserAnswers] =
     for {
@@ -40,9 +43,9 @@ class FinancialInstitutionUpdateService @Inject() (sessionRepository: SessionRep
 
   def fiDetailsHasChanged(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean =
     userAnswers.get(NameOfFinancialInstitutionPage).exists(_ != fiDetails.FIName) ||
-      checkTaxIdentifierForChanges(userAnswers, fiDetails, UTR, HaveUniqueTaxpayerReferencePage, WhatIsUniqueTaxpayerReferencePage) ||
-      checkTaxIdentifierForChanges(userAnswers, fiDetails, GIIN, HaveGIINPage, WhatIsGIINPage) ||
-      userAnswers.get(FetchedRegisteredAddressPage).exists(_ != AddressResponse.fromAddressDetails(fiDetails.AddressDetails)) ||
+      checkTaxIdentifierForChanges(userAnswers, fiDetails.TINDetails, UTR, HaveUniqueTaxpayerReferencePage, WhatIsUniqueTaxpayerReferencePage) ||
+      checkTaxIdentifierForChanges(userAnswers, fiDetails.TINDetails, GIIN, HaveGIINPage, WhatIsGIINPage) ||
+      checkAddressForChanges(userAnswers, fiDetails.AddressDetails) ||
       checkPrimaryContactForChanges(userAnswers, fiDetails) ||
       checkSecondaryContactForChanges(userAnswers, fiDetails)
 
@@ -55,15 +58,15 @@ class FinancialInstitutionUpdateService @Inject() (sessionRepository: SessionRep
   )(implicit ec: ExecutionContext): Future[UserAnswers] =
     for {
       a <- Future.fromTry(userAnswers.set(NameOfFinancialInstitutionPage, fiDetails.FIName))
-      b <- setUTR(a, fiDetails)
-      c <- setGIIN(b, fiDetails)
-      d <- Future.fromTry(c.set(FetchedRegisteredAddressPage, AddressResponse.fromAddressDetails(fiDetails.AddressDetails)))
+      b <- setUTR(a, fiDetails.TINDetails)
+      c <- setGIIN(b, fiDetails.TINDetails)
+      d <- setAddress(c, fiDetails.AddressDetails)
       e <- setPrimaryContactDetails(d, fiDetails)
       f <- setSecondaryContactDetails(e, fiDetails)
     } yield f
 
-  private def setUTR(userAnswers: UserAnswers, fiDetails: FIDetail)(implicit ec: ExecutionContext): Future[UserAnswers] =
-    fiDetails.TINDetails.find(_.TINType == UTR) match {
+  private def setUTR(userAnswers: UserAnswers, tinDetails: Seq[TINDetails])(implicit ec: ExecutionContext): Future[UserAnswers] =
+    tinDetails.find(_.TINType == UTR) match {
       case Some(details) =>
         for {
           a <- Future.fromTry(userAnswers.set(HaveUniqueTaxpayerReferencePage, true))
@@ -76,8 +79,8 @@ class FinancialInstitutionUpdateService @Inject() (sessionRepository: SessionRep
         } yield b
     }
 
-  private def setGIIN(userAnswers: UserAnswers, fiDetails: FIDetail)(implicit ec: ExecutionContext): Future[UserAnswers] =
-    fiDetails.TINDetails.find(_.TINType == GIIN) match {
+  private def setGIIN(userAnswers: UserAnswers, tinDetails: Seq[TINDetails])(implicit ec: ExecutionContext): Future[UserAnswers] =
+    tinDetails.find(_.TINType == GIIN) match {
       case Some(details) =>
         for {
           a <- Future.fromTry(userAnswers.set(HaveGIINPage, true))
@@ -89,6 +92,19 @@ class FinancialInstitutionUpdateService @Inject() (sessionRepository: SessionRep
           b <- Future.fromTry(a.remove(WhatIsGIINPage))
         } yield b
     }
+
+  private def setAddress(userAnswers: UserAnswers, addressDetails: AddressDetails): Future[UserAnswers] = {
+    val isUkAddress = addressDetails.CountryCode.exists(countryListFactory.countryCodesForUkCountries.contains)
+    val addressPage = if (isUkAddress) UkAddressPage else NonUkAddressPage
+    for {
+      a <- Future.fromTry(userAnswers.set(WhereIsFIBasedPage, isUkAddress))
+      b <- addressDetails.toAddress(countryListFactory) match {
+        case Some(address) => Future.fromTry(a.set(addressPage, address))
+        case None =>
+          Future.failed(new RuntimeException(s"Failed to find country with code ${addressDetails.CountryCode}"))
+      }
+    } yield b
+  }
 
   private def setPrimaryContactDetails(userAnswers: UserAnswers, fiDetails: FIDetail)(implicit ec: ExecutionContext): Future[UserAnswers] = {
     val primaryContact = fiDetails.PrimaryContactDetails
@@ -140,18 +156,39 @@ class FinancialInstitutionUpdateService @Inject() (sessionRepository: SessionRep
 
   private def checkTaxIdentifierForChanges[T <: TaxIdentificationNumber](
     userAnswers: UserAnswers,
-    fiDetails: FIDetail,
+    tinDetails: Seq[TINDetails],
     idType: TINType,
     haveIdTypePage: QuestionPage[Boolean],
     idTypePage: QuestionPage[T]
   )(implicit reads: Reads[T]): Boolean =
-    fiDetails.TINDetails.find(_.TINType == idType) match {
+    tinDetails.find(_.TINType == idType) match {
       case Some(id) =>
         userAnswers.get(haveIdTypePage).contains(false) ||
-        userAnswers.get(idTypePage).exists(_.value != id.TIN)
+        userAnswers.get(idTypePage).exists(_.value.toLowerCase != id.TIN.toLowerCase)
       case None =>
         userAnswers.get(haveIdTypePage).contains(true)
     }
+
+  private def checkAddressForChanges(userAnswers: UserAnswers, addressDetails: AddressDetails): Boolean = {
+    val isUkAddress    = addressDetails.CountryCode.exists(countryListFactory.countryCodesForUkCountries.contains)
+    val fetchedAddress = addressDetails.toAddress(countryListFactory)
+    val enteredAddress = if (isUkAddress) {
+      (userAnswers.get(UkAddressPage), userAnswers.get(SelectedAddressLookupPage)) match {
+        case (Some(ukAddress), None)             => Option(ukAddress)
+        case (None, Some(selectedLookupAddress)) => Option(selectedLookupAddress.toAddress)
+        case _                                   => None
+      }
+    } else {
+      userAnswers.get(NonUkAddressPage)
+    }
+
+    val addressHasChanged = (fetchedAddress, enteredAddress) match {
+      case (Some(a), Some(b)) => a != b
+      case (None, None)       => false
+      case _                  => true
+    }
+    userAnswers.get(WhereIsFIBasedPage).contains(!isUkAddress) || addressHasChanged
+  }
 
   private def checkPrimaryContactForChanges(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean = {
     val primaryContact = fiDetails.PrimaryContactDetails

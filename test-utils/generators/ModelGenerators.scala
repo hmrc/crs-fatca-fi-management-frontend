@@ -94,7 +94,7 @@ trait ModelGenerators extends RegexConstants with Generators {
       addressLine2,
       addressLine3,
       addressLine4,
-      Option(countryCode),
+      Option(countryCode.toUpperCase),
       postalCode
     )
   }
