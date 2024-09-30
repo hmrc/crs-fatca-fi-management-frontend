@@ -21,13 +21,17 @@ import controllers.actions._
 import controllers.routes
 import models.UserAnswers
 import pages.Page
+import play.api.i18n.Lang.logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.FinancialInstitutionsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{CheckYourAnswersValidator, ContactHelper}
 import viewmodels.checkAnswers.CheckYourAnswersViewModel._
 import viewmodels.govuk.summarylist._
 import views.html.addFinancialInstitution.CheckYourAnswersView
+
+import scala.concurrent.ExecutionContext
 
 class CheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
@@ -35,9 +39,11 @@ class CheckYourAnswersController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   checkForInformationSent: CheckForInformationSentAction,
+  service: FinancialInstitutionsService,
   val controllerComponents: MessagesControllerComponents,
   view: CheckYourAnswersView
-) extends FrontendBaseController
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
     with ContactHelper
     with I18nSupport {
 
@@ -55,8 +61,19 @@ class CheckYourAnswersController @Inject() (
       }
   }
 
-  def confirmAndAdd(): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkForInformationSent) {
-    Redirect(controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad())
+  def confirmAndAdd(): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkForInformationSent).async {
+    implicit request =>
+      service
+        .addFinancialInstitution(request.fatcaId, request.userAnswers)
+        .map {
+          _ =>
+            Redirect(controllers.addFinancialInstitution.routes.FinancialInstitutionAddedConfirmationController.onPageLoad)
+        }
+        .recover {
+          case ex: Exception =>
+            logger.error(s"Error while adding an FI ${ex.getMessage}")
+            Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+        }
   }
 
   private def getMissingAnswers(userAnswers: UserAnswers): Seq[Page] = CheckYourAnswersValidator(userAnswers).validate

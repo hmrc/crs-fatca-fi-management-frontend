@@ -18,6 +18,8 @@ package connectors
 
 import config.FrontendAppConfig
 import models.FinancialInstitutions.{CreateFIDetails, RemoveFIDetail}
+import models.response.ErrorDetails
+import play.api.http.Status.OK
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
@@ -38,11 +40,18 @@ class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, v
   def addFi(fiDetails: CreateFIDetails)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[HttpResponse] =
+  ): Future[Either[ErrorDetails, HttpResponse]] =
     httpClient
       .post(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/create")
       .withBody(Json.toJson(fiDetails))
       .execute[HttpResponse]
+      .map {
+        response =>
+          response.status match {
+            case OK => Right(response)
+            case _  => Left((response.json \ "ErrorDetails").as[ErrorDetails])
+          }
+      }
 
   def removeFi(fiDetails: RemoveFIDetail)(implicit
     hc: HeaderCarrier,

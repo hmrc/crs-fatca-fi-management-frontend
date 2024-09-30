@@ -19,8 +19,9 @@ package services
 import base.SpecBase
 import connectors.FinancialInstitutionsConnector
 import generators.{ModelGenerators, UserAnswersGenerator}
-import models.FinancialInstitutions.FIDetail
+import models.FinancialInstitutions.{CreateFIDetails, FIDetail}
 import models.UserAnswers
+import models.response.ErrorDetails
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar._
@@ -57,16 +58,35 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
       sut.getInstitutionById(fiDetails, noFiid) mustBe None
 
     }
-    "addFinancialInstitution adds FI details" in {
-      val mockResponse   = Future.successful(HttpResponse(OK, "{}"))
+    "addFinancialInstitution" - {
       val subscriptionId = "XE5123456789"
-      forAll(fiNotRegistered.arbitrary) {
-        (userAnswers: UserAnswers) =>
-          when(mockConnector.addFi(any())(any[HeaderCarrier](), any[ExecutionContext]())).thenReturn(mockResponse)
-          val result = sut.addFinancialInstitution(subscriptionId, userAnswers)
-          result.futureValue mustBe ()
+
+      "handles error when the connector returns ErrorDetails" in {
+        val errorDetail = ErrorDetails("yyyy:mm:dd:hh:ss", "correlationId", Some("400"), Some("Invalid ID"), None, None)
+
+        forAll(fiNotRegistered.arbitrary) {
+          (userAnswers: UserAnswers) =>
+            when(mockConnector.addFi(any[CreateFIDetails]())(any[HeaderCarrier](), any[ExecutionContext]()))
+              .thenReturn(Future.successful(Left(errorDetail)))
+            val exception = intercept[Exception] {
+              sut.addFinancialInstitution(subscriptionId, userAnswers).futureValue
+            }
+            exception.getMessage must include("Failed to add an FI")
+        }
+
+      }
+      "adds FI details" in {
+        val mockResponse = Future.successful(Right(HttpResponse(OK, "{}")))
+
+        forAll(fiNotRegistered.arbitrary) {
+          (userAnswers: UserAnswers) =>
+            when(mockConnector.addFi(any())(any[HeaderCarrier](), any[ExecutionContext]())).thenReturn(mockResponse)
+            val result = sut.addFinancialInstitution(subscriptionId, userAnswers)
+            result.futureValue mustBe ()
+        }
       }
     }
+
     "removeFinancialInstitution triggers removeFi" in {
       val mockResponse = Future.successful(HttpResponse(OK, "{}"))
       when(mockConnector.removeFi(any())(any[HeaderCarrier](), any[ExecutionContext]())).thenReturn(mockResponse)

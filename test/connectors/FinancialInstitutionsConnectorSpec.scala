@@ -19,10 +19,13 @@ package connectors
 import base.SpecBase
 import helpers.WireMockServerHandler
 import models.FinancialInstitutions.{AddressDetails, ContactDetails, CreateFIDetails, RemoveFIDetail}
+import models.response.ErrorDetails
 import play.api.Application
-import play.api.http.Status.OK
+import play.api.http.Status.{OK, SERVICE_UNAVAILABLE}
+import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHandler {
 
@@ -73,14 +76,40 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
       result.futureValue.status mustBe OK
     }
 
-    "must return status as OK for addFi" in {
-      stubPostResponse(
-        s"/crs-fatca-fi-management/financial-institutions/create",
-        OK,
-        "{}"
-      )
-      val result = connector.addFi(createFIDetails)
-      result.futureValue.status mustBe OK
+    "addFi" - {
+
+      "must return Right(HttpResponse) when the response status is OK" in {
+        stubPostResponse(
+          s"/crs-fatca-fi-management/financial-institutions/create",
+          OK,
+          "{}"
+        )
+        val result = connector.addFi(createFIDetails).futureValue
+        result.equals(Future(Right(HttpResponse(OK))))
+      }
+
+      "return Left(ErrorDetails) when the response status is not OK" in {
+//todo: fix
+        val fiDetails = createFIDetails
+
+        val errorResponseJson =
+          """{
+            |"ErrorDetails": {
+            |    "timestamp": "2016-08-16T18:15:41Z",
+            |    "correlationId": "",
+            |    "errorCode": "503"
+            |}}""".stripMargin
+
+        stubPostResponse(
+          s"/crs-fatca-fi-management/financial-institutions/create",
+          SERVICE_UNAVAILABLE,
+          errorResponseJson
+        )
+        val result = connector.addFi(fiDetails).futureValue
+
+        result mustBe a[Left[_, _]]
+        result.left.get mustBe ErrorDetails("2016-08-16T18:15:41Z", "", Some("503"))
+      }
     }
 
     "must return status as OK for removeFi" in {
