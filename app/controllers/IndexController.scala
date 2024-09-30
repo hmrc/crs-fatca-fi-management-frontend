@@ -24,6 +24,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{FinancialInstitutionsService, SubscriptionService}
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.IndexView
 
@@ -57,7 +58,7 @@ class IndexController @Inject() (
               .map(_.nonEmpty)
               .flatMap {
                 hasFis =>
-                  val changeContactDetailsUrl = if (sub.isBusiness) conf.changeOrganisationDetailsUrl else conf.changeIndividualDetailsUrl
+                  val changeContactDetailsUrl = if (request.userType == Individual) conf.changeIndividualDetailsUrl else conf.changeOrganisationDetailsUrl
                   val indexPageDetails =
                     IndexViewModel(sub.isBusiness, fatcaId, changeContactDetailsUrl, sub.businessName, hasFis)
 
