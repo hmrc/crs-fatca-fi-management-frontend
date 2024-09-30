@@ -44,6 +44,7 @@ class IndexController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = identify.async {
     implicit request =>
+      sessionRepository.set(UserAnswers.apply(request.userId))
       val fatcaId = request.fatcaId
       subscriptionService.getSubscription(fatcaId).flatMap {
         sub =>
