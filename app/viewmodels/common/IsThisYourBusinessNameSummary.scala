@@ -17,8 +17,9 @@
 package viewmodels.common
 
 import models.{AnswersReviewPageType, CheckMode, UserAnswers}
-import pages.addFinancialInstitution.IsRegisteredBusiness.IsThisYourBusinessNamePage
+import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
 import play.api.i18n.Messages
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
@@ -26,13 +27,11 @@ import viewmodels.implicits._
 object IsThisYourBusinessNameSummary {
 
   def row(answers: UserAnswers, pageType: AnswersReviewPageType)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(IsThisYourBusinessNamePage).map {
+    answers.get(NameOfFinancialInstitutionPage).map {
       answer =>
-        val value = if (answer) "site.yes" else "site.no"
-
         SummaryListRowViewModel(
           key = s"isThisYourBusinessName.${pageType.labelPrefix}YourAnswersLabel",
-          value = ValueViewModel(value),
+          value = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
             accessibleActionItem("site.change",
                                  controllers.addFinancialInstitution.registeredBusiness.routes.IsThisYourBusinessNameController.onPageLoad(CheckMode).url
