@@ -20,9 +20,10 @@ import base.SpecBase
 import generators.Generators
 import helpers.WireMockServerHandler
 import models.FinancialInstitutions.{AddressDetails, ContactDetails, CreateFIDetails, RemoveFIDetail}
+import models.response.ErrorDetails
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.Application
-import play.api.http.Status.OK
+import play.api.http.Status.{OK, SERVICE_UNAVAILABLE}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -87,16 +88,38 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
       }
     }
 
-    "must return status as OK for addFi" in {
-      stubPostResponse(
-        s"/crs-fatca-fi-management/financial-institutions/create",
-        OK,
-        "{}"
-      )
-      val result = connector.addFi(createFIDetails)
-      result.futureValue.status mustBe OK
-    }
+    "addFi" - {
 
+      "must return Right(HttpResponse) when the response status is OK" in {
+        stubPostResponse(
+          s"/crs-fatca-fi-management/financial-institutions/create",
+          OK,
+          "{}"
+        )
+        val result = connector.addFi(createFIDetails).futureValue
+        result mustBe a[Right[_, _]]
+        result.right.get.status mustBe OK
+      }
+
+      "must return Left(ErrorDetails) when the response status is not OK" in {
+        val errorResponseJson =
+          """{
+            |"ErrorDetails": {
+            |    "timestamp": "2016-08-16T18:15:41Z",
+            |    "correlationId": "",
+            |    "errorCode": "503"
+            |}}""".stripMargin
+
+        stubPostResponse(
+          s"/crs-fatca-fi-management/financial-institutions/create",
+          SERVICE_UNAVAILABLE,
+          errorResponseJson
+        )
+        val result = connector.addFi(createFIDetails).futureValue
+
+        result mustBe a[Left[ErrorDetails, _]]
+      }
+    }
     "must return status as OK for removeFi" in {
       val removeFIDetail = RemoveFIDetail("FIID", "SubscriptionID")
       stubPostResponse(

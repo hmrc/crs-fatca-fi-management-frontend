@@ -21,15 +21,21 @@ import controllers.routes
 import generators.{ModelGenerators, UserAnswersGenerator}
 import models.UserAnswers
 import navigation.{FakeNavigator, Navigator}
-import org.scalatestplus.mockito.MockitoSugar.mock
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
+import pages.addFinancialInstitution._
 import play.api.i18n.Messages
 import play.api.inject.bind
-import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.FinancialInstitutionsService
+import uk.gov.hmrc.http.HeaderCarrier
 import viewmodels.govuk.SummaryListFluency
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with ModelGenerators with UserAnswersGenerator {
   implicit val mockMessages: Messages = mock[Messages]
@@ -110,8 +116,49 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "confirmAndAdd" - {
-      "must redirect to self (until the PUT endpoint exists)" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(data = Json.obj(("key", "value"))))).build()
+      val mockService = mock[FinancialInstitutionsService]
+
+      val someUserAnswers = emptyUserAnswers
+        .withPage(NameOfFinancialInstitutionPage, "test")
+        .withPage(HaveUniqueTaxpayerReferencePage, false)
+        .withPage(HaveGIINPage, false)
+        .withPage(WhereIsFIBasedPage, false)
+        .withPage(WhereIsFIBasedPage, true)
+        .withPage(SelectedAddressLookupPage, testAddressLookup)
+        .withPage(IsThisAddressPage, true)
+        .withPage(FirstContactNamePage, "MrTest")
+        .withPage(FirstContactEmailPage, "MrTest@test.com")
+        .withPage(FirstContactHavePhonePage, false)
+        .withPage(SecondContactExistsPage, false)
+
+      "must redirect to error page when an exception is thrown" in {
+
+        when(mockService.addFinancialInstitution(any[String](), any[UserAnswers]())(any[HeaderCarrier](), any[ExecutionContext]()))
+          .thenReturn(Future.failed(new Exception("Something went wrong")))
+
+        val application = applicationBuilder(userAnswers = Some(someUserAnswers))
+          .overrides(
+            bind[FinancialInstitutionsService].toInstance(mockService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.addFinancialInstitution.routes.CheckYourAnswersController.confirmAndAdd().url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+      "must redirect to confirmation page when submitting answers" in {
+        when(mockService.addFinancialInstitution(any[String](), any[UserAnswers]())(any[HeaderCarrier](), any[ExecutionContext]()))
+          .thenReturn(Future.successful())
+
+        val application = applicationBuilder(userAnswers = Some(someUserAnswers))
+          .overrides(
+            bind[FinancialInstitutionsService].toInstance(mockService)
+          )
+          .build()
 
         running(application) {
           val request = FakeRequest(POST, controllers.addFinancialInstitution.routes.CheckYourAnswersController.confirmAndAdd().url)
@@ -119,8 +166,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad().url
-
+          redirectLocation(result).value mustEqual controllers.addFinancialInstitution.routes.FinancialInstitutionAddedConfirmationController.onPageLoad.url
         }
       }
 
