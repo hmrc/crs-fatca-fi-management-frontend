@@ -70,8 +70,7 @@ class CheckYourAnswersController @Inject() (
             Redirect(controllers.addFinancialInstitution.routes.FinancialInstitutionAddedConfirmationController.onPageLoad)
         }
         .recover {
-          case ex: Exception =>
-            logger.error(s"Error while adding an FI ${ex.getMessage}")
+          case _ =>
             Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
         }
   }

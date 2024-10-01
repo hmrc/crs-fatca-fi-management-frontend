@@ -20,10 +20,12 @@ import config.FrontendAppConfig
 import models.FinancialInstitutions.{CreateFIDetails, RemoveFIDetail}
 import models.response.ErrorDetails
 import play.api.http.Status.OK
+import play.api.i18n.Lang.logger
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
+import java.time.LocalDateTime
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -51,6 +53,11 @@ class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, v
             case OK => Right(response)
             case _  => Left((response.json \ "ErrorDetails").as[ErrorDetails])
           }
+      }
+      .recoverWith {
+        case e: Exception =>
+          logger.error(s"Error while adding an FI: ${e.getMessage}")
+          Future.successful(Left(ErrorDetails(s"${LocalDateTime.now()}", fiDetails.SubscriptionID, None, Some(s"Add FI failed: ${e.getMessage}"))))
       }
 
   def removeFi(fiDetails: RemoveFIDetail)(implicit

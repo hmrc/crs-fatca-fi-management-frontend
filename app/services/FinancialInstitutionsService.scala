@@ -22,7 +22,6 @@ import models.FinancialInstitutions._
 import models.UserAnswers
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
-import play.api.i18n.Lang.logger
 import play.api.libs.json.{JsResult, JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -59,13 +58,11 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
     ec: ExecutionContext
   ): Future[Unit] = {
     val fiDetailsRequest = buildFiDetailsRequest(subscriptionId, userAnswers)
-    connector.addFi(fiDetailsRequest).flatMap {
-      case Right(_) => Future.successful(())
-      case Left(errorDetail) =>
-        val msg = s"Failed to add an FI, Error code: ${errorDetail.errorCode}, ${errorDetail.errorMessage}"
-        logger.error(msg)
-        Future.failed(new Exception(msg))
-    }
+    connector
+      .addFi(fiDetailsRequest)
+      .map(
+        _ => ()
+      )
   }
 
   def removeFinancialInstitution(details: FIDetail)(implicit

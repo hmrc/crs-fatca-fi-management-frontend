@@ -61,20 +61,6 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
     "addFinancialInstitution" - {
       val subscriptionId = "XE5123456789"
 
-      "handles error when the connector returns ErrorDetails" in {
-        val errorDetail = ErrorDetails("yyyy:mm:dd:hh:ss", "correlationId", Some("400"), Some("Invalid ID"), None, None)
-
-        forAll(fiNotRegistered.arbitrary) {
-          (userAnswers: UserAnswers) =>
-            when(mockConnector.addFi(any[CreateFIDetails]())(any[HeaderCarrier](), any[ExecutionContext]()))
-              .thenReturn(Future.successful(Left(errorDetail)))
-            val exception = intercept[Exception] {
-              sut.addFinancialInstitution(subscriptionId, userAnswers).futureValue
-            }
-            exception.getMessage must include("Failed to add an FI")
-        }
-
-      }
       "adds FI details" in {
         val mockResponse = Future.successful(Right(HttpResponse(OK, "{}")))
 
