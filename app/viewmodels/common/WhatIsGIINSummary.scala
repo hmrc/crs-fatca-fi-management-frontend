@@ -14,28 +14,27 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.common
 
-import models.{CheckMode, UserAnswers}
-import pages.addFinancialInstitution.WhatIsUniqueTaxpayerReferencePage
+import models.{AnswersReviewPageType, CheckMode, UserAnswers}
+import pages.addFinancialInstitution.WhatIsGIINPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.checkAnswers.CheckYourAnswersViewModel.accessibleActionItem
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object WhatIsUniqueTaxpayerReferenceSummary {
+object WhatIsGIINSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(WhatIsUniqueTaxpayerReferencePage).map {
+  def row(answers: UserAnswers, pageType: AnswersReviewPageType)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(WhatIsGIINPage).map {
       answer =>
         SummaryListRowViewModel(
-          key = "whatIsUniqueTaxpayerReference.checkYourAnswersLabel",
+          key = s"whatIsGIIN.${pageType.labelPrefix}YourAnswersLabel",
           value = ValueViewModel(HtmlFormat.escape(answer.value).toString),
           actions = Seq(
-            accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("whatIsUniqueTaxpayerReference.change.hidden"))
+            accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.WhatIsGIINController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("whatIsGIIN.change.hidden"))
           )
         )
     }

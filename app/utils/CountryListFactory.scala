@@ -28,7 +28,7 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class CountryListFactory @Inject() (environment: Environment, appConfig: FrontendAppConfig) {
 
-  private val countryCodesForUkCountries: Set[String] = Set("GB", "UK", "GG", "JE", "IM")
+  val countryCodesForUkCountries: Set[String] = Set("GB", "UK", "GG", "JE", "IM")
 
   lazy val countryList: Seq[Country] = getCountryList
 

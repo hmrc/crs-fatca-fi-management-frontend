@@ -18,7 +18,6 @@ package utils
 
 import base.SpecBase
 import models.{Address, AddressLookup, AddressResponse, Country}
-import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 
 class AddressHelperSpec extends SpecBase {
@@ -64,6 +63,24 @@ class AddressHelperSpec extends SpecBase {
       )
       val result = sut.formatAddressResponse(address)
       result.equals(expectedResult)
+    }
+
+    "must format AddressLookupBlock as html" in {
+      val addressLookup = AddressLookup(Some("line1"), Some("line2"), Some("line3"), Some("line4"), "town", Some("county"), "postcode")
+
+      val result = sut.formatAddressLookupBlock(addressLookup)
+
+      val formattedAddress = HtmlContent(
+        s"""|<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>${addressLookup.addressLine1.value}</p>
+               |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>${addressLookup.addressLine2.value}</p>
+               |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>${addressLookup.addressLine3.value}</p>
+               |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>${addressLookup.addressLine4.value}</p>
+               |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>${addressLookup.town}</p>
+               |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>${addressLookup.postcode}</p>
+               |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>${addressLookup.county.value}</p>
+               |""".stripMargin.replaceAll("\\n", "")
+      )
+      result mustBe formattedAddress
     }
 
   }

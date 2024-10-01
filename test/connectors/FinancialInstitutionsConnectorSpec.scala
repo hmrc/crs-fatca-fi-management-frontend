@@ -17,15 +17,17 @@
 package connectors
 
 import base.SpecBase
+import generators.Generators
 import helpers.WireMockServerHandler
 import models.FinancialInstitutions.{AddressDetails, ContactDetails, CreateFIDetails, RemoveFIDetail}
 import models.response.ErrorDetails
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.Application
 import play.api.http.Status.{OK, SERVICE_UNAVAILABLE}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHandler {
+class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckDrivenPropertyChecks with Generators {
 
   lazy val app: Application = applicationBuilder()
     .configure(
@@ -74,6 +76,18 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
       result.futureValue.status mustBe OK
     }
 
+    "must return status as OK for viewFI" in {
+      forAll(validSubscriptionID, validFiId) {
+        (subscriptionId, fiId) =>
+          stubResponse(
+            s"/crs-fatca-fi-management/financial-institutions/$subscriptionId/$fiId",
+            OK
+          )
+          val result = connector.viewFi(subscriptionId, fiId)
+          result.futureValue.status mustBe OK
+      }
+    }
+
     "addFi" - {
 
       "must return Right(HttpResponse) when the response status is OK" in {
@@ -105,18 +119,16 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
 
         result mustBe a[Left[ErrorDetails, _]]
       }
-
-      "must return status as OK for removeFi" in {
-        val removeFIDetail = RemoveFIDetail("FIID", "SubscriptionID")
-        stubPostResponse(
-          s"/crs-fatca-fi-management/financial-institutions/remove",
-          OK,
-          "{}"
-        )
-        val result = connector.removeFi(removeFIDetail)
-        result.futureValue.status mustBe OK
-      }
-
+    }
+    "must return status as OK for removeFi" in {
+      val removeFIDetail = RemoveFIDetail("FIID", "SubscriptionID")
+      stubPostResponse(
+        s"/crs-fatca-fi-management/financial-institutions/remove",
+        OK,
+        "{}"
+      )
+      val result = connector.removeFi(removeFIDetail)
+      result.futureValue.status mustBe OK
     }
 
   }

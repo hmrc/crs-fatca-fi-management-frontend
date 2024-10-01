@@ -14,35 +14,34 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.common
 
-import models.{CheckMode, UserAnswers}
-import pages.addFinancialInstitution._
+import models.{AnswersReviewPageType, CheckMode, UserAnswers}
+import pages.addFinancialInstitution.{SecondContactCanWePhonePage, SecondContactExistsPage, SecondContactPhoneNumberPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.checkAnswers.CheckYourAnswersViewModel.accessibleActionItem
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object SecondContactPhoneNumberSummary {
 
-  def row(ua: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+  def row(ua: UserAnswers, pageType: AnswersReviewPageType)(implicit messages: Messages): Option[SummaryListRow] = {
     val sendContactExists = ua.get(SecondContactExistsPage)
     val canPhoneAnswer    = ua.get(SecondContactCanWePhonePage)
     val phoneAnswer       = ua.get(SecondContactPhoneNumberPage)
 
     (sendContactExists, canPhoneAnswer, phoneAnswer) match {
       case (None, _, _)                           => None
-      case (Some(true), Some(false), _)           => Option(createRow(messages("site.notProvided")))
-      case (Some(true), Some(true), Some(answer)) => Option(createRow(answer))
+      case (Some(true), Some(false), _)           => Option(createRow(messages("site.notProvided"), pageType))
+      case (Some(true), Some(true), Some(answer)) => Option(createRow(answer, pageType))
       case (_, _, _)                              => None
     }
   }
 
-  private def createRow(answer: String)(implicit messages: Messages) =
+  private def createRow(answer: String, pageType: AnswersReviewPageType)(implicit messages: Messages) =
     SummaryListRowViewModel(
-      key = "secondContactPhoneNumber.checkYourAnswersLabel",
+      key = s"secondContactPhoneNumber.${pageType.labelPrefix}YourAnswersLabel",
       value = ValueViewModel(HtmlContent(answer)),
       actions = Seq(
         accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.SecondContactCanWePhoneController.onPageLoad(CheckMode).url)

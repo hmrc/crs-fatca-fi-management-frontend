@@ -14,24 +14,16 @@
  * limitations under the License.
  */
 
-package pages.addFinancialInstitution
+package models
 
-import models.UserAnswers
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+sealed trait AnswersReviewPageType {
+  def labelPrefix: String
+}
 
-import scala.util.Try
+case object CheckAnswers extends AnswersReviewPageType {
+  override val labelPrefix = "check"
+}
 
-case object HaveUniqueTaxpayerReferencePage extends QuestionPage[Boolean] {
-
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "haveUniqueTaxpayerReference"
-
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    value match {
-      case Some(false) => userAnswers.remove(WhatIsUniqueTaxpayerReferencePage)
-      case _           => super.cleanup(value, userAnswers)
-    }
-
+case object ChangeAnswers extends AnswersReviewPageType {
+  override val labelPrefix = "change"
 }

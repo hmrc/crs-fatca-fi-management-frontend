@@ -14,28 +14,27 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.common
 
-import models.{CheckMode, UserAnswers}
-import pages.addFinancialInstitution.SecondContactEmailPage
+import models.{AnswersReviewPageType, CheckMode, UserAnswers}
+import pages.addFinancialInstitution.SecondContactNamePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.checkAnswers.CheckYourAnswersViewModel.accessibleActionItem
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object SecondContactEmailSummary {
+object SecondContactNameSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SecondContactEmailPage).map {
+  def row(answers: UserAnswers, pageType: AnswersReviewPageType)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(SecondContactNamePage).map {
       answer =>
         SummaryListRowViewModel(
-          key = "secondContactEmail.checkYourAnswersLabel",
+          key = s"secondContactName.${pageType.labelPrefix}YourAnswersLabel",
           value = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
-            accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.SecondContactEmailController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("secondContactEmail.change.hidden"))
+            accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.SecondContactNameController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("secondContactName.change.hidden"))
           )
         )
     }

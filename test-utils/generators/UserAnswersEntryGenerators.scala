@@ -96,7 +96,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     modelArbitrary[pages.addFinancialInstitution.UkAddressPage.type, models.Address](pages.addFinancialInstitution.UkAddressPage)
 
   implicit lazy val arbitraryWhatIsGIINUserAnswersEntry: Arbitrary[(pages.addFinancialInstitution.WhatIsGIINPage.type, JsValue)] =
-    alphaStrNonEmptyPageArbitrary(pages.addFinancialInstitution.WhatIsGIINPage)
+    modelArbitrary[pages.addFinancialInstitution.WhatIsGIINPage.type, models.GIINumber](pages.addFinancialInstitution.WhatIsGIINPage)
 
   implicit lazy val arbitraryWhatIsUniqueTaxpayerReferenceEntry: Arbitrary[(pages.addFinancialInstitution.WhatIsUniqueTaxpayerReferencePage.type, JsValue)] =
     modelArbitrary[pages.addFinancialInstitution.WhatIsUniqueTaxpayerReferencePage.type, models.UniqueTaxpayerReference](

@@ -63,4 +63,5 @@ case class AddressResponse(
 object AddressResponse {
 
   implicit val format: OFormat[AddressResponse] = Json.format[AddressResponse]
+
 }
