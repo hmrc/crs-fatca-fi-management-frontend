@@ -19,7 +19,7 @@ package viewmodels.checkAnswers
 import base.SpecBase
 import models.{AddressResponse, CheckAnswers, CheckMode, GIINumber, UserAnswers}
 import org.scalatestplus.mockito.MockitoSugar.mock
-import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, ReportForRegisteredBusinessPage}
+import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 import play.api.i18n.Messages
 import viewmodels.common.{getAddressChangeRoute, getFirstContactSummaries, getSecondContactSummaries}
@@ -32,7 +32,7 @@ class CheckYourAnswersViewModelSpec extends SpecBase {
 
   "CheckYourAnswersViewModel" - {
     "getFinancialInstitutionSummaries must" - {
-      val ua1 = emptyUserAnswers.withPage(NameOfFinancialInstitutionPage, "TestFinancialInstitutionName")
+      val ua1 = emptyUserAnswers.withPage(IsThisYourBusinessNamePage, true)
       val ua2 = ua1.withPage(HaveUniqueTaxpayerReferencePage, true)
       val ua3 = ua2.withPage(FirstContactEmailPage, "test@email.com")
 

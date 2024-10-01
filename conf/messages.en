@@ -256,8 +256,10 @@ isTheAddressCorrect.error.required = Select yes if the registered address for th
 
 isThisYourBusinessName.title = Is this the correct name for the business?
 isThisYourBusinessName.heading = Is this the correct name for the business?
-isThisYourBusinessName.checkYourAnswersLabel = isThisYourBusinessName
+isThisYourBusinessName.checkYourAnswersLabel = What is the name of the financial institution?
 isThisYourBusinessName.error.required = Select yes if this is the correct name for the business
+isThisYourBusinessName.change.hidden = Change financial institution name
+
 
 reportForRegisteredBusiness.title = Would you like to add your business as a financial institution?
 reportForRegisteredBusiness.heading = Would you like to add your business as a financial institution?
