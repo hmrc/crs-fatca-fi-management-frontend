@@ -18,6 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.addFinancialInstitution.YourFinancialInstitutionsFormProvider
+import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import pages.{RemoveAreYouSurePage, RemoveInstitutionDetail}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -65,9 +66,10 @@ class YourFinancialInstitutionsController @Inject() (
         }
       }
       for {
-        institutions   <- financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId)
-        updatedAnswers <- Future.fromTry(request.userAnswers.remove(RemoveInstitutionDetail))
-        _              <- sessionRepository.set(updatedAnswers)
+        institutions           <- financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId)
+        answersWithoutRemoveFI <- Future.fromTry(request.userAnswers.remove(RemoveInstitutionDetail))
+        answersWithoutChangeFI <- Future.fromTry(answersWithoutRemoveFI.remove(ChangeFiDetailsInProgressId))
+        _                      <- sessionRepository.set(answersWithoutChangeFI)
       } yield Ok(view(form, SummaryListViewModel(getYourFinancialInstitutionsRows(institutions)), removedInstitutionName))
   }
 

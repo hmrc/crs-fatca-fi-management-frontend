@@ -155,8 +155,7 @@ haveGIIN.para.1 = A GIIN is required for FATCA reporting. You can choose to prov
 haveGIIN.para.2 = To receive a GIIN for FATCA, {0} must have registered with the United States of America’s Internal Revenue Service.
 haveGIIN.para.3 = You can also provide a GIIN if you’re reporting for CRS but may report for FATCA later.
 haveGIIN.error.required = Select yes if you would like to provide a GIIN for the financial institution now
-haveGIIN.checkYourAnswersLabel = Would you like to provide their Global Intermediary Identification Number?
-haveGIIN.checkYourAnswersLabel.2 = Would you like to provide a Global Intermediary Identification Number?
+haveGIIN.checkYourAnswersLabel = Would you like to provide a Global Intermediary Identification Number?
 haveGIIN.change.hidden = Change if you would like to provide a Global Intermediary Identification Number
 
 whatIsGIIN.title = What is the financial institution’s GIIN?
@@ -359,3 +358,32 @@ removeAreYouSure.para = This will permanently remove this financial institution 
 removeAreYouSure.para.list.1 = send, access, update or delete reports for the FI ID {0}
 removeAreYouSure.para.list.2 = access or change details for the FI ID {0}
 removeAreYouSure.warning = Removing a financial institution that has inaccurate or incomplete reports could result in a penalty for that financial institution.
+
+changeYourAnswers.title = Change the details for the financial institution
+changeYourAnswers.heading = Change the details for {0}
+changeYourAnswers.subheading.FirstContact = First contact
+changeYourAnswers.subheading.SecondContact = Second contact
+changeYourAnswers.changed.subheading = Now change these details for this financial institution
+changeYourAnswers.p1 = Back to manage your financial institutions
+changeYourAnswers.changed.p2 = By changing these details, you are confirming that the information is correct and complete to the best of your knowledge.
+changeYourAnswers.submit.button = Confirm and send
+
+financialInstitutionId.changeYourAnswersLabel = FI ID
+nameOfFinancialInstitution.changeYourAnswersLabel = What is the name of the financial institution?
+haveUniqueTaxpayerReference.changeYourAnswersLabel = Do they have a Unique Taxpayer Reference?
+whatIsUniqueTaxpayerReference.changeYourAnswersLabel = Unique Taxpayer Reference
+haveGIIN.changeYourAnswersLabel = Would you like to provide their Global Intermediary Identification Number?
+whatIsGIIN.changeYourAnswersLabel = Global Intermediary Identification Number
+selectAddress.changeYourAnswersLabel = Main business address
+firstContactName.changeYourAnswersLabel = First contact name
+firstContactEmail.changeYourAnswersLabel = First contact email address
+firstContactPhoneNumber.changeYourAnswersLabel = First contact telephone number
+secondContact.changeYourAnswersLabel = Do they have a second contact?
+secondContactName.changeYourAnswersLabel = Second contact name
+secondContactEmail.changeYourAnswersLabel = Second contact email address
+secondContactPhoneNumber.changeYourAnswersLabel = Second contact telephone number
+
+detailsUpdated.title = Details updated
+detailsUpdated.heading = Details updated for {0}
+detailsUpdated.p1 = Back to manage your financial institutions
+detailsUpdated.p2 = Back to manage your CRS and FATCA reports

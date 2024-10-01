@@ -24,7 +24,8 @@ case class AddressResponse(
   addressLine3: Option[String],
   addressLine4: Option[String],
   postalCode: Option[String],
-  countryCode: String
+  countryCode: String,
+  country: Option[Country] = None
 ) {
 
   val toAddress: Address = {
@@ -44,7 +45,7 @@ case class AddressResponse(
     addressLine3,
     addressLine4,
     postCodeFormatter(postalCode),
-    Option(countryCode)
+    country.map(_.description).orElse(Some(countryCode))
   ).flatten
 
   private def postCodeFormatter(postcode: Option[String]): Option[String] =
@@ -62,4 +63,5 @@ case class AddressResponse(
 object AddressResponse {
 
   implicit val format: OFormat[AddressResponse] = Json.format[AddressResponse]
+
 }

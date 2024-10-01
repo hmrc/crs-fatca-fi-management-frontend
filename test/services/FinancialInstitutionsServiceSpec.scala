@@ -26,6 +26,7 @@ import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.http.Status.OK
+import play.api.libs.json.{JsArray, JsObject, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -48,6 +49,39 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
       val result: Future[Seq[FIDetail]] = sut.getListOfFinancialInstitutions(subscriptionId)
       result.futureValue mustBe testFiDetails
     }
+
+    "getFinancialInstitution" - {
+
+      "must return financial institution details" in {
+        forAll {
+          fiDetail: FIDetail =>
+            val viewFIDetailsResponse = createViewFIDetailsResponse(Seq(fiDetail))
+
+            when(mockConnector.viewFi(fiDetail.SubscriptionID, fiDetail.FIID))
+              .thenReturn(Future.successful(HttpResponse(OK, Json.toJson(viewFIDetailsResponse), Map.empty)))
+
+            val result = sut.getFinancialInstitution(fiDetail.SubscriptionID, fiDetail.FIID)
+
+            result.futureValue.value mustBe fiDetail
+        }
+      }
+
+      "must return None when there is no financial institution details" in {
+        forAll {
+          fiDetail: FIDetail =>
+            val viewFIDetailsResponse = createViewFIDetailsResponse(Nil)
+
+            when(mockConnector.viewFi(fiDetail.SubscriptionID, fiDetail.FIID))
+              .thenReturn(Future.successful(HttpResponse(OK, Json.toJson(viewFIDetailsResponse), Map.empty)))
+
+            val result = sut.getFinancialInstitution(fiDetail.SubscriptionID, fiDetail.FIID)
+
+            result.futureValue mustBe empty
+        }
+      }
+
+    }
+
     "getInstitutionById extracts details matching given FIID" in {
       val fiid      = "683373339"
       val noFiid    = "000000000"
@@ -74,6 +108,12 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
       result.futureValue mustBe ()
     }
 
+  }
+
+  private def createViewFIDetailsResponse(fiDetails: Seq[FIDetail]): JsObject = {
+    val fiDetailsJsObject       = Json.obj(("FIDetails", JsArray(fiDetails.map(Json.toJson(_)))))
+    val responseDetailsJsObject = Json.obj(("ResponseDetails", fiDetailsJsObject))
+    Json.obj(("ViewFIDetails", responseDetailsJsObject))
   }
 
 }

@@ -19,7 +19,7 @@ package controllers.addFinancialInstitution.registeredBusiness
 import controllers.actions._
 import controllers.routes
 import forms.addFinancialInstitution.IsRegisteredBusiness.IsTheAddressCorrectFormProvider
-import models.Mode
+import models.{AddressResponse, Mode}
 import navigation.Navigator
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, IsTheAddressCorrectPage}
 import play.api.Logging
@@ -33,6 +33,7 @@ import views.html.addFinancialInstitution.IsRegisteredBusiness.IsTheAddressCorre
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success, Try}
 
 class IsTheAddressCorrectController @Inject() (
   override val messagesApi: MessagesApi,
@@ -59,33 +60,47 @@ class IsTheAddressCorrectController @Inject() (
     implicit request =>
       request.ctutr match {
         case Some(utr) =>
-          regService.fetchAddress(utr).flatMap {
-            address =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(FetchedRegisteredAddressPage, address))
-                result <- sessionRepository.set(updatedAnswers).map {
-                  _ =>
-                    val preparedForm = request.userAnswers.get(IsTheAddressCorrectPage) match {
-                      case None        => form
-                      case Some(value) => form.fill(value)
-                    }
-                    countryListFactory.findCountryWithCode(address.countryCode) match {
-                      case Some(country) =>
-                        val addressWithCountryName = address.copy(countryCode = country.description)
-                        Ok(view(preparedForm, mode, getFinancialInstitutionName(request.userAnswers), addressWithCountryName))
-                      case None =>
-                        logger.error(s"Country with code ${address.countryCode} not found in list of countries")
-                        Redirect(routes.JourneyRecoveryController.onPageLoad())
-                    }
-                }
-              } yield result
+          regService
+            .fetchAddress(utr)
+            .flatMap {
+              address =>
+                for {
+                  addressWithCountry <- Future.fromTry(addCountryToAddress(address))
+                  updatedAnswers     <- Future.fromTry(request.userAnswers.set(FetchedRegisteredAddressPage, addressWithCountry))
+                  result <- sessionRepository.set(updatedAnswers).map {
+                    _ =>
+                      val preparedForm = request.userAnswers.get(IsTheAddressCorrectPage) match {
+                        case None        => form
+                        case Some(value) => form.fill(value)
+                      }
+                      Ok(view(preparedForm, mode, getFinancialInstitutionName(request.userAnswers), addressWithCountry))
+                  }
+                } yield result
 
-          }
+            }
+            .recoverWith {
+              case e =>
+                logger.error(s"Failed to fetch address for UTR $utr", e)
+                Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+            }
         case None =>
           Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
       }
 
   }
+
+  private def addCountryToAddress(addressResponse: AddressResponse): Try[AddressResponse] =
+    if (addressResponse.country.isDefined) {
+      Success(addressResponse)
+    } else {
+      countryListFactory.findCountryWithCode(addressResponse.countryCode) match {
+        case Some(country) =>
+          Success(addressResponse.copy(countryCode = country.description))
+        case None =>
+          logger.error(s"Country with code ${addressResponse.countryCode} not found in list of countries")
+          Failure(new RuntimeException("Country not found"))
+      }
+    }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>

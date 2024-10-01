@@ -27,6 +27,11 @@ trait Generators extends RegexConstants {
 
   implicit val dontShrink: Shrink[String] = Shrink.shrinkAny
 
+  private val FIIdLength = 8
+
+  private val subscriptionIDRegex = "^[X][A-Z][0-9]{13}"
+  private val phoneNumberRegex    = "[A-Z0-9)/(\\-*#+]*"
+
   def genIntersperseString(gen: Gen[String], value: String, frequencyV: Int = 1, frequencyN: Int = 10): Gen[String] = {
 
     val genValue: Gen[Option[String]] = Gen.frequency(frequencyN -> None, frequencyV -> Gen.const(Some(value)))
@@ -194,5 +199,12 @@ trait Generators extends RegexConstants {
   }
 
   def invalidCountry: Gen[String] = Gen.oneOf(Set("Invalid Country 1", "Invalid Country 2", "&nbsp"))
+
+  def validSubscriptionID: Gen[String] = RegexpGen.from(subscriptionIDRegex)
+  def validPhoneNumber: Gen[String]    = RegexpGen.from(phoneNumberRegex)
+
+  def stringOfLength(n: Int): Gen[String] = Gen.listOfN(n, Gen.alphaChar).map(_.mkString)
+
+  def validFiId: Gen[String] = stringOfLength(FIIdLength)
 
 }

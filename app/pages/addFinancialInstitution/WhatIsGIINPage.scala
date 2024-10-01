@@ -16,10 +16,11 @@
 
 package pages.addFinancialInstitution
 
+import models.GIINumber
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object WhatIsGIINPage extends QuestionPage[String] {
+case object WhatIsGIINPage extends QuestionPage[GIINumber] {
 
   override def path: JsPath = JsPath \ toString
 

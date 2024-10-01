@@ -16,90 +16,29 @@
 
 package viewmodels.checkAnswers
 
-import models.{CheckMode, UserAnswers}
-import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
-import pages.addFinancialInstitution._
+import models.{CheckAnswers, UserAnswers}
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, SummaryListRow}
-import viewmodels.govuk.summarylist._
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.common._
 
 object CheckYourAnswersViewModel {
-
-  def accessibleActionItem(messageKey: String, href: String)(implicit messages: Messages): ActionItem =
-    ActionItemViewModel(
-      content = HtmlContent(
-        s"""
-           |<span aria-hidden="true">${messages(messageKey)}</span>
-           |""".stripMargin
-      ),
-      href = href
-    )
-
-  private def getAddressRow(ua: UserAnswers)(implicit messages: Messages) = {
-    val addressLookup  = SelectedAddressLookupSummary.row(ua)
-    val nonUkAddress   = NonUkAddressSummary.row(ua)
-    val ukAddress      = UkAddressSummary.row(ua)
-    val fetchedAddress = FetchedRegisteredAddressSummary.row(ua)
-
-    (addressLookup.isDefined, nonUkAddress.isDefined, ukAddress.isDefined, fetchedAddress.isDefined) match {
-      case (false, false, true, false) => ukAddress
-      case (false, true, false, false) => nonUkAddress
-      case (true, false, false, _)     => addressLookup
-      case (_, _, _, true)             => fetchedAddress
-      case (_, _, _, false)            => None
-    }
-
-  }
-
-  def getAddressChangeRoute(answers: UserAnswers): String =
-    answers
-      .get(ReportForRegisteredBusinessPage) match {
-      case Some(true) => controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(CheckMode).url
-      case _          => controllers.addFinancialInstitution.routes.WhereIsFIBasedController.onPageLoad(CheckMode).url
-    }
-
-  private def getGIINRows(ua: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = {
-    val haveGIIN = ua.get(HaveGIINPage)
-
-    haveGIIN match {
-      case None        => Seq(WhatIsGIINSummary.row(ua)).flatten
-      case Some(true)  => Seq(HaveGIINSummary.row(ua), WhatIsGIINSummary.row(ua)).flatten
-      case Some(false) => Seq(HaveGIINSummary.row(ua)).flatten
-      case _           => Seq.empty
-    }
-  }
 
   def getFinancialInstitutionSummaries(ua: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] =
     Seq(
       ReportForRegisteredBusinessSummary.row(ua),
-      NameOfFinancialInstitutionSummary.row(ua),
-      HaveUniqueTaxpayerReferenceSummary.row(ua),
-      WhatIsUniqueTaxpayerReferenceSummary.row(ua),
-      getGIINRows(ua),
-      getAddressRow(ua)
-    ).flatten
-
-  def getFirstContactSummaries(ua: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = Seq(
-    FirstContactNameSummary.row(ua),
-    FirstContactEmailSummary.row(ua),
-    FirstContactPhoneNumberSummary.row(ua)
-  ).flatten
-
-  def getSecondContactSummaries(ua: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] =
-    Seq(
-      SecondContactExistsSummary.row(ua),
-      SecondContactNameSummary.row(ua),
-      SecondContactEmailSummary.row(ua),
-      SecondContactPhoneNumberSummary.row(ua)
+      NameOfFinancialInstitutionSummary.row(ua, CheckAnswers),
+      HaveUniqueTaxpayerReferenceSummary.row(ua, CheckAnswers),
+      WhatIsUniqueTaxpayerReferenceSummary.row(ua, CheckAnswers),
+      getGIINRows(ua, CheckAnswers),
+      getAddressRow(ua, CheckAnswers)
     ).flatten
 
   def getRegisteredBusinessSummaries(ua: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] =
     Seq(
       ReportForRegisteredBusinessSummary.row(ua),
-      NameOfFinancialInstitutionSummary.row(ua),
-      getGIINRows(ua),
-      getAddressRow(ua)
+      NameOfFinancialInstitutionSummary.row(ua, CheckAnswers),
+      getGIINRows(ua, CheckAnswers),
+      getAddressRow(ua, CheckAnswers)
     ).flatten
 
 }

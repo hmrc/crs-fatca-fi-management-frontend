@@ -18,19 +18,27 @@ package forms.addFinancialInstitution
 
 import javax.inject.Inject
 import forms.mappings.Mappings
+import models.GIINumber
 import play.api.data.Form
+import play.api.data.Forms.mapping
 import utils.RegexConstants
 
 class WhatIsGIINFormProvider @Inject() extends Mappings with RegexConstants {
 
-  def apply(): Form[String] =
+  def apply(): Form[GIINumber] =
     Form(
-      "value" -> mandatoryGIIN(
-        "whatIsGIIN.error.required",
-        "whatIsGIIN.error.length",
-        "whatIsGIIN.error.invalid",
-        "whatIsGIIN.error.format",
-        "whatIsGIIN.error.char"
+      mapping(
+        "value" -> mandatoryGIIN(
+          "whatIsGIIN.error.required",
+          "whatIsGIIN.error.length",
+          "whatIsGIIN.error.invalid",
+          "whatIsGIIN.error.format",
+          "whatIsGIIN.error.char"
+        )
+      )(
+        GIINumber.apply
+      )(
+        GIINumber.unapply
       )
     )
 

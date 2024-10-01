@@ -19,9 +19,11 @@ package navigation
 import base.SpecBase
 import controllers.addFinancialInstitution.routes
 import models._
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import pages._
 import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
+import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 
 class NavigatorSpec extends SpecBase {
 
@@ -186,7 +188,7 @@ class NavigatorSpec extends SpecBase {
         "must go to IsTheAddressCorrect when FI is the user" in {
           val userAnswers = emptyUserAnswers
             .withPage(ReportForRegisteredBusinessPage, true)
-            .withPage(WhatIsGIINPage, "answer")
+            .withPage(WhatIsGIINPage, GIINumber("answer"))
 
           navigator.nextPage(WhatIsGIINPage, NormalMode, userAnswers) mustBe
             controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(NormalMode)
@@ -195,7 +197,7 @@ class NavigatorSpec extends SpecBase {
         "must go to WhereIsFIBased when FI is not the user" in {
           val userAnswers = emptyUserAnswers
             .withPage(ReportForRegisteredBusinessPage, false)
-            .withPage(WhatIsGIINPage, "answer")
+            .withPage(WhatIsGIINPage, GIINumber("answer"))
 
           navigator.nextPage(WhatIsGIINPage, NormalMode, userAnswers) mustBe
             routes.WhereIsFIBasedController.onPageLoad(NormalMode)
@@ -377,6 +379,177 @@ class NavigatorSpec extends SpecBase {
           CheckMode,
           UserAnswers("id")
         ) mustBe routes.CheckYourAnswersController.onPageLoad
+      }
+
+      "when change FI details is in progress" - {
+
+        "must navigate from NameOfFinancialInstitutionPage to ChangeFinancialInstitution" in {
+          forAll {
+            fiId: String =>
+              val userAnswers = emptyUserAnswers.withPage(ChangeFiDetailsInProgressId, fiId)
+
+              navigator
+                .nextPage(NameOfFinancialInstitutionPage, CheckMode, userAnswers)
+                .mustBe(controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(fiId))
+          }
+        }
+
+        "must navigate from WhatIsUniqueTaxpayerReferencePage to ChangeFinancialInstitution" in {
+          forAll {
+            fiId: String =>
+              val userAnswers = emptyUserAnswers.withPage(ChangeFiDetailsInProgressId, fiId)
+
+              navigator
+                .nextPage(WhatIsUniqueTaxpayerReferencePage, CheckMode, userAnswers)
+                .mustBe(controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(fiId))
+          }
+        }
+
+        "must navigate from WhatIsGIINPage to ChangeFinancialInstitution" in {
+          forAll {
+            fiId: String =>
+              val userAnswers = emptyUserAnswers.withPage(ChangeFiDetailsInProgressId, fiId)
+
+              navigator
+                .nextPage(WhatIsGIINPage, CheckMode, userAnswers)
+                .mustBe(controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(fiId))
+          }
+        }
+
+        "must navigate from FirstContactNamePage to ChangeFinancialInstitution" in {
+          forAll {
+            fiId: String =>
+              val userAnswers = emptyUserAnswers.withPage(ChangeFiDetailsInProgressId, fiId)
+
+              navigator
+                .nextPage(FirstContactNamePage, CheckMode, userAnswers)
+                .mustBe(controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(fiId))
+          }
+        }
+
+        "must navigate from FirstContactEmailPage to ChangeFinancialInstitution" in {
+          forAll {
+            fiId: String =>
+              val userAnswers = emptyUserAnswers.withPage(ChangeFiDetailsInProgressId, fiId)
+
+              navigator
+                .nextPage(FirstContactEmailPage, CheckMode, userAnswers)
+                .mustBe(controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(fiId))
+          }
+        }
+
+        "must navigate from FirstContactHavePhonePage to ChangeFinancialInstitution when user answers no" in {
+          forAll {
+            fiId: String =>
+              val userAnswers = emptyUserAnswers
+                .withPage(ChangeFiDetailsInProgressId, fiId)
+                .withPage(FirstContactHavePhonePage, false)
+
+              navigator
+                .nextPage(FirstContactHavePhonePage, CheckMode, userAnswers)
+                .mustBe(controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(fiId))
+          }
+        }
+
+        "must navigate from FirstContactHavePhonePage to FirstContactPhoneNumber when user answers yes" in {
+          forAll {
+            fiId: String =>
+              val userAnswers = emptyUserAnswers
+                .withPage(ChangeFiDetailsInProgressId, fiId)
+                .withPage(FirstContactHavePhonePage, true)
+
+              navigator
+                .nextPage(FirstContactHavePhonePage, CheckMode, userAnswers)
+                .mustBe(routes.FirstContactPhoneNumberController.onPageLoad(CheckMode))
+          }
+        }
+
+        "must navigate from SecondContactExistsPage to ChangeFinancialInstitution when user answers no" in {
+          forAll {
+            fiId: String =>
+              val userAnswers = emptyUserAnswers
+                .withPage(ChangeFiDetailsInProgressId, fiId)
+                .withPage(SecondContactExistsPage, false)
+
+              navigator
+                .nextPage(SecondContactExistsPage, CheckMode, userAnswers)
+                .mustBe(controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(fiId))
+          }
+        }
+
+        "must navigate from SecondContactExistsPage to SecondContactName when user answers yes" in {
+          forAll {
+            fiId: String =>
+              val userAnswers = emptyUserAnswers
+                .withPage(ChangeFiDetailsInProgressId, fiId)
+                .withPage(SecondContactExistsPage, true)
+
+              navigator
+                .nextPage(SecondContactExistsPage, CheckMode, userAnswers)
+                .mustBe(routes.SecondContactNameController.onPageLoad(CheckMode))
+          }
+        }
+
+        "must navigate from SecondContactNamePage to ChangeFinancialInstitution when SecondContactEmail already exists" in {
+          forAll {
+            (fiId: String, secondContactEmail: String) =>
+              val userAnswers = emptyUserAnswers
+                .withPage(ChangeFiDetailsInProgressId, fiId)
+                .withPage(SecondContactEmailPage, secondContactEmail)
+
+              navigator
+                .nextPage(SecondContactNamePage, CheckMode, userAnswers)
+                .mustBe(controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(fiId))
+          }
+        }
+
+        "must navigate from SecondContactNamePage to SecondContactEmail" in {
+          forAll {
+            fiId: String =>
+              val userAnswers = emptyUserAnswers.withPage(ChangeFiDetailsInProgressId, fiId)
+
+              navigator
+                .nextPage(SecondContactNamePage, CheckMode, userAnswers)
+                .mustBe(routes.SecondContactEmailController.onPageLoad(CheckMode))
+          }
+        }
+
+        "must navigate from SecondContactEmailPage to ChangeFinancialInstitution when SecondContactCanWePhonePage already exists" in {
+          forAll {
+            (fiId: String, havePhone: Boolean) =>
+              val userAnswers = emptyUserAnswers
+                .withPage(ChangeFiDetailsInProgressId, fiId)
+                .withPage(SecondContactCanWePhonePage, havePhone)
+
+              navigator
+                .nextPage(SecondContactEmailPage, CheckMode, userAnswers)
+                .mustBe(controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(fiId))
+          }
+        }
+
+        "must navigate from SecondContactCanWePhonePage to ChangeFinancialInstitution when user answers no" in {
+          forAll {
+            fiId: String =>
+              val userAnswers = emptyUserAnswers
+                .withPage(ChangeFiDetailsInProgressId, fiId)
+                .withPage(SecondContactCanWePhonePage, false)
+
+              navigator
+                .nextPage(SecondContactCanWePhonePage, CheckMode, userAnswers)
+                .mustBe(controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(fiId))
+          }
+        }
+
+        "must navigate from SecondContactPhoneNumberPage to ChangeFinancialInstitution" in {
+          forAll {
+            fiId: String =>
+              val userAnswers = emptyUserAnswers.withPage(ChangeFiDetailsInProgressId, fiId)
+
+              navigator
+                .nextPage(SecondContactPhoneNumberPage, CheckMode, userAnswers)
+                .mustBe(controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(fiId))
+          }
+        }
       }
     }
 

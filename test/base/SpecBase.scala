@@ -227,6 +227,8 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
     def withPage[T](page: Settable[T], value: T)(implicit writes: Writes[T]): UserAnswers =
       userAnswers.set(page, value).success.value
 
+    def removePage[T](page: Settable[T]): UserAnswers = userAnswers.remove(page).success.value
+
   }
 
 }

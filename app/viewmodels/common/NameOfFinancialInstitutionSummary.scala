@@ -14,24 +14,23 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.common
 
-import models.{CheckMode, UserAnswers}
+import models.{AnswersReviewPageType, CheckMode, UserAnswers}
 import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.checkAnswers.CheckYourAnswersViewModel.accessibleActionItem
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object NameOfFinancialInstitutionSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers, pageType: AnswersReviewPageType)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(NameOfFinancialInstitutionPage).map {
       answer =>
         SummaryListRowViewModel(
-          key = "nameOfFinancialInstitution.checkYourAnswersLabel",
+          key = s"nameOfFinancialInstitution.${pageType.labelPrefix}YourAnswersLabel",
           value = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
             accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(CheckMode).url)

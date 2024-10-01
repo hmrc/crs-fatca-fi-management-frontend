@@ -16,8 +16,10 @@
 
 package generators
 
+import models.FinancialInstitutions._
 import models._
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen.listOf
 import org.scalacheck.{Arbitrary, Gen}
 import utils.RegexConstants
 
@@ -79,11 +81,75 @@ trait ModelGenerators extends RegexConstants with Generators {
     } yield AddressResponse(addressline, addressline2, addressline3, addressline4, postcode, countrycode)
   }
 
+  implicit val arbitraryAddressDetails: Arbitrary[AddressDetails] = Arbitrary {
+    for {
+      addressLine1 <- stringOfLength(35)
+      addressLine2 <- Gen.option(stringOfLength(35))
+      addressLine3 <- stringOfLength(35)
+      addressLine4 <- Gen.option(stringOfLength(35))
+      postalCode   <- Gen.option(validPostCodes)
+      countryCode  <- stringOfLength(2)
+    } yield AddressDetails(
+      addressLine1,
+      addressLine2,
+      addressLine3,
+      addressLine4,
+      Option(countryCode.toUpperCase),
+      postalCode
+    )
+  }
+
+  implicit val arbitraryContactDetails: Arbitrary[ContactDetails] =
+    Arbitrary {
+      for {
+        contactName  <- stringOfLength(105)
+        emailAddress <- stringOfLength(105)
+        phoneNumber  <- validPhoneNumber
+      } yield ContactDetails(contactName, emailAddress + "@domain.com", Some(phoneNumber))
+    }
+
+  implicit val arbitraryTINDetails: Arbitrary[TINDetails] =
+    Arbitrary {
+      for {
+        tinType  <- Gen.oneOf(TINType.values)
+        tin      <- stringOfLength(25)
+        issuedBy <- stringOfLength(2)
+      } yield TINDetails(tinType, tin, issuedBy.toUpperCase)
+    }
+
+  implicit val arbitraryFIDetail: Arbitrary[FIDetail] = Arbitrary {
+    for {
+      fiId                    <- stringOfLength(15)
+      fiName                  <- stringOfLength(105)
+      subscriptionId          <- validSubscriptionID
+      tinDetails              <- listOf(arbitrary[TINDetails])
+      isFIUser                <- arbitrary[Boolean]
+      isFATCAReporting        <- arbitrary[Boolean]
+      addressDetails          <- arbitrary[AddressDetails]
+      primaryContactDetails   <- arbitrary[ContactDetails]
+      secondaryContactDetails <- Gen.option(arbitrary[ContactDetails])
+    } yield FIDetail(
+      FIID = fiId,
+      FIName = fiName,
+      SubscriptionID = subscriptionId,
+      TINDetails = tinDetails,
+      IsFIUser = isFIUser,
+      IsFATCAReporting = isFATCAReporting,
+      AddressDetails = addressDetails,
+      PrimaryContactDetails = primaryContactDetails,
+      SecondaryContactDetails = secondaryContactDetails
+    )
+  }
+
 //Line holder for template scripts
   implicit val arbitraryUniqueTaxpayerReference: Arbitrary[UniqueTaxpayerReference] = Arbitrary {
     for {
       id <- arbitrary[String]
     } yield UniqueTaxpayerReference(id)
+  }
+
+  implicit val arbitraryGIIN: Arbitrary[GIINumber] = Arbitrary {
+    arbitrary[String].map(GIINumber.apply)
   }
 
   // Line holder for template scripts
