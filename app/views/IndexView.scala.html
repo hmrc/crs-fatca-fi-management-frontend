@@ -32,7 +32,7 @@
 @(details: IndexViewModel)(implicit request: Request[_], messages: Messages)
 
 @emailLink = {@link(href="mailto:aeoi.enquiries@hmrc.gov.uk", "index.p4.link", Some("email-aeoi-enquiries"))}
-@addFILink = {@link(controllers.addFinancialInstitution.routes.AddFIController.onPageLoad.url, "index.p1.link", Some("add-financial-institute"))}
+@addFILink = {@link(controllers.addFinancialInstitution.routes.AddFIController.onPageLoad.url, "index.p1.link", Some("add-financial-institution"))}
 
 @layout(
     pageTitle    = titleNoForm(messages("index.title")),
