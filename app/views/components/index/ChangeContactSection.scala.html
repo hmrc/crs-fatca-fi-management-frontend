@@ -23,11 +23,12 @@
         link(changeContactDetailsUrl, messages("organisationIndex.p3", businessName.get), Some("change-contact-details"))
         } else {link(changeContactDetailsUrl, "index.p3", Some("change-contact-details"))}
     }
-
+<div class="govuk-!-padding-top-5">
     @if(isBusiness){
-     <p class="govuk-heading-m">@messages("organisationIndex.h2")</p>
+     <h2 class="govuk-heading-m">@messages("organisationIndex.h2")</h2>
      <p class="govuk-body">@changeContactLink</p>
     } else {
-     <p class="govuk-heading-m">@messages("index.h2")</p>
+     <h2 class="govuk-heading-m">@messages("index.h2")</h2>
      <p class="govuk-body">@changeContactLink</p>
     }
+</div>

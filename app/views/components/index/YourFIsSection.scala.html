@@ -16,13 +16,15 @@
 
 @import components._
 
-@this(link: Link, heading: Heading)
+@this(link: Link)
 
 @()(implicit messages: Messages)
 
-    @addFILink = {@link(controllers.addFinancialInstitution.routes.AddFIController.onPageLoad.url, "index.addFi.link", Some("add-financial-institution"))}
-    @manageFILink = {@link(controllers.routes.YourFinancialInstitutionsController.onPageLoad().url, "index.manageFi.link", Some("your-financial-institutions"))}
+@addFILink = {@link(controllers.addFinancialInstitution.routes.AddFIController.onPageLoad.url, "index.addFi.link", Some("add-financial-institution"))}
+@manageFILink = {@link(controllers.routes.YourFinancialInstitutionsController.onPageLoad().url, "index.manageFi.link", Some("your-financial-institutions"))}
 
-    @heading(messages("index.yourFis.h2"), "m")
-    <p class="govuk-body">@addFILink</p>
+<div class="govuk-!-padding-top-5">
+    <h2 class="govuk-heading-m">@messages("index.yourFis.h2")</h2>
+    <p class="govuk-body govuk-!-margin-bottom-2">@addFILink</p>
     <p class="govuk-body">@manageFILink</p>
+</div>
