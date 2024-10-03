@@ -39,7 +39,7 @@
     showBackLink = false
 ) {
     @heading(messages("index.heading"))
-    @{if(!details.hasFis) para(Html(messages("index.p1", addFILink)),classes = "govuk-!-margin-bottom-2")}
+    @{if(!details.hasFis) para(Html(messages("index.p1", addFILink))gst)}
     @para(Html(messages("index.p2", details.fatcaId)))
 
     @if(details.hasFis) {
@@ -49,5 +49,5 @@
 
     @changeContactSection(details.isBusiness, details.businessName, details.changeContactDetailsUrl)
 
-    @para(Html(messages("index.p4", emailLink)),classes="govuk-body govuk-!-padding-top-4")
+    @para(Html(messages("index.p4", emailLink)),classes="govuk-body govuk-!-padding-top-5")
 }
