@@ -39,7 +39,7 @@
     showBackLink = false
 ) {
     @heading(messages("index.heading"))
-    @{if(!details.hasFis) para(Html(messages("index.p1", addFILink))gst)}
+    @{if(!details.hasFis) para(Html(messages("index.p1", addFILink)))}
     @para(Html(messages("index.p2", details.fatcaId)))
 
     @if(details.hasFis) {
