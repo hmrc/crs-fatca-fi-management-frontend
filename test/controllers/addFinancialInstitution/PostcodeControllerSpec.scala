@@ -87,8 +87,8 @@ class PostcodeControllerSpec extends SpecBase with MockitoSugar {
       val mockAddressLookupConnector               = mock[AddressLookupConnector]
 
       val addresses: Seq[AddressLookup] = Seq(
-        AddressLookup(Some("1 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ"),
-        AddressLookup(Some("2 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ")
+        AddressLookup(Some("1 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ", Some("Jersey")),
+        AddressLookup(Some("2 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ", None)
       )
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)

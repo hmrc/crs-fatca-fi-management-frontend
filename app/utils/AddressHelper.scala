@@ -29,7 +29,8 @@ object AddressHelper {
       address.addressLine4,
       address.town,
       address.postcode,
-      address.county
+      address.county,
+      address.country
     )
       .collect {
         case s: String => s
@@ -62,7 +63,8 @@ object AddressHelper {
       address.addressLine4,
       address.town,
       address.postcode,
-      address.county
+      address.county,
+      address.country
     )
     toFormattedAddress(lines)
   }
