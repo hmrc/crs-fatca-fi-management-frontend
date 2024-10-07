@@ -76,7 +76,8 @@ object AddressLookup {
         (JsPath \ "address" \ "town").read[String] and
         (JsPath \ "address" \ "county").readNullable[String] and
         (JsPath \ "address" \ "postcode").read[String] and
-        (JsPath \ "address" \ "country" \ "name").readNullable[String]
+        ((JsPath \ "address" \ "country" \ "name").readNullable[String] orElse
+          (JsPath \ "address" \ "country").readNullable[String])
     ) {
       (lines, town, county, postcode, countryName) =>
         val addressLines: (Option[String], Option[String], Option[String], Option[String]) =

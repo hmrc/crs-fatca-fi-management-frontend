@@ -57,7 +57,6 @@ class IsThisAddressController @Inject() (
             case None        => form
             case Some(value) => form.fill(value)
           }
-          println(s"\nBANANA\n$address\n\n")
           Ok(view(preparedForm, mode, getFinancialInstitutionName(ua), address.head.toAddress))
 
         case None => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
