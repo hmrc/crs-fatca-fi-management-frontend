@@ -43,7 +43,7 @@ case class AddressLookup(addressLine1: Option[String],
       case (_, _)        => addressLine4
     }
     val safePostcode  = Option(postcode)
-    val ctry: Country = Country("", "", country.getOrElse("unknown"))
+    val ctry: Country = Country("", "", country.getOrElse(""))
 
     Address(line1, line2, line3, line4, safePostcode, ctry)
   }
