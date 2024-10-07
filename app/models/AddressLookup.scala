@@ -36,11 +36,14 @@ case class AddressLookup(addressLine1: Option[String],
     val line1 = addressLine1.getOrElse("")
     val line2 = addressLine2
     val line3 = addressLine3
-      .orElse(addressLine4)
       .getOrElse(town)
-    val line4         = if (addressLine4.isEmpty) Some(town) else addressLine4
+    val line4 = (addressLine3.isEmpty, addressLine4.isEmpty) match {
+      case (true, true)  => county
+      case (false, true) => Some(town)
+      case (_, _)        => addressLine4
+    }
     val safePostcode  = Option(postcode)
-    val ctry: Country = Country("unknown", "unknown", country.getOrElse("unknown"))
+    val ctry: Country = Country("", "", country.getOrElse("unknown"))
 
     Address(line1, line2, line3, line4, safePostcode, ctry)
   }

@@ -45,7 +45,7 @@ class IsThisAddressControllerSpec extends SpecBase with MockitoSugar {
     "1 address street",
     addressLine2 = None,
     addressLine3 = "Address town",
-    addressLine4 = None,
+    addressLine4 = Some("Wessex"),
     postCode = Some("postcode"),
     country = Country("valid", "GB", "United Kingdom")
   )
