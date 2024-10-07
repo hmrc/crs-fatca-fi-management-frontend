@@ -86,4 +86,13 @@ class AddressHelperSpec extends SpecBase {
 
   }
 
+  "AddressLookup" - {
+    "toAddress must convert to Address class" in {
+      val addressLookup   = AddressLookup(Some("line1"), Some("line2"), Some("line3"), Some("line4"), "town", Some("county"), "postcode", Some("country"))
+      val expectedAddress = Address("line1", Some("line2"), "line3", Some("line4"), Some("postcode"), Country("unknown", "unknown", "country"))
+      addressLookup.toAddress mustBe expectedAddress
+
+    }
+  }
+
 }
