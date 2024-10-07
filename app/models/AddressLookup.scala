@@ -72,14 +72,14 @@ object AddressLookup {
   }
 
   implicit val addressLookupReads: Reads[AddressLookup] =
-    (
-      (JsPath \ "address" \ "lines").read[List[String]] and
-        (JsPath \ "address" \ "town").read[String] and
-        (JsPath \ "address" \ "county").readNullable[String] and
-        (JsPath \ "address" \ "postcode").read[String] and
-        ((JsPath \ "address" \ "country" \ "name").readNullable[String] orElse
-          (JsPath \ "address" \ "country").readNullable[String])
-    ) {
+    ((JsPath \ "address" \ "lines").read[List[String]] and
+      (JsPath \ "address" \ "town").read[String] and
+      (JsPath \ "address" \ "county").readNullable[String] and
+      (JsPath \ "address" \ "postcode").read[String] and
+      (
+        (JsPath \ "address" \ "country").readNullable[String] orElse
+          (JsPath \ "address" \ "country" \ "name").readNullable[String]
+      )) {
       (lines, town, county, postcode, countryName) =>
         val addressLines: (Option[String], Option[String], Option[String], Option[String]) =
           lines.size match {
