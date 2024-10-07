@@ -50,13 +50,15 @@ class IsThisAddressControllerSpec extends SpecBase with MockitoSugar {
     country = Country("valid", "GB", "United Kingdom")
   )
 
-  val addressLookup: AddressLookup = AddressLookup(Some("1 address street"),
-                                                   addressLine2 = None,
-                                                   addressLine3 = None,
-                                                   addressLine4 = None,
-                                                   town = "Address town",
-                                                   county = Some("Wessex"),
-                                                   postcode = "postcode"
+  val addressLookup: AddressLookup = AddressLookup(
+    Some("1 address street"),
+    addressLine2 = None,
+    addressLine3 = None,
+    addressLine4 = None,
+    town = "Address town",
+    county = Some("Wessex"),
+    postcode = "postcode",
+    country = Some("United Kingdom")
   )
 
   val userAnswers: UserAnswers = emptyUserAnswers.set(AddressLookupPage, Seq(addressLookup)).success.value
@@ -68,6 +70,7 @@ class IsThisAddressControllerSpec extends SpecBase with MockitoSugar {
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      println(userAnswers.get(AddressLookupPage))
 
       running(application) {
         val request = FakeRequest(GET, isThisAddressRoute)

@@ -40,6 +40,8 @@ class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppCon
 
     http.POST[LookupAddressByPostcode, HttpResponse](addressLookupUrl, lookupAddressByPostcode, headers = Seq("X-Hmrc-Origin" -> "CRSFATCA")) flatMap {
       case response if response.status equals OK =>
+        println(s"\nBERRY\n${response.body}\n\n")
+
         Future.successful(
           sortAddresses(
             response.json

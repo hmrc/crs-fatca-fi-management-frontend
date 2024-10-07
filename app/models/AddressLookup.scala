@@ -27,7 +27,8 @@ case class AddressLookup(addressLine1: Option[String],
                          addressLine4: Option[String],
                          town: String,
                          county: Option[String],
-                         postcode: String
+                         postcode: String,
+                         country: Option[String]
 ) {
 
   val toAddress: Address = {
@@ -39,10 +40,11 @@ case class AddressLookup(addressLine1: Option[String],
         l => s"$l $town"
       )
       .getOrElse(town)
-    val line4        = addressLine4
-    val safePostcode = Option(postcode)
+    val line4         = addressLine4
+    val safePostcode  = Option(postcode)
+    val ctry: Country = Country("unknown", "unknown", country.getOrElse("unknown"))
 
-    Address(line1, line2, line3, line4, safePostcode, Country.GB)
+    Address(line1, line2, line3, line4, safePostcode, ctry)
   }
 
 }
@@ -62,7 +64,8 @@ object AddressLookup {
           "lines"    -> lines,
           "town"     -> addressLookup.town,
           "county"   -> addressLookup.county,
-          "postcode" -> addressLookup.postcode
+          "postcode" -> addressLookup.postcode,
+          "country"  -> addressLookup.country
         )
     )
   }
@@ -72,9 +75,10 @@ object AddressLookup {
       (JsPath \ "address" \ "lines").read[List[String]] and
         (JsPath \ "address" \ "town").read[String] and
         (JsPath \ "address" \ "county").readNullable[String] and
-        (JsPath \ "address" \ "postcode").read[String]
+        (JsPath \ "address" \ "postcode").read[String] and
+        (JsPath \ "address" \ "country" \ "name").readNullable[String]
     ) {
-      (lines, town, county, postcode) =>
+      (lines, town, county, postcode, countryName) =>
         val addressLines: (Option[String], Option[String], Option[String], Option[String]) =
           lines.size match {
             case 0 =>
@@ -87,7 +91,16 @@ object AddressLookup {
               (Some(lines.head), Some(lines(1)), Some(lines(2)), None)
             case numberOfLines if numberOfLines >= 4 => (Some(lines.head), Some(lines(1)), Some(lines(2)), Some(lines(3)))
           }
-        AddressLookup(addressLines._1, addressLines._2, addressLines._3, addressLines._4, town, county, postcode)
+        AddressLookup(
+          addressLines._1,
+          addressLines._2,
+          addressLines._3,
+          addressLines._4,
+          town,
+          county,
+          postcode,
+          countryName
+        )
     }
 
   implicit val addressesLookupReads: Reads[Seq[AddressLookup]] = Reads {

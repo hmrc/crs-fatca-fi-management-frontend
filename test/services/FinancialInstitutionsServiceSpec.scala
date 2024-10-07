@@ -19,9 +19,8 @@ package services
 import base.SpecBase
 import connectors.FinancialInstitutionsConnector
 import generators.{ModelGenerators, UserAnswersGenerator}
-import models.FinancialInstitutions.{CreateFIDetails, FIDetail}
+import models.FinancialInstitutions.FIDetail
 import models.UserAnswers
-import models.response.ErrorDetails
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar._
