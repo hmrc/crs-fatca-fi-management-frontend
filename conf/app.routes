@@ -155,4 +155,7 @@ POST        /remove-fi/:fiid                                              contro
 GET         /change-answers/:fiid                                         controllers.changeFinancialInstitution.ChangeFinancialInstitutionController.onPageLoad(fiid: String)
 POST        /change-answers                                               controllers.changeFinancialInstitution.ChangeFinancialInstitutionController.confirmAndAdd()
 
+GET         /registered-business/change-answers/:fiid                      controllers.changeFinancialInstitution.ChangeRegisteredFinancialInstitutionController.onPageLoad(fiid: String)
+POST        /registered-business/change-answers                            controllers.changeFinancialInstitution.ChangeRegisteredFinancialInstitutionController.confirmAndAdd()
+
 GET        /details-updated                       controllers.DetailsUpdatedController.onPageLoad()

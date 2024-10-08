@@ -370,6 +370,13 @@ changeYourAnswers.p1 = Back to manage your financial institutions
 changeYourAnswers.changed.p2 = By changing these details, you are confirming that the information is correct and complete to the best of your knowledge.
 changeYourAnswers.submit.button = Confirm and send
 
+changeYourRegisteredAnswers.title = Change the details for the financial institution
+changeYourRegisteredAnswers.heading = Change the details for {0}
+changeYourRegisteredAnswers.changed.subheading = Now change these details for this financial institution
+changeYourRegisteredAnswers.p1 = Back to manage your financial institutions
+changeYourRegisteredAnswers.changed.p2 = By changing these details, you are confirming that the information is correct and complete to the best of your knowledge.
+changeYourRegisteredAnswers.submit.button = Confirm and send
+
 financialInstitutionId.changeYourAnswersLabel = FI ID
 nameOfFinancialInstitution.changeYourAnswersLabel = What is the name of the financial institution?
 haveUniqueTaxpayerReference.changeYourAnswersLabel = Do they have a Unique Taxpayer Reference?
@@ -384,6 +391,9 @@ secondContact.changeYourAnswersLabel = Do they have a second contact?
 secondContactName.changeYourAnswersLabel = Second contact name
 secondContactEmail.changeYourAnswersLabel = Second contact email address
 secondContactPhoneNumber.changeYourAnswersLabel = Second contact telephone number
+isFIRegistered.changeYourAnswersLabel = Is this financial institution the business you registered as?
+isFIRegistered.changeYourAnswersLabel = Is this financial institution the business you registered as?
+
 
 detailsUpdated.title = Details updated
 detailsUpdated.heading = Details updated for {0}
