@@ -19,11 +19,13 @@ package base
 import controllers.actions._
 import models.FinancialInstitutions.TINType.GIIN
 import models.FinancialInstitutions.{AddressDetails, ContactDetails, FIDetail, TINDetails}
-import models.{Address, AddressLookup, AddressResponse, Country, UserAnswers}
+import models.{Address, AddressLookup, AddressResponse, Country, GIINumber, UniqueTaxpayerReference, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{OptionValues, TryValues}
+import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage}
+import pages.addFinancialInstitution._
 import play.api.Application
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
@@ -208,6 +210,32 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
   val testAddress: Address                 = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"), Country.GB)
   val testAddressResponse: AddressResponse = AddressResponse("value 1", Some("value 2"), Some("value 3"), Some("value 4"), Some("XX9 9XX"), Country.GB.code)
   val testAddressLookup: AddressLookup     = AddressLookup(Some("1 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ", Some("United Kingdom"))
+
+  val userAnswersForAddFI: UserAnswers = emptyUserAnswers
+    .withPage(NameOfFinancialInstitutionPage, "testfi")
+    .withPage(HaveUniqueTaxpayerReferencePage, true)
+    .withPage(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference("222333444"))
+    .withPage(HaveGIINPage, true)
+    .withPage(WhatIsGIINPage, GIINumber("98096B.00000.LE.350"))
+    .withPage(WhereIsFIBasedPage, true)
+    .withPage(SelectedAddressLookupPage, testAddressLookup)
+    .withPage(IsThisAddressPage, true)
+    .withPage(FirstContactNamePage, "MrTest")
+    .withPage(FirstContactEmailPage, "MrTest@test.com")
+    .withPage(FirstContactHavePhonePage, true)
+    .withPage(FirstContactPhoneNumberPage, "0123456789")
+    .withPage(SecondContactExistsPage, true)
+    .withPage(SecondContactNamePage, "MrsTest")
+    .withPage(SecondContactEmailPage, "MrsTest@test.com")
+    .withPage(SecondContactCanWePhonePage, true)
+    .withPage(SecondContactPhoneNumberPage, "0234567891")
+
+  val userAnswersForAddUserAsFI: UserAnswers = emptyUserAnswers
+    .withPage(IsThisYourBusinessNamePage, true)
+    .withPage(HaveGIINPage, true)
+    .withPage(WhatIsGIINPage, GIINumber("98096B.00000.LE.350"))
+    .withPage(WhereIsFIBasedPage, true)
+    .withPage(IsTheAddressCorrectPage, true)
 
   implicit val hc: HeaderCarrier    = HeaderCarrier()
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)

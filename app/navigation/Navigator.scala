@@ -173,7 +173,14 @@ class Navigator @Inject() () {
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
-
+    case ReportForRegisteredBusinessPage =>
+      userAnswers =>
+        yesNoPage(
+          userAnswers,
+          ReportForRegisteredBusinessPage,
+          redirectToCheckYouAnswers(userAnswers),
+          controllers.routes.IndexController.onPageLoad()
+        )
     case HaveUniqueTaxpayerReferencePage =>
       userAnswers =>
         yesNoPage(
@@ -182,20 +189,17 @@ class Navigator @Inject() () {
           routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(CheckMode),
           redirectToCheckYouAnswers(userAnswers)
         )
-    case FirstContactNamePage =>
-      userAnswers => resolveNextRoute(userAnswers, routes.FirstContactEmailController.onPageLoad(CheckMode))
-    case FirstContactEmailPage =>
-      userAnswers => resolveNextRoute(userAnswers, routes.FirstContactHavePhoneController.onPageLoad(CheckMode))
+    case FirstContactNamePage  => redirectToCheckYouAnswers
+    case FirstContactEmailPage => redirectToCheckYouAnswers
     case FirstContactHavePhonePage =>
       userAnswers =>
         yesNoPage(
           userAnswers,
           FirstContactHavePhonePage,
           routes.FirstContactPhoneNumberController.onPageLoad(CheckMode),
-          resolveNextRoute(userAnswers, routes.SecondContactExistsController.onPageLoad(CheckMode))
+          redirectToCheckYouAnswers(userAnswers)
         )
-    case FirstContactPhoneNumberPage =>
-      userAnswers => resolveNextRoute(userAnswers, routes.SecondContactExistsController.onPageLoad(CheckMode))
+    case FirstContactPhoneNumberPage => redirectToCheckYouAnswers
     case SecondContactExistsPage =>
       userAnswers =>
         yesNoPage(
@@ -204,8 +208,7 @@ class Navigator @Inject() () {
           checkNextPageForValueThenRoute(CheckMode, userAnswers, SecondContactNamePage, routes.SecondContactNameController.onPageLoad(CheckMode)),
           resolveAnswersVerificationRoute(userAnswers)
         )
-    case SecondContactNamePage =>
-      userAnswers => checkNextPageForValueThenRoute(CheckMode, userAnswers, SecondContactEmailPage, routes.SecondContactEmailController.onPageLoad(CheckMode))
+    case SecondContactNamePage => redirectToCheckYouAnswers
     case SecondContactEmailPage =>
       userAnswers =>
         checkNextPageForValueThenRoute(CheckMode, userAnswers, SecondContactCanWePhonePage, routes.SecondContactCanWePhoneController.onPageLoad(CheckMode))
@@ -262,7 +265,7 @@ class Navigator @Inject() () {
           redirectToCheckYouAnswers(userAnswers),
           routes.NameOfFinancialInstitutionController.onPageLoad(CheckMode)
         )
-    case _ => redirectToCheckYouAnswers
+    case _ => redirectToCheckYouAnswers // should we remove some cases as this catches them?
   }
 
   private def redirectToCheckYouAnswers(ua: UserAnswers): Call =
