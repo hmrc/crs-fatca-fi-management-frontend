@@ -63,7 +63,7 @@ trait ModelGenerators extends RegexConstants with Generators {
         postCode     <- arbitrary[String]
         town         <- arbitrary[String]
         county       <- arbitrary[Option[String]]
-        country      <- arbitrary[Option[String]]
+        country      <- arbitrary[Option[Country]]
       } yield AddressLookup(addressLine1, addressLine2, addressLine3, addressLine4, town, county, postCode, country)
     }
 

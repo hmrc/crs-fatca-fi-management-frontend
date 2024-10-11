@@ -20,7 +20,6 @@ import com.google.inject.Inject
 import controllers.actions._
 import models.{CheckAnswers, UserAnswers}
 import pages.Page
-import play.api.i18n.Lang.logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.FinancialInstitutionsService

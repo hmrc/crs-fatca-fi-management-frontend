@@ -18,7 +18,7 @@ package controllers.addFinancialInstitution
 
 import base.SpecBase
 import forms.addFinancialInstitution.SelectAddressFormProvider
-import models.{AddressLookup, NormalMode}
+import models.{AddressLookup, Country, NormalMode}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -48,13 +48,13 @@ class SelectAddressControllerSpec extends SpecBase with MockitoSugar {
   private val ua  = emptyUserAnswers.set(NameOfFinancialInstitutionPage, contactName).get
 
   val addresses: Seq[AddressLookup] = Seq(
-    AddressLookup(Some("1 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ", None),
-    AddressLookup(Some("2 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ", None)
+    AddressLookup(Some("1 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ", Some(Country.GB)),
+    AddressLookup(Some("2 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ", Some(Country.GB))
   )
 
   val addressOptions: Seq[RadioItem] = Seq(
-    RadioItem(content = Text("1 Address line 1, Town, ZZ1 1ZZ"), value = Some("1 Address line 1, Town, ZZ1 1ZZ")),
-    RadioItem(content = Text("2 Address line 1, Town, ZZ1 1ZZ"), value = Some("2 Address line 1, Town, ZZ1 1ZZ"))
+    RadioItem(content = Text("1 Address line 1, Town, ZZ1 1ZZ, United Kingdom"), value = Some("1 Address line 1, Town, ZZ1 1ZZ, United Kingdom")),
+    RadioItem(content = Text("2 Address line 1, Town, ZZ1 1ZZ, United Kingdom"), value = Some("2 Address line 1, Town, ZZ1 1ZZ, United Kingdom"))
   )
 
   val userAnswers = ua
@@ -107,7 +107,7 @@ class SelectAddressControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, SelectAddressRoute).withFormUrlEncodedBody(("value", "1 Address line 1, Town, ZZ1 1ZZ"))
+          FakeRequest(POST, SelectAddressRoute).withFormUrlEncodedBody(("value", "1 Address line 1, Town, ZZ1 1ZZ, United Kingdom"))
 
         val result = route(application, request).value
 
