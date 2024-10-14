@@ -47,7 +47,7 @@ class IsThisAddressControllerSpec extends SpecBase with MockitoSugar {
     addressLine3 = "Address town",
     addressLine4 = Some("Wessex"),
     postCode = Some("postcode"),
-    country = Country("valid", "GB", "United Kingdom")
+    country = Country.GB
   )
 
   val addressLookup: AddressLookup = AddressLookup(

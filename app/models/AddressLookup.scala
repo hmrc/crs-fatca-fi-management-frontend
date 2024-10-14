@@ -76,8 +76,9 @@ object AddressLookup {
       (JsPath \ "address" \ "county").readNullable[String] and
       (JsPath \ "address" \ "postcode").read[String] and
       (JsPath \ "address" \ "country" \ "code").readNullable[String] and
+      (JsPath \ "address" \ "country" \ "description").readNullable[String] and
       (JsPath \ "address" \ "country" \ "name").readNullable[String]) {
-      (lines, town, county, postcode, countryCode, countryName) =>
+      (lines, town, county, postcode, countryCode, countryDescription, countryName) =>
         val addressLines: (Option[String], Option[String], Option[String], Option[String]) =
           lines.size match {
             case 0 =>
@@ -98,7 +99,9 @@ object AddressLookup {
           town,
           county,
           postcode,
-          Some(Country("", countryCode.getOrElse("GB"), countryName.getOrElse("United Kingdom")))
+          countryCode.map(
+            code => Country("", code, countryDescription.orElse(countryName).getOrElse(code))
+          )
         )
     }
 
