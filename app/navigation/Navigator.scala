@@ -189,8 +189,6 @@ class Navigator @Inject() () {
           routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(CheckMode),
           redirectToCheckYouAnswers(userAnswers)
         )
-    case FirstContactNamePage  => redirectToCheckYouAnswers
-    case FirstContactEmailPage => redirectToCheckYouAnswers
     case FirstContactHavePhonePage =>
       userAnswers =>
         yesNoPage(
@@ -199,7 +197,6 @@ class Navigator @Inject() () {
           routes.FirstContactPhoneNumberController.onPageLoad(CheckMode),
           redirectToCheckYouAnswers(userAnswers)
         )
-    case FirstContactPhoneNumberPage => redirectToCheckYouAnswers
     case SecondContactExistsPage =>
       userAnswers =>
         yesNoPage(
@@ -208,7 +205,6 @@ class Navigator @Inject() () {
           checkNextPageForValueThenRoute(CheckMode, userAnswers, SecondContactNamePage, routes.SecondContactNameController.onPageLoad(CheckMode)),
           resolveAnswersVerificationRoute(userAnswers)
         )
-    case SecondContactNamePage => redirectToCheckYouAnswers
     case SecondContactEmailPage =>
       userAnswers =>
         checkNextPageForValueThenRoute(CheckMode, userAnswers, SecondContactCanWePhonePage, routes.SecondContactCanWePhoneController.onPageLoad(CheckMode))
@@ -220,7 +216,6 @@ class Navigator @Inject() () {
           routes.SecondContactPhoneNumberController.onPageLoad(CheckMode),
           redirectToCheckYouAnswers(userAnswers)
         )
-    case SecondContactPhoneNumberPage => redirectToCheckYouAnswers
     case IsTheAddressCorrectPage =>
       userAnswers =>
         yesNoPage(
@@ -245,10 +240,7 @@ class Navigator @Inject() () {
           redirectToCheckYouAnswers(userAnswers),
           routes.UkAddressController.onPageLoad(CheckMode)
         )
-    case PostcodePage      => addressLookupNavigation(CheckMode)
-    case NonUkAddressPage  => redirectToCheckYouAnswers
-    case UkAddressPage     => redirectToCheckYouAnswers
-    case SelectAddressPage => redirectToCheckYouAnswers
+    case PostcodePage => addressLookupNavigation(CheckMode)
     case HaveGIINPage =>
       userAnswers =>
         yesNoPage(
@@ -265,7 +257,7 @@ class Navigator @Inject() () {
           redirectToCheckYouAnswers(userAnswers),
           routes.NameOfFinancialInstitutionController.onPageLoad(CheckMode)
         )
-    case _ => redirectToCheckYouAnswers // should we remove some cases as this catches them?
+    case _ => redirectToCheckYouAnswers
   }
 
   private def redirectToCheckYouAnswers(ua: UserAnswers): Call =
