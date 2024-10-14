@@ -45,9 +45,9 @@ class AddressHelperSpec extends SpecBase {
     }
 
     "format the address from AddressLookup correctly" in {
-      val address = AddressLookup(Some("line1"), Some("line2"), Some("line3"), Some("line4"), "town", Some("county"), "postcode", Some("country"))
+      val address = AddressLookup(Some("line1"), Some("line2"), Some("line3"), Some("line4"), "town", Some("county"), "postcode", Some(Country.GB))
       val result  = sut.formatAddress(address)
-      result mustBe "line1, line2, line3, line4, town, postcode, county, country"
+      result mustBe "line1, line2, line3, line4, town, postcode, county, United Kingdom"
     }
 
     "format the address from AddressResponse correctly as html" in {
@@ -66,7 +66,7 @@ class AddressHelperSpec extends SpecBase {
     }
 
     "must format AddressLookupBlock as html" in {
-      val addressLookup = AddressLookup(Some("line1"), Some("line2"), Some("line3"), Some("line4"), "town", Some("county"), "postcode", Some("country"))
+      val addressLookup = AddressLookup(Some("line1"), Some("line2"), Some("line3"), Some("line4"), "town", Some("county"), "postcode", Some(Country.GB))
 
       val result = sut.formatAddressLookupBlock(addressLookup)
 
@@ -78,7 +78,7 @@ class AddressHelperSpec extends SpecBase {
             |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>${addressLookup.town}</p>
             |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>${addressLookup.postcode}</p>
             |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>${addressLookup.county.value}</p>
-            |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>${addressLookup.country.value}</p>
+            |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>${addressLookup.country.map(_.description).value}</p>
             |""".stripMargin.replaceAll("\\n", "")
       )
       result mustBe formattedAddress
@@ -87,24 +87,24 @@ class AddressHelperSpec extends SpecBase {
 
   "AddressLookup" - {
     "toAddress must convert to Address class" in {
-      val addressLookup   = AddressLookup(Some("line1"), Some("line2"), Some("line3"), Some("line4"), "town", Some("county"), "postcode", Some("country"))
-      val expectedAddress = Address("line1", Some("line2"), "line3", Some("line4"), Some("postcode"), Country("", "", "country"))
+      val addressLookup   = AddressLookup(Some("line1"), Some("line2"), Some("line3"), Some("line4"), "town", Some("county"), "postcode", Some(Country.GB))
+      val expectedAddress = Address("line1", Some("line2"), "line3", Some("line4"), Some("postcode"), Country("", "GB", "United Kingdom"))
       addressLookup.toAddress mustBe expectedAddress
     }
     "toAddress must populate from the town field correctly without line3" in {
-      val addressLookup   = AddressLookup(Some("line1"), Some("line2"), None, Some("line4"), "town", Some("county"), "postcode", Some("country"))
-      val expectedAddress = Address("line1", Some("line2"), "town", Some("line4"), Some("postcode"), Country("", "", "country"))
+      val addressLookup   = AddressLookup(Some("line1"), Some("line2"), None, Some("line4"), "town", Some("county"), "postcode", Some(Country.GB))
+      val expectedAddress = Address("line1", Some("line2"), "town", Some("line4"), Some("postcode"), Country("", "GB", "United Kingdom"))
       addressLookup.toAddress mustBe expectedAddress
     }
     "toAddress must populate from the town field correctly without line4" in {
-      val addressLookup   = AddressLookup(Some("line1"), Some("line2"), Some("line3"), None, "town", Some("county"), "postcode", Some("country"))
-      val expectedAddress = Address("line1", Some("line2"), "line3", Some("town"), Some("postcode"), Country("", "", "country"))
+      val addressLookup   = AddressLookup(Some("line1"), Some("line2"), Some("line3"), None, "town", Some("county"), "postcode", Some(Country.GB))
+      val expectedAddress = Address("line1", Some("line2"), "line3", Some("town"), Some("postcode"), Country("", "GB", "United Kingdom"))
       addressLookup.toAddress mustBe expectedAddress
 
     }
     "toAddress must populate county field if there is space" in {
-      val addressLookup   = AddressLookup(Some("line1"), Some("line2"), None, None, "town", Some("county"), "postcode", Some("country"))
-      val expectedAddress = Address("line1", Some("line2"), "town", Some("county"), Some("postcode"), Country("", "", "country"))
+      val addressLookup   = AddressLookup(Some("line1"), Some("line2"), None, None, "town", Some("county"), "postcode", Some(Country.GB))
+      val expectedAddress = Address("line1", Some("line2"), "town", Some("county"), Some("postcode"), Country("", "GB", "United Kingdom"))
       addressLookup.toAddress mustBe expectedAddress
 
     }

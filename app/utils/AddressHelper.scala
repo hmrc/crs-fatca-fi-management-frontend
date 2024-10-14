@@ -30,7 +30,7 @@ object AddressHelper {
       address.town,
       address.postcode,
       address.county,
-      address.country
+      address.country.map(_.description)
     )
       .collect {
         case s: String => s
@@ -40,14 +40,7 @@ object AddressHelper {
   }
 
   def formatAddress(address: Address): String = {
-    val lines = Seq(address.addressLine1,
-                    address.addressLine2,
-                    address.addressLine3,
-                    address.addressLine4,
-                    address.country,
-                    address.postCode,
-                    address.country.description
-    )
+    val lines = Seq(address.addressLine1, address.addressLine2, address.addressLine3, address.addressLine4, address.postCode, address.country.description)
       .collect {
         case s: String => s
         case Some(s)   => s
@@ -64,20 +57,13 @@ object AddressHelper {
       address.town,
       address.postcode,
       address.county,
-      address.country
+      address.country.map(_.description)
     )
     toFormattedAddress(lines)
   }
 
   def formatAddressBlock(address: Address): HtmlContent = {
-    val lines = Seq(address.addressLine1,
-                    address.addressLine2,
-                    address.addressLine3,
-                    address.addressLine4,
-                    address.country,
-                    address.postCode,
-                    address.country.description
-    )
+    val lines = Seq(address.addressLine1, address.addressLine2, address.addressLine3, address.addressLine4, address.postCode, address.country.description)
     toFormattedAddress(lines)
   }
 
