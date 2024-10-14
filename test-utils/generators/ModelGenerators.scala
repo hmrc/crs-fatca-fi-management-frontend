@@ -137,7 +137,7 @@ trait ModelGenerators extends RegexConstants with Generators {
       IsFIUser = isFIUser,
       IsFATCAReporting = isFATCAReporting,
       AddressDetails = addressDetails,
-      PrimaryContactDetails = primaryContactDetails,
+      PrimaryContactDetails = Some(primaryContactDetails),
       SecondaryContactDetails = secondaryContactDetails
     )
   }

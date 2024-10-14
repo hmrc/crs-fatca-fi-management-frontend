@@ -217,7 +217,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
             val populatedUserAnswers = service
               .populateAndSaveFiDetails(emptyUserAnswers, fiDetails)
               .futureValue
-              .withPage(FirstContactHavePhonePage, fiDetails.PrimaryContactDetails.PhoneNumber.isEmpty)
+              .withPage(FirstContactHavePhonePage, fiDetails.PrimaryContactDetails.map(_.PhoneNumber).isEmpty)
 
             service.fiDetailsHasChanged(populatedUserAnswers, fiDetails) mustBe true
         }
@@ -279,7 +279,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
         forAll {
           (fiDetails: FIDetail, name: String, email: String, phone: String) =>
             val fiDetailsWithSecondaryContact = fiDetails
-              .copy(PrimaryContactDetails = ContactDetails(name, email, PhoneNumber = Option(phone)))
+              .copy(PrimaryContactDetails = Some(ContactDetails(name, email, PhoneNumber = Option(phone))))
             when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
             when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(Country.GB))
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(fiDetails.AddressDetails.CountryCode.toSet)
@@ -297,7 +297,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
         forAll {
           (fiDetails: FIDetail, name: String, email: String) =>
             val fiDetailsWithSecondaryContact = fiDetails
-              .copy(PrimaryContactDetails = ContactDetails(name, email, PhoneNumber = None))
+              .copy(PrimaryContactDetails = Some(ContactDetails(name, email, PhoneNumber = None)))
             when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
             when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(Country.GB))
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(fiDetails.AddressDetails.CountryCode.toSet)
@@ -483,10 +483,10 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
     val addressPage = if (isUkAddress) UkAddressPage else NonUkAddressPage
     populatedUserAnswers.get(addressPage).value mustBe fiDetails.AddressDetails.toAddress(mockCountryListFactory).value
 
-    populatedUserAnswers.get(FirstContactNamePage).value mustBe fiDetails.PrimaryContactDetails.ContactName
-    populatedUserAnswers.get(FirstContactEmailPage).value mustBe fiDetails.PrimaryContactDetails.EmailAddress
-    populatedUserAnswers.get(FirstContactHavePhonePage).value mustBe fiDetails.PrimaryContactDetails.PhoneNumber.isDefined
-    populatedUserAnswers.get(FirstContactPhoneNumberPage) mustBe fiDetails.PrimaryContactDetails.PhoneNumber
+    populatedUserAnswers.get(FirstContactNamePage).value mustBe fiDetails.PrimaryContactDetails.map(_.ContactName).get
+    populatedUserAnswers.get(FirstContactEmailPage).value mustBe fiDetails.PrimaryContactDetails.map(_.EmailAddress).get
+    populatedUserAnswers.get(FirstContactHavePhonePage).value mustBe fiDetails.PrimaryContactDetails.map(_.PhoneNumber).isDefined
+    populatedUserAnswers.get(FirstContactPhoneNumberPage) mustBe fiDetails.PrimaryContactDetails.map(_.PhoneNumber).get
 
     populatedUserAnswers.get(SecondContactExistsPage).value mustBe fiDetails.SecondaryContactDetails.isDefined
     populatedUserAnswers.get(SecondContactNamePage) mustBe fiDetails.SecondaryContactDetails.map(_.ContactName)

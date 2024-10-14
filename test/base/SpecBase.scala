@@ -100,7 +100,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
       IsFIUser = true,
       IsFATCAReporting = true,
       AddressDetails("22", Some("High Street"), "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
-      ContactDetails("Jane Doe", "janedoe@example.com", Some("0444458888")),
+      Some(ContactDetails("Jane Doe", "janedoe@example.com", Some("0444458888"))),
       Some(ContactDetails("John Doe", "johndoe@example.com", Some("0333458888")))
     )
 
@@ -114,7 +114,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
         IsFIUser = true,
         IsFATCAReporting = true,
         AddressDetails("22", Some("High Street"), "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
-        ContactDetails("Jane Doe", "janedoe@example.com", Some("0444458888")),
+        Some(ContactDetails("Jane Doe", "janedoe@example.com", Some("0444458888"))),
         Some(ContactDetails("John Doe", "johndoe@example.com", Some("0333458888")))
       ),
       FIDetail(
@@ -125,7 +125,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
         IsFIUser = true,
         IsFATCAReporting = true,
         AddressDetails("22", Some("High Street"), "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
-        ContactDetails("Foo Bar", "fbar@example.com", Some("0223458888")),
+        Some(ContactDetails("Foo Bar", "fbar@example.com", Some("0223458888"))),
         Some(ContactDetails("Foobar Baz", "fbaz@example.com", Some("0123456789")))
       )
     )
