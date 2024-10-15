@@ -56,7 +56,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
     reset(mockFinancialInstitutionsService, mockFinancialInstitutionUpdateService)
   }
 
-  "ChangeFinancialInstitutionController" - {
+  "ChangeRegisteredBusinessFinancialInstitutionController" - {
 
     "onPageLoad" - {
 
