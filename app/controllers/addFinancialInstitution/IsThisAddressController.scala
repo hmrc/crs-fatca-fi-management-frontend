@@ -18,7 +18,7 @@ package controllers.addFinancialInstitution
 
 import controllers.actions._
 import forms.addFinancialInstitution.IsThisAddressFormProvider
-import models.{AddressLookup, Mode}
+import models.Mode
 import navigation.Navigator
 import pages.addFinancialInstitution.{AddressLookupPage, IsThisAddressPage, SelectedAddressLookupPage}
 import play.api.i18n.{I18nSupport, MessagesApi}

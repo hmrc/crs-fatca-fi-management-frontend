@@ -174,8 +174,7 @@ trait Generators extends RegexConstants {
       pt2         <- Gen.choose(0, 9)
 
       pt3numOpt <- Gen.option(Gen.choose(0, 9))
-      pt3 = pt3numOpt.getOrElse("").toString
-
+      pt3 = pt3numOpt.map(_.toString).getOrElse("")
       pt4 <- Gen.choose(0, 9)
       pt5a <- Gen.alphaChar suchThat (
         ch => !disallowed.contains(ch.toLower)
