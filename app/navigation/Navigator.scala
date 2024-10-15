@@ -21,7 +21,7 @@ import models._
 import pages._
 import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
-import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
+import pages.changeFinancialInstitution.{ChangeFiDetailsInProgressId, ChangeRegisteredFiDetailsInProgressId}
 import play.api.libs.json.Reads
 import play.api.mvc.Call
 
@@ -302,10 +302,12 @@ class Navigator @Inject() () {
     resolveNextRoute(userAnswers, routes.CheckYourAnswersController.onPageLoad())
 
   private def resolveNextRoute(userAnswers: UserAnswers, checkAnswersOnwardRoute: Call): Call =
-    userAnswers.get(ChangeFiDetailsInProgressId) match {
-      case Some(id) =>
+    (userAnswers.get(ChangeFiDetailsInProgressId), userAnswers.get(ChangeRegisteredFiDetailsInProgressId)) match {
+      case (Some(id), None) =>
         controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(id)
-      case None => checkAnswersOnwardRoute
+      case (None, Some(id)) =>
+        controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.onPageLoad(id)
+      case _ => checkAnswersOnwardRoute
     }
 
 }

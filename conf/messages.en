@@ -392,7 +392,9 @@ secondContactName.changeYourAnswersLabel = Second contact name
 secondContactEmail.changeYourAnswersLabel = Second contact email address
 secondContactPhoneNumber.changeYourAnswersLabel = Second contact telephone number
 isFIRegistered.changeYourAnswersLabel = Is this financial institution the business you registered as?
-isFIRegistered.changeYourAnswersLabel = Is this financial institution the business you registered as?
+isThisYourBusinessName.changeYourAnswersLabel = What is the name of the financial institution?
+reportForRegisteredBusiness.changeYourAnswersLabel = Is this financial institution the business you registered as?
+
 
 
 detailsUpdated.title = Details updated

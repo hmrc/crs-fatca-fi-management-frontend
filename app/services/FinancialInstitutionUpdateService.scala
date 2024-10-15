@@ -21,8 +21,9 @@ import models.FinancialInstitutions.TINType.{GIIN, UTR}
 import models.FinancialInstitutions._
 import models.{GIINumber, TaxIdentificationNumber, UniqueTaxpayerReference, UserAnswers}
 import pages.QuestionPage
+import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
 import pages.addFinancialInstitution._
-import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
+import pages.changeFinancialInstitution.{ChangeFiDetailsInProgressId, ChangeRegisteredFiDetailsInProgressId}
 import play.api.libs.json.{Json, Reads}
 import repositories.SessionRepository
 import utils.CountryListFactory
@@ -41,6 +42,13 @@ class FinancialInstitutionUpdateService @Inject() (
       _                           <- sessionRepository.set(updatedUserAnswers)
     } yield updatedUserAnswers
 
+  def populateAndSaveRegisteredFiDetails(userAnswers: UserAnswers, fiDetails: FIDetail): Future[UserAnswers] =
+    for {
+      userAnswersWithProgressFlag <- Future.fromTry(userAnswers.set(ChangeRegisteredFiDetailsInProgressId, fiDetails.FIID))
+      updatedUserAnswers          <- populateUserAnswersWithRegisteredFiDetail(fiDetails, userAnswersWithProgressFlag)
+      _                           <- sessionRepository.set(updatedUserAnswers)
+    } yield updatedUserAnswers
+
   def fiDetailsHasChanged(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean =
     userAnswers.get(NameOfFinancialInstitutionPage).exists(_ != fiDetails.FIName) ||
       checkTaxIdentifierForChanges(userAnswers, fiDetails.TINDetails, UTR, HaveUniqueTaxpayerReferencePage, WhatIsUniqueTaxpayerReferencePage) ||
@@ -48,6 +56,11 @@ class FinancialInstitutionUpdateService @Inject() (
       checkAddressForChanges(userAnswers, fiDetails.AddressDetails) ||
       checkPrimaryContactForChanges(userAnswers, fiDetails) ||
       checkSecondaryContactForChanges(userAnswers, fiDetails)
+
+  def registeredFiDetailsHasChanged(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean =
+    userAnswers.get(NameOfFinancialInstitutionPage).exists(_ != fiDetails.FIName) ||
+      checkTaxIdentifierForChanges(userAnswers, fiDetails.TINDetails, GIIN, HaveGIINPage, WhatIsGIINPage) ||
+      checkAddressForChanges(userAnswers, fiDetails.AddressDetails)
 
   def clearUserAnswers(userAnswers: UserAnswers): Future[Boolean] =
     sessionRepository.set(userAnswers.copy(data = Json.obj()))
@@ -64,6 +77,17 @@ class FinancialInstitutionUpdateService @Inject() (
       e <- setPrimaryContactDetails(d, fiDetails)
       f <- setSecondaryContactDetails(e, fiDetails)
     } yield f
+
+  private def populateUserAnswersWithRegisteredFiDetail(
+    fiDetails: FIDetail,
+    userAnswers: UserAnswers
+  )(implicit ec: ExecutionContext): Future[UserAnswers] =
+    for {
+      a <- Future.fromTry(userAnswers.set(ReportForRegisteredBusinessPage, fiDetails.IsFIUser))
+      b <- Future.fromTry(a.set(NameOfFinancialInstitutionPage, fiDetails.FIName))
+      c <- setGIIN(b, fiDetails.TINDetails)
+      d <- setAddress(c, fiDetails.AddressDetails)
+    } yield d
 
   private def setUTR(userAnswers: UserAnswers, tinDetails: Seq[TINDetails])(implicit ec: ExecutionContext): Future[UserAnswers] =
     tinDetails.find(_.TINType == UTR) match {
