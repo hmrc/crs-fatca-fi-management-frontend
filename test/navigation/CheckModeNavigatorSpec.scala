@@ -22,7 +22,7 @@ import models.{CheckMode, _}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import pages._
-import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, ReportForRegisteredBusinessPage}
+import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 
@@ -43,6 +43,12 @@ class CheckModeNavigatorSpec extends SpecBase {
 
     "when adding an FI" - {
       // Fields that only appear on /check-answers:
+      // FIName in standard
+      "must go from NameOfFinancialInstitution to CheckAnswers when No" in {
+        val userAnswers = emptyUserAnswers.withPage(NameOfFinancialInstitutionPage, "fiName")
+        navigator.nextPage(NameOfFinancialInstitutionPage, CheckMode, userAnswers) mustBe
+          controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad()
+      }
       // UTR
       "must go from HaveUniqueTaxpayerReference to CheckAnswers when No" in {
         val userAnswers = emptyUserAnswers.withPage(HaveUniqueTaxpayerReferencePage, false)
@@ -90,7 +96,7 @@ class CheckModeNavigatorSpec extends SpecBase {
         val userAnswers = emptyUserAnswers.withPage(SecondContactExistsPage, false)
         navigator.nextPage(SecondContactExistsPage, CheckMode, userAnswers) mustBe
           controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad()
-      } //////////
+      }
       "when SecondContactExists is changed from no to yes" - {
         "must go from SecondContactExists to SecondContactName when yes" in {
           val userAnswers = emptyUserAnswers.withPage(SecondContactExistsPage, true)
@@ -110,7 +116,6 @@ class CheckModeNavigatorSpec extends SpecBase {
         }
 
       }
-////////////
       "must go from SecondContactName to CheckAnswers" in {
         val userAnswers = emptyUserAnswers
           .withPage(SecondContactNamePage, "testname")
@@ -147,10 +152,21 @@ class CheckModeNavigatorSpec extends SpecBase {
         navigator.nextPage(ReportForRegisteredBusinessPage, CheckMode, userAnswers) mustBe
           controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad()
       }
-      "to manage FIs home page" in {
+      "to manage FIs home page when No" in {
         val userAnswers = emptyUserAnswers.withPage(ReportForRegisteredBusinessPage, false)
         navigator.nextPage(ReportForRegisteredBusinessPage, CheckMode, userAnswers) mustBe
           controllers.routes.IndexController.onPageLoad()
+      }
+    }
+    // FI name
+    "must go from IsThisYourBusinessName" - {
+      "to CheckAnswers when Yes" in {
+        val ua = emptyUserAnswers.withPage(IsThisYourBusinessNamePage, true)
+        navigator.nextPage(IsThisYourBusinessNamePage, CheckMode, ua) mustBe controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad()
+      }
+      "to NameOfFinancialInstitutionPage when No" in {
+        val ua = emptyUserAnswers.withPage(IsThisYourBusinessNamePage, false)
+        navigator.nextPage(IsThisYourBusinessNamePage, CheckMode, ua) mustBe routes.NameOfFinancialInstitutionController.onPageLoad(CheckMode)
       }
     }
     // Fields that are shared by both Answers Pages:
@@ -168,11 +184,6 @@ class CheckModeNavigatorSpec extends SpecBase {
       )
       forAll(userIsFiStatus) {
         (userAnswers, CYA, isFIUser) =>
-          // FI name
-          s"must go from NameOfFinancialInstitutionPage to CheckAnswers $isFIUser" in {
-            val ua = userAnswers.withPage(NameOfFinancialInstitutionPage, "FIName")
-            navigator.nextPage(NameOfFinancialInstitutionPage, CheckMode, ua) mustBe CYA
-          }
           // GIIN
           s"must go from HaveGIIN $isFIUser" - {
             s"to Answers page" in {
