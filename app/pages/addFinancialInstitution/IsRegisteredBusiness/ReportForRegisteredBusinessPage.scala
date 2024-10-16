@@ -16,12 +16,45 @@
 
 package pages.addFinancialInstitution.IsRegisteredBusiness
 
+import models.UserAnswers
 import pages.QuestionPage
+import pages.addFinancialInstitution._
 import play.api.libs.json.JsPath
+
+import scala.util.Try
 
 case object ReportForRegisteredBusinessPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "reportForRegisteredBusiness"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+    value match {
+      case Some(false) =>
+        val pagesToRemove = Seq(
+          HaveUniqueTaxpayerReferencePage,
+          WhatIsUniqueTaxpayerReferencePage,
+          FirstContactNamePage,
+          FirstContactEmailPage,
+          FirstContactHavePhonePage,
+          FirstContactPhoneNumberPage,
+          SecondContactExistsPage,
+          SecondContactNamePage,
+          SecondContactEmailPage,
+          SecondContactCanWePhonePage,
+          SecondContactPhoneNumberPage
+        )
+        removePages(pagesToRemove, userAnswers)
+
+      case Some(true) =>
+        val pagesToRemove = Seq(
+          IsThisYourBusinessNamePage,
+          IsTheAddressCorrectPage
+        )
+        removePages(pagesToRemove, userAnswers)
+
+      case _ => super.cleanup(value, userAnswers)
+    }
+
 }
