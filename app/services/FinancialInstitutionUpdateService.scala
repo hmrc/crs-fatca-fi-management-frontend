@@ -21,7 +21,7 @@ import models.FinancialInstitutions.TINType.{GIIN, UTR}
 import models.FinancialInstitutions._
 import models.{GIINumber, TaxIdentificationNumber, UniqueTaxpayerReference, UserAnswers}
 import pages.QuestionPage
-import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
+import pages.addFinancialInstitution.IsRegisteredBusiness.{IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.{ChangeFiDetailsInProgressId, ChangeRegisteredFiDetailsInProgressId}
 import play.api.libs.json.{Json, Reads}
@@ -87,7 +87,8 @@ class FinancialInstitutionUpdateService @Inject() (
       b <- Future.fromTry(a.set(NameOfFinancialInstitutionPage, fiDetails.FIName))
       c <- setGIIN(b, fiDetails.TINDetails)
       d <- setAddress(c, fiDetails.AddressDetails)
-    } yield d
+      e <- setFiUserDetails(d)
+    } yield e
 
   private def setUTR(userAnswers: UserAnswers, tinDetails: Seq[TINDetails])(implicit ec: ExecutionContext): Future[UserAnswers] =
     tinDetails.find(_.TINType == UTR) match {
@@ -160,6 +161,12 @@ class FinancialInstitutionUpdateService @Inject() (
           b <- Future.fromTry(a.remove(phoneNumberPage))
         } yield b
     }
+
+  private def setFiUserDetails(userAnswers: UserAnswers): Future[UserAnswers] = for {
+    a <- Future.fromTry(userAnswers.set(ReportForRegisteredBusinessPage, true))
+    b <- Future.fromTry(a.set(IsThisYourBusinessNamePage, true))
+    c <- Future.fromTry(b.set(IsThisAddressPage, true))
+  } yield c
 
   private def setSecondaryContactDetails(userAnswers: UserAnswers, fiDetails: FIDetail)(implicit ec: ExecutionContext): Future[UserAnswers] =
     for {
