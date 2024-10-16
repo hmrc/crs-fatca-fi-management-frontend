@@ -21,7 +21,7 @@ import models.FinancialInstitutions.TINType.{GIIN, UTR}
 import models.FinancialInstitutions._
 import models.{GIINumber, TaxIdentificationNumber, UniqueTaxpayerReference, UserAnswers}
 import pages.QuestionPage
-import pages.addFinancialInstitution.IsRegisteredBusiness.{IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
+import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.{ChangeFiDetailsInProgressId, ChangeRegisteredFiDetailsInProgressId}
 import play.api.libs.json.{Json, Reads}
@@ -166,7 +166,8 @@ class FinancialInstitutionUpdateService @Inject() (
     a <- Future.fromTry(userAnswers.set(ReportForRegisteredBusinessPage, true))
     b <- Future.fromTry(a.set(IsThisYourBusinessNamePage, true))
     c <- Future.fromTry(b.set(IsThisAddressPage, true))
-  } yield c
+    d <- Future.fromTry(c.set(IsTheAddressCorrectPage, true))
+  } yield d
 
   private def setSecondaryContactDetails(userAnswers: UserAnswers, fiDetails: FIDetail)(implicit ec: ExecutionContext): Future[UserAnswers] =
     for {
