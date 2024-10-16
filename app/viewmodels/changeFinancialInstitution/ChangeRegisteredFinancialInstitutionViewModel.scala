@@ -27,7 +27,6 @@ object ChangeRegisteredFinancialInstitutionViewModel {
   def getChangeRegisteredFinancialInstitutionSummaries(fiId: String, userAnswers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] =
     Seq(
       Option(FinancialInstitutionIdSummary.row(fiId)),
-      ReportForRegisteredBusinessSummary.row(userAnswers, ChangeAnswers),
       IsThisYourBusinessNameSummary.row(userAnswers, ChangeAnswers),
       getGIINRows(userAnswers, ChangeAnswers),
       getAddressRow(userAnswers, ChangeAnswers)
