@@ -90,14 +90,38 @@ class CheckModeNavigatorSpec extends SpecBase {
         val userAnswers = emptyUserAnswers.withPage(SecondContactExistsPage, false)
         navigator.nextPage(SecondContactExistsPage, CheckMode, userAnswers) mustBe
           controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad()
+      } //////////
+      "when SecondContactExists is changed from no to yes" - {
+        "must go from SecondContactExists to SecondContactName when yes" in {
+          val userAnswers = emptyUserAnswers.withPage(SecondContactExistsPage, true)
+          navigator.nextPage(SecondContactExistsPage, CheckMode, userAnswers) mustBe
+            controllers.addFinancialInstitution.routes.SecondContactNameController.onPageLoad(CheckMode)
+        }
+        "must go from SecondContactName to SecondContactEmail" in {
+          val userAnswers = emptyUserAnswers.withPage(SecondContactNamePage, "name")
+          navigator.nextPage(SecondContactNamePage, CheckMode, userAnswers) mustBe
+            controllers.addFinancialInstitution.routes.SecondContactEmailController.onPageLoad(CheckMode)
+        }
+        "must go from SecondContactEmail to SecondContactCanWePhone" in {
+          val userAnswers = emptyUserAnswers
+            .withPage(SecondContactEmailPage, "name@email.com")
+          navigator.nextPage(SecondContactEmailPage, CheckMode, userAnswers) mustBe
+            controllers.addFinancialInstitution.routes.SecondContactCanWePhoneController.onPageLoad(CheckMode)
+        }
+
       }
+////////////
       "must go from SecondContactName to CheckAnswers" in {
-        val userAnswers = emptyUserAnswers.withPage(SecondContactNamePage, "testname")
+        val userAnswers = emptyUserAnswers
+          .withPage(SecondContactNamePage, "testname")
+          .withPage(SecondContactEmailPage, "test@email.io")
         navigator.nextPage(SecondContactNamePage, CheckMode, userAnswers) mustBe
           controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad()
       }
       "must go from SecondContactEmail to CheckAnswers" in {
-        val userAnswers = emptyUserAnswers.withPage(SecondContactEmailPage, "test@email.io")
+        val userAnswers = emptyUserAnswers
+          .withPage(SecondContactEmailPage, "test@email.io")
+          .withPage(SecondContactCanWePhonePage, false)
         navigator.nextPage(SecondContactNamePage, CheckMode, userAnswers) mustBe
           controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad()
       }
@@ -106,7 +130,7 @@ class CheckModeNavigatorSpec extends SpecBase {
         navigator.nextPage(SecondContactCanWePhonePage, CheckMode, userAnswers) mustBe
           controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad()
       }
-      "must go from SecondContactCanWePhone to _ when Yes" in {
+      "must go from SecondContactCanWePhone to SecondContactPhoneNumber when Yes" in {
         val userAnswers = emptyUserAnswers.withPage(SecondContactCanWePhonePage, true)
         navigator.nextPage(SecondContactCanWePhonePage, CheckMode, userAnswers) mustBe
           controllers.addFinancialInstitution.routes.SecondContactPhoneNumberController.onPageLoad(CheckMode)

@@ -205,6 +205,8 @@ class Navigator @Inject() () {
           checkNextPageForValueThenRoute(CheckMode, userAnswers, SecondContactNamePage, routes.SecondContactNameController.onPageLoad(CheckMode)),
           resolveAnswersVerificationRoute(userAnswers)
         )
+    case SecondContactNamePage =>
+      userAnswers => checkNextPageForValueThenRoute(CheckMode, userAnswers, SecondContactEmailPage, routes.SecondContactEmailController.onPageLoad(CheckMode))
     case SecondContactEmailPage =>
       userAnswers =>
         checkNextPageForValueThenRoute(CheckMode, userAnswers, SecondContactCanWePhonePage, routes.SecondContactCanWePhoneController.onPageLoad(CheckMode))
