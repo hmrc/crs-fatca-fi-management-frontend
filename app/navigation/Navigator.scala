@@ -265,11 +265,7 @@ class Navigator @Inject() () {
     case _ => redirectToCheckYouAnswers
   }
 
-  private def redirectToCheckYouAnswers(ua: UserAnswers): Call =
-    ua.get(ReportForRegisteredBusinessPage) match {
-      case Some(value) if value => controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad()
-      case _                    => resolveAnswersVerificationRoute(ua)
-    }
+  private def redirectToCheckYouAnswers(ua: UserAnswers): Call = resolveAnswersVerificationRoute(ua)
 
   private def isFiUser(ua: UserAnswers, yesCall: => Call, noCall: => Call): Call =
     ua.get(ReportForRegisteredBusinessPage) match {
