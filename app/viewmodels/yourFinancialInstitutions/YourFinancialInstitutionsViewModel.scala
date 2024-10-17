@@ -32,8 +32,13 @@ object YourFinancialInstitutionsViewModel {
           key = Key("", "govuk-!-display-none"),
           value = ValueViewModel(institution.FIName),
           actions = Seq(
-            accessibleActionItem("site.change",
-                                 controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(institution.FIID).url
+            accessibleActionItem(
+              "site.change",
+              if (institution.IsFIUser) {
+                controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.onPageLoad(institution.FIID).url
+              } else {
+                controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(institution.FIID).url
+              }
             )
               .withVisuallyHiddenText(messages("yourFinancialInstitutions.change.hidden", institution.FIName)),
             accessibleActionItem("site.remove", controllers.routes.RemoveAreYouSureController.onPageLoad(institution.FIID).url)
