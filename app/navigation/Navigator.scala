@@ -21,7 +21,7 @@ import models._
 import pages._
 import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
-import pages.changeFinancialInstitution.{ChangeFiDetailsInProgressId, ChangeRegisteredFiDetailsInProgressId}
+import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.libs.json.Reads
 import play.api.mvc.Call
 
@@ -294,15 +294,20 @@ class Navigator @Inject() () {
   def checkNextPageForValueThenRoute[A](mode: Mode, userAnswers: UserAnswers, page: QuestionPage[A], call: Call)(implicit rds: Reads[A]): Call =
     if (mode.equals(CheckMode) && userAnswers.get(page).isDefined) resolveAnswersVerificationRoute(userAnswers) else call
 
-  private def resolveAnswersVerificationRoute(userAnswers: UserAnswers): Call =
-    resolveNextRoute(userAnswers, routes.CheckYourAnswersController.onPageLoad())
+  private def resolveAnswersVerificationRoute(userAnswers: UserAnswers): Call = {
+    val route = userAnswers.get(ReportForRegisteredBusinessPage) match {
+      case Some(value) if value => controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad()
+      case _                    => routes.CheckYourAnswersController.onPageLoad()
+    }
+    resolveNextRoute(userAnswers, route)
+  }
 
   private def resolveNextRoute(userAnswers: UserAnswers, checkAnswersOnwardRoute: Call): Call =
-    (userAnswers.get(ChangeFiDetailsInProgressId), userAnswers.get(ChangeRegisteredFiDetailsInProgressId)) match {
-      case (Some(id), None) =>
-        controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(id)
-      case (None, Some(id)) =>
+    (userAnswers.get(ChangeFiDetailsInProgressId), userAnswers.get(ReportForRegisteredBusinessPage)) match {
+      case (Some(id), Some(true)) =>
         controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.onPageLoad(id)
+      case (Some(id), _) =>
+        controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(id)
       case _ => checkAnswersOnwardRoute
     }
 

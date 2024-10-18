@@ -307,7 +307,7 @@ class NavigatorSpec extends SpecBase {
 
         "must go from IsTheAddressCorrect" - {
           "to RegisteredBusinessCheckYourAnswers when Yes" in {
-            val ua = userAnswers.withPage(IsTheAddressCorrectPage, true)
+            val ua = userAnswers.withPage(IsTheAddressCorrectPage, true).withPage(ReportForRegisteredBusinessPage, true)
             navigator.nextPage(IsTheAddressCorrectPage, CheckMode, ua) mustBe
               controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad()
           }

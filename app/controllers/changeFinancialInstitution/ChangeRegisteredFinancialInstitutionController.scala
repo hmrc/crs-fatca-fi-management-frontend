@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import controllers.actions._
 import models.UserAnswers
 import models.requests.DataRequest
-import pages.changeFinancialInstitution.ChangeRegisteredFiDetailsInProgressId
+import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -57,7 +57,7 @@ class ChangeRegisteredFinancialInstitutionController @Inject() (
         .getFinancialInstitution(request.fatcaId, fiid)
         .flatMap {
           case Some(fiDetails) =>
-            userAnswers.get(ChangeRegisteredFiDetailsInProgressId) match {
+            userAnswers.get(ChangeFiDetailsInProgressId) match {
               case Some(id) if id.equalsIgnoreCase(fiid) =>
                 val hasChanges = financialInstitutionUpdateService.registeredFiDetailsHasChanged(userAnswers, fiDetails)
                 Future.successful(createPage(fiid, userAnswers, hasChanges))

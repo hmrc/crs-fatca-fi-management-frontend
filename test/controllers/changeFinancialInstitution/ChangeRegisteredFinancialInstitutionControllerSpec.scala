@@ -137,7 +137,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
               val userAnswers = emptyUserAnswers.withPage(ChangeFiDetailsInProgressId, fiDetail.FIID)
 
               mockSuccessfulFiRetrieval(fiDetail)
-              when(mockFinancialInstitutionUpdateService.fiDetailsHasChanged(mockitoEq(userAnswers), mockitoEq(fiDetail)))
+              when(mockFinancialInstitutionUpdateService.registeredFiDetailsHasChanged(mockitoEq(userAnswers), mockitoEq(fiDetail)))
                 .thenReturn(true)
 
               val application = createAppWithAnswers(Option(userAnswers))
@@ -160,7 +160,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
               val userAnswers = emptyUserAnswers.withPage(ChangeFiDetailsInProgressId, fiDetail.FIID)
 
               mockSuccessfulFiRetrieval(fiDetail)
-              when(mockFinancialInstitutionUpdateService.fiDetailsHasChanged(mockitoEq(userAnswers), mockitoEq(fiDetail)))
+              when(mockFinancialInstitutionUpdateService.registeredFiDetailsHasChanged(mockitoEq(userAnswers), mockitoEq(fiDetail)))
                 .thenReturn(false)
 
               val application = createAppWithAnswers(Option(userAnswers))
@@ -275,7 +275,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
 
   private def mockSuccessfulUserAnswersPersistence(userAnswers: UserAnswers, fiDetail: FIDetail) =
     when(
-      mockFinancialInstitutionUpdateService.populateAndSaveFiDetails(mockitoEq(userAnswers), mockitoEq(fiDetail))
+      mockFinancialInstitutionUpdateService.populateAndSaveRegisteredFiDetails(mockitoEq(userAnswers), mockitoEq(fiDetail))
     ).thenReturn(Future.successful(userAnswers))
 
 }

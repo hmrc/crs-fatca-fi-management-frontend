@@ -23,7 +23,7 @@ import models.{GIINumber, TaxIdentificationNumber, UniqueTaxpayerReference, User
 import pages.QuestionPage
 import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
-import pages.changeFinancialInstitution.{ChangeFiDetailsInProgressId, ChangeRegisteredFiDetailsInProgressId}
+import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.libs.json.{Json, Reads}
 import repositories.SessionRepository
 import utils.CountryListFactory
@@ -44,7 +44,7 @@ class FinancialInstitutionUpdateService @Inject() (
 
   def populateAndSaveRegisteredFiDetails(userAnswers: UserAnswers, fiDetails: FIDetail): Future[UserAnswers] =
     for {
-      userAnswersWithProgressFlag <- Future.fromTry(userAnswers.set(ChangeRegisteredFiDetailsInProgressId, fiDetails.FIID))
+      userAnswersWithProgressFlag <- Future.fromTry(userAnswers.set(ChangeFiDetailsInProgressId, fiDetails.FIID))
       updatedUserAnswers          <- populateUserAnswersWithRegisteredFiDetail(fiDetails, userAnswersWithProgressFlag)
       _                           <- sessionRepository.set(updatedUserAnswers)
     } yield updatedUserAnswers
