@@ -173,7 +173,14 @@ class Navigator @Inject() () {
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
-
+    case ReportForRegisteredBusinessPage =>
+      userAnswers =>
+        yesNoPage(
+          userAnswers,
+          ReportForRegisteredBusinessPage,
+          redirectToCheckYouAnswers(userAnswers),
+          controllers.routes.IndexController.onPageLoad()
+        )
     case HaveUniqueTaxpayerReferencePage =>
       userAnswers =>
         yesNoPage(
@@ -182,20 +189,14 @@ class Navigator @Inject() () {
           routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(CheckMode),
           redirectToCheckYouAnswers(userAnswers)
         )
-    case FirstContactNamePage =>
-      userAnswers => resolveNextRoute(userAnswers, routes.FirstContactEmailController.onPageLoad(CheckMode))
-    case FirstContactEmailPage =>
-      userAnswers => resolveNextRoute(userAnswers, routes.FirstContactHavePhoneController.onPageLoad(CheckMode))
     case FirstContactHavePhonePage =>
       userAnswers =>
         yesNoPage(
           userAnswers,
           FirstContactHavePhonePage,
           routes.FirstContactPhoneNumberController.onPageLoad(CheckMode),
-          resolveNextRoute(userAnswers, routes.SecondContactExistsController.onPageLoad(CheckMode))
+          redirectToCheckYouAnswers(userAnswers)
         )
-    case FirstContactPhoneNumberPage =>
-      userAnswers => resolveNextRoute(userAnswers, routes.SecondContactExistsController.onPageLoad(CheckMode))
     case SecondContactExistsPage =>
       userAnswers =>
         yesNoPage(
@@ -217,7 +218,6 @@ class Navigator @Inject() () {
           routes.SecondContactPhoneNumberController.onPageLoad(CheckMode),
           redirectToCheckYouAnswers(userAnswers)
         )
-    case SecondContactPhoneNumberPage => redirectToCheckYouAnswers
     case IsTheAddressCorrectPage =>
       userAnswers =>
         yesNoPage(
@@ -242,10 +242,7 @@ class Navigator @Inject() () {
           redirectToCheckYouAnswers(userAnswers),
           routes.UkAddressController.onPageLoad(CheckMode)
         )
-    case PostcodePage      => addressLookupNavigation(CheckMode)
-    case NonUkAddressPage  => redirectToCheckYouAnswers
-    case UkAddressPage     => redirectToCheckYouAnswers
-    case SelectAddressPage => redirectToCheckYouAnswers
+    case PostcodePage => addressLookupNavigation(CheckMode)
     case HaveGIINPage =>
       userAnswers =>
         yesNoPage(

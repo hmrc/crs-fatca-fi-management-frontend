@@ -30,8 +30,13 @@ case object HaveUniqueTaxpayerReferencePage extends QuestionPage[Boolean] {
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
-      case Some(false) => userAnswers.remove(WhatIsUniqueTaxpayerReferencePage)
-      case _           => super.cleanup(value, userAnswers)
+      case Some(false) =>
+        val pagesToRemove = Seq(WhatIsUniqueTaxpayerReferencePage, IsThisAddressPage)
+        removePages(pagesToRemove, userAnswers)
+
+      case Some(true) => userAnswers.remove(IsThisAddressPage)
+
+      case _ => super.cleanup(value, userAnswers)
     }
 
 }

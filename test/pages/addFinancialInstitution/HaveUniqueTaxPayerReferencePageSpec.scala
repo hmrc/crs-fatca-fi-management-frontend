@@ -16,7 +16,7 @@
 
 package pages.addFinancialInstitution
 
-import models.UniqueTaxpayerReference
+import pages.addFinancialInstitution.IsRegisteredBusiness.IsTheAddressCorrectPage
 import pages.addFinancialInstitution.behaviours.PageBehaviours
 
 class HaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
@@ -30,26 +30,17 @@ class HaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
   }
 
   "cleanup" - {
-    "must remove WhatIsUniqueTaxpayerReferencePage when answer is false" in {
-      forAll(validUtr -> "UTR") {
-        value: String =>
-          val userAnswers = emptyUserAnswers.withPage(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference(value))
 
-          val result = HaveUniqueTaxpayerReferencePage.cleanup(Some(false), userAnswers).success.value
-
-          result.get(WhatIsUniqueTaxpayerReferencePage) mustBe empty
-      }
+    "when false" in {
+      val result = HaveUniqueTaxpayerReferencePage.cleanup(Some(false), userAnswersForAddFI)
+      result.get.data.value must not contain key(IsTheAddressCorrectPage.toString)
+      result.get.data.value must not contain key(WhatIsUniqueTaxpayerReferencePage.toString)
     }
 
-    "must not remove WhatIsUniqueTaxpayerReferencePage when answer is true" in {
-      forAll(validUtr -> "UTR") {
-        value: String =>
-          val userAnswers = emptyUserAnswers.withPage(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference(value))
+    "when true" in {
+      val result = HaveUniqueTaxpayerReferencePage.cleanup(Some(true), userAnswersForAddFI)
+      result.get.data.value must not contain key(IsTheAddressCorrectPage.toString)
 
-          val result = HaveUniqueTaxpayerReferencePage.cleanup(Some(true), userAnswers).success.value
-
-          result.get(WhatIsUniqueTaxpayerReferencePage) must not be empty
-      }
     }
   }
 
