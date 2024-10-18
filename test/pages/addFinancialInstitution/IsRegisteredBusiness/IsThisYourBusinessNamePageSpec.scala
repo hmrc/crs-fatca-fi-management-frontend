@@ -34,34 +34,11 @@ class IsThisYourBusinessNamePageSpec extends PageBehaviours {
     "when false" in {
       val result = IsThisYourBusinessNamePage.cleanup(Some(false), userAnswersForAddFI)
 
-      result.get.data.value must contain key NameOfFinancialInstitutionPage.toString
-      result.get.data.value must not contain key(HaveUniqueTaxpayerReferencePage.toString)
-      result.get.data.value must not contain key(WhatIsUniqueTaxpayerReferencePage.toString)
-      result.get.data.value must not contain key(FirstContactNamePage.toString)
-      result.get.data.value must not contain key(FirstContactEmailPage.toString)
-      result.get.data.value must not contain key(FirstContactHavePhonePage.toString)
-      result.get.data.value must not contain key(FirstContactPhoneNumberPage.toString)
-      result.get.data.value must not contain key(SecondContactExistsPage.toString)
-      result.get.data.value must not contain key(SecondContactNamePage.toString)
-      result.get.data.value must not contain key(SecondContactEmailPage.toString)
-      result.get.data.value must not contain key(SecondContactCanWePhonePage.toString)
-      result.get.data.value must not contain key(SecondContactPhoneNumberPage.toString)
+      result.get.data.value must not contain key(NameOfFinancialInstitutionPage.toString)
     }
-
     "when true" in {
       val result = IsThisYourBusinessNamePage.cleanup(Some(true), userAnswersForAddFI)
-      result.get.data.value must not contain key(NameOfFinancialInstitutionPage.toString)
-      result.get.data.value must not contain key(HaveUniqueTaxpayerReferencePage.toString)
-      result.get.data.value must not contain key(WhatIsUniqueTaxpayerReferencePage.toString)
-      result.get.data.value must not contain key(FirstContactNamePage.toString)
-      result.get.data.value must not contain key(FirstContactEmailPage.toString)
-      result.get.data.value must not contain key(FirstContactHavePhonePage.toString)
-      result.get.data.value must not contain key(FirstContactPhoneNumberPage.toString)
-      result.get.data.value must not contain key(SecondContactExistsPage.toString)
-      result.get.data.value must not contain key(SecondContactNamePage.toString)
-      result.get.data.value must not contain key(SecondContactEmailPage.toString)
-      result.get.data.value must not contain key(SecondContactCanWePhonePage.toString)
-      result.get.data.value must not contain key(SecondContactPhoneNumberPage.toString)
+      result.get mustBe userAnswersForAddFI
     }
   }
 

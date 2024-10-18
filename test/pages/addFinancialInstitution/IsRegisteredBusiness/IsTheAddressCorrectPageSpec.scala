@@ -32,21 +32,13 @@ class IsTheAddressCorrectPageSpec extends PageBehaviours {
   "cleanup" - {
 
     "when false" in {
-      val result = IsTheAddressCorrectPage.cleanup(Some(false), userAnswersForAddFI)
+      val result = IsTheAddressCorrectPage.cleanup(Some(false), userAnswersForAddFI.withPage(FetchedRegisteredAddressPage, testAddressResponse))
 
-      result.get.data.value must not contain key(FirstContactNamePage.toString)
-      result.get.data.value must not contain key(FirstContactEmailPage.toString)
-      result.get.data.value must not contain key(FirstContactHavePhonePage.toString)
-      result.get.data.value must not contain key(FirstContactPhoneNumberPage.toString)
-      result.get.data.value must not contain key(SecondContactExistsPage.toString)
-      result.get.data.value must not contain key(SecondContactNamePage.toString)
-      result.get.data.value must not contain key(SecondContactEmailPage.toString)
-      result.get.data.value must not contain key(SecondContactCanWePhonePage.toString)
-      result.get.data.value must not contain key(SecondContactPhoneNumberPage.toString)
+      result.get.data.value must not contain key(FetchedRegisteredAddressPage.toString)
     }
 
     "when true" in {
-      val result = IsTheAddressCorrectPage.cleanup(Some(true), userAnswersForAddFI)
+      val result = IsTheAddressCorrectPage.cleanup(Some(true), userAnswersForAddFI.withPage(FetchedRegisteredAddressPage, testAddressResponse))
 
       result.get.data.value must not contain key(WhereIsFIBasedPage.toString)
       result.get.data.value must not contain key(NonUkAddressPage.toString)
@@ -55,15 +47,6 @@ class IsTheAddressCorrectPageSpec extends PageBehaviours {
       result.get.data.value must not contain key(FetchedRegisteredAddressPage.toString)
       result.get.data.value must not contain key(IsThisAddressPage.toString)
       result.get.data.value must not contain key(UkAddressPage.toString)
-      result.get.data.value must not contain key(FirstContactNamePage.toString)
-      result.get.data.value must not contain key(FirstContactEmailPage.toString)
-      result.get.data.value must not contain key(FirstContactHavePhonePage.toString)
-      result.get.data.value must not contain key(FirstContactPhoneNumberPage.toString)
-      result.get.data.value must not contain key(SecondContactExistsPage.toString)
-      result.get.data.value must not contain key(SecondContactNamePage.toString)
-      result.get.data.value must not contain key(SecondContactEmailPage.toString)
-      result.get.data.value must not contain key(SecondContactCanWePhonePage.toString)
-      result.get.data.value must not contain key(SecondContactPhoneNumberPage.toString)
     }
   }
 

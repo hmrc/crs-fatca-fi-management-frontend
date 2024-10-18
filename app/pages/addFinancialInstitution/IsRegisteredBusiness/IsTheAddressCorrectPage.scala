@@ -33,15 +33,7 @@ case object IsTheAddressCorrectPage extends QuestionPage[Boolean] {
     value match {
       case Some(false) =>
         val pagesToRemove = Seq(
-          FirstContactNamePage,
-          FirstContactEmailPage,
-          FirstContactHavePhonePage,
-          FirstContactPhoneNumberPage,
-          SecondContactExistsPage,
-          SecondContactNamePage,
-          SecondContactEmailPage,
-          SecondContactCanWePhonePage,
-          SecondContactPhoneNumberPage
+          FetchedRegisteredAddressPage
         )
 
         removePages(pagesToRemove, userAnswers)
@@ -54,16 +46,7 @@ case object IsTheAddressCorrectPage extends QuestionPage[Boolean] {
           SelectedAddressLookupPage,
           FetchedRegisteredAddressPage,
           IsThisAddressPage,
-          UkAddressPage,
-          FirstContactNamePage,
-          FirstContactEmailPage,
-          FirstContactHavePhonePage,
-          FirstContactPhoneNumberPage,
-          SecondContactExistsPage,
-          SecondContactNamePage,
-          SecondContactEmailPage,
-          SecondContactCanWePhonePage,
-          SecondContactPhoneNumberPage
+          UkAddressPage
         )
         removePages(pagesToRemove, userAnswers)
 
