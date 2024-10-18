@@ -25,7 +25,6 @@ import utils.ContactHelper
 import views.html.DetailsUpdatedView
 
 import javax.inject.Inject
-import scala.concurrent.Future
 
 class DetailsUpdatedController @Inject() (
   override val messagesApi: MessagesApi,

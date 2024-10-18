@@ -28,7 +28,7 @@ case class AddressLookup(addressLine1: Option[String],
                          town: String,
                          county: Option[String],
                          postcode: String,
-                         country: Option[String]
+                         country: Option[Country]
 ) {
 
   val toAddress: Address = {
@@ -42,10 +42,9 @@ case class AddressLookup(addressLine1: Option[String],
       case (false, true) => Some(town)
       case (_, _)        => addressLine4
     }
-    val safePostcode  = Option(postcode)
-    val ctry: Country = Country("", "", country.getOrElse(""))
+    val safePostcode = Option(postcode)
 
-    Address(line1, line2, line3, line4, safePostcode, ctry)
+    Address(line1, line2, line3, line4, safePostcode, country.getOrElse(Country.GB))
   }
 
 }
@@ -76,11 +75,10 @@ object AddressLookup {
       (JsPath \ "address" \ "town").read[String] and
       (JsPath \ "address" \ "county").readNullable[String] and
       (JsPath \ "address" \ "postcode").read[String] and
-      (
-        (JsPath \ "address" \ "country").readNullable[String] orElse
-          (JsPath \ "address" \ "country" \ "name").readNullable[String]
-      )) {
-      (lines, town, county, postcode, countryName) =>
+      (JsPath \ "address" \ "country" \ "code").readNullable[String] and
+      (JsPath \ "address" \ "country" \ "description").readNullable[String] and
+      (JsPath \ "address" \ "country" \ "name").readNullable[String]) {
+      (lines, town, county, postcode, countryCode, countryDescription, countryName) =>
         val addressLines: (Option[String], Option[String], Option[String], Option[String]) =
           lines.size match {
             case 0 =>
@@ -101,7 +99,9 @@ object AddressLookup {
           town,
           county,
           postcode,
-          countryName
+          countryCode.map(
+            code => Country("", code, countryDescription.orElse(countryName).getOrElse(code))
+          )
         )
     }
 

@@ -19,7 +19,7 @@ package controllers.addFinancialInstitution
 import base.SpecBase
 import connectors.AddressLookupConnector
 import forms.addFinancialInstitution.PostcodeFormProvider
-import models.{AddressLookup, NormalMode}
+import models.{AddressLookup, Country, NormalMode}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -87,7 +87,7 @@ class PostcodeControllerSpec extends SpecBase with MockitoSugar {
       val mockAddressLookupConnector               = mock[AddressLookupConnector]
 
       val addresses: Seq[AddressLookup] = Seq(
-        AddressLookup(Some("1 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ", Some("Jersey")),
+        AddressLookup(Some("1 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ", Some(Country.GB)),
         AddressLookup(Some("2 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ", None)
       )
 

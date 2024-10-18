@@ -28,7 +28,7 @@ final case class FIDetail(
   IsFIUser: Boolean,
   IsFATCAReporting: Boolean,
   AddressDetails: AddressDetails,
-  PrimaryContactDetails: ContactDetails,
+  PrimaryContactDetails: Option[ContactDetails],
   SecondaryContactDetails: Option[ContactDetails]
 )
 

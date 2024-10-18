@@ -16,13 +16,12 @@
 
 @this(
   layout: templates.Layout,
-  link: components.Link,
-  govukBackLink: GovukBackLink
+  link: components.Link
 )
 
 @()(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("informationSent.title")), backLink = controllers.addFinancialInstitution.routes.FinancialInstitutionAddedConfirmationController.onPageLoad.url) {
+@layout(pageTitle = titleNoForm(messages("informationSent.title")), showBackLink = false) {
 
     <h1 class="govuk-heading-l">@messages("informationSent.heading")</h1>
 

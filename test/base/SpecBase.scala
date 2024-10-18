@@ -102,7 +102,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
       IsFIUser = true,
       IsFATCAReporting = true,
       AddressDetails("22", Some("High Street"), "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
-      ContactDetails("Jane Doe", "janedoe@example.com", Some("0444458888")),
+      Some(ContactDetails("Jane Doe", "janedoe@example.com", Some("0444458888"))),
       Some(ContactDetails("John Doe", "johndoe@example.com", Some("0333458888")))
     )
 
@@ -116,7 +116,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
         IsFIUser = true,
         IsFATCAReporting = true,
         AddressDetails("22", Some("High Street"), "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
-        ContactDetails("Jane Doe", "janedoe@example.com", Some("0444458888")),
+        Some(ContactDetails("Jane Doe", "janedoe@example.com", Some("0444458888"))),
         Some(ContactDetails("John Doe", "johndoe@example.com", Some("0333458888")))
       ),
       FIDetail(
@@ -127,7 +127,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
         IsFIUser = true,
         IsFATCAReporting = true,
         AddressDetails("22", Some("High Street"), "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
-        ContactDetails("Foo Bar", "fbar@example.com", Some("0223458888")),
+        Some(ContactDetails("Foo Bar", "fbar@example.com", Some("0223458888"))),
         Some(ContactDetails("Foobar Baz", "fbaz@example.com", Some("0123456789")))
       )
     )
@@ -209,7 +209,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
 
   val testAddress: Address                 = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"), Country.GB)
   val testAddressResponse: AddressResponse = AddressResponse("value 1", Some("value 2"), Some("value 3"), Some("value 4"), Some("XX9 9XX"), Country.GB.code)
-  val testAddressLookup: AddressLookup     = AddressLookup(Some("1 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ", Some("United Kingdom"))
+  val testAddressLookup: AddressLookup     = AddressLookup(Some("1 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ", Some(Country.GB))
 
   val userAnswersForAddFI: UserAnswers = emptyUserAnswers
     .withPage(NameOfFinancialInstitutionPage, "testfi")

@@ -108,11 +108,14 @@ class FinancialInstitutionUpdateService @Inject() (
 
   private def setPrimaryContactDetails(userAnswers: UserAnswers, fiDetails: FIDetail)(implicit ec: ExecutionContext): Future[UserAnswers] = {
     val primaryContact = fiDetails.PrimaryContactDetails
-    for {
-      a <- Future.fromTry(userAnswers.set(FirstContactNamePage, primaryContact.ContactName))
-      b <- Future.fromTry(a.set(FirstContactEmailPage, primaryContact.EmailAddress))
-      c <- setPhoneNumber(b, primaryContact, FirstContactHavePhonePage, FirstContactPhoneNumberPage)
-    } yield c
+    primaryContact map {
+      contact =>
+        for {
+          a <- Future.fromTry(userAnswers.set(FirstContactNamePage, contact.ContactName))
+          b <- Future.fromTry(a.set(FirstContactEmailPage, contact.EmailAddress))
+          c <- setPhoneNumber(b, contact, FirstContactHavePhonePage, FirstContactPhoneNumberPage)
+        } yield c
+    } getOrElse Future.successful(userAnswers)
   }
 
   private def setPhoneNumber(
@@ -192,9 +195,13 @@ class FinancialInstitutionUpdateService @Inject() (
 
   private def checkPrimaryContactForChanges(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean = {
     val primaryContact = fiDetails.PrimaryContactDetails
-    userAnswers.get(FirstContactNamePage).exists(_ != primaryContact.ContactName) ||
-    userAnswers.get(FirstContactEmailPage).exists(_ != primaryContact.EmailAddress) ||
-    checkPhoneNumberForChanges(userAnswers, primaryContact, FirstContactHavePhonePage, FirstContactPhoneNumberPage)
+    primaryContact match {
+      case Some(contact) =>
+        userAnswers.get(FirstContactNamePage).exists(_ != contact.ContactName) ||
+        userAnswers.get(FirstContactEmailPage).exists(_ != contact.EmailAddress) ||
+        checkPhoneNumberForChanges(userAnswers, contact, FirstContactHavePhonePage, FirstContactPhoneNumberPage)
+      case _ => false
+    }
   }
 
   private def checkSecondaryContactForChanges(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean =
