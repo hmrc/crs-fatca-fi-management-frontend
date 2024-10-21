@@ -40,11 +40,11 @@ class IsTheAddressCorrectPageSpec extends PageBehaviours {
     "when true" in {
       val result = IsTheAddressCorrectPage.cleanup(Some(true), userAnswersForAddFI.withPage(FetchedRegisteredAddressPage, testAddressResponse))
 
+      result.get.data.value must contain key (FetchedRegisteredAddressPage.toString)
       result.get.data.value must not contain key(WhereIsFIBasedPage.toString)
       result.get.data.value must not contain key(NonUkAddressPage.toString)
       result.get.data.value must not contain key(PostcodePage.toString)
       result.get.data.value must not contain key(SelectedAddressLookupPage.toString)
-      result.get.data.value must not contain key(FetchedRegisteredAddressPage.toString)
       result.get.data.value must not contain key(IsThisAddressPage.toString)
       result.get.data.value must not contain key(UkAddressPage.toString)
     }

@@ -44,7 +44,6 @@ case object IsTheAddressCorrectPage extends QuestionPage[Boolean] {
           NonUkAddressPage,
           PostcodePage,
           SelectedAddressLookupPage,
-          FetchedRegisteredAddressPage,
           IsThisAddressPage,
           UkAddressPage
         )
