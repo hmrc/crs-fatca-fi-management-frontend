@@ -30,7 +30,7 @@
 
 @layout(pageTitle = titleNoForm(if (hasChanges) messages("changeYourRegisteredAnswers.title") else messages("changeYourRegisteredAnswers.title"))) {
 
-    @heading(if (hasChanges) messages("changeYourRegisteredAnswers.heading", fiName) else messages("changeYourRegisteredAnswers.heading", fiName))
+    @heading(if (hasChanges) messages("changedYourRegisteredAnswers.heading", fiName) else messages("changeYourRegisteredAnswers.heading", fiName))
 
     @govukSummaryList(financialInstitutionList)
     <p class="govuk-!-margin-bottom-9"></p>
