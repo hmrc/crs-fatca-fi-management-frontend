@@ -148,7 +148,7 @@ class CheckModeNavigatorSpec extends SpecBase {
     }
     "must go from ReportForRegisteredBusinessPage" - {
       "to RegisteredBusinessCheckYourAnswers when Yes" in {
-        val userAnswers = emptyUserAnswers.withPage(ReportForRegisteredBusinessPage, true)
+        val userAnswers = emptyUserAnswers.withPage(ReportForRegisteredBusinessPage, true).withPage(ReportForRegisteredBusinessPage, true)
         navigator.nextPage(ReportForRegisteredBusinessPage, CheckMode, userAnswers) mustBe
           controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad()
       }

@@ -28,6 +28,7 @@ class NavigatorSpec extends SpecBase {
   val navigator = new Navigator
 
   "Navigator" - {
+
     "in Normal mode" - {
 
       "must go from a page that doesn't exist in the route map to Index" in {

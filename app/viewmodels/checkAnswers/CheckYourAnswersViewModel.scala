@@ -25,7 +25,7 @@ object CheckYourAnswersViewModel {
 
   def getFinancialInstitutionSummaries(ua: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] =
     Seq(
-      ReportForRegisteredBusinessSummary.row(ua),
+      ReportForRegisteredBusinessSummary.row(ua, CheckAnswers),
       NameOfFinancialInstitutionSummary.row(ua, CheckAnswers),
       HaveUniqueTaxpayerReferenceSummary.row(ua, CheckAnswers),
       WhatIsUniqueTaxpayerReferenceSummary.row(ua, CheckAnswers),
@@ -35,7 +35,7 @@ object CheckYourAnswersViewModel {
 
   def getRegisteredBusinessSummaries(ua: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] =
     Seq(
-      ReportForRegisteredBusinessSummary.row(ua),
+      ReportForRegisteredBusinessSummary.row(ua, CheckAnswers),
       IsThisYourBusinessNameSummary.row(ua, CheckAnswers),
       getGIINRows(ua, CheckAnswers),
       getAddressRow(ua, CheckAnswers)
