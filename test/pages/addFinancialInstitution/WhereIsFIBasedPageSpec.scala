@@ -35,6 +35,7 @@ class WhereIsFIBasedPageSpec extends PageBehaviours {
       val result = WhereIsFIBasedPage.cleanup(Some(false), userAnswersForAddFI)
       result.get.data.value must not contain key(PostcodePage.toString)
       result.get.data.value must not contain key(SelectedAddressLookupPage.toString)
+      result.get.data.value must not contain key(SelectAddressPage.toString)
       result.get.data.value must not contain key(UkAddressPage.toString)
       result.get.data.value must not contain key(FetchedRegisteredAddressPage.toString)
       result.get.data.value must not contain key(IsThisAddressPage.toString)
