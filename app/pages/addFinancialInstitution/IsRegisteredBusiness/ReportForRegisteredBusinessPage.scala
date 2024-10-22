@@ -31,7 +31,7 @@ case object ReportForRegisteredBusinessPage extends QuestionPage[Boolean] {
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
-      case Some(false) =>
+      case Some(true) =>
         val pagesToRemove = Seq(
           HaveUniqueTaxpayerReferencePage,
           WhatIsUniqueTaxpayerReferencePage,
@@ -47,7 +47,7 @@ case object ReportForRegisteredBusinessPage extends QuestionPage[Boolean] {
         )
         removePages(pagesToRemove, userAnswers)
 
-      case Some(true) =>
+      case Some(false) =>
         val pagesToRemove = Seq(
           IsThisYourBusinessNamePage,
           IsTheAddressCorrectPage

@@ -31,8 +31,8 @@ class ReportForRegisteredBusinessPageSpec extends PageBehaviours {
 
   "cleanup" - {
 
-    "when false" in {
-      val result = ReportForRegisteredBusinessPage.cleanup(Some(false), userAnswersForAddFI)
+    "when true" in {
+      val result = ReportForRegisteredBusinessPage.cleanup(Some(true), userAnswersForAddFI)
       result.get.data.value must not contain key(HaveUniqueTaxpayerReferencePage.toString)
       result.get.data.value must not contain key(WhatIsUniqueTaxpayerReferencePage.toString)
       result.get.data.value must not contain key(FirstContactNamePage.toString)
@@ -46,8 +46,8 @@ class ReportForRegisteredBusinessPageSpec extends PageBehaviours {
       result.get.data.value must not contain key(SecondContactPhoneNumberPage.toString)
 
     }
-    "when true" in {
-      val result = ReportForRegisteredBusinessPage.cleanup(Some(true), userAnswersForAddUserAsFI)
+    "when false" in {
+      val result = ReportForRegisteredBusinessPage.cleanup(Some(false), userAnswersForAddUserAsFI)
       result.get.data.value must not contain key(IsThisYourBusinessNamePage.toString)
       result.get.data.value must not contain key(IsTheAddressCorrectPage.toString)
     }
