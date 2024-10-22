@@ -28,7 +28,7 @@
 
 @(hasChanges: Boolean, fiName: String, financialInstitutionList: SummaryList)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(if (hasChanges) messages("changeYourRegisteredAnswers.title") else messages("changeYourRegisteredAnswers.title"))) {
+@layout(pageTitle = titleNoForm(if (hasChanges) messages("changedYourRegisteredAnswers.title") else messages("changeYourRegisteredAnswers.title"))) {
 
     @heading(if (hasChanges) messages("changedYourRegisteredAnswers.heading", fiName) else messages("changeYourRegisteredAnswers.heading", fiName))
 
