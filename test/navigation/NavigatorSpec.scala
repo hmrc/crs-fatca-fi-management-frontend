@@ -126,8 +126,8 @@ class NavigatorSpec extends SpecBase {
         "when user answers yes must go to" - {
           "RegisteredBusinessCheckYourAnswers when FI is the user" in {
             val userAnswers = emptyUserAnswers
-              .withPage(IsThisAddressPage, true)
               .withPage(ReportForRegisteredBusinessPage, true)
+              .withPage(IsThisAddressPage, true)
 
             navigator.nextPage(IsThisAddressPage, NormalMode, userAnswers) mustBe
               controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad()

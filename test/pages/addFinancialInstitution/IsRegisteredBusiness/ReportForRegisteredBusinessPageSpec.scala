@@ -33,6 +33,8 @@ class ReportForRegisteredBusinessPageSpec extends PageBehaviours {
 
     "when true" in {
       val result = ReportForRegisteredBusinessPage.cleanup(Some(true), userAnswersForAddFI)
+      result.get.data.value must contain key HaveGIINPage.toString
+      result.get.data.value must contain key WhatIsGIINPage.toString
       result.get.data.value must not contain key(HaveUniqueTaxpayerReferencePage.toString)
       result.get.data.value must not contain key(WhatIsUniqueTaxpayerReferencePage.toString)
       result.get.data.value must not contain key(FirstContactNamePage.toString)
