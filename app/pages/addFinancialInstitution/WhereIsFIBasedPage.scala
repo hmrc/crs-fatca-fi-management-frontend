@@ -36,6 +36,7 @@ case object WhereIsFIBasedPage extends QuestionPage[Boolean] {
           PostcodePage,
           SelectAddressPage,
           SelectedAddressLookupPage,
+          AddressLookupPage,
           UkAddressPage,
           FetchedRegisteredAddressPage,
           IsThisAddressPage

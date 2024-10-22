@@ -32,13 +32,27 @@ class WhereIsFIBasedPageSpec extends PageBehaviours {
   "cleanup" - {
 
     "when false" in {
-      val result = WhereIsFIBasedPage.cleanup(Some(false), userAnswersForAddFI)
-      result.get.data.value must not contain key(PostcodePage.toString)
-      result.get.data.value must not contain key(SelectedAddressLookupPage.toString)
-      result.get.data.value must not contain key(SelectAddressPage.toString)
-      result.get.data.value must not contain key(UkAddressPage.toString)
-      result.get.data.value must not contain key(FetchedRegisteredAddressPage.toString)
-      result.get.data.value must not contain key(IsThisAddressPage.toString)
+      val ua1 = userAnswersForAddFI
+        .withPage(AddressLookupPage, Seq(testAddressLookup))
+        .withPage(SelectAddressPage, "Some address")
+
+      val ua2 = userAnswersForAddFI
+        .withPage(FetchedRegisteredAddressPage, testAddressResponse)
+
+      val ua3 = userAnswersForAddFI
+        .withPage(UkAddressPage, testAddress)
+
+      Seq(ua1, ua2, ua3).foreach {
+        ua =>
+          val result = WhereIsFIBasedPage.cleanup(Some(false), ua)
+          result.get.data.value must not contain key(SelectedAddressLookupPage.toString)
+          result.get.data.value must not contain key(PostcodePage.toString)
+          result.get.data.value must not contain key(IsThisAddressPage.toString)
+          result.get.data.value must not contain key(AddressLookupPage.toString)
+          result.get.data.value must not contain key(SelectAddressPage.toString)
+          result.get.data.value must not contain key(UkAddressPage.toString)
+          result.get.data.value must not contain key(FetchedRegisteredAddressPage.toString)
+      }
     }
 
     "when true" in {
