@@ -36,12 +36,12 @@
     <p class="govuk-!-margin-bottom-9"></p>
 
     @if(hasChanges){
-        @heading(messages("changeYourAnswers.changed.subheading"), "m")
-        @para(Html(messages("changeYourAnswers.changed.p2")))
+        @heading(messages("changeYourRegisteredAnswers.changed.subheading"), "m")
+        @para(Html(messages("changeYourRegisteredAnswers.changed.p2")))
 
         @formHelper(action = controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.confirmAndAdd()) {
         @govukButton(
-            ButtonViewModel(messages("changeYourAnswers.submit.button")).withAttribute("id" -> "submit").preventingDoubleClick())
+            ButtonViewModel(messages("changeYourRegisteredAnswers.submit.button")).withAttribute("id" -> "submit").preventingDoubleClick())
         }
     }
 
