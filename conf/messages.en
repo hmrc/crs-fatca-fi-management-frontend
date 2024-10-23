@@ -376,7 +376,7 @@ changeYourRegisteredAnswers.heading = Change the details for {0}
 changedYourRegisteredAnswers.heading = Check the details for {0}
 changeYourRegisteredAnswers.changed.subheading = Now send these details for the registered business
 changeYourRegisteredAnswers.p1 = Back to manage your financial institutions
-changeYourRegisteredAnswers.changed.p2 = By changing these details, you are confirming that the information is correct and complete to the best of your knowledge.
+changeYourRegisteredAnswers.changed.p2 = By sending these details, you are confirming that the information is correct and complete to the best of your knowledge.
 changeYourRegisteredAnswers.submit.button = Confirm and send
 
 financialInstitutionId.changeYourAnswersLabel = FI ID
