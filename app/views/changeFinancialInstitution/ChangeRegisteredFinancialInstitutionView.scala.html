@@ -36,8 +36,8 @@
     <p class="govuk-!-margin-bottom-9"></p>
 
     @if(hasChanges){
-        @heading(messages("changeYourAnswers.changed.subheading"), "m")
-        @para(Html(messages("changeYourAnswers.changed.p2")))
+        @heading(messages("changedYourRegisteredAnswers.changed.subheading"), "m")
+        @para(Html(messages("changedYourRegisteredAnswers.changed.p2")))
 
         @formHelper(action = controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.confirmAndAdd()) {
         @govukButton(
