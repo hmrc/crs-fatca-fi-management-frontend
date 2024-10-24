@@ -16,6 +16,16 @@
 
 package pages
 
+import models.UserAnswers
 import queries.{Gettable, Settable}
 
-trait QuestionPage[A] extends Page with Gettable[A] with Settable[A]
+import scala.util.Try
+
+trait QuestionPage[A] extends Page with Gettable[A] with Settable[A] {
+
+  def removePages(pages: Seq[Settable[_]], userAnswers: UserAnswers): Try[UserAnswers] =
+    pages.foldLeft(Try(userAnswers))(
+      (ua, page) => ua.flatMap(_.remove(page))
+    )
+
+}

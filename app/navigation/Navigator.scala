@@ -24,6 +24,7 @@ import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.libs.json.Reads
 import play.api.mvc.Call
+import utils.CheckYourAnswersValidator
 
 import javax.inject.{Inject, Singleton}
 
@@ -173,7 +174,27 @@ class Navigator @Inject() () {
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
+    case ReportForRegisteredBusinessPage =>
+      userAnswers =>
+        def resolveRoute(userAnswers: UserAnswers, registeredBusinessRoute: Boolean) = {
+          val validator        = CheckYourAnswersValidator(userAnswers)
+          val validationResult = if (registeredBusinessRoute) validator.validateRegisteredBusiness else validator.validate
 
+          validationResult match {
+            case Nil => redirectToCheckYouAnswers(userAnswers)
+            case _ if registeredBusinessRoute =>
+              controllers.addFinancialInstitution.registeredBusiness.routes.IsThisYourBusinessNameController.onPageLoad(NormalMode)
+            case _ =>
+              controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode)
+          }
+        }
+
+        yesNoPage(
+          userAnswers,
+          ReportForRegisteredBusinessPage,
+          resolveRoute(userAnswers, true),
+          resolveRoute(userAnswers, false)
+        )
     case HaveUniqueTaxpayerReferencePage =>
       userAnswers =>
         yesNoPage(
@@ -182,20 +203,14 @@ class Navigator @Inject() () {
           routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(CheckMode),
           redirectToCheckYouAnswers(userAnswers)
         )
-    case FirstContactNamePage =>
-      userAnswers => resolveNextRoute(userAnswers, routes.FirstContactEmailController.onPageLoad(CheckMode))
-    case FirstContactEmailPage =>
-      userAnswers => resolveNextRoute(userAnswers, routes.FirstContactHavePhoneController.onPageLoad(CheckMode))
     case FirstContactHavePhonePage =>
       userAnswers =>
         yesNoPage(
           userAnswers,
           FirstContactHavePhonePage,
           routes.FirstContactPhoneNumberController.onPageLoad(CheckMode),
-          resolveNextRoute(userAnswers, routes.SecondContactExistsController.onPageLoad(CheckMode))
+          redirectToCheckYouAnswers(userAnswers)
         )
-    case FirstContactPhoneNumberPage =>
-      userAnswers => resolveNextRoute(userAnswers, routes.SecondContactExistsController.onPageLoad(CheckMode))
     case SecondContactExistsPage =>
       userAnswers =>
         yesNoPage(
@@ -217,7 +232,6 @@ class Navigator @Inject() () {
           routes.SecondContactPhoneNumberController.onPageLoad(CheckMode),
           redirectToCheckYouAnswers(userAnswers)
         )
-    case SecondContactPhoneNumberPage => redirectToCheckYouAnswers
     case IsTheAddressCorrectPage =>
       userAnswers =>
         yesNoPage(
@@ -242,10 +256,7 @@ class Navigator @Inject() () {
           redirectToCheckYouAnswers(userAnswers),
           routes.UkAddressController.onPageLoad(CheckMode)
         )
-    case PostcodePage      => addressLookupNavigation(CheckMode)
-    case NonUkAddressPage  => redirectToCheckYouAnswers
-    case UkAddressPage     => redirectToCheckYouAnswers
-    case SelectAddressPage => redirectToCheckYouAnswers
+    case PostcodePage => addressLookupNavigation(CheckMode)
     case HaveGIINPage =>
       userAnswers =>
         yesNoPage(

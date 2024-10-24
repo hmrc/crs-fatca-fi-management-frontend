@@ -87,9 +87,10 @@ class SelectAddressController @Inject() (
                 val addressToStore: AddressLookup = addresses.find(formatAddress(_) == value).getOrElse(throw new Exception("Cannot get address"))
 
                 for {
-                  updatedAnswers                    <- Future.fromTry(request.userAnswers.set(SelectAddressPage, value))
-                  updatedAnswersWithSelectedAddress <- Future.fromTry(updatedAnswers.set(SelectedAddressLookupPage, addressToStore))
-                  _                                 <- sessionRepository.set(updatedAnswersWithSelectedAddress)
+                  updatedAnswersWithSelectedAddress <- Future.fromTry(
+                    request.userAnswers.set(SelectedAddressLookupPage, addressToStore).flatMap(_.remove(AddressLookupPage))
+                  )
+                  _ <- sessionRepository.set(updatedAnswersWithSelectedAddress)
                 } yield Redirect(navigator.nextPage(SelectAddressPage, mode, updatedAnswersWithSelectedAddress))
               }
             )
