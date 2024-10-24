@@ -33,25 +33,30 @@ class ReportForRegisteredBusinessPageSpec extends PageBehaviours {
 
     "when true" in {
       val result = ReportForRegisteredBusinessPage.cleanup(Some(true), userAnswersForAddFI)
-      result.get.data.value must contain key HaveGIINPage.toString
-      result.get.data.value must contain key WhatIsGIINPage.toString
-      result.get.data.value must not contain key(HaveUniqueTaxpayerReferencePage.toString)
-      result.get.data.value must not contain key(WhatIsUniqueTaxpayerReferencePage.toString)
-      result.get.data.value must not contain key(FirstContactNamePage.toString)
-      result.get.data.value must not contain key(FirstContactEmailPage.toString)
-      result.get.data.value must not contain key(FirstContactHavePhonePage.toString)
-      result.get.data.value must not contain key(FirstContactPhoneNumberPage.toString)
-      result.get.data.value must not contain key(SecondContactExistsPage.toString)
-      result.get.data.value must not contain key(SecondContactNamePage.toString)
-      result.get.data.value must not contain key(SecondContactEmailPage.toString)
-      result.get.data.value must not contain key(SecondContactCanWePhonePage.toString)
-      result.get.data.value must not contain key(SecondContactPhoneNumberPage.toString)
-
+      result.get.data.keys must contain allElementsOf List(
+        HaveGIINPage.toString,
+        WhatIsGIINPage.toString
+      )
+      result.get.data.keys must contain noElementsOf List(
+        HaveUniqueTaxpayerReferencePage.toString,
+        WhatIsUniqueTaxpayerReferencePage.toString,
+        FirstContactNamePage.toString,
+        FirstContactEmailPage.toString,
+        FirstContactHavePhonePage.toString,
+        FirstContactPhoneNumberPage.toString,
+        SecondContactExistsPage.toString,
+        SecondContactNamePage.toString,
+        SecondContactEmailPage.toString,
+        SecondContactCanWePhonePage.toString,
+        SecondContactPhoneNumberPage.toString
+      )
     }
     "when false" in {
       val result = ReportForRegisteredBusinessPage.cleanup(Some(false), userAnswersForAddUserAsFI)
-      result.get.data.value must not contain key(IsThisYourBusinessNamePage.toString)
-      result.get.data.value must not contain key(IsTheAddressCorrectPage.toString)
+      result.get.data.keys must contain noElementsOf List(
+        IsThisYourBusinessNamePage.toString,
+        IsTheAddressCorrectPage.toString
+      )
     }
   }
 

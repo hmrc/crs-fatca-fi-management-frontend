@@ -17,8 +17,6 @@
 package pages
 
 import models.UserAnswers
-import pages.addFinancialInstitution.IsRegisteredBusiness._
-import pages.addFinancialInstitution._
 import queries.{Gettable, Settable}
 
 import scala.util.Try
@@ -29,18 +27,5 @@ trait QuestionPage[A] extends Page with Gettable[A] with Settable[A] {
     pages.foldLeft(Try(userAnswers))(
       (ua, page) => ua.flatMap(_.remove(page))
     )
-
-  protected val allAddressPages: Seq[QuestionPage[_]] = Seq(
-    AddressLookupPage,
-    FetchedRegisteredAddressPage,
-    SelectedAddressLookupPage,
-    SelectAddressPage,
-    IsTheAddressCorrectPage,
-    WhereIsFIBasedPage,
-    IsThisAddressPage,
-    SelectedAddressLookupPage,
-    UkAddressPage,
-    NonUkAddressPage
-  )
 
 }
