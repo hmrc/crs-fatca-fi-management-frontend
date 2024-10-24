@@ -21,6 +21,7 @@ import models.requests.IdentifierRequest
 import models.{IdentifierType, UniqueTaxpayerReference}
 import play.api.Logging
 import play.api.mvc.{ActionFunction, Result}
+import uk.gov.hmrc.auth.core.AffinityGroup
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,7 +51,7 @@ class CtUtrRetrievalActionProvider @Inject() (
       })
 
     ctUtr match {
-      case Some(_) =>
+      case Some(_) if request.userType != AffinityGroup.Agent =>
         block(request.copy(autoMatched = true, ctutr = ctUtr))
       case _ =>
         block(request)

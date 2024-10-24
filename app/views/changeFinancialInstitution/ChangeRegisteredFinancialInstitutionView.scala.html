@@ -28,7 +28,7 @@
 
 @(hasChanges: Boolean, fiName: String, financialInstitutionList: SummaryList)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(if (hasChanges) messages("changeYourRegisteredAnswers.title") else messages("changeYourRegisteredAnswers.title"))) {
+@layout(pageTitle = titleNoForm(if (hasChanges) messages("changedYourRegisteredAnswers.title") else messages("changeYourRegisteredAnswers.title"))) {
 
     @heading(if (hasChanges) messages("changedYourRegisteredAnswers.heading", fiName) else messages("changeYourRegisteredAnswers.heading", fiName))
 
@@ -36,12 +36,12 @@
     <p class="govuk-!-margin-bottom-9"></p>
 
     @if(hasChanges){
-        @heading(messages("changeYourAnswers.changed.subheading"), "m")
-        @para(Html(messages("changeYourAnswers.changed.p2")))
+        @heading(messages("changeYourRegisteredAnswers.changed.subheading"), "m")
+        @para(Html(messages("changeYourRegisteredAnswers.changed.p2")))
 
         @formHelper(action = controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.confirmAndAdd()) {
         @govukButton(
-            ButtonViewModel(messages("changeYourAnswers.submit.button")).withAttribute("id" -> "submit").preventingDoubleClick())
+            ButtonViewModel(messages("changeYourRegisteredAnswers.submit.button")).withAttribute("id" -> "submit").preventingDoubleClick())
         }
     }
 
