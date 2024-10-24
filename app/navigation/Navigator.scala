@@ -24,6 +24,7 @@ import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.libs.json.Reads
 import play.api.mvc.Call
+import utils.CheckYourAnswersValidator
 
 import javax.inject.{Inject, Singleton}
 
@@ -175,11 +176,24 @@ class Navigator @Inject() () {
   private val checkRouteMap: Page => UserAnswers => Call = {
     case ReportForRegisteredBusinessPage =>
       userAnswers =>
+        def resolveRoute(userAnswers: UserAnswers, registeredBusinessRoute: Boolean) = {
+          val validator        = CheckYourAnswersValidator(userAnswers)
+          val validationResult = if (registeredBusinessRoute) validator.validateRegisteredBusiness else validator.validate
+
+          validationResult match {
+            case Nil => redirectToCheckYouAnswers(userAnswers)
+            case _ if registeredBusinessRoute =>
+              controllers.addFinancialInstitution.registeredBusiness.routes.IsThisYourBusinessNameController.onPageLoad(NormalMode)
+            case _ =>
+              controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode)
+          }
+        }
+
         yesNoPage(
           userAnswers,
           ReportForRegisteredBusinessPage,
-          redirectToCheckYouAnswers(userAnswers),
-          controllers.routes.IndexController.onPageLoad()
+          resolveRoute(userAnswers, true),
+          resolveRoute(userAnswers, false)
         )
     case HaveUniqueTaxpayerReferencePage =>
       userAnswers =>

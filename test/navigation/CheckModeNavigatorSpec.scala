@@ -147,15 +147,25 @@ class CheckModeNavigatorSpec extends SpecBase {
       }
     }
     "must go from ReportForRegisteredBusinessPage" - {
-      "to RegisteredBusinessCheckYourAnswers when Yes" in {
-        val userAnswers = emptyUserAnswers.withPage(ReportForRegisteredBusinessPage, true).withPage(ReportForRegisteredBusinessPage, true)
+      "to RegisteredBusinessCheckYourAnswers when unchanged answer is yes" in {
+        val userAnswers = userAnswersForAddUserAsFI.withPage(ReportForRegisteredBusinessPage, true)
         navigator.nextPage(ReportForRegisteredBusinessPage, CheckMode, userAnswers) mustBe
           controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad()
       }
-      "to manage FIs home page when No" in {
+      "to RegisteredBusinessCheckYourAnswers when unchanged answer is no" in {
+        val userAnswers = userAnswersForAddFI.withPage(ReportForRegisteredBusinessPage, false)
+        navigator.nextPage(ReportForRegisteredBusinessPage, CheckMode, userAnswers) mustBe
+          controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad()
+      }
+      "to IsThisYourBusinessName when Yes" in {
+        val userAnswers = emptyUserAnswers.withPage(ReportForRegisteredBusinessPage, true)
+        navigator.nextPage(ReportForRegisteredBusinessPage, CheckMode, userAnswers) mustBe
+          controllers.addFinancialInstitution.registeredBusiness.routes.IsThisYourBusinessNameController.onPageLoad(NormalMode)
+      }
+      "to NameOfFinancialInstitution when No" in {
         val userAnswers = emptyUserAnswers.withPage(ReportForRegisteredBusinessPage, false)
         navigator.nextPage(ReportForRegisteredBusinessPage, CheckMode, userAnswers) mustBe
-          controllers.routes.IndexController.onPageLoad()
+          controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode)
       }
     }
     // FI name

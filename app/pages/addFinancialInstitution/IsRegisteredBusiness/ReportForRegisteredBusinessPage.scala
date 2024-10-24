@@ -44,7 +44,7 @@ case object ReportForRegisteredBusinessPage extends QuestionPage[Boolean] {
           SecondContactEmailPage,
           SecondContactCanWePhonePage,
           SecondContactPhoneNumberPage
-        ) ++ allAddressPages
+        )
         removePages(pagesToRemove, userAnswers)
 
       case Some(false) =>
