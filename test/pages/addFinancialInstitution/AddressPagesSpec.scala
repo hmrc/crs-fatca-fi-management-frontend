@@ -24,18 +24,24 @@ class AddressPagesSpec extends SpecBase {
 
   "cleanup for" - {
     "UkAddressPage" - {
-      "must remove other address answers from UserAnswers" - {
+      "must remove other address answers from UserAnswers" in {
         val res1: UserAnswers = emptyUserAnswers
-          .withPage(FetchedRegisteredAddressPage, testAddressResponse)
-          .withPage(UkAddressPage, testAddress)
+          .set(FetchedRegisteredAddressPage, testAddressResponse)
+          .get
+          .set(UkAddressPage, testAddress)
+          .get
 
         val res2: UserAnswers = emptyUserAnswers
-          .withPage(NonUkAddressPage, testAddress)
-          .withPage(UkAddressPage, testAddress)
+          .set(NonUkAddressPage, testAddress)
+          .get
+          .set(UkAddressPage, testAddress)
+          .get
 
         val res3: UserAnswers = emptyUserAnswers
-          .withPage(SelectedAddressLookupPage, testAddressLookup)
-          .withPage(UkAddressPage, testAddress)
+          .set(SelectedAddressLookupPage, testAddressLookup)
+          .get
+          .set(UkAddressPage, testAddress)
+          .get
 
         res1.get(UkAddressPage) mustBe defined
         res1.data.fields.size mustBe 1
@@ -51,16 +57,22 @@ class AddressPagesSpec extends SpecBase {
     "NonUkAddressPage" - {
       "must remove other address answers from UserAnswers" in {
         val res1: UserAnswers = emptyUserAnswers
-          .withPage(FetchedRegisteredAddressPage, testAddressResponse)
-          .withPage(NonUkAddressPage, testAddress)
+          .set(FetchedRegisteredAddressPage, testAddressResponse)
+          .get
+          .set(NonUkAddressPage, testAddress)
+          .get
 
         val res2: UserAnswers = emptyUserAnswers
-          .withPage(UkAddressPage, testAddress)
-          .withPage(NonUkAddressPage, testAddress)
+          .set(UkAddressPage, testAddress)
+          .get
+          .set(NonUkAddressPage, testAddress)
+          .get
 
         val res3: UserAnswers = emptyUserAnswers
-          .withPage(SelectedAddressLookupPage, testAddressLookup)
-          .withPage(NonUkAddressPage, testAddress)
+          .set(SelectedAddressLookupPage, testAddressLookup)
+          .get
+          .set(NonUkAddressPage, testAddress)
+          .get
 
         res1.get(NonUkAddressPage) mustBe defined
         res1.data.fields.size mustBe 1
@@ -76,16 +88,22 @@ class AddressPagesSpec extends SpecBase {
     "SelectedAddressLookupPage" - {
       "must remove other address answers from UserAnswers" in {
         val res1: UserAnswers = emptyUserAnswers
-          .withPage(FetchedRegisteredAddressPage, testAddressResponse)
-          .withPage(SelectedAddressLookupPage, testAddressLookup)
+          .set(FetchedRegisteredAddressPage, testAddressResponse)
+          .get
+          .set(SelectedAddressLookupPage, testAddressLookup)
+          .get
 
         val res2: UserAnswers = emptyUserAnswers
-          .withPage(UkAddressPage, testAddress)
-          .withPage(SelectedAddressLookupPage, testAddressLookup)
+          .set(UkAddressPage, testAddress)
+          .get
+          .set(SelectedAddressLookupPage, testAddressLookup)
+          .get
 
         val res3: UserAnswers = emptyUserAnswers
-          .withPage(NonUkAddressPage, testAddress)
-          .withPage(SelectedAddressLookupPage, testAddressLookup)
+          .set(NonUkAddressPage, testAddress)
+          .get
+          .set(SelectedAddressLookupPage, testAddressLookup)
+          .get
 
         res1.get(SelectedAddressLookupPage) mustBe defined
         res1.data.fields.size mustBe 1
@@ -102,16 +120,22 @@ class AddressPagesSpec extends SpecBase {
     "FetchedRegisteredAddressPage" - {
       "must remove other address answers from UserAnswers" in {
         val res1: UserAnswers = emptyUserAnswers
-          .withPage(SelectedAddressLookupPage, testAddressLookup)
-          .withPage(FetchedRegisteredAddressPage, testAddressResponse)
+          .set(SelectedAddressLookupPage, testAddressLookup)
+          .get
+          .set(FetchedRegisteredAddressPage, testAddressResponse)
+          .get
 
         val res2: UserAnswers = emptyUserAnswers
-          .withPage(UkAddressPage, testAddress)
-          .withPage(FetchedRegisteredAddressPage, testAddressResponse)
+          .set(UkAddressPage, testAddress)
+          .get
+          .set(FetchedRegisteredAddressPage, testAddressResponse)
+          .get
 
         val res3: UserAnswers = emptyUserAnswers
-          .withPage(NonUkAddressPage, testAddress)
-          .withPage(FetchedRegisteredAddressPage, testAddressResponse)
+          .set(NonUkAddressPage, testAddress)
+          .get
+          .set(FetchedRegisteredAddressPage, testAddressResponse)
+          .get
 
         res1.get(FetchedRegisteredAddressPage) mustBe defined
         res1.data.fields.size mustBe 1

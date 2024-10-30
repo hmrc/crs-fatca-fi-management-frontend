@@ -37,14 +37,14 @@ class FinancialInstitutionUpdateService @Inject() (
 
   def populateAndSaveFiDetails(userAnswers: UserAnswers, fiDetails: FIDetail): Future[UserAnswers] =
     for {
-      userAnswersWithProgressFlag <- Future.fromTry(userAnswers.set(ChangeFiDetailsInProgressId, fiDetails.FIID))
+      userAnswersWithProgressFlag <- Future.fromTry(userAnswers.set(ChangeFiDetailsInProgressId, fiDetails.FIID, cleanup = false))
       updatedUserAnswers          <- populateUserAnswersWithFiDetail(fiDetails, userAnswersWithProgressFlag)
       _                           <- sessionRepository.set(updatedUserAnswers)
     } yield updatedUserAnswers
 
   def populateAndSaveRegisteredFiDetails(userAnswers: UserAnswers, fiDetails: FIDetail): Future[UserAnswers] =
     for {
-      userAnswersWithProgressFlag <- Future.fromTry(userAnswers.set(ChangeFiDetailsInProgressId, fiDetails.FIID))
+      userAnswersWithProgressFlag <- Future.fromTry(userAnswers.set(ChangeFiDetailsInProgressId, fiDetails.FIID, cleanup = false))
       updatedUserAnswers          <- populateUserAnswersWithRegisteredFiDetail(fiDetails, userAnswersWithProgressFlag)
       _                           <- sessionRepository.set(updatedUserAnswers)
     } yield updatedUserAnswers
@@ -70,7 +70,7 @@ class FinancialInstitutionUpdateService @Inject() (
     userAnswers: UserAnswers
   )(implicit ec: ExecutionContext): Future[UserAnswers] =
     for {
-      a <- Future.fromTry(userAnswers.set(NameOfFinancialInstitutionPage, fiDetails.FIName))
+      a <- Future.fromTry(userAnswers.set(NameOfFinancialInstitutionPage, fiDetails.FIName, cleanup = false))
       b <- setUTR(a, fiDetails.TINDetails)
       c <- setGIIN(b, fiDetails.TINDetails)
       d <- setAddress(c, fiDetails.AddressDetails)
@@ -83,8 +83,8 @@ class FinancialInstitutionUpdateService @Inject() (
     userAnswers: UserAnswers
   )(implicit ec: ExecutionContext): Future[UserAnswers] =
     for {
-      a <- Future.fromTry(userAnswers.set(ReportForRegisteredBusinessPage, fiDetails.IsFIUser))
-      b <- Future.fromTry(a.set(NameOfFinancialInstitutionPage, fiDetails.FIName))
+      a <- Future.fromTry(userAnswers.set(ReportForRegisteredBusinessPage, fiDetails.IsFIUser, cleanup = false))
+      b <- Future.fromTry(a.set(NameOfFinancialInstitutionPage, fiDetails.FIName, cleanup = false))
       c <- setGIIN(b, fiDetails.TINDetails)
       d <- setAddress(c, fiDetails.AddressDetails)
       e <- setFiUserDetails(d)
@@ -94,12 +94,12 @@ class FinancialInstitutionUpdateService @Inject() (
     tinDetails.find(_.TINType == UTR) match {
       case Some(details) =>
         for {
-          a <- Future.fromTry(userAnswers.set(HaveUniqueTaxpayerReferencePage, true))
-          b <- Future.fromTry(a.set(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference(details.TIN)))
+          a <- Future.fromTry(userAnswers.set(HaveUniqueTaxpayerReferencePage, true, cleanup = false))
+          b <- Future.fromTry(a.set(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference(details.TIN), cleanup = false))
         } yield b
       case None =>
         for {
-          a <- Future.fromTry(userAnswers.set(HaveUniqueTaxpayerReferencePage, false))
+          a <- Future.fromTry(userAnswers.set(HaveUniqueTaxpayerReferencePage, false, cleanup = false))
           b <- Future.fromTry(a.remove(WhatIsUniqueTaxpayerReferencePage))
         } yield b
     }
@@ -108,12 +108,12 @@ class FinancialInstitutionUpdateService @Inject() (
     tinDetails.find(_.TINType == GIIN) match {
       case Some(details) =>
         for {
-          a <- Future.fromTry(userAnswers.set(HaveGIINPage, true))
-          b <- Future.fromTry(a.set(WhatIsGIINPage, GIINumber(details.TIN)))
+          a <- Future.fromTry(userAnswers.set(HaveGIINPage, true, cleanup = false))
+          b <- Future.fromTry(a.set(WhatIsGIINPage, GIINumber(details.TIN), cleanup = false))
         } yield b
       case None =>
         for {
-          a <- Future.fromTry(userAnswers.set(HaveGIINPage, false))
+          a <- Future.fromTry(userAnswers.set(HaveGIINPage, false, cleanup = false))
           b <- Future.fromTry(a.remove(WhatIsGIINPage))
         } yield b
     }
@@ -122,9 +122,9 @@ class FinancialInstitutionUpdateService @Inject() (
     val isUkAddress = addressDetails.CountryCode.exists(countryListFactory.countryCodesForUkCountries.contains)
     val addressPage = if (isUkAddress) UkAddressPage else NonUkAddressPage
     for {
-      a <- Future.fromTry(userAnswers.set(WhereIsFIBasedPage, isUkAddress))
+      a <- Future.fromTry(userAnswers.set(WhereIsFIBasedPage, isUkAddress, cleanup = false))
       b <- addressDetails.toAddress(countryListFactory) match {
-        case Some(address) => Future.fromTry(a.set(addressPage, address))
+        case Some(address) => Future.fromTry(a.set(addressPage, address, cleanup = false))
         case None =>
           Future.failed(new RuntimeException(s"Failed to find country with code ${addressDetails.CountryCode}"))
       }
@@ -136,8 +136,8 @@ class FinancialInstitutionUpdateService @Inject() (
     primaryContact map {
       contact =>
         for {
-          a <- Future.fromTry(userAnswers.set(FirstContactNamePage, contact.ContactName))
-          b <- Future.fromTry(a.set(FirstContactEmailPage, contact.EmailAddress))
+          a <- Future.fromTry(userAnswers.set(FirstContactNamePage, contact.ContactName, cleanup = false))
+          b <- Future.fromTry(a.set(FirstContactEmailPage, contact.EmailAddress, cleanup = false))
           c <- setPhoneNumber(b, contact, FirstContactHavePhonePage, FirstContactPhoneNumberPage)
         } yield c
     } getOrElse Future.successful(userAnswers)
@@ -152,31 +152,31 @@ class FinancialInstitutionUpdateService @Inject() (
     contactDetails.PhoneNumber match {
       case Some(phoneNumber) =>
         for {
-          a <- Future.fromTry(userAnswers.set(havePhonePage, true))
-          b <- Future.fromTry(a.set(phoneNumberPage, phoneNumber))
+          a <- Future.fromTry(userAnswers.set(havePhonePage, true, cleanup = false))
+          b <- Future.fromTry(a.set(phoneNumberPage, phoneNumber, cleanup = false))
         } yield b
       case None =>
         for {
-          a <- Future.fromTry(userAnswers.set(havePhonePage, false))
+          a <- Future.fromTry(userAnswers.set(havePhonePage, false, cleanup = false))
           b <- Future.fromTry(a.remove(phoneNumberPage))
         } yield b
     }
 
   private def setFiUserDetails(userAnswers: UserAnswers): Future[UserAnswers] = for {
-    a <- Future.fromTry(userAnswers.set(ReportForRegisteredBusinessPage, true))
-    b <- Future.fromTry(a.set(IsThisYourBusinessNamePage, true))
-    c <- Future.fromTry(b.set(IsThisAddressPage, true))
-    d <- Future.fromTry(c.set(IsTheAddressCorrectPage, true))
+    a <- Future.fromTry(userAnswers.set(ReportForRegisteredBusinessPage, true, cleanup = false))
+    b <- Future.fromTry(a.set(IsThisYourBusinessNamePage, true, cleanup = false))
+    c <- Future.fromTry(b.set(IsThisAddressPage, true, cleanup = false))
+    d <- Future.fromTry(c.set(IsTheAddressCorrectPage, true, cleanup = false))
   } yield d
 
   private def setSecondaryContactDetails(userAnswers: UserAnswers, fiDetails: FIDetail)(implicit ec: ExecutionContext): Future[UserAnswers] =
     for {
-      a <- Future.fromTry(userAnswers.set(SecondContactExistsPage, fiDetails.SecondaryContactDetails.isDefined))
+      a <- Future.fromTry(userAnswers.set(SecondContactExistsPage, fiDetails.SecondaryContactDetails.isDefined, cleanup = false))
       b <- fiDetails.SecondaryContactDetails match {
         case Some(secondaryContact) =>
           for {
-            b <- Future.fromTry(a.set(SecondContactNamePage, secondaryContact.ContactName))
-            c <- Future.fromTry(b.set(SecondContactEmailPage, secondaryContact.EmailAddress))
+            b <- Future.fromTry(a.set(SecondContactNamePage, secondaryContact.ContactName, cleanup = false))
+            c <- Future.fromTry(b.set(SecondContactEmailPage, secondaryContact.EmailAddress, cleanup = false))
             d <- setPhoneNumber(c, secondaryContact, SecondContactCanWePhonePage, SecondContactPhoneNumberPage)
           } yield d
         case None =>
