@@ -253,7 +253,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
   implicit class UserAnswersExtension(userAnswers: UserAnswers) {
 
     def withPage[T](page: Settable[T], value: T)(implicit writes: Writes[T]): UserAnswers =
-      userAnswers.set(page, value).success.value
+      userAnswers.set(page, value, cleanup = false).success.value
 
     def removePage[T](page: Settable[T]): UserAnswers = userAnswers.remove(page).success.value
 

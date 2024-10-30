@@ -28,7 +28,9 @@ object FinancialInstitutionIdSummary {
     SummaryListRowViewModel(
       key = "financialInstitutionId.changeYourAnswersLabel",
       value = ValueViewModel(HtmlFormat.escape(fiId).toString),
-      actions = Nil
+      actions = Seq(
+        ActionItemViewModel("", "")
+      )
     )
 
 }
