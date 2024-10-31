@@ -23,8 +23,8 @@ GET         /add                                                          contro
 
 GET         /contact-name                                                 controllers.addFinancialInstitution.FirstContactNameController.onPageLoad(mode: Mode = NormalMode)
 POST        /contact-name                                                 controllers.addFinancialInstitution.FirstContactNameController.onSubmit(mode: Mode = NormalMode)
-GET         /change/contact-name                                          controllers.addFinancialInstitution.FirstContactNameController.onPageLoad(mode: Mode = CheckMode)
-POST        /change/contact-name                                          controllers.addFinancialInstitution.FirstContactNameController.onSubmit(mode: Mode = CheckMode)
+GET         /change-contact-name                                          controllers.addFinancialInstitution.FirstContactNameController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-contact-name                                          controllers.addFinancialInstitution.FirstContactNameController.onSubmit(mode: Mode = CheckMode)
 
 GET         /email                                                        controllers.addFinancialInstitution.FirstContactEmailController.onPageLoad(mode: Mode = NormalMode)
 POST        /email                                                        controllers.addFinancialInstitution.FirstContactEmailController.onSubmit(mode: Mode = NormalMode)
