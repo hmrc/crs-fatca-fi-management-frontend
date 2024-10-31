@@ -23,8 +23,8 @@
 
 @lines = @{
     val rows = (address.isDefined, addressRes.isDefined) match {
-      case (true, _) => address.get.lines
-      case (_, true) => addressRes.get.lines
+      case (true, _) => address.get.linesWithoutCountry
+      case (_, true) => addressRes.get.linesWithoutCountry
     }
     rows.map {
         case line => s"<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>$line</p>"

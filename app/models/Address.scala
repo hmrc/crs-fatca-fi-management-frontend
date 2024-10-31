@@ -36,6 +36,14 @@ case class Address(
     Some(country.description)
   ).flatten
 
+  def linesWithoutCountry: Seq[String] = Seq(
+    Some(addressLine1),
+    addressLine2,
+    Some(addressLine3),
+    addressLine4,
+    postCode
+  ).flatten
+
   val isGB: Boolean           = this.country.code == Address.GBCountryCode
   val isOtherCountry: Boolean = this.country.code != Address.GBCountryCode
 }
