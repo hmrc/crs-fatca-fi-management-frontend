@@ -48,6 +48,14 @@ case class AddressResponse(
     country.map(_.description).orElse(Some(countryCode))
   ).flatten
 
+  def linesWithoutCountry: Seq[String] = Seq(
+    Some(addressLine1),
+    addressLine2,
+    addressLine3,
+    addressLine4,
+    postCodeFormatter(postalCode)
+  ).flatten
+
   private def postCodeFormatter(postcode: Option[String]): Option[String] =
     postcode match {
       case Some(pc) =>
