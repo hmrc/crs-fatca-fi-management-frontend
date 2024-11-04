@@ -17,7 +17,7 @@
 package services
 
 import connectors.FinancialInstitutionsConnector
-import models.FinancialInstitutions.TINType.UTR
+import models.FinancialInstitutions.TINType.{GIIN, UTR}
 import models.FinancialInstitutions._
 import models.UserAnswers
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, ReportForRegisteredBusinessPage}
@@ -106,7 +106,7 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
     }
 
     val giin = userAnswers.get(WhatIsGIINPage) match {
-      case Some(giin) => Seq(TINDetails(UTR, giin.value, "US"))
+      case Some(giin) => Seq(TINDetails(GIIN, giin.value, "US"))
       case _          => Seq.empty
     }
 
