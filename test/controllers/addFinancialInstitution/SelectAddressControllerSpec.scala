@@ -53,8 +53,8 @@ class SelectAddressControllerSpec extends SpecBase with MockitoSugar {
   )
 
   val addressOptions: Seq[RadioItem] = Seq(
-    RadioItem(content = Text("1 Address line 1, Town, ZZ1 1ZZ, United Kingdom"), value = Some("1 Address line 1, Town, ZZ1 1ZZ, United Kingdom")),
-    RadioItem(content = Text("2 Address line 1, Town, ZZ1 1ZZ, United Kingdom"), value = Some("2 Address line 1, Town, ZZ1 1ZZ, United Kingdom"))
+    RadioItem(content = Text("1 Address line 1, Town, ZZ1 1ZZ"), value = Some("1 Address line 1, Town, ZZ1 1ZZ")),
+    RadioItem(content = Text("2 Address line 1, Town, ZZ1 1ZZ"), value = Some("2 Address line 1, Town, ZZ1 1ZZ"))
   )
 
   val userAnswers = ua
@@ -107,7 +107,7 @@ class SelectAddressControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, SelectAddressRoute).withFormUrlEncodedBody(("value", "1 Address line 1, Town, ZZ1 1ZZ, United Kingdom"))
+          FakeRequest(POST, SelectAddressRoute).withFormUrlEncodedBody(("value", "1 Address line 1, Town, ZZ1 1ZZ"))
 
         val result = route(application, request).value
 

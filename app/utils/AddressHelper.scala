@@ -29,8 +29,7 @@ object AddressHelper {
       address.addressLine4,
       address.town,
       address.postcode,
-      address.county,
-      address.country.map(_.description)
+      address.county
     )
       .collect {
         case s: String => s
