@@ -47,7 +47,7 @@ class AddressHelperSpec extends SpecBase {
     "format the address from AddressLookup correctly" in {
       val address = AddressLookup(Some("line1"), Some("line2"), Some("line3"), Some("line4"), "town", Some("county"), "postcode", Some(Country.GB))
       val result  = sut.formatAddress(address)
-      result mustBe "line1, line2, line3, line4, town, postcode, county, United Kingdom"
+      result mustBe "line1, line2, line3, line4, town, postcode, county"
     }
 
     "format the address from AddressResponse correctly as html" in {
