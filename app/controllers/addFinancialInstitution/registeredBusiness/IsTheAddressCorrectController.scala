@@ -66,7 +66,7 @@ class IsTheAddressCorrectController @Inject() (
               address =>
                 for {
                   addressWithCountry <- Future.fromTry(addCountryToAddress(address))
-                  updatedAnswers     <- Future.fromTry(request.userAnswers.set(FetchedRegisteredAddressPage, addressWithCountry))
+                  updatedAnswers     <- Future.fromTry(request.userAnswers.set(FetchedRegisteredAddressPage, addressWithCountry, cleanup = false))
                   result <- sessionRepository.set(updatedAnswers).map {
                     _ =>
                       val preparedForm = request.userAnswers.get(IsTheAddressCorrectPage) match {
