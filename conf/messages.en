@@ -370,8 +370,8 @@ changeYourAnswers.p1 = Back to manage your financial institutions
 changeYourAnswers.changed.p2 = By changing these details, you are confirming that the information is correct and complete to the best of your knowledge.
 changeYourAnswers.submit.button = Confirm and send
 
-changeYourRegisteredAnswers.title = Change the details for the financial institution
-changedYourRegisteredAnswers.title = Check the details for the financial institution
+changeYourRegisteredAnswers.title = Change the details for the registered business
+changedYourRegisteredAnswers.title = Check the details for the registered business
 changeYourRegisteredAnswers.heading = Change the details for {0}
 changedYourRegisteredAnswers.heading = Check the details for {0}
 changeYourRegisteredAnswers.changed.subheading = Now send these details for the registered business
