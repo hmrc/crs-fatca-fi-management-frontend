@@ -96,7 +96,7 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
           OK,
           "{}"
         )
-        val result = connector.addFi(createFIDetails).futureValue
+        val result = connector.addOrUpdateFI(createFIDetails, "POST").futureValue
         result mustBe a[Right[_, _]]
         result.right.get.status mustBe OK
       }
@@ -115,7 +115,7 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
           SERVICE_UNAVAILABLE,
           errorResponseJson
         )
-        val result = connector.addFi(createFIDetails).futureValue
+        val result = connector.addOrUpdateFI(createFIDetails, "POST").futureValue
 
         result mustBe a[Left[ErrorDetails, _]]
       }

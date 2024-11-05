@@ -99,8 +99,8 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
 
         forAll(fiNotRegistered.arbitrary) {
           (userAnswers: UserAnswers) =>
-            when(mockConnector.addFi(any())(any[HeaderCarrier](), any[ExecutionContext]())).thenReturn(mockResponse)
-            val result = sut.addFinancialInstitution(subscriptionId, userAnswers)
+            when(mockConnector.addOrUpdateFI(any(), any())(any[HeaderCarrier](), any[ExecutionContext]())).thenReturn(mockResponse)
+            val result = sut.addOrUpdateFinancialInstitution(subscriptionId, userAnswers, "POST")
             result.futureValue mustBe ()
         }
       }
