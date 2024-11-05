@@ -284,26 +284,25 @@ class ChangeFinancialInstitutionControllerSpec
           redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
         }
       }
-      // TODO implement something similar to below when Details Updated page is added
-//      "must redirect to confirmation page when submitting answers" in {
-//        when(mockService.addOrUpdateFinancialInstitution(any[String](), any[UserAnswers](), any[String]())(any[HeaderCarrier](), any[ExecutionContext]()))
-//          .thenReturn(Future.successful())
-//
-//        val application = applicationBuilder(userAnswers = Some(someUserAnswers))
-//          .overrides(
-//            bind[FinancialInstitutionsService].toInstance(mockService)
-//          )
-//          .build()
-//
-//        running(application) {
-//          val request = FakeRequest(POST, controllers.addFinancialInstitution.routes.CheckYourAnswersController.confirmAndAdd().url)
-//
-//          val result = route(application, request).value
-//
-//          status(result) mustEqual SEE_OTHER
-//          redirectLocation(result).value mustEqual controllers.addFinancialInstitution.routes.FinancialInstitutionAddedConfirmationController.onPageLoad.url
-//        }
-//      }
+      "must redirect to details updated page when submitting answers" in {
+        when(mockService.addOrUpdateFinancialInstitution(any[String](), any[UserAnswers](), any[String]())(any[HeaderCarrier](), any[ExecutionContext]()))
+          .thenReturn(Future.successful())
+
+        val application = applicationBuilder(userAnswers = Some(someUserAnswers))
+          .overrides(
+            bind[FinancialInstitutionsService].toInstance(mockService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.confirmAndAdd().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.DetailsUpdatedController.onPageLoad().url
+        }
+      }
     }
   }
 

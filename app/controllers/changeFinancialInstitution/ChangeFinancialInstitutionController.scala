@@ -95,10 +95,9 @@ class ChangeFinancialInstitutionController @Inject() (
     implicit request =>
       financialInstitutionsService
         .addOrUpdateFinancialInstitution(request.fatcaId, request.userAnswers, "PUT")
-        .map(
-          _ => // TODO: User answers to be submitted and redirected to /details-updated as part of DAC6-3186
-            Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-        )
+        .map {
+          _ => Redirect(controllers.routes.DetailsUpdatedController.onPageLoad())
+        }
         .recoverWith {
           exception =>
             logger.error(s"Failed to clear user answers for subscription Id: [${request.fatcaId}]", exception)
