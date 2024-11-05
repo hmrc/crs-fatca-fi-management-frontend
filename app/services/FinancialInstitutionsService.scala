@@ -63,13 +63,13 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
     listsResult.get
   }
 
-  def addFinancialInstitution(subscriptionId: String, userAnswers: UserAnswers)(implicit
+  def addOrUpdateFinancialInstitution(subscriptionId: String, userAnswers: UserAnswers, requestType: String)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Unit] = {
     val fiDetailsRequest = buildFiDetailsRequest(subscriptionId, userAnswers)
     connector
-      .addFi(fiDetailsRequest)
+      .addOrUpdateFI(fiDetailsRequest, requestType)
       .map(
         _ => ()
       )

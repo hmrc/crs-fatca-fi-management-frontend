@@ -63,7 +63,7 @@ class CheckYourAnswersController @Inject() (
   def confirmAndAdd(): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkForInformationSent).async {
     implicit request =>
       service
-        .addFinancialInstitution(request.fatcaId, request.userAnswers)
+        .addOrUpdateFinancialInstitution(request.fatcaId, request.userAnswers, "POST")
         .map {
           _ =>
             Redirect(controllers.addFinancialInstitution.routes.FinancialInstitutionAddedConfirmationController.onPageLoad)
