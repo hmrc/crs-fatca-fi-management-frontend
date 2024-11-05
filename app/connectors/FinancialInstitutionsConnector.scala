@@ -50,42 +50,28 @@ class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, v
   def addOrUpdateFI(fiDetails: CreateFIDetails, requestType: String)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[Either[ErrorDetails, HttpResponse]] =
-    if (requestType == "POST") {
-      httpClient
-        .post(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/create")
-        .withBody(Json.toJson(fiDetails))
-        .execute[HttpResponse]
-        .map {
-          response =>
-            response.status match {
-              case OK => Right(response)
-              case _  => Left((response.json \ "ErrorDetails").as[ErrorDetails])
-            }
-        }
-        .recoverWith {
-          case e: Exception =>
-            logger.error(s"Error while adding an FI: ${e.getMessage}")
-            Future.successful(Left(ErrorDetails(s"${LocalDateTime.now()}", fiDetails.SubscriptionID, None, Some(s"Add FI failed: ${e.getMessage}"))))
-        }
+  ): Future[Either[ErrorDetails, HttpResponse]] = {
+    val request = if (requestType == "POST") {
+      httpClient.post(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/create")
     } else {
-      httpClient
-        .put(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/create")
-        .withBody(Json.toJson(fiDetails))
-        .execute[HttpResponse]
-        .map {
-          response =>
-            response.status match {
-              case OK => Right(response)
-              case _  => Left((response.json \ "ErrorDetails").as[ErrorDetails])
-            }
-        }
-        .recoverWith {
-          case e: Exception =>
-            logger.error(s"Error while updating an FI: ${e.getMessage}")
-            Future.successful(Left(ErrorDetails(s"${LocalDateTime.now()}", fiDetails.SubscriptionID, None, Some(s"Update FI failed: ${e.getMessage}"))))
-        }
+      httpClient.put(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/create")
     }
+    request
+      .withBody(Json.toJson(fiDetails))
+      .execute[HttpResponse]
+      .map {
+        response =>
+          response.status match {
+            case OK => Right(response)
+            case _  => Left((response.json \ "ErrorDetails").as[ErrorDetails])
+          }
+      }
+      .recoverWith {
+        case e: Exception =>
+          logger.error(s"Error while adding an FI: ${e.getMessage}")
+          Future.successful(Left(ErrorDetails(s"${LocalDateTime.now()}", fiDetails.SubscriptionID, None, Some(s"Add FI failed: ${e.getMessage}"))))
+      }
+  }
 
   def removeFi(fiDetails: RemoveFIDetail)(implicit
     hc: HeaderCarrier,
