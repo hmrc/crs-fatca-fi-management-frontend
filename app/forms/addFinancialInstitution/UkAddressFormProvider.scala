@@ -16,18 +16,17 @@
 
 package forms.addFinancialInstitution
 
-import javax.inject.Inject
 import forms.mappings.Mappings
 import models.{Address, Country}
 import play.api.data.Form
 import play.api.data.Forms.mapping
 import utils.RegexConstants
 
-class UkAddressFormProvider @Inject() extends Mappings with RegexConstants {
+class UkAddressFormProvider extends Mappings with RegexConstants {
 
   val addressLineLength = 35
 
-  def apply(countryList: Seq[Country]): Form[Address] = Form(
+  def apply(): Form[Address] = Form(
     mapping(
       "addressLine1" -> validatedText(
         "ukAddress.error.addressLine1.required",
@@ -60,17 +59,17 @@ class UkAddressFormProvider @Inject() extends Mappings with RegexConstants {
         regexPostcode,
         "ukAddress.error.postcode.chars",
         postCodeAllowedChars
-      ).transform[Option[String]](
-        postCode => Option(postCode),
-        _.getOrElse(throw new IllegalStateException("postCode is empty"))
-      ),
-      "country" -> text("ukAddress.error.country.required")
-        .verifying("ukAddress.error.country.required", value => countryList.exists(_.code == value))
-        .transform[Country](
-          value => countryList.find(_.code == value).getOrElse(throw new IllegalStateException(s"Country with code [$value] not found")),
-          _.code
+      ).verifying("ukAddress.error.postcode.nonUk", postcode => !Seq("GE", "JY", "IM").exists(postcode.startsWith))
+        .transform[Option[String]](
+          postCode => Option(postCode),
+          _.getOrElse(throw new IllegalStateException("postCode is empty"))
         )
-    )(Address.apply)(Address.unapply)
+    )(
+      (addressLine1, addressLine2, addressLine3, addressLine4, postCode) =>
+        Address(addressLine1, addressLine2, addressLine3, addressLine4, postCode, Country.GB)
+    )(
+      address => Some((address.addressLine1, address.addressLine2, address.addressLine3, address.addressLine4, address.postCode))
+    )
   )
 
 }
