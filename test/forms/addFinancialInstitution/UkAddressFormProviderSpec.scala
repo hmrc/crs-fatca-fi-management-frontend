@@ -17,7 +17,6 @@
 package forms.addFinancialInstitution
 
 import forms.behaviours.StringFieldBehaviours
-import models.Country
 import play.api.data.FormError
 import wolfendale.scalacheck.regexp.RegexpGen
 
