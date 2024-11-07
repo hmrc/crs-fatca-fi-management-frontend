@@ -18,15 +18,17 @@ package controllers.changeFinancialInstitution
 
 import com.google.inject.Inject
 import controllers.actions._
+import controllers.routes
 import models.UserAnswers
 import models.requests.DataRequest
+import pages.Page
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{FinancialInstitutionUpdateService, FinancialInstitutionsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.ContactHelper
+import utils.{CheckYourAnswersValidator, ContactHelper}
 import viewmodels.changeFinancialInstitution.ChangeRegisteredFinancialInstitutionViewModel.getChangeRegisteredFinancialInstitutionSummaries
 import viewmodels.govuk.summarylist._
 import views.html.ThereIsAProblemView
@@ -59,8 +61,13 @@ class ChangeRegisteredFinancialInstitutionController @Inject() (
           case Some(fiDetails) =>
             userAnswers.get(ChangeFiDetailsInProgressId) match {
               case Some(id) if id.equalsIgnoreCase(fiid) =>
-                val hasChanges = financialInstitutionUpdateService.registeredFiDetailsHasChanged(userAnswers, fiDetails)
-                Future.successful(createPage(fiid, userAnswers, hasChanges))
+                getMissingAnswers(userAnswers) match {
+                  case Nil =>
+                    val hasChanges = financialInstitutionUpdateService.registeredFiDetailsHasChanged(userAnswers, fiDetails)
+                    Future.successful(createPage(fiid, userAnswers, hasChanges))
+                  case _ =>
+                    Future.successful(Redirect(routes.SomeInformationMissingController.onPageLoad()))
+                }
               case _ =>
                 financialInstitutionUpdateService
                   .populateAndSaveRegisteredFiDetails(userAnswers, fiDetails)
@@ -104,5 +111,7 @@ class ChangeRegisteredFinancialInstitutionController @Inject() (
     val financialInstitutionSummary = SummaryListViewModel(getChangeRegisteredFinancialInstitutionSummaries(fiId, updatedUserAnswers))
     Ok(view(hasChanges, fiName, financialInstitutionSummary))
   }
+
+  private def getMissingAnswers(userAnswers: UserAnswers): Seq[Page] = CheckYourAnswersValidator(userAnswers).validateRegisteredBusiness
 
 }

@@ -18,7 +18,7 @@ package controllers.changeFinancialInstitution
 
 import base.SpecBase
 import controllers.routes
-import generators.ModelGenerators
+import generators.{ModelGenerators, UserAnswersGenerator}
 import models.FinancialInstitutions.FIDetail
 import models.UserAnswers
 import org.jsoup.Jsoup
@@ -44,6 +44,7 @@ class ChangeFinancialInstitutionControllerSpec
     with MockitoSugar
     with ModelGenerators
     with BeforeAndAfterEach
+    with UserAnswersGenerator
     with ScalaCheckDrivenPropertyChecks {
 
   private val SubscriptionId                        = "subscriptionId"
@@ -63,14 +64,14 @@ class ChangeFinancialInstitutionControllerSpec
       "when change FI details is not in progress" - {
 
         "must return OK and the correct view without the 'Confirm and send' button for a GET when ChangeFiDetailsInProgress is false" in {
-          forAll {
-            fiDetail: FIDetail =>
-              val userAnswers = emptyUserAnswers.withPage(ChangeFiDetailsInProgressId, fiDetail.FIID)
+          forAll(fiNotRegistered.arbitrary, arbitraryFIDetail.arbitrary) {
+            (userAnswers: UserAnswers, fiDetail: FIDetail) =>
+              val updatedAnswers = userAnswers.withPage(ChangeFiDetailsInProgressId, fiDetail.FIID)
 
               mockSuccessfulFiRetrieval(fiDetail)
-              mockSuccessfulUserAnswersPersistence(userAnswers, fiDetail)
+              mockSuccessfulUserAnswersPersistence(updatedAnswers, fiDetail)
 
-              val application = createAppWithAnswers(Option(userAnswers))
+              val application = createAppWithAnswers(Option(updatedAnswers))
               running(application) {
                 val request = FakeRequest(GET, controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(fiDetail.FIID).url)
 
@@ -129,15 +130,15 @@ class ChangeFinancialInstitutionControllerSpec
       "when change FI details is in progress" - {
 
         "must return OK and the correct view with the 'Confirm and send' button for a GET when FI details has been changed" in {
-          forAll {
-            fiDetail: FIDetail =>
-              val userAnswers = emptyUserAnswers.withPage(ChangeFiDetailsInProgressId, fiDetail.FIID)
+          forAll(fiNotRegistered.arbitrary, arbitraryFIDetail.arbitrary) {
+            (userAnswers: UserAnswers, fiDetail: FIDetail) =>
+              val updatedAnswers = userAnswers.withPage(ChangeFiDetailsInProgressId, fiDetail.FIID)
 
               mockSuccessfulFiRetrieval(fiDetail)
-              when(mockFinancialInstitutionUpdateService.fiDetailsHasChanged(mockitoEq(userAnswers), mockitoEq(fiDetail)))
+              when(mockFinancialInstitutionUpdateService.fiDetailsHasChanged(mockitoEq(updatedAnswers), mockitoEq(fiDetail)))
                 .thenReturn(true)
 
-              val application = createAppWithAnswers(Option(userAnswers))
+              val application = createAppWithAnswers(Option(updatedAnswers))
               running(application) {
                 val request = FakeRequest(GET, controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(fiDetail.FIID).url)
 
@@ -151,15 +152,15 @@ class ChangeFinancialInstitutionControllerSpec
         }
 
         "must return OK and the correct view without the 'Confirm and send' button for a GET when FI details has NOT been changed" in {
-          forAll {
-            fiDetail: FIDetail =>
-              val userAnswers = emptyUserAnswers.withPage(ChangeFiDetailsInProgressId, fiDetail.FIID)
+          forAll(fiNotRegistered.arbitrary, arbitraryFIDetail.arbitrary) {
+            (userAnswers: UserAnswers, fiDetail: FIDetail) =>
+              val updatedAnswers = userAnswers.withPage(ChangeFiDetailsInProgressId, fiDetail.FIID)
 
               mockSuccessfulFiRetrieval(fiDetail)
-              when(mockFinancialInstitutionUpdateService.fiDetailsHasChanged(mockitoEq(userAnswers), mockitoEq(fiDetail)))
+              when(mockFinancialInstitutionUpdateService.fiDetailsHasChanged(mockitoEq(updatedAnswers), mockitoEq(fiDetail)))
                 .thenReturn(false)
 
-              val application = createAppWithAnswers(Option(userAnswers))
+              val application = createAppWithAnswers(Option(updatedAnswers))
               running(application) {
                 val request = FakeRequest(GET, controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(fiDetail.FIID).url)
 
@@ -168,6 +169,27 @@ class ChangeFinancialInstitutionControllerSpec
                 status(result) mustEqual OK
                 val document = Jsoup.parse(contentAsString(result))
                 document.getElementsContainingText(SendButtonText).isEmpty mustBe true
+              }
+          }
+        }
+
+        "must redirect to information missing page when ChangeFiDetails In Progress and missing answers" in {
+          forAll(fiNotRegisteredMissingAnswers.arbitrary, arbitraryFIDetail.arbitrary) {
+            (userAnswers: UserAnswers, fiDetail: FIDetail) =>
+              val updatedAnswers = userAnswers.withPage(ChangeFiDetailsInProgressId, fiDetail.FIID)
+
+              mockSuccessfulFiRetrieval(fiDetail)
+              when(mockFinancialInstitutionUpdateService.fiDetailsHasChanged(mockitoEq(updatedAnswers), mockitoEq(fiDetail)))
+                .thenReturn(false)
+
+              val application = createAppWithAnswers(Option(updatedAnswers))
+              running(application) {
+                val request = FakeRequest(GET, controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(fiDetail.FIID).url)
+
+                val result = route(application, request).value
+
+                status(result) mustEqual SEE_OTHER
+                redirectLocation(result).value mustEqual routes.SomeInformationMissingController.onPageLoad().url
               }
           }
         }
