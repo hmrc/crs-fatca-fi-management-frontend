@@ -59,7 +59,7 @@ class UkAddressFormProvider extends Mappings with RegexConstants {
         regexPostcode,
         "ukAddress.error.postcode.chars",
         postCodeAllowedChars
-      ).verifying("ukAddress.error.postcode.nonUk", postcode => !Seq("GE", "JY", "IM").exists(postcode.startsWith))
+      ).verifying("ukAddress.error.postcode.nonUk", postcode => !Seq("GY", "JE", "IM").exists(postcode.startsWith))
         .transform[Option[String]](
           postCode => Option(postCode),
           _.getOrElse(throw new IllegalStateException("postCode is empty"))

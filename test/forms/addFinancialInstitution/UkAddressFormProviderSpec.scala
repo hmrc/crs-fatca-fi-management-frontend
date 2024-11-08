@@ -210,7 +210,7 @@ class UkAddressFormProviderSpec extends StringFieldBehaviours {
     )
 
     "not allow crown dependency postcodes" in {
-      val prefixes = Seq("GE", "JY", "IM", "ge", "jy", "im")
+      val prefixes = Seq("GY", "JE", "IM", "gy", "je", "im")
       val baseData = Map("addressLine1" -> "somewhere", "addressLine3" -> "somewhere")
 
       prefixes.foreach {
