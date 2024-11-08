@@ -252,7 +252,7 @@ ukAddress.error.postcode.required = Enter a postcode, like AA1 1AA
 ukAddress.error.postcode.length = Postcode must be 10 characters or less
 ukAddress.error.postcode.chars = Postcode must only include letters a to z and numbers 0 to 9
 ukAddress.error.postcode.invalid = Enter a real postcode
-ukAddress.error.country.required = Select country
+ukAddress.error.postcode.nonUk = Postcode must be a UK postcode
 
 isTheAddressCorrect.title = Is this the registered address for the financial institution?
 isTheAddressCorrect.heading = Is this the registered address for {0}?

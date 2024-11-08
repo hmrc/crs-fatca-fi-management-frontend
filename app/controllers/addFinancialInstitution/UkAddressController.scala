@@ -53,7 +53,7 @@ class UkAddressController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val form = formProvider(countriesList)
+      val form = formProvider()
       val preparedForm = request.userAnswers.get(UkAddressPage) match {
         case None        => form
         case Some(value) => form.fill(value)
@@ -62,7 +62,6 @@ class UkAddressController @Inject() (
       Ok(
         view(
           preparedForm,
-          countryListFactory.countrySelectList(preparedForm.data, countriesList),
           getFinancialInstitutionName(request.userAnswers),
           mode
         )
@@ -71,7 +70,7 @@ class UkAddressController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val form = formProvider(countriesList)
+      val form = formProvider()
       form
         .bindFromRequest()
         .fold(
@@ -80,7 +79,6 @@ class UkAddressController @Inject() (
               BadRequest(
                 view(
                   formWithErrors,
-                  countryListFactory.countrySelectList(formWithErrors.data, countriesList),
                   getFinancialInstitutionName(request.userAnswers),
                   mode
                 )

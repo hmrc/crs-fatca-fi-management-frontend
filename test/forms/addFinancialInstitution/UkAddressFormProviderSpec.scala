@@ -17,22 +17,12 @@
 package forms.addFinancialInstitution
 
 import forms.behaviours.StringFieldBehaviours
-import models.Country
-import org.scalacheck.Gen
 import play.api.data.FormError
 import wolfendale.scalacheck.regexp.RegexpGen
 
 class UkAddressFormProviderSpec extends StringFieldBehaviours {
 
-  private val countries = Seq(
-    Country("valid", "AD", "Andorra"),
-    Country("valid", "FJ", "Fiji"),
-    Country("valid", "GG", "Guernsey"),
-    Country("valid", "GG", "Guernsey"),
-    Country("valid", "GG", "Guernsey")
-  )
-
-  val form = new UkAddressFormProvider()(countries)
+  val form = new UkAddressFormProvider()()
 
   val addressLineMaxLength = 35
 
@@ -181,6 +171,7 @@ class UkAddressFormProviderSpec extends StringFieldBehaviours {
     val lengthKey      = "ukAddress.error.postcode.length"
     val invalidKey     = "ukAddress.error.postcode.invalid"
     val invalidCharKey = "ukAddress.error.postcode.chars"
+    val nonUkKey       = "ukAddress.error.postcode.nonUk"
 
     val postCodeMaxLength = 10
 
@@ -217,31 +208,20 @@ class UkAddressFormProviderSpec extends StringFieldBehaviours {
       FormError(fieldName, invalidCharKey),
       Some("chars")
     )
-  }
 
-  ".country" - {
+    "not allow crown dependency postcodes" in {
+      val prefixes = Seq("GY", "JE", "IM", "gy", "je", "im")
+      val baseData = Map("addressLine1" -> "somewhere", "addressLine3" -> "somewhere")
 
-    val fieldName   = "country"
-    val requiredKey = "ukAddress.error.country.required"
+      prefixes.foreach {
+        prefix =>
+          val data   = baseData + ("postCode" -> s"${prefix}1Z 7AB")
+          val result = form.bind(data)
 
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
+          result.errors mustEqual Seq(FormError(fieldName, nonUkKey))
+      }
+    }
 
-    behave like fieldThatBindsValidData(
-      form,
-      fieldName,
-      Gen.oneOf(countries.map(_.code))
-    )
-
-    behave like fieldWithInvalidData(
-      form,
-      fieldName,
-      invalidCountry,
-      error = FormError(fieldName, requiredKey)
-    )
   }
 
 }

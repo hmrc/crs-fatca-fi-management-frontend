@@ -29,7 +29,7 @@
 )
 
 
-@(form: Form[_], countries: Seq[SelectItem], fiName: String, mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], fiName: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("ukAddress.title"))) {
 
@@ -84,18 +84,6 @@
                 label = LabelViewModel(messages("ukAddress.postCode.mandatory"))
             ).withAutocomplete("postal-code")
             .withWidth(Fixed10)
-        )
-
-        @govukSelect(
-            SelectViewModel(
-                field = form("country"),
-                label = LabelViewModel(messages("ukAddress.countryCode")),
-                items = countries
-            )
-            .withAttribute("autocomplete" -> "country-name")
-            .asAccessibleAutocomplete(Some(
-                AccessibleAutocomplete(defaultValue = Some(""), showAllValues = true, autoSelect = true)
-            ))
         )
 
     </fieldset>
