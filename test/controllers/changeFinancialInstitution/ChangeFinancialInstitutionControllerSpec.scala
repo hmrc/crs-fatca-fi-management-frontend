@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.routes
 import generators.{ModelGenerators, UserAnswersGenerator}
 import models.FinancialInstitutions.FIDetail
-import models.UserAnswers
+import models.{RequestType, UserAnswers}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => mockitoEq}
 import org.mockito.Mockito.when
@@ -267,7 +267,7 @@ class ChangeFinancialInstitutionControllerSpec
 
       "must redirect to error page when an exception is thrown" in {
 
-        when(mockService.addOrUpdateFinancialInstitution(any[String](), any[UserAnswers](), any[String]())(any[HeaderCarrier](), any[ExecutionContext]()))
+        when(mockService.addOrUpdateFinancialInstitution(any[String](), any[UserAnswers](), any[RequestType]())(any[HeaderCarrier](), any[ExecutionContext]()))
           .thenReturn(Future.failed(new Exception("Something went wrong")))
 
         val application = applicationBuilder(userAnswers = Some(someUserAnswers))
@@ -285,7 +285,7 @@ class ChangeFinancialInstitutionControllerSpec
         }
       }
       "must redirect to details updated page when submitting answers" in {
-        when(mockService.addOrUpdateFinancialInstitution(any[String](), any[UserAnswers](), any[String]())(any[HeaderCarrier](), any[ExecutionContext]()))
+        when(mockService.addOrUpdateFinancialInstitution(any[String](), any[UserAnswers](), any[RequestType]())(any[HeaderCarrier](), any[ExecutionContext]()))
           .thenReturn(Future.successful())
 
         val application = applicationBuilder(userAnswers = Some(someUserAnswers))

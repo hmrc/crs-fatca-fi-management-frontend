@@ -18,6 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import models.FinancialInstitutions.{CreateFIDetails, RemoveFIDetail}
+import models.{CREATE, RequestType, UPDATE}
 import models.response.ErrorDetails
 import play.api.http.Status.OK
 import play.api.i18n.Lang.logger
@@ -47,17 +48,14 @@ class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, v
       .get(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/$subscriptionId/$fiId")
       .execute[HttpResponse]
 
-  def addOrUpdateFI(fiDetails: CreateFIDetails, requestType: String)(implicit
+  def addOrUpdateFI(fiDetails: CreateFIDetails, requestType: RequestType)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[Either[ErrorDetails, HttpResponse]] = {
-    val request = if (requestType == "POST") {
-      httpClient.post(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/create")
-    } else {
-      httpClient.put(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/create")
-    }
-    request
-      .withBody(Json.toJson(fiDetails))
+  ): Future[Either[ErrorDetails, HttpResponse]] =
+    (requestType match {
+      case CREATE => httpClient.post(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/create")
+      case UPDATE => httpClient.put(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/update")
+    }).withBody(Json.toJson(fiDetails))
       .execute[HttpResponse]
       .map {
         response =>
@@ -71,7 +69,6 @@ class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, v
           logger.error(s"Error while adding an FI: ${e.getMessage}")
           Future.successful(Left(ErrorDetails(s"${LocalDateTime.now()}", fiDetails.SubscriptionID, None, Some(s"Add FI failed: ${e.getMessage}"))))
       }
-  }
 
   def removeFi(fiDetails: RemoveFIDetail)(implicit
     hc: HeaderCarrier,

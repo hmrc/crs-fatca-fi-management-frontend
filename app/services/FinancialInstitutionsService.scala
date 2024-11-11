@@ -19,7 +19,7 @@ package services
 import connectors.FinancialInstitutionsConnector
 import models.FinancialInstitutions.TINType.{GIIN, UTR}
 import models.FinancialInstitutions._
-import models.UserAnswers
+import models.{RequestType, UserAnswers}
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 import play.api.libs.json.{JsResult, JsValue, Json}
@@ -63,7 +63,7 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
     listsResult.get
   }
 
-  def addOrUpdateFinancialInstitution(subscriptionId: String, userAnswers: UserAnswers, requestType: String)(implicit
+  def addOrUpdateFinancialInstitution(subscriptionId: String, userAnswers: UserAnswers, requestType: RequestType)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Unit] = {

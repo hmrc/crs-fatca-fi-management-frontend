@@ -19,6 +19,7 @@ package connectors
 import base.SpecBase
 import generators.Generators
 import helpers.WireMockServerHandler
+import models.{CREATE, UPDATE}
 import models.FinancialInstitutions.{AddressDetails, ContactDetails, CreateFIDetails, RemoveFIDetail}
 import models.response.ErrorDetails
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
@@ -96,7 +97,7 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
           OK,
           "{}"
         )
-        val result = connector.addOrUpdateFI(createFIDetails, "POST").futureValue
+        val result = connector.addOrUpdateFI(createFIDetails, CREATE).futureValue
         result mustBe a[Right[_, _]]
         result.right.get.status mustBe OK
       }
@@ -115,7 +116,7 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
           SERVICE_UNAVAILABLE,
           errorResponseJson
         )
-        val result = connector.addOrUpdateFI(createFIDetails, "POST").futureValue
+        val result = connector.addOrUpdateFI(createFIDetails, CREATE).futureValue
 
         result mustBe a[Left[ErrorDetails, _]]
       }
