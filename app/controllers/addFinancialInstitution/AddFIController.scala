@@ -18,11 +18,12 @@ package controllers.addFinancialInstitution
 
 import controllers.actions.{CtUtrRetrievalAction, IdentifierAction}
 import models.NormalMode
-
-import javax.inject.Inject
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
+import javax.inject.Inject
 import scala.concurrent.Future
 
 class AddFIController @Inject() (
@@ -33,13 +34,15 @@ class AddFIController @Inject() (
 
   def onPageLoad: Action[AnyContent] = (identify andThen retrieveCtUTR()).async {
     implicit request =>
-      val redirectUrl = if (request.autoMatched) {
-        controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(NormalMode)
-      } else {
-        routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode)
-      }
-
-      Future.successful(Redirect(redirectUrl))
+      Future.successful(Redirect(redirectUrl(request.autoMatched, request.userType)))
   }
+
+  def redirectUrl(autoMatched: Boolean, affinityGroup: AffinityGroup) =
+    (autoMatched, affinityGroup) match {
+      case (true, Organisation) =>
+        controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(NormalMode)
+      case _ =>
+        routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode)
+    }
 
 }

@@ -17,13 +17,15 @@
 package controllers.addFinancialInstitution
 
 import base.SpecBase
-import controllers.actions.{CtUtrRetrievalAction, FakeCtUtrRetrievalAction}
+import controllers.actions.{CtUtrRetrievalAction, FakeCtUtrRetrievalAction, IdentifierAction}
 import models.NormalMode
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.inject.bind
+import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
 
 class AddFIControllerSpec extends SpecBase {
 
@@ -68,6 +70,26 @@ class AddFIControllerSpec extends SpecBase {
       }
     }
 
+    "redirectUrl" - {
+      val controllerComponents: MessagesControllerComponents = stubMessagesControllerComponents()
+      val identify                                           = mock[IdentifierAction]
+      val retrieveCtUTR                                      = mock[CtUtrRetrievalAction]
+
+      val sut = new AddFIController(controllerComponents, identify, retrieveCtUTR)
+
+      "returns /name when Individual is autoMatched" in {
+        val result = sut.redirectUrl(autoMatched = true, Individual)
+        result.url mustBe routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url
+      }
+      "returns /name when not autoMatched and Org" in {
+        val orgResult = sut.redirectUrl(autoMatched = false, Organisation)
+        orgResult.url mustBe routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url
+      }
+      "returns /name when not autoMatched and Ind" in {
+        val indResult = sut.redirectUrl(autoMatched = false, Individual)
+        indResult.url mustBe routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url
+      }
+    }
   }
 
 }
