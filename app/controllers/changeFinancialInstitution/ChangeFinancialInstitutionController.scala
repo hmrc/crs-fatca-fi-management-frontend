@@ -20,13 +20,14 @@ import com.google.inject.Inject
 import controllers.actions._
 import models.requests.DataRequest
 import models.{ChangeAnswers, UserAnswers}
+import pages.Page
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{FinancialInstitutionUpdateService, FinancialInstitutionsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.ContactHelper
+import utils.{CheckYourAnswersValidator, ContactHelper}
 import viewmodels.changeFinancialInstitution.ChangeFinancialInstitutionViewModel.getChangeFinancialInstitutionSummaries
 import viewmodels.common.{getFirstContactSummaries, getSecondContactSummaries}
 import viewmodels.govuk.summarylist._
@@ -60,8 +61,13 @@ class ChangeFinancialInstitutionController @Inject() (
           case Some(fiDetails) =>
             userAnswers.get(ChangeFiDetailsInProgressId) match {
               case Some(id) if id.equalsIgnoreCase(fiid) =>
-                val hasChanges = financialInstitutionUpdateService.fiDetailsHasChanged(userAnswers, fiDetails)
-                Future.successful(createPage(fiid, userAnswers, hasChanges))
+                getMissingAnswers(userAnswers) match {
+                  case Nil =>
+                    val hasChanges = financialInstitutionUpdateService.fiDetailsHasChanged(userAnswers, fiDetails)
+                    Future.successful(createPage(fiid, userAnswers, hasChanges))
+                  case _ =>
+                    Future.successful(Redirect(controllers.routes.SomeInformationMissingController.onPageLoad()))
+                }
               case _ =>
                 financialInstitutionUpdateService
                   .populateAndSaveFiDetails(userAnswers, fiDetails)
@@ -107,5 +113,7 @@ class ChangeFinancialInstitutionController @Inject() (
     val secondContactSummary        = SummaryListViewModel(getSecondContactSummaries(updatedUserAnswers, ChangeAnswers))
     Ok(view(hasChanges, fiName, financialInstitutionSummary, firstContactSummary, secondContactSummary))
   }
+
+  private def getMissingAnswers(userAnswers: UserAnswers): Seq[Page] = CheckYourAnswersValidator(userAnswers).validate
 
 }

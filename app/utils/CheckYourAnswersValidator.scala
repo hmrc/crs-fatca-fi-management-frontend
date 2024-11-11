@@ -16,7 +16,7 @@
 
 package utils
 
-import models.UserAnswers
+import models.{CheckMode, UserAnswers}
 import pages._
 import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
@@ -63,28 +63,40 @@ sealed trait AddFIValidator {
         checkPage(UkAddressPage),
         checkPage(IsThisAddressPage)
       ).map(
-        _ => PostcodePage
+        _ => WhereIsFIBasedPage
       )
-    case Some(false) => checkPage(NonUkAddressPage)
-    case _           => Some(WhereIsFIBasedPage)
+    case Some(false) =>
+      checkPage(NonUkAddressPage).map(
+        _ => WhereIsFIBasedPage
+      )
+    case _ => Some(WhereIsFIBasedPage)
   }).toSeq
 
   private def fiUTRMissingAnswers: Seq[Page] = (userAnswers.get(HaveUniqueTaxpayerReferencePage) match {
-    case Some(true)  => checkPage(WhatIsUniqueTaxpayerReferencePage)
+    case Some(true) =>
+      checkPage(WhatIsUniqueTaxpayerReferencePage).map(
+        _ => HaveUniqueTaxpayerReferencePage
+      )
     case Some(false) => None
     case _           => Some(HaveUniqueTaxpayerReferencePage)
   }).toSeq
 
   private def fiGIINMissingAnswers: Seq[Page] = (userAnswers.get(HaveGIINPage) match {
-    case Some(true)  => checkPage(WhatIsGIINPage)
+    case Some(true) =>
+      checkPage(WhatIsGIINPage).map(
+        _ => HaveGIINPage
+      )
     case Some(false) => None
     case _           => Some(HaveGIINPage)
   }).toSeq
 
   private def checkRegisteredBusinessName: Seq[Page] = (userAnswers.get(IsThisYourBusinessNamePage) match {
-    case Some(true)  => checkPage(HaveGIINPage)
-    case Some(false) => checkPage(NameOfFinancialInstitutionPage)
-    case _           => Some(ReportForRegisteredBusinessPage)
+    case Some(true) => checkPage(HaveGIINPage)
+    case Some(false) =>
+      checkPage(NameOfFinancialInstitutionPage).map(
+        _ => IsThisYourBusinessNamePage
+      )
+    case _ => Some(ReportForRegisteredBusinessPage)
   }).toSeq
 
   private def checkReportForRegisteredMissingAnswers: Seq[Page] = (userAnswers.get(ReportForRegisteredBusinessPage) match {
@@ -94,9 +106,12 @@ sealed trait AddFIValidator {
   }).toSeq
 
   private def checkRegisteredBusinessAddress: Seq[Page] = (userAnswers.get(IsTheAddressCorrectPage) match {
-    case Some(true)  => None
-    case Some(false) => checkPage(WhereIsFIBasedPage)
-    case _           => Some(IsTheAddressCorrectPage)
+    case Some(true) => None
+    case Some(false) =>
+      checkPage(WhereIsFIBasedPage).map(
+        _ => IsTheAddressCorrectPage
+      )
+    case _ => Some(IsTheAddressCorrectPage)
   }).toSeq
 
   private[utils] def checkNameUTRGIINMissingAnswers: Seq[Page] = Seq(
@@ -121,8 +136,34 @@ class CheckYourAnswersValidator(val userAnswers: UserAnswers) extends AddFIValid
 
   def validate: Seq[Page] = checkNameUTRGIINMissingAnswers ++ checkAddressMissingAnswers ++ checkContactDetailsMissingAnswers
 
+  def changeAnswersRedirectUrl: String = validate.headOption match {
+    case Some(HaveUniqueTaxpayerReferencePage) =>
+      controllers.addFinancialInstitution.routes.HaveUniqueTaxpayerReferenceController.onPageLoad(CheckMode).url
+    case Some(HaveGIINPage) =>
+      controllers.addFinancialInstitution.routes.HaveGIINController.onPageLoad(CheckMode).url
+    case Some(WhereIsFIBasedPage) =>
+      controllers.addFinancialInstitution.routes.WhereIsFIBasedController.onPageLoad(CheckMode).url
+    case Some(FirstContactPhoneNumberPage) =>
+      controllers.addFinancialInstitution.routes.FirstContactHavePhoneController.onPageLoad(CheckMode).url
+    case Some(SecondContactPhoneNumberPage) =>
+      controllers.addFinancialInstitution.routes.SecondContactCanWePhoneController.onPageLoad(CheckMode).url
+    case Some(SecondContactEmailPage) =>
+      controllers.addFinancialInstitution.routes.SecondContactEmailController.onPageLoad(CheckMode).url
+    case Some(SecondContactNamePage) | Some(SecondContactExistsPage) =>
+      controllers.addFinancialInstitution.routes.SecondContactExistsController.onPageLoad(CheckMode).url
+    case _ =>
+      controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(CheckMode).url
+  }
+
   def validateRegisteredBusiness: Seq[Page] =
     if (userAnswers.get(IsTheAddressCorrectPage).contains(true)) checkRegisteredBusiness else checkRegisteredBusiness ++ checkAddressMissingAnswers
+
+  def changeAnswersRedirectUrlForRegisteredBusiness: String = validateRegisteredBusiness.headOption match {
+    case Some(IsTheAddressCorrectPage) | Some(WhereIsFIBasedPage) =>
+      controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(CheckMode).url
+    case Some(HaveGIINPage) => controllers.addFinancialInstitution.routes.HaveGIINController.onPageLoad(CheckMode).url
+    case _                  => controllers.addFinancialInstitution.registeredBusiness.routes.IsThisYourBusinessNameController.onPageLoad(CheckMode).url
+  }
 
 }
 

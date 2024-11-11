@@ -17,7 +17,7 @@
 package utils
 
 import generators.{ModelGenerators, UserAnswersGenerator}
-import models.UserAnswers
+import models.{CheckMode, UserAnswers}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -67,6 +67,24 @@ class CheckYourAnswersValidatorSpec extends AnyFreeSpec with Matchers with Model
             ) must contain allElementsOf result
         }
       }
+
+      "return correct redirect url" in {
+        forAll(fiNotRegisteredMissingAnswers.arbitrary) {
+          (userAnswers: UserAnswers) =>
+            val result = CheckYourAnswersValidator(userAnswers).changeAnswersRedirectUrl
+            Set(
+              controllers.addFinancialInstitution.routes.HaveUniqueTaxpayerReferenceController.onPageLoad(CheckMode).url,
+              controllers.addFinancialInstitution.routes.HaveGIINController.onPageLoad(CheckMode).url,
+              controllers.addFinancialInstitution.routes.WhereIsFIBasedController.onPageLoad(CheckMode).url,
+              controllers.addFinancialInstitution.routes.FirstContactHavePhoneController.onPageLoad(CheckMode).url,
+              controllers.addFinancialInstitution.routes.SecondContactCanWePhoneController.onPageLoad(CheckMode).url,
+              controllers.addFinancialInstitution.routes.SecondContactEmailController.onPageLoad(CheckMode).url,
+              controllers.addFinancialInstitution.routes.SecondContactExistsController.onPageLoad(CheckMode).url,
+              controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(CheckMode).url
+            ) must contain(result)
+        }
+      }
+
     }
     "registered add FI journey" - {
 
@@ -90,6 +108,18 @@ class CheckYourAnswersValidatorSpec extends AnyFreeSpec with Matchers with Model
               IsThisYourBusinessNamePage,
               IsTheAddressCorrectPage
             ) must contain allElementsOf result
+        }
+      }
+
+      "return correct redirect url" in {
+        forAll(fiRegisteredMissingAnswers.arbitrary) {
+          (userAnswers: UserAnswers) =>
+            val result = CheckYourAnswersValidator(userAnswers).changeAnswersRedirectUrlForRegisteredBusiness
+            Set(
+              controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(CheckMode).url,
+              controllers.addFinancialInstitution.routes.HaveGIINController.onPageLoad(CheckMode).url,
+              controllers.addFinancialInstitution.registeredBusiness.routes.IsThisYourBusinessNameController.onPageLoad(CheckMode).url
+            ) must contain(result)
         }
       }
     }
