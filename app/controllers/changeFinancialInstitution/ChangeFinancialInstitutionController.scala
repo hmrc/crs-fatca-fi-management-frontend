@@ -95,9 +95,12 @@ class ChangeFinancialInstitutionController @Inject() (
     implicit request =>
       financialInstitutionsService
         .addOrUpdateFinancialInstitution(request.fatcaId, request.userAnswers, UPDATE)
-        .map {
+        .flatMap(
+          _ => financialInstitutionUpdateService.clearUserAnswers(request.userAnswers)
+        )
+        .map(
           _ => Redirect(controllers.routes.DetailsUpdatedController.onPageLoad())
-        }
+        )
         .recoverWith {
           exception =>
             logger.error(s"Failed to clear user answers for subscription Id: [${request.fatcaId}]", exception)
