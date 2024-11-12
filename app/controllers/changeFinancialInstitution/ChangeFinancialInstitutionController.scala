@@ -19,7 +19,7 @@ package controllers.changeFinancialInstitution
 import com.google.inject.Inject
 import controllers.actions._
 import models.requests.DataRequest
-import models.{ChangeAnswers, UserAnswers}
+import models.{ChangeAnswers, UPDATE, UserAnswers}
 import pages.Page
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.Logging
@@ -93,11 +93,13 @@ class ChangeFinancialInstitutionController @Inject() (
 
   def confirmAndAdd(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      financialInstitutionUpdateService
-        .clearUserAnswers(request.userAnswers)
+      financialInstitutionsService
+        .addOrUpdateFinancialInstitution(request.fatcaId, request.userAnswers, UPDATE)
+        .flatMap(
+          _ => financialInstitutionUpdateService.clearUserAnswers(request.userAnswers)
+        )
         .map(
-          _ => // TODO: User answers to be submitted and redirected to /details-updated as part of DAC6-3186
-            Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+          _ => Redirect(controllers.routes.DetailsUpdatedController.onPageLoad())
         )
         .recoverWith {
           exception =>

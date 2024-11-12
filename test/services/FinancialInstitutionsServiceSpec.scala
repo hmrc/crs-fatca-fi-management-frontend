@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.FinancialInstitutionsConnector
 import generators.{ModelGenerators, UserAnswersGenerator}
 import models.FinancialInstitutions.FIDetail
-import models.UserAnswers
+import models.{CREATE, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar._
@@ -95,12 +95,12 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
       val subscriptionId = "XE5123456789"
 
       "adds FI details" in {
-        val mockResponse = Future.successful(Right(HttpResponse(OK, "{}")))
+        val mockResponse = Future.successful(HttpResponse(OK, "{}"))
 
         forAll(fiNotRegistered.arbitrary) {
           (userAnswers: UserAnswers) =>
-            when(mockConnector.addFi(any())(any[HeaderCarrier](), any[ExecutionContext]())).thenReturn(mockResponse)
-            val result = sut.addFinancialInstitution(subscriptionId, userAnswers)
+            when(mockConnector.addOrUpdateFI(any(), any())(any[HeaderCarrier](), any[ExecutionContext]())).thenReturn(mockResponse)
+            val result = sut.addOrUpdateFinancialInstitution(subscriptionId, userAnswers, CREATE)
             result.futureValue mustBe ()
         }
       }

@@ -18,16 +18,15 @@ package connectors
 
 import config.FrontendAppConfig
 import models.FinancialInstitutions.{CreateFIDetails, RemoveFIDetail}
-import models.response.ErrorDetails
-import play.api.http.Status.OK
+import models.{CREATE, RequestType, UPDATE}
 import play.api.i18n.Lang.logger
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
-import java.time.LocalDateTime
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Failure
 
 class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, val httpClient: HttpClientV2) {
 
@@ -47,25 +46,17 @@ class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, v
       .get(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/$subscriptionId/$fiId")
       .execute[HttpResponse]
 
-  def addFi(fiDetails: CreateFIDetails)(implicit
+  def addOrUpdateFI(fiDetails: CreateFIDetails, requestType: RequestType)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[Either[ErrorDetails, HttpResponse]] =
-    httpClient
-      .post(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/create")
-      .withBody(Json.toJson(fiDetails))
+  ): Future[HttpResponse] =
+    (requestType match {
+      case CREATE => httpClient.post(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/create")
+      case UPDATE => httpClient.put(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/update")
+    }).withBody(Json.toJson(fiDetails))
       .execute[HttpResponse]
-      .map {
-        response =>
-          response.status match {
-            case OK => Right(response)
-            case _  => Left((response.json \ "ErrorDetails").as[ErrorDetails])
-          }
-      }
-      .recoverWith {
-        case e: Exception =>
-          logger.error(s"Error while adding an FI: ${e.getMessage}")
-          Future.successful(Left(ErrorDetails(s"${LocalDateTime.now()}", fiDetails.SubscriptionID, None, Some(s"Add FI failed: ${e.getMessage}"))))
+      .andThen {
+        case Failure(exception) => logger.error(s"Failed to add or update FI: ${exception.getMessage}", exception)
       }
 
   def removeFi(fiDetails: RemoveFIDetail)(implicit

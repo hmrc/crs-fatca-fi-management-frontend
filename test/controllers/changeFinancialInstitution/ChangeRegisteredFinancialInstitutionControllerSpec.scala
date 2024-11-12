@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.routes
 import generators.{ModelGenerators, UserAnswersGenerator}
 import models.FinancialInstitutions.FIDetail
-import models.UserAnswers
+import models.{UPDATE, UserAnswers}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => mockitoEq}
 import org.mockito.Mockito.when
@@ -245,10 +245,16 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
     }
 
     "confirmAndAdd" - {
-      "must clear user answers data and redirect to JourneyRecovery for a POST" in {
+      "must clear user answers data and redirect to details submitted for a POST" in {
         val userAnswers = emptyUserAnswers
 
         when(mockFinancialInstitutionUpdateService.clearUserAnswers(any[UserAnswers])).thenReturn(Future.successful(true))
+        when(
+          mockFinancialInstitutionsService.addOrUpdateFinancialInstitution(any[String], any[UserAnswers], mockitoEq(UPDATE))(any[HeaderCarrier],
+                                                                                                                             any[ExecutionContext]
+          )
+        )
+          .thenReturn(Future.successful())
 
         val application = createAppWithAnswers(Option(userAnswers))
         running(application) {
@@ -257,13 +263,19 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+          redirectLocation(result).value mustEqual routes.DetailsUpdatedController.onPageLoad().url
 
           verify(mockFinancialInstitutionUpdateService, times(1)).clearUserAnswers(userAnswers)
         }
       }
 
       "must return INTERNAL_SERVER_ERROR for a POST when an error occurs when clearing user answers" in {
+        when(
+          mockFinancialInstitutionsService.addOrUpdateFinancialInstitution(any[String], any[UserAnswers], mockitoEq(UPDATE))(any[HeaderCarrier],
+                                                                                                                             any[ExecutionContext]
+          )
+        )
+          .thenReturn(Future.successful())
         when(mockFinancialInstitutionUpdateService.clearUserAnswers(any[UserAnswers]))
           .thenReturn(Future.failed(new Exception("failed to clear user answers data")))
 

@@ -20,14 +20,27 @@ import base.SpecBase
 import controllers.routes
 import generators.{ModelGenerators, UserAnswersGenerator}
 import models.FinancialInstitutions.FIDetail
-import models.UserAnswers
+import models.{RequestType, UserAnswers}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => mockitoEq}
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.{reset, times, verify}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import pages.addFinancialInstitution.{
+  FirstContactEmailPage,
+  FirstContactHavePhonePage,
+  FirstContactNamePage,
+  HaveGIINPage,
+  HaveUniqueTaxpayerReferencePage,
+  IsThisAddressPage,
+  NameOfFinancialInstitutionPage,
+  SecondContactExistsPage,
+  SelectedAddressLookupPage,
+  WhereIsFIBasedPage
+}
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.inject.bind
@@ -237,38 +250,57 @@ class ChangeFinancialInstitutionControllerSpec
     }
 
     "confirmAndAdd" - {
-      "must clear user answers data and redirect to JourneyRecovery for a POST" in {
-        val userAnswers = emptyUserAnswers
+      val mockService = mock[FinancialInstitutionsService]
 
-        when(mockFinancialInstitutionUpdateService.clearUserAnswers(any[UserAnswers])).thenReturn(Future.successful(true))
+      val someUserAnswers = emptyUserAnswers
+        .withPage(NameOfFinancialInstitutionPage, "test")
+        .withPage(HaveUniqueTaxpayerReferencePage, false)
+        .withPage(HaveGIINPage, false)
+        .withPage(WhereIsFIBasedPage, false)
+        .withPage(WhereIsFIBasedPage, true)
+        .withPage(SelectedAddressLookupPage, testAddressLookup)
+        .withPage(IsThisAddressPage, true)
+        .withPage(FirstContactNamePage, "MrTest")
+        .withPage(FirstContactEmailPage, "MrTest@test.com")
+        .withPage(FirstContactHavePhonePage, false)
+        .withPage(SecondContactExistsPage, false)
 
-        val application = createAppWithAnswers(Option(userAnswers))
+      "must redirect to error page when an exception is thrown" in {
+
+        when(mockService.addOrUpdateFinancialInstitution(any[String](), any[UserAnswers](), any[RequestType]())(any[HeaderCarrier](), any[ExecutionContext]()))
+          .thenReturn(Future.failed(new Exception("Something went wrong")))
+
+        val application = applicationBuilder(userAnswers = Some(someUserAnswers))
+          .overrides(
+            bind[FinancialInstitutionsService].toInstance(mockService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.addFinancialInstitution.routes.CheckYourAnswersController.confirmAndAdd().url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+      "must redirect to details updated page when submitting answers" in {
+        when(mockService.addOrUpdateFinancialInstitution(any[String](), any[UserAnswers](), any[RequestType]())(any[HeaderCarrier](), any[ExecutionContext]()))
+          .thenReturn(Future.successful())
+
+        val application = applicationBuilder(userAnswers = Some(someUserAnswers))
+          .overrides(
+            bind[FinancialInstitutionsService].toInstance(mockService)
+          )
+          .build()
+
         running(application) {
           val request = FakeRequest(POST, controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.confirmAndAdd().url)
 
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-
-          verify(mockFinancialInstitutionUpdateService, times(1)).clearUserAnswers(userAnswers)
-        }
-      }
-
-      "must return INTERNAL_SERVER_ERROR for a POST when an error occurs when clearing user answers" in {
-        when(mockFinancialInstitutionUpdateService.clearUserAnswers(any[UserAnswers]))
-          .thenReturn(Future.failed(new Exception("failed to clear user answers data")))
-
-        val application = createAppWithAnswers(Option(emptyUserAnswers))
-        running(application) {
-          val request = FakeRequest(POST, controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.confirmAndAdd().url)
-
-          val result = route(application, request).value
-
-          val view = application.injector.instanceOf[ThereIsAProblemView]
-
-          status(result) mustEqual INTERNAL_SERVER_ERROR
-          contentAsString(result) mustEqual view()(request, messages(application)).toString
+          redirectLocation(result).value mustEqual controllers.routes.DetailsUpdatedController.onPageLoad().url
         }
       }
     }
