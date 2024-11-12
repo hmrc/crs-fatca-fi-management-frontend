@@ -87,8 +87,8 @@ class YourFinancialInstitutionsController @Inject() (
             case true =>
               financialInstitutionUpdateService
                 .clearUserAnswers(request.userAnswers)
-                .flatMap(
-                  _ => Future.successful(Redirect(controllers.addFinancialInstitution.routes.AddFIController.onPageLoad))
+                .map(
+                  _ => Redirect(controllers.addFinancialInstitution.routes.AddFIController.onPageLoad)
                 )
             case false => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad()))
           }
