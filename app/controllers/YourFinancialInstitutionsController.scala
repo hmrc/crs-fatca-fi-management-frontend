@@ -23,7 +23,7 @@ import pages.{RemoveAreYouSurePage, RemoveInstitutionDetail}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.FinancialInstitutionsService
+import services.{FinancialInstitutionUpdateService, FinancialInstitutionsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.govuk.all.SummaryListViewModel
 import viewmodels.yourFinancialInstitutions.YourFinancialInstitutionsViewModel.getYourFinancialInstitutionsRows
@@ -40,6 +40,7 @@ class YourFinancialInstitutionsController @Inject() (
   requireData: DataRequiredAction,
   formProvider: YourFinancialInstitutionsFormProvider,
   val controllerComponents: MessagesControllerComponents,
+  val financialInstitutionUpdateService: FinancialInstitutionUpdateService,
   val financialInstitutionsService: FinancialInstitutionsService,
   view: YourFinancialInstitutionsView
 )(implicit ec: ExecutionContext)
@@ -83,7 +84,12 @@ class YourFinancialInstitutionsController @Inject() (
               institutions => Ok(view(formWithErrors, SummaryListViewModel(getYourFinancialInstitutionsRows(institutions))))
             },
           {
-            case true  => Future.successful(Redirect(controllers.addFinancialInstitution.routes.AddFIController.onPageLoad))
+            case true =>
+              financialInstitutionUpdateService
+                .clearUserAnswers(request.userAnswers)
+                .map(
+                  _ => Redirect(controllers.addFinancialInstitution.routes.AddFIController.onPageLoad)
+                )
             case false => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad()))
           }
         )
