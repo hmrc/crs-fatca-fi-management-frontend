@@ -19,12 +19,13 @@ package connectors
 import base.SpecBase
 import generators.Generators
 import helpers.WireMockServerHandler
-import models.{CREATE, UPDATE}
+import models.CREATE
 import models.FinancialInstitutions.{AddressDetails, ContactDetails, CreateFIDetails, RemoveFIDetail}
 import models.response.ErrorDetails
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.Application
 import play.api.http.Status.{OK, SERVICE_UNAVAILABLE}
+import uk.gov.hmrc.http.UpstreamErrorResponse
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -98,8 +99,7 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
           "{}"
         )
         val result = connector.addOrUpdateFI(createFIDetails, CREATE).futureValue
-        result mustBe a[Right[_, _]]
-        result.right.get.status mustBe OK
+        result.status mustBe OK
       }
 
       "must return Left(ErrorDetails) when the response status is not OK" in {
@@ -116,9 +116,9 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
           SERVICE_UNAVAILABLE,
           errorResponseJson
         )
-        val result = connector.addOrUpdateFI(createFIDetails, CREATE).futureValue
+        val result = connector.addOrUpdateFI(createFIDetails, CREATE).failed.futureValue
 
-        result mustBe a[Left[ErrorDetails, _]]
+        result mustBe a[UpstreamErrorResponse]
       }
     }
     "must return status as OK for removeFi" in {

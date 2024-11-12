@@ -95,7 +95,7 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
       val subscriptionId = "XE5123456789"
 
       "adds FI details" in {
-        val mockResponse = Future.successful(Right(HttpResponse(OK, "{}")))
+        val mockResponse = Future.successful(HttpResponse(OK, "{}"))
 
         forAll(fiNotRegistered.arbitrary) {
           (userAnswers: UserAnswers) =>
