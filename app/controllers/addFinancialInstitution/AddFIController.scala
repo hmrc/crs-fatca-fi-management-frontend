@@ -18,7 +18,7 @@ package controllers.addFinancialInstitution
 
 import controllers.actions.{CtUtrRetrievalAction, IdentifierAction}
 import models.NormalMode
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -37,7 +37,7 @@ class AddFIController @Inject() (
       Future.successful(Redirect(redirectUrl(request.autoMatched, request.userType)))
   }
 
-  private def redirectUrl(autoMatched: Boolean, affinityGroup: AffinityGroup) =
+  private def redirectUrl(autoMatched: Boolean, affinityGroup: AffinityGroup): Call =
     (autoMatched, affinityGroup) match {
       case (true, Organisation) =>
         controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(NormalMode)

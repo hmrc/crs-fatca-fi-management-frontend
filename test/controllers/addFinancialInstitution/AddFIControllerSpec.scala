@@ -20,14 +20,15 @@ import base.SpecBase
 import controllers.actions.{CtUtrRetrievalAction, FakeCtUtrRetrievalAction, IdentifierAction}
 import models.NormalMode
 import org.mockito.Mockito.when
+import org.scalatest.PrivateMethodTester
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.inject.bind
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{Call, MessagesControllerComponents}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
 
-class AddFIControllerSpec extends SpecBase {
+class AddFIControllerSpec extends SpecBase with PrivateMethodTester {
 
   "Add FI Controller" - {
 
@@ -77,16 +78,26 @@ class AddFIControllerSpec extends SpecBase {
 
       val sut = new AddFIController(controllerComponents, identify, retrieveCtUTR)
 
+      val privateRedirectUrl = PrivateMethod[Call](Symbol("redirectUrl"))
+
+      "returns /report-for-registered-business when Org is autoMatched" in {
+        val result = sut.invokePrivate(privateRedirectUrl(true, Organisation))
+
+        result.url mustBe controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(NormalMode).url
+      }
       "returns /name when Individual is autoMatched" in {
-        val result = sut.redirectUrl(autoMatched = true, Individual)
+        val result = sut.invokePrivate(privateRedirectUrl(true, Individual))
+
         result.url mustBe routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url
       }
       "returns /name when not autoMatched and Org" in {
-        val orgResult = sut.redirectUrl(autoMatched = false, Organisation)
+        val orgResult = sut.invokePrivate(privateRedirectUrl(false, Organisation))
+
         orgResult.url mustBe routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url
       }
       "returns /name when not autoMatched and Ind" in {
-        val indResult = sut.redirectUrl(autoMatched = false, Individual)
+        val indResult = sut.invokePrivate(privateRedirectUrl(false, Individual))
+
         indResult.url mustBe routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url
       }
     }
