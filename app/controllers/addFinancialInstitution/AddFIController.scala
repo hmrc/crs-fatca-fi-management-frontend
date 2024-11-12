@@ -37,7 +37,7 @@ class AddFIController @Inject() (
       Future.successful(Redirect(redirectUrl(request.autoMatched, request.userType)))
   }
 
-  def redirectUrl(autoMatched: Boolean, affinityGroup: AffinityGroup) =
+  private def redirectUrl(autoMatched: Boolean, affinityGroup: AffinityGroup) =
     (autoMatched, affinityGroup) match {
       case (true, Organisation) =>
         controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(NormalMode)
