@@ -19,12 +19,14 @@ package connectors
 import config.FrontendAppConfig
 import models.FinancialInstitutions.{CreateFIDetails, RemoveFIDetail}
 import models.{CREATE, RequestType, UPDATE}
+import play.api.i18n.Lang.logger
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Failure
 
 class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, val httpClient: HttpClientV2) {
 
@@ -53,6 +55,9 @@ class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, v
       case UPDATE => httpClient.put(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/update")
     }).withBody(Json.toJson(fiDetails))
       .execute[HttpResponse]
+      .andThen {
+        case Failure(exception) => logger.error(s"Failed to add or update FI: ${exception.getMessage}", exception)
+      }
 
   def removeFi(fiDetails: RemoveFIDetail)(implicit
     hc: HeaderCarrier,
