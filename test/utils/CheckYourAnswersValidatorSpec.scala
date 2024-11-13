@@ -52,7 +52,6 @@ class CheckYourAnswersValidatorSpec extends AnyFreeSpec with Matchers with Model
               HaveGIINPage,
               HaveUniqueTaxpayerReferencePage,
               IsThisAddressPage,
-              PostcodePage,
               SelectAddressPage,
               SelectedAddressLookupPage,
               NonUkAddressPage,

@@ -24,23 +24,11 @@ import models.{RequestType, UserAnswers}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => mockitoEq}
 import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.{reset, times, verify}
+import org.mockito.MockitoSugar.reset
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
-import pages.addFinancialInstitution.{
-  FirstContactEmailPage,
-  FirstContactHavePhonePage,
-  FirstContactNamePage,
-  HaveGIINPage,
-  HaveUniqueTaxpayerReferencePage,
-  IsThisAddressPage,
-  NameOfFinancialInstitutionPage,
-  SecondContactExistsPage,
-  SelectedAddressLookupPage,
-  WhereIsFIBasedPage
-}
+import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.inject.bind
