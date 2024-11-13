@@ -30,7 +30,7 @@ class PostcodeFormProviderSpec extends StringFieldBehaviours {
     val lengthKey      = "postcode.error.length"
     val invalidKey     = "postcode.error.invalid"
     val invalidCharKey = "postcode.error.chars"
-    val nonUkKey       = "ukAddress.error.postcode.nonUk"
+    val nonUkKey       = "postcode.error.postcode.nonUk"
 
     val postCodeMaxLength = 10
 
