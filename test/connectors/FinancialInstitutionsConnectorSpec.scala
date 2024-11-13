@@ -21,7 +21,6 @@ import generators.Generators
 import helpers.WireMockServerHandler
 import models.CREATE
 import models.FinancialInstitutions.{AddressDetails, ContactDetails, CreateFIDetails, RemoveFIDetail}
-import models.response.ErrorDetails
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.Application
 import play.api.http.Status.{OK, SERVICE_UNAVAILABLE}

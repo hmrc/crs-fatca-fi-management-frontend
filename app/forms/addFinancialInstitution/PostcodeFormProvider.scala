@@ -33,7 +33,7 @@ class PostcodeFormProvider @Inject() extends Mappings with RegexConstants {
           regexPostcode,
           "postcode.error.chars",
           postCodeAllowedChars
-        )
+        ).verifying("postcode.error.postcode.nonUk", postcode => !Seq("GY", "JE", "IM").exists(postcode.startsWith))
     )
 
 }
