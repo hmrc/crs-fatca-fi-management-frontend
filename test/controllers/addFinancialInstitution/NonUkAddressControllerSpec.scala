@@ -48,7 +48,7 @@ class NonUkAddressControllerSpec extends SpecBase with GuiceOneAppPerSuite with 
   private val testCountryList: Seq[Country]    = Seq(testCountry)
   private val mockAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
-  private val address: Address = Address(AddressLine1, Some(AddressLine2), AddressLine3, Some(AddressLine4), Some(PostCode), testCountry)
+  private val address: Address = Address(AddressLine1, Some(AddressLine2), AddressLine3, Some(AddressLine4), Some(PostCode))
 
   private val countryListFactory: CountryListFactory = new CountryListFactory(app.environment, mockAppConfig) {
     override lazy val countryList: Seq[Country] = testCountryList

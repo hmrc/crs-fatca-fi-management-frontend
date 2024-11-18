@@ -49,8 +49,7 @@ trait ModelGenerators extends RegexConstants with Generators {
         addressLine3 <- arbitrary[String].suchThat(_.nonEmpty)
         addressLine4 <- arbitrary[Option[String]]
         postCode     <- arbitrary[Option[String]]
-        country      <- arbitrary[Country]
-      } yield Address(addressLine1, addressLine2, addressLine3, addressLine4, postCode, country)
+      } yield Address(addressLine1, addressLine2, addressLine3, addressLine4, postCode)
     }
 
   implicit lazy val arbitraryAddressLookup: Arbitrary[models.AddressLookup] =
@@ -95,7 +94,6 @@ trait ModelGenerators extends RegexConstants with Generators {
       addressLine2,
       addressLine3,
       addressLine4,
-      Option(countryCode.toUpperCase),
       postalCode
     )
   }

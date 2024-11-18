@@ -57,13 +57,7 @@ class NonUkAddressFormProvider @Inject() extends Mappings with RegexConstants {
       ),
       "postCode" -> optionalPostcode(
         "nonUkAddress.error.postcode.length"
-      ),
-      "country" -> text("nonUkAddress.error.country.required")
-        .verifying("nonUkAddress.error.country.required", value => countryList.exists(_.code == value))
-        .transform[Country](
-          value => countryList.find(_.code == value).getOrElse(throw new IllegalStateException(s"Country with code [$value] not found")),
-          _.code
-        )
+      )
     )(Address.apply)(Address.unapply)
   )
 

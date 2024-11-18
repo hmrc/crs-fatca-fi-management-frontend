@@ -36,7 +36,7 @@ case class AddressResponse(
     val line4        = addressLine4
     val safePostcode = postalCode
 
-    Address(line1, line2, line3, line4, safePostcode, Country.GB)
+    Address(line1, line2, line3, line4, safePostcode)
   }
 
   def lines: Seq[String] = Seq(

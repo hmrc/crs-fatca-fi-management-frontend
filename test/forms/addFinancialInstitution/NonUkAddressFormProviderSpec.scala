@@ -195,29 +195,4 @@ class NonUkAddressFormProviderSpec extends StringFieldBehaviours {
     )
   }
 
-  ".country" - {
-
-    val fieldName   = "country"
-    val requiredKey = "nonUkAddress.error.country.required"
-
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
-
-    behave like fieldThatBindsValidData(
-      form,
-      fieldName,
-      Gen.oneOf(countries.map(_.code))
-    )
-
-    behave like fieldWithInvalidData(
-      form,
-      fieldName,
-      invalidCountry,
-      error = FormError(fieldName, requiredKey)
-    )
-  }
-
 }

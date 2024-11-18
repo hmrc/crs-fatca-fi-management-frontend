@@ -50,17 +50,13 @@ object AddressDetails {
 
   implicit class AddressDetailsExtension(addressDetails: AddressDetails) {
 
-    def toAddress(factory: CountryListFactory): Option[Address] =
-      for {
-        countryCode <- addressDetails.CountryCode
-        country     <- factory.findCountryWithCode(countryCode)
-      } yield Address(
+    def toAddress: Address =
+      Address(
         addressLine1 = addressDetails.AddressLine1,
         addressLine2 = addressDetails.AddressLine2,
         addressLine3 = addressDetails.AddressLine3,
         addressLine4 = addressDetails.AddressLine4,
-        postCode = addressDetails.PostalCode,
-        country = country
+        postCode = addressDetails.PostalCode
       )
 
   }
@@ -72,7 +68,6 @@ final case class AddressDetails(
   AddressLine2: Option[String],
   AddressLine3: String,
   AddressLine4: Option[String],
-  CountryCode: Option[String],
   PostalCode: Option[String]
 )
 

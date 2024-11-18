@@ -38,7 +38,7 @@ class UkAddressControllerSpec extends SpecBase with GuiceOneAppPerSuite with Moc
 
   private def onwardRoute = Call("GET", "/foo")
 
-  private val address: Address = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"), Country.GB)
+  private val address: Address = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"))
 
   private val formProvider = new UkAddressFormProvider()
   private val form         = formProvider()

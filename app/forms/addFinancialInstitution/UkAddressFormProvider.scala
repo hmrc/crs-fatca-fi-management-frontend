@@ -65,8 +65,7 @@ class UkAddressFormProvider extends Mappings with RegexConstants {
           _.getOrElse(throw new IllegalStateException("postCode is empty"))
         )
     )(
-      (addressLine1, addressLine2, addressLine3, addressLine4, postCode) =>
-        Address(addressLine1, addressLine2, addressLine3, addressLine4, postCode, Country.GB)
+      (addressLine1, addressLine2, addressLine3, addressLine4, postCode) => Address(addressLine1, addressLine2, addressLine3, addressLine4, postCode)
     )(
       address => Some((address.addressLine1, address.addressLine2, address.addressLine3, address.addressLine4, address.postCode))
     )
