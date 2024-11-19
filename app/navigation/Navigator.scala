@@ -47,15 +47,7 @@ class Navigator @Inject() () {
         isFiUser(
           userAnswers,
           controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(NormalMode),
-          routes.WhereIsFIBasedController.onPageLoad(NormalMode)
-        )
-    case WhereIsFIBasedPage =>
-      userAnswers =>
-        yesNoPage(
-          userAnswers,
-          WhereIsFIBasedPage,
-          routes.PostcodeController.onPageLoad(NormalMode),
-          routes.NonUkAddressController.onPageLoad(NormalMode)
+          controllers.addFinancialInstitution.routes.PostcodeController.onPageLoad(NormalMode)
         )
     case HaveUniqueTaxpayerReferencePage =>
       userAnswers =>
@@ -127,7 +119,7 @@ class Navigator @Inject() () {
           isFiUser(
             userAnswers,
             controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(NormalMode),
-            routes.WhereIsFIBasedController.onPageLoad(NormalMode)
+            controllers.addFinancialInstitution.routes.PostcodeController.onPageLoad(NormalMode)
           )
         )
     case ReportForRegisteredBusinessPage =>
@@ -152,16 +144,9 @@ class Navigator @Inject() () {
           userAnswers,
           IsTheAddressCorrectPage,
           controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
-          routes.WhereIsFIBasedController.onPageLoad(NormalMode)
+          controllers.addFinancialInstitution.routes.PostcodeController.onPageLoad(NormalMode)
         )
     case UkAddressPage =>
-      userAnswers =>
-        isFiUser(
-          userAnswers,
-          controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
-          routes.FirstContactNameController.onPageLoad(NormalMode)
-        )
-    case NonUkAddressPage =>
       userAnswers =>
         isFiUser(
           userAnswers,
@@ -238,15 +223,7 @@ class Navigator @Inject() () {
           userAnswers,
           IsTheAddressCorrectPage,
           redirectToCheckYouAnswers(userAnswers),
-          routes.WhereIsFIBasedController.onPageLoad(CheckMode)
-        )
-    case WhereIsFIBasedPage =>
-      userAnswers =>
-        yesNoPage(
-          userAnswers,
-          WhereIsFIBasedPage,
-          routes.PostcodeController.onPageLoad(CheckMode),
-          routes.NonUkAddressController.onPageLoad(CheckMode)
+          controllers.addFinancialInstitution.routes.PostcodeController.onPageLoad(CheckMode)
         )
     case IsThisAddressPage =>
       userAnswers =>
