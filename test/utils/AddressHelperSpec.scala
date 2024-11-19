@@ -58,7 +58,6 @@ class AddressHelperSpec extends SpecBase {
            |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>line3</p>
            |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>line4</p>
            |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>AB1 2CD</p>
-           |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>United Kingdom</p>
            |""".stripMargin
       )
       val result = sut.formatAddressResponse(address)
@@ -78,7 +77,6 @@ class AddressHelperSpec extends SpecBase {
             |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>${addressLookup.town}</p>
             |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>${addressLookup.postcode}</p>
             |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>${addressLookup.county.value}</p>
-            |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>${addressLookup.country.map(_.description).value}</p>
             |""".stripMargin.replaceAll("\\n", "")
       )
       result mustBe formattedAddress
