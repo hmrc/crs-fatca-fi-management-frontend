@@ -103,9 +103,6 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       pages.addFinancialInstitution.WhatIsUniqueTaxpayerReferencePage
     )
 
-  implicit lazy val arbitraryWhereIsFIBasedUserAnswersEntry: Arbitrary[(pages.addFinancialInstitution.WhereIsFIBasedPage.type, JsValue)] =
-    modelArbitrary[pages.addFinancialInstitution.WhereIsFIBasedPage.type, Boolean](pages.addFinancialInstitution.WhereIsFIBasedPage)
-
   private def alphaStrNonEmptyPageArbitrary[T](page: T): Arbitrary[(T, JsValue)] = Arbitrary {
     for {
       value <- Gen.alphaStr.suchThat(_.nonEmpty).map(Json.toJson(_))

@@ -217,7 +217,6 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
     .withPage(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference("222333444"))
     .withPage(HaveGIINPage, true)
     .withPage(WhatIsGIINPage, GIINumber("98096B.00000.LE.350"))
-    .withPage(WhereIsFIBasedPage, true)
     .withPage(SelectedAddressLookupPage, testAddressLookup)
     .withPage(IsThisAddressPage, true)
     .withPage(FirstContactNamePage, "MrTest")
@@ -234,7 +233,6 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
     .withPage(IsThisYourBusinessNamePage, true)
     .withPage(HaveGIINPage, true)
     .withPage(WhatIsGIINPage, GIINumber("98096B.00000.LE.350"))
-    .withPage(WhereIsFIBasedPage, true)
     .withPage(IsTheAddressCorrectPage, true)
 
   implicit val hc: HeaderCarrier    = HeaderCarrier()

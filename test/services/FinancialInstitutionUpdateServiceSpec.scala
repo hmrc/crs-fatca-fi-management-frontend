@@ -128,7 +128,6 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
               .futureValue
               .removePage(NonUkAddressPage)
               .removePage(SelectedAddressLookupPage)
-              .withPage(WhereIsFIBasedPage, true)
               .withPage(UkAddressPage, newAddress.toAddress(mockCountryListFactory).value)
 
             service.fiDetailsHasChanged(populatedUserAnswers, fiDetails) mustBe true
@@ -148,7 +147,6 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
               .futureValue
               .removePage(UkAddressPage)
               .removePage(SelectedAddressLookupPage)
-              .withPage(WhereIsFIBasedPage, false)
               .withPage(NonUkAddressPage, newAddress.toAddress(mockCountryListFactory).value)
 
             service.fiDetailsHasChanged(populatedUserAnswers, fiDetails) mustBe true
@@ -168,7 +166,6 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
               .futureValue
               .removePage(UkAddressPage)
               .removePage(NonUkAddressPage)
-              .withPage(WhereIsFIBasedPage, true)
               .withPage(SelectedAddressLookupPage, newAddress)
 
             service.fiDetailsHasChanged(populatedUserAnswers, fiDetails) mustBe true
@@ -477,8 +474,6 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
     populatedUserAnswers.get(WhatIsGIINPage) mustBe maybeGIIN.map(
       id => GIINumber(id.TIN)
     )
-
-    populatedUserAnswers.get(WhereIsFIBasedPage).value mustBe isUkAddress
 
     val addressPage = if (isUkAddress) UkAddressPage else NonUkAddressPage
     populatedUserAnswers.get(addressPage).value mustBe fiDetails.AddressDetails.toAddress(mockCountryListFactory).value

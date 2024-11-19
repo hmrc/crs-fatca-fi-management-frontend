@@ -86,11 +86,8 @@ class CheckYourAnswersViewModelSpec extends SpecBase {
       }
     }
     "getAddressChangeRoute" - {
-      "must be UK Postcode when adding another business" in {
+      "must be /uk-postcode when adding another business" in {
         val answers = ua.withPage(ReportForRegisteredBusinessPage, false)
-
-        getAddressChangeRoute(ua) mustBe
-          controllers.addFinancialInstitution.routes.PostcodeController.onPageLoad(CheckMode).url
         getAddressChangeRoute(answers) mustBe
           controllers.addFinancialInstitution.routes.PostcodeController.onPageLoad(CheckMode).url
       }

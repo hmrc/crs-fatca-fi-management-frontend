@@ -33,7 +33,6 @@ object SelectedAddressLookupPage extends QuestionPage[AddressLookup] {
       _ =>
         List(
           UkAddressPage,
-          NonUkAddressPage,
           FetchedRegisteredAddressPage
         ).foldLeft(Try(userAnswers))(
           (ua: Try[UserAnswers], page: QuestionPage[_]) => ua.flatMap(_.remove(page))
