@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.addFinancialInstitution
 
 import controllers.actions._
 import forms.TrustURNFormProvider
-import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
 import pages.TrustURNPage
@@ -28,6 +27,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.TrustURNView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class TrustURNController @Inject() (
