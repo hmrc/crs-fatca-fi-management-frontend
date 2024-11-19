@@ -119,15 +119,10 @@ class FinancialInstitutionUpdateService @Inject() (
     }
 
   private def setAddress(userAnswers: UserAnswers, addressDetails: AddressDetails): Future[UserAnswers] = {
-    val isUkAddress = addressDetails.CountryCode.exists(countryListFactory.countryCodesForUkCountries.contains)
-    val addressPage = if (isUkAddress) UkAddressPage else NonUkAddressPage
+    val addressPage = UkAddressPage
     for {
-      a <- Future.fromTry(userAnswers.set(WhereIsFIBasedPage, isUkAddress, cleanup = false))
-      b <- addressDetails.toAddress(countryListFactory) match {
-        case Some(address) => Future.fromTry(a.set(addressPage, address, cleanup = false))
-        case None =>
-          Future.failed(new RuntimeException(s"Failed to find country with code ${addressDetails.CountryCode}"))
-      }
+      a <- Future.fromTry(userAnswers.set(WhereIsFIBasedPage, true, cleanup = false))
+      b <- Future.fromTry(a.set(addressPage, addressDetails.toAddress, cleanup = false))
     } yield b
   }
 
@@ -205,16 +200,11 @@ class FinancialInstitutionUpdateService @Inject() (
     }
 
   private def checkAddressForChanges(userAnswers: UserAnswers, addressDetails: AddressDetails): Boolean = {
-    val isUkAddress    = addressDetails.CountryCode.exists(countryListFactory.countryCodesForUkCountries.contains)
-    val fetchedAddress = addressDetails.toAddress(countryListFactory)
-    val enteredAddress = if (isUkAddress) {
-      (userAnswers.get(UkAddressPage), userAnswers.get(SelectedAddressLookupPage)) match {
-        case (Some(ukAddress), None)             => Option(ukAddress)
-        case (None, Some(selectedLookupAddress)) => Option(selectedLookupAddress.toAddress)
-        case _                                   => None
-      }
-    } else {
-      userAnswers.get(NonUkAddressPage)
+    val fetchedAddress = Option(addressDetails.toAddress)
+    val enteredAddress = (userAnswers.get(UkAddressPage), userAnswers.get(SelectedAddressLookupPage)) match {
+      case (Some(ukAddress), None)             => Some(ukAddress)
+      case (None, Some(selectedLookupAddress)) => Some(selectedLookupAddress.toAddress)
+      case _                                   => None
     }
 
     val addressHasChanged = (fetchedAddress, enteredAddress) match {
@@ -222,7 +212,8 @@ class FinancialInstitutionUpdateService @Inject() (
       case (None, None)       => false
       case _                  => true
     }
-    userAnswers.get(WhereIsFIBasedPage).contains(!isUkAddress) || addressHasChanged
+
+    addressHasChanged
   }
 
   private def checkPrimaryContactForChanges(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean = {

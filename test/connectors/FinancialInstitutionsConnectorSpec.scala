@@ -51,7 +51,6 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
       AddressLine2 = None,
       AddressLine3 = "line 3",
       AddressLine4 = None,
-      CountryCode = Some("GB"),
       PostalCode = Some("AA1 1AA")
     ),
     PrimaryContactDetails = Some(
@@ -98,7 +97,7 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
         )
         val result = connector.addFi(createFIDetails).futureValue
         result mustBe a[Right[_, _]]
-        result.right.get.status mustBe OK
+        result.toOption.get.status mustBe OK
       }
 
       "must return Left(ErrorDetails) when the response status is not OK" in {

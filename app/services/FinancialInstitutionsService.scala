@@ -145,7 +145,6 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
             AddressLine2 = address.addressLine2,
             AddressLine3 = address.addressLine3,
             AddressLine4 = address.addressLine4,
-            CountryCode = None,
             PostalCode = address.postCode
           )
       )
