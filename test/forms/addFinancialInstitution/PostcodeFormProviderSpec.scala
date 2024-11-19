@@ -30,6 +30,7 @@ class PostcodeFormProviderSpec extends StringFieldBehaviours {
     val lengthKey      = "postcode.error.length"
     val invalidKey     = "postcode.error.invalid"
     val invalidCharKey = "postcode.error.chars"
+    val nonUkKey       = "postcode.error.postcode.nonUk"
 
     val postCodeMaxLength = 10
 
@@ -66,6 +67,21 @@ class PostcodeFormProviderSpec extends StringFieldBehaviours {
       FormError(fieldName, invalidCharKey),
       Some("chars")
     )
+
+    "not allow crown dependency postcodes" in {
+
+      val prefixes = Seq("GY", "JE", "IM", "gy", "je", "im")
+      val baseData = Map("addressLine1" -> "somewhere", "addressLine3" -> "somewhere")
+
+      prefixes.foreach {
+        prefix =>
+          val data   = baseData + ("postCode" -> s"${prefix}1Z 7AB")
+          val result = form.bind(data)
+
+          result.errors mustEqual Seq(FormError(fieldName, nonUkKey))
+      }
+    }
+
   }
 
 }

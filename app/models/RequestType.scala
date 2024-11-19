@@ -14,19 +14,9 @@
  * limitations under the License.
  */
 
-package models.FinancialInstitutions
+package models
 
-import enumeratum._
+sealed trait RequestType
 
-sealed trait RequestType extends EnumEntry
-
-object RequestType extends PlayEnum[RequestType] {
-
-  val values: IndexedSeq[RequestType] = findValues
-
-  case object CREATE extends RequestType
-  case object UPDATE extends RequestType
-  case object DELETE extends RequestType
-  case object VIEW extends RequestType
-
-}
+case object UPDATE extends RequestType
+case object CREATE extends RequestType

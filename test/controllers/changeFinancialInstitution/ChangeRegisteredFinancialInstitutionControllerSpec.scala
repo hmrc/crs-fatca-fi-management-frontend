@@ -18,9 +18,9 @@ package controllers.changeFinancialInstitution
 
 import base.SpecBase
 import controllers.routes
-import generators.ModelGenerators
+import generators.{ModelGenerators, UserAnswersGenerator}
 import models.FinancialInstitutions.FIDetail
-import models.UserAnswers
+import models.{UPDATE, UserAnswers}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => mockitoEq}
 import org.mockito.Mockito.when
@@ -43,6 +43,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
     extends SpecBase
     with MockitoSugar
     with ModelGenerators
+    with UserAnswersGenerator
     with BeforeAndAfterEach
     with ScalaCheckDrivenPropertyChecks {
 
@@ -63,14 +64,14 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
       "when change FI details is not in progress" - {
 
         "must return OK and the correct view without the 'Confirm and send' button for a GET when ChangeFiDetailsInProgress is false" in {
-          forAll {
-            fiDetail: FIDetail =>
-              val userAnswers = emptyUserAnswers.withPage(ChangeFiDetailsInProgressId, fiDetail.FIID)
+          forAll(fiRegistered.arbitrary, arbitraryFIDetail.arbitrary) {
+            (userAnswers: UserAnswers, fiDetail: FIDetail) =>
+              val updatedAnswers = userAnswers.withPage(ChangeFiDetailsInProgressId, fiDetail.FIID)
 
               mockSuccessfulFiRetrieval(fiDetail)
-              mockSuccessfulUserAnswersPersistence(userAnswers, fiDetail)
+              mockSuccessfulUserAnswersPersistence(updatedAnswers, fiDetail)
 
-              val application = createAppWithAnswers(Option(userAnswers))
+              val application = createAppWithAnswers(Option(updatedAnswers))
               running(application) {
                 val request =
                   FakeRequest(GET, controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.onPageLoad(fiDetail.FIID).url)
@@ -132,15 +133,15 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
       "when change FI details is in progress" - {
 
         "must return OK and the correct view with the 'Confirm and send' button for a GET when FI details has been changed" in {
-          forAll {
-            fiDetail: FIDetail =>
-              val userAnswers = emptyUserAnswers.withPage(ChangeFiDetailsInProgressId, fiDetail.FIID)
+          forAll(fiRegistered.arbitrary, arbitraryFIDetail.arbitrary) {
+            (userAnswers: UserAnswers, fiDetail: FIDetail) =>
+              val updatedAnswers = userAnswers.withPage(ChangeFiDetailsInProgressId, fiDetail.FIID)
 
               mockSuccessfulFiRetrieval(fiDetail)
-              when(mockFinancialInstitutionUpdateService.registeredFiDetailsHasChanged(mockitoEq(userAnswers), mockitoEq(fiDetail)))
+              when(mockFinancialInstitutionUpdateService.registeredFiDetailsHasChanged(mockitoEq(updatedAnswers), mockitoEq(fiDetail)))
                 .thenReturn(true)
 
-              val application = createAppWithAnswers(Option(userAnswers))
+              val application = createAppWithAnswers(Option(updatedAnswers))
               running(application) {
                 val request =
                   FakeRequest(GET, controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.onPageLoad(fiDetail.FIID).url)
@@ -155,15 +156,15 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
         }
 
         "must return OK and the correct view without the 'Confirm and send' button for a GET when FI details has NOT been changed" in {
-          forAll {
-            fiDetail: FIDetail =>
-              val userAnswers = emptyUserAnswers.withPage(ChangeFiDetailsInProgressId, fiDetail.FIID)
+          forAll(fiRegistered.arbitrary, arbitraryFIDetail.arbitrary) {
+            (userAnswers: UserAnswers, fiDetail: FIDetail) =>
+              val updatedAnswers = userAnswers.withPage(ChangeFiDetailsInProgressId, fiDetail.FIID)
 
               mockSuccessfulFiRetrieval(fiDetail)
-              when(mockFinancialInstitutionUpdateService.registeredFiDetailsHasChanged(mockitoEq(userAnswers), mockitoEq(fiDetail)))
+              when(mockFinancialInstitutionUpdateService.registeredFiDetailsHasChanged(mockitoEq(updatedAnswers), mockitoEq(fiDetail)))
                 .thenReturn(false)
 
-              val application = createAppWithAnswers(Option(userAnswers))
+              val application = createAppWithAnswers(Option(updatedAnswers))
               running(application) {
                 val request =
                   FakeRequest(GET, controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.onPageLoad(fiDetail.FIID).url)
@@ -173,6 +174,28 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
                 status(result) mustEqual OK
                 val document = Jsoup.parse(contentAsString(result))
                 document.getElementsContainingText(SendButtonText).isEmpty mustBe true
+              }
+          }
+        }
+
+        "must redirect to information missing page when ChangeFiDetails In Progress and missing answers" in {
+          forAll(fiRegisteredMissingAnswers.arbitrary, arbitraryFIDetail.arbitrary) {
+            (userAnswers: UserAnswers, fiDetail: FIDetail) =>
+              val updatedAnswers = userAnswers.withPage(ChangeFiDetailsInProgressId, fiDetail.FIID)
+
+              mockSuccessfulFiRetrieval(fiDetail)
+              when(mockFinancialInstitutionUpdateService.registeredFiDetailsHasChanged(mockitoEq(updatedAnswers), mockitoEq(fiDetail)))
+                .thenReturn(false)
+
+              val application = createAppWithAnswers(Option(updatedAnswers))
+              running(application) {
+                val request =
+                  FakeRequest(GET, controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.onPageLoad(fiDetail.FIID).url)
+
+                val result = route(application, request).value
+
+                status(result) mustEqual SEE_OTHER
+                redirectLocation(result).value mustEqual routes.SomeInformationMissingController.onPageLoad().url
               }
           }
         }
@@ -222,10 +245,16 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
     }
 
     "confirmAndAdd" - {
-      "must clear user answers data and redirect to JourneyRecovery for a POST" in {
+      "must clear user answers data and redirect to details submitted for a POST" in {
         val userAnswers = emptyUserAnswers
 
         when(mockFinancialInstitutionUpdateService.clearUserAnswers(any[UserAnswers])).thenReturn(Future.successful(true))
+        when(
+          mockFinancialInstitutionsService.addOrUpdateFinancialInstitution(any[String], any[UserAnswers], mockitoEq(UPDATE))(any[HeaderCarrier],
+                                                                                                                             any[ExecutionContext]
+          )
+        )
+          .thenReturn(Future.successful())
 
         val application = createAppWithAnswers(Option(userAnswers))
         running(application) {
@@ -234,13 +263,19 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+          redirectLocation(result).value mustEqual routes.DetailsUpdatedController.onPageLoad().url
 
           verify(mockFinancialInstitutionUpdateService, times(1)).clearUserAnswers(userAnswers)
         }
       }
 
       "must return INTERNAL_SERVER_ERROR for a POST when an error occurs when clearing user answers" in {
+        when(
+          mockFinancialInstitutionsService.addOrUpdateFinancialInstitution(any[String], any[UserAnswers], mockitoEq(UPDATE))(any[HeaderCarrier],
+                                                                                                                             any[ExecutionContext]
+          )
+        )
+          .thenReturn(Future.successful())
         when(mockFinancialInstitutionUpdateService.clearUserAnswers(any[UserAnswers]))
           .thenReturn(Future.failed(new Exception("failed to clear user answers data")))
 

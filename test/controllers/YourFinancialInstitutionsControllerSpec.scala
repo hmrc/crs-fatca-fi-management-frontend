@@ -18,13 +18,14 @@ package controllers
 
 import base.SpecBase
 import forms.addFinancialInstitution.YourFinancialInstitutionsFormProvider
+import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.FinancialInstitutionsService
+import services.{FinancialInstitutionUpdateService, FinancialInstitutionsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import viewmodels.govuk.all.SummaryListViewModel
 import views.html.YourFinancialInstitutionsView
@@ -64,7 +65,13 @@ class YourFinancialInstitutionsControllerSpec extends SpecBase with MockitoSugar
 
     "must redirect to Add new FI when user selects yes" in {
 
-      val application = applicationBuilder(userAnswers = Option(emptyUserAnswers)).build()
+      val mockFinancialInstitutionUpdateService = mock[FinancialInstitutionUpdateService]
+      when(mockFinancialInstitutionUpdateService.clearUserAnswers(any[UserAnswers])).thenReturn(Future.successful(true))
+      val application = applicationBuilder(userAnswers = Option(emptyUserAnswers))
+        .overrides(
+          bind[FinancialInstitutionUpdateService].toInstance(mockFinancialInstitutionUpdateService)
+        )
+        .build()
 
       running(application) {
         val request =
@@ -74,6 +81,7 @@ class YourFinancialInstitutionsControllerSpec extends SpecBase with MockitoSugar
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.addFinancialInstitution.routes.AddFIController.onPageLoad.url
+        verify(mockFinancialInstitutionUpdateService).clearUserAnswers(any[UserAnswers])
       }
     }
 
