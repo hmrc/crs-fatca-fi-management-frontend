@@ -37,11 +37,10 @@ class AddressHelperSpec extends SpecBase {
            |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>line3</p>
            |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>line4</p>
            |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>postcode</p>
-           |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>United Kingdom</p>
-           |""".stripMargin
+           |""".stripMargin.replaceAll("\\n", "")
       )
       val result = sut.formatAddressBlock(address)
-      result.equals(expectedResult)
+      result mustBe expectedResult
     }
 
     "format the address from AddressLookup correctly" in {
@@ -58,10 +57,10 @@ class AddressHelperSpec extends SpecBase {
            |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>line3</p>
            |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>line4</p>
            |<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>AB1 2CD</p>
-           |""".stripMargin
+           |""".stripMargin.replaceAll("\\n", "")
       )
       val result = sut.formatAddressResponse(address)
-      result.equals(expectedResult)
+      result mustBe expectedResult
     }
 
     "must format AddressLookupBlock as html" in {
