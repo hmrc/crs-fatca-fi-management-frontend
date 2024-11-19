@@ -55,14 +55,13 @@ object AddressHelper {
       address.addressLine4,
       address.town,
       address.postcode,
-      address.county,
-      address.country.map(_.description)
+      address.county
     )
     toFormattedAddress(lines)
   }
 
   def formatAddressBlock(address: Address): HtmlContent = {
-    val lines = Seq(address.addressLine1, address.addressLine2, address.addressLine3, address.addressLine4, address.postCode, address.country.description)
+    val lines = Seq(address.addressLine1, address.addressLine2, address.addressLine3, address.addressLine4, address.postCode)
     toFormattedAddress(lines)
   }
 
