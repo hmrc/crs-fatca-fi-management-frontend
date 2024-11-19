@@ -404,3 +404,10 @@ detailsUpdated.title = Details updated
 detailsUpdated.heading = Details updated for {0}
 detailsUpdated.p1 = Back to manage your financial institutions
 detailsUpdated.p2 = Back to manage your CRS and FATCA reports
+
+trustURN.title = trustURN
+trustURN.heading = trustURN
+trustURN.checkYourAnswersLabel = trustURN
+trustURN.error.required = Enter trustURN
+trustURN.error.length = TrustURN must be 20 characters or less
+trustURN.change.hidden = TrustURN
