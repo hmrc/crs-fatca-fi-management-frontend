@@ -160,7 +160,7 @@ POST        /registered-business/change-answers                           contro
 
 GET        /details-updated                                               controllers.DetailsUpdatedController.onPageLoad()
 
-GET        /trust-urn                         controllers.TrustURNController.onPageLoad(mode: Mode = NormalMode)
-POST       /trust-urn                         controllers.TrustURNController.onSubmit(mode: Mode = NormalMode)
-GET        /change-trust-urn                  controllers.TrustURNController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-trust-urn                  controllers.TrustURNController.onSubmit(mode: Mode = CheckMode)
+GET        /trust-urn                         controllers.addFinancialInstitution.TrustURNController.onPageLoad(mode: Mode = NormalMode)
+POST       /trust-urn                         controllers.addFinancialInstitution.TrustURNController.onSubmit(mode: Mode = NormalMode)
+GET        /change-trust-urn                  controllers.addFinancialInstitution.TrustURNController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-trust-urn                  controllers.addFinancialInstitution.TrustURNController.onSubmit(mode: Mode = CheckMode)
