@@ -31,7 +31,7 @@ package object common {
     answers
       .get(ReportForRegisteredBusinessPage) match {
       case Some(true) => controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(CheckMode).url
-      case _          => controllers.addFinancialInstitution.routes.WhereIsFIBasedController.onPageLoad(CheckMode).url
+      case _          => controllers.addFinancialInstitution.routes.PostcodeController.onPageLoad(CheckMode).url
     }
 
   def accessibleActionItem(messageKey: String, href: String)(implicit messages: Messages): ActionItem =
