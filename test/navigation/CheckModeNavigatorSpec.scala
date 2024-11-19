@@ -219,21 +219,9 @@ class CheckModeNavigatorSpec extends SpecBase {
           s"must go from IsTheAddressCorrect to WhereIsFIBased when No $isFIUser" in {
             val ua = userAnswers.withPage(IsTheAddressCorrectPage, false)
             navigator.nextPage(IsTheAddressCorrectPage, CheckMode, ua) mustBe
-              routes.WhereIsFIBasedController.onPageLoad(CheckMode)
+              routes.PostcodeController.onPageLoad(CheckMode)
           }
 
-          s"must go from WhereIsFIBased $isFIUser" - {
-            "to Postcode page when Yes" in {
-              val ua = userAnswers.withPage(WhereIsFIBasedPage, true)
-              navigator.nextPage(WhereIsFIBasedPage, CheckMode, ua) mustBe
-                routes.PostcodeController.onPageLoad(CheckMode)
-            }
-            "to NonUkAddress page when No " in {
-              val ua = userAnswers.withPage(WhereIsFIBasedPage, false)
-              navigator.nextPage(WhereIsFIBasedPage, CheckMode, ua) mustBe
-                routes.NonUkAddressController.onPageLoad(CheckMode)
-            }
-          }
           s"must go from Postcode page $isFIUser" - {
             "to SelectAddress when lookup returns 1 address" in {
               val ua = userAnswers.withPage(AddressLookupPage, Seq(testAddressLookup))

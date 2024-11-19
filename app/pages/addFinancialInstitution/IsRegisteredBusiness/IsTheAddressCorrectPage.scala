@@ -40,8 +40,6 @@ case object IsTheAddressCorrectPage extends QuestionPage[Boolean] {
 
       case Some(true) =>
         val pagesToRemove = Seq(
-          WhereIsFIBasedPage,
-          NonUkAddressPage,
           PostcodePage,
           SelectedAddressLookupPage,
           IsThisAddressPage,

@@ -122,13 +122,12 @@ class FinancialInstitutionUpdateService @Inject() (
     val isUkAddress = addressDetails.CountryCode.exists(countryListFactory.countryCodesForUkCountries.contains)
     val addressPage = if (isUkAddress) UkAddressPage else NonUkAddressPage
     for {
-      a <- Future.fromTry(userAnswers.set(WhereIsFIBasedPage, isUkAddress, cleanup = false))
-      b <- addressDetails.toAddress(countryListFactory) match {
-        case Some(address) => Future.fromTry(a.set(addressPage, address, cleanup = false))
+      a <- addressDetails.toAddress(countryListFactory) match {
+        case Some(address) => Future.fromTry(userAnswers.set(addressPage, address, cleanup = false))
         case None =>
           Future.failed(new RuntimeException(s"Failed to find country with code ${addressDetails.CountryCode}"))
       }
-    } yield b
+    } yield a
   }
 
   private def setPrimaryContactDetails(userAnswers: UserAnswers, fiDetails: FIDetail)(implicit ec: ExecutionContext): Future[UserAnswers] = {
@@ -217,12 +216,11 @@ class FinancialInstitutionUpdateService @Inject() (
       userAnswers.get(NonUkAddressPage)
     }
 
-    val addressHasChanged = (fetchedAddress, enteredAddress) match {
+    (fetchedAddress, enteredAddress) match {
       case (Some(a), Some(b)) => a != b
       case (None, None)       => false
       case _                  => true
     }
-    userAnswers.get(WhereIsFIBasedPage).contains(!isUkAddress) || addressHasChanged
   }
 
   private def checkPrimaryContactForChanges(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean = {

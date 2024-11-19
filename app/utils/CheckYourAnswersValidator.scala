@@ -55,21 +55,12 @@ sealed trait AddFIValidator {
 
   private[utils] def checkContactDetailsMissingAnswers = checkFirstContactMissingAnswers ++ checkSecContactDetailsMissingAnswers
 
-  private[utils] def checkAddressMissingAnswers: Seq[Page] = (userAnswers.get(WhereIsFIBasedPage) match {
-    case Some(true) =>
-      any(
-        checkPage(SelectedAddressLookupPage),
-        checkPage(UkAddressPage),
-        checkPage(IsThisAddressPage)
-      ).map(
-        _ => WhereIsFIBasedPage
-      )
-    case Some(false) =>
-      checkPage(NonUkAddressPage).map(
-        _ => WhereIsFIBasedPage
-      )
-    case _ => Some(WhereIsFIBasedPage)
-  }).toSeq
+  private[utils] def checkAddressMissingAnswers: Seq[Page] = any(
+    checkPage(SelectedAddressLookupPage),
+    checkPage(UkAddressPage)
+  ).map(
+    _ => PostcodePage
+  ).toSeq
 
   private def fiUTRMissingAnswers: Seq[Page] = (userAnswers.get(HaveUniqueTaxpayerReferencePage) match {
     case Some(true) =>
@@ -107,7 +98,10 @@ sealed trait AddFIValidator {
   private def checkRegisteredBusinessAddress: Seq[Page] = (userAnswers.get(IsTheAddressCorrectPage) match {
     case Some(true) => None
     case Some(false) =>
-      checkPage(WhereIsFIBasedPage).map(
+      any(
+        checkPage(SelectedAddressLookupPage),
+        checkPage(UkAddressPage)
+      ).map(
         _ => IsTheAddressCorrectPage
       )
     case _ => Some(IsTheAddressCorrectPage)
@@ -140,8 +134,8 @@ class CheckYourAnswersValidator(val userAnswers: UserAnswers) extends AddFIValid
       controllers.addFinancialInstitution.routes.HaveUniqueTaxpayerReferenceController.onPageLoad(CheckMode).url
     case Some(HaveGIINPage) =>
       controllers.addFinancialInstitution.routes.HaveGIINController.onPageLoad(CheckMode).url
-    case Some(WhereIsFIBasedPage) =>
-      controllers.addFinancialInstitution.routes.WhereIsFIBasedController.onPageLoad(CheckMode).url
+    case Some(PostcodePage) =>
+      controllers.addFinancialInstitution.routes.PostcodeController.onPageLoad(CheckMode).url
     case Some(FirstContactPhoneNumberPage) =>
       controllers.addFinancialInstitution.routes.FirstContactHavePhoneController.onPageLoad(CheckMode).url
     case Some(SecondContactPhoneNumberPage) =>
@@ -158,7 +152,7 @@ class CheckYourAnswersValidator(val userAnswers: UserAnswers) extends AddFIValid
     if (userAnswers.get(IsTheAddressCorrectPage).contains(true)) checkRegisteredBusiness else checkRegisteredBusiness ++ checkAddressMissingAnswers
 
   def changeAnswersRedirectUrlForRegisteredBusiness: String = validateRegisteredBusiness.headOption match {
-    case Some(IsTheAddressCorrectPage) | Some(WhereIsFIBasedPage) =>
+    case Some(IsTheAddressCorrectPage) =>
       controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(CheckMode).url
     case Some(HaveGIINPage) => controllers.addFinancialInstitution.routes.HaveGIINController.onPageLoad(CheckMode).url
     case _                  => controllers.addFinancialInstitution.registeredBusiness.routes.IsThisYourBusinessNameController.onPageLoad(CheckMode).url

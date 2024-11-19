@@ -32,8 +32,6 @@ class AddressPagesSpec extends SpecBase {
           .get
 
         val res2: UserAnswers = emptyUserAnswers
-          .set(NonUkAddressPage, testAddress)
-          .get
           .set(UkAddressPage, testAddress)
           .get
 
@@ -54,37 +52,6 @@ class AddressPagesSpec extends SpecBase {
 
       }
     }
-    "NonUkAddressPage" - {
-      "must remove other address answers from UserAnswers" in {
-        val res1: UserAnswers = emptyUserAnswers
-          .set(FetchedRegisteredAddressPage, testAddressResponse)
-          .get
-          .set(NonUkAddressPage, testAddress)
-          .get
-
-        val res2: UserAnswers = emptyUserAnswers
-          .set(UkAddressPage, testAddress)
-          .get
-          .set(NonUkAddressPage, testAddress)
-          .get
-
-        val res3: UserAnswers = emptyUserAnswers
-          .set(SelectedAddressLookupPage, testAddressLookup)
-          .get
-          .set(NonUkAddressPage, testAddress)
-          .get
-
-        res1.get(NonUkAddressPage) mustBe defined
-        res1.data.fields.size mustBe 1
-
-        res2.get(NonUkAddressPage) mustBe defined
-        res2.data.fields.size mustBe 1
-
-        res3.get(NonUkAddressPage) mustBe defined
-        res3.data.fields.size mustBe 1
-
-      }
-    }
     "SelectedAddressLookupPage" - {
       "must remove other address answers from UserAnswers" in {
         val res1: UserAnswers = emptyUserAnswers
@@ -100,8 +67,6 @@ class AddressPagesSpec extends SpecBase {
           .get
 
         val res3: UserAnswers = emptyUserAnswers
-          .set(NonUkAddressPage, testAddress)
-          .get
           .set(SelectedAddressLookupPage, testAddressLookup)
           .get
 
@@ -132,8 +97,6 @@ class AddressPagesSpec extends SpecBase {
           .get
 
         val res3: UserAnswers = emptyUserAnswers
-          .set(NonUkAddressPage, testAddress)
-          .get
           .set(FetchedRegisteredAddressPage, testAddressResponse)
           .get
 

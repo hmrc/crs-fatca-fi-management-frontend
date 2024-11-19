@@ -175,7 +175,7 @@ class NavigatorSpec extends SpecBase {
               .withPage(HaveGIINPage, false)
 
             navigator.nextPage(HaveGIINPage, NormalMode, userAnswers) mustBe
-              routes.WhereIsFIBasedController.onPageLoad(NormalMode)
+              routes.PostcodeController.onPageLoad(NormalMode)
           }
         }
 
@@ -198,20 +198,8 @@ class NavigatorSpec extends SpecBase {
             .withPage(WhatIsGIINPage, GIINumber("answer"))
 
           navigator.nextPage(WhatIsGIINPage, NormalMode, userAnswers) mustBe
-            routes.WhereIsFIBasedController.onPageLoad(NormalMode)
+            routes.PostcodeController.onPageLoad(NormalMode)
         }
-      }
-
-      "must go from WhereIsFIBased to UKPostcode when user answers yes" in {
-        val userAnswers = emptyUserAnswers.withPage(WhereIsFIBasedPage, true)
-        navigator.nextPage(WhereIsFIBasedPage, NormalMode, userAnswers) mustBe
-          routes.PostcodeController.onPageLoad(NormalMode)
-      }
-
-      "must go from WhereIsFIBased to NonUKAddress when user answers no" in {
-        val userAnswers = emptyUserAnswers.withPage(WhereIsFIBasedPage, false)
-        navigator.nextPage(WhereIsFIBasedPage, NormalMode, userAnswers) mustBe
-          routes.NonUkAddressController.onPageLoad(NormalMode)
       }
 
       "must go from UkAddress" - {
@@ -228,19 +216,6 @@ class NavigatorSpec extends SpecBase {
         }
       }
 
-      "must go from NonUkAddress" - {
-        "to RegisteredBusinessCheckYourAnswers when FI is the user" in {
-          val userAnswers = emptyUserAnswers
-            .withPage(ReportForRegisteredBusinessPage, true)
-
-          navigator.nextPage(NonUkAddressPage, NormalMode, userAnswers) mustBe
-            controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad()
-        }
-        "to FirstContactName when FI is not the user" in {
-          navigator.nextPage(NonUkAddressPage, NormalMode, emptyUserAnswers) mustBe
-            routes.FirstContactNameController.onPageLoad(NormalMode)
-        }
-      }
       "must go from ReportForRegisteredBusiness" - {
         " to IsThisYourBusinessName if Yes" in {
           val userAnswers = emptyUserAnswers.set(ReportForRegisteredBusinessPage, true).get
@@ -276,7 +251,7 @@ class NavigatorSpec extends SpecBase {
         " to WhereIsFiBased if No" in {
           val userAnswers = emptyUserAnswers.set(IsTheAddressCorrectPage, false).get
           navigator.nextPage(IsTheAddressCorrectPage, NormalMode, userAnswers) mustBe
-            routes.WhereIsFIBasedController.onPageLoad(NormalMode)
+            routes.PostcodeController.onPageLoad(NormalMode)
         }
       }
       "must go from SelectAddress" - {
