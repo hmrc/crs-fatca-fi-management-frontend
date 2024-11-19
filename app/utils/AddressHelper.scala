@@ -66,7 +66,7 @@ object AddressHelper {
   }
 
   def formatAddressResponse(address: AddressResponse): HtmlContent =
-    toFormattedAddress(address.lines)
+    toFormattedAddress(address.linesWithoutCountry)
 
   private def toFormattedAddress(addressLines: Seq[Any]): HtmlContent = {
     val block = addressLines
