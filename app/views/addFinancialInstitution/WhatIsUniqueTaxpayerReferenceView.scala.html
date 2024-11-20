@@ -40,14 +40,13 @@
 
         @heading(messages("whatIsUniqueTaxpayerReference.heading", fiName))
 
-        <p class="govuk-body">@messages("whatIsUniqueTaxpayerReference.p1") @link(appConfig.lostUTRUrl, "whatIsUniqueTaxpayerReference.p1.link").</p>
-
         @govukInput(
             InputViewModel(
                 field = form("value"),
                 label = LabelViewModel(messages("whatIsUniqueTaxpayerReference.heading", fiName)).visuallyHidden()
             )
             .withWidth(OneThird)
+            .withHint(HintViewModel(HtmlContent(messages("whatIsUniqueTaxpayerReference.hint"))))
         )
 
         @govukButton(
