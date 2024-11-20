@@ -76,6 +76,9 @@ POST        /name                                                         contro
 GET         /change-name                                                  controllers.addFinancialInstitution.NameOfFinancialInstitutionController.onPageLoad(mode: Mode = CheckMode)
 POST        /change-name                                                  controllers.addFinancialInstitution.NameOfFinancialInstitutionController.onSubmit(mode: Mode = CheckMode)
 
+GET         /crn                                                          controllers.addFinancialInstitution.WhatIsCompanyRegistrationNumberController.onPageLoad(mode: Mode = NormalMode)
+POST        /crn                                                          controllers.addFinancialInstitution.WhatIsCompanyRegistrationNumberController.onSubmit(mode: Mode = NormalMode)
+
 GET         /utr                                                          controllers.addFinancialInstitution.WhatIsUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = NormalMode)
 POST        /utr                                                          controllers.addFinancialInstitution.WhatIsUniqueTaxpayerReferenceController.onSubmit(mode: Mode = NormalMode)
 GET         /change-utr                                                   controllers.addFinancialInstitution.WhatIsUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = CheckMode)
