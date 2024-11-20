@@ -38,12 +38,10 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @heading(messages("whatIsUniqueTaxpayerReference.heading", fiName))
-
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("whatIsUniqueTaxpayerReference.heading", fiName)).visuallyHidden()
+                label = LabelViewModel(messages("whatIsUniqueTaxpayerReference.heading", fiName)).asPageHeading()
             )
             .withWidth(OneThird)
             .withHint(HintViewModel(HtmlContent(messages("whatIsUniqueTaxpayerReference.hint"))))
