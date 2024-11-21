@@ -38,7 +38,7 @@
 
         @heading(messages("isTheAddressCorrect.heading", fiName))
 
-       @addressBlock(addressRes = Some(address))
+       @addressBlock(addressRes = Some(address), withCountry = true)
 
         @govukRadios(
             RadiosViewModel.yesNo(
