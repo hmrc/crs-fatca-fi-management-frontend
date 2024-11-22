@@ -95,7 +95,7 @@ class IsTheAddressCorrectController @Inject() (
     } else {
       countryListFactory.findCountryWithCode(addressResponse.countryCode) match {
         case Some(country) =>
-          Success(addressResponse.copy(countryCode = country.description))
+          Success(addressResponse.copy(country = Some(country)))
         case None =>
           logger.error(s"Country with code ${addressResponse.countryCode} not found in list of countries")
           Failure(new RuntimeException("Country not found"))

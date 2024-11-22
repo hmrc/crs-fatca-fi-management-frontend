@@ -39,7 +39,7 @@ case class AddressResponse(
     Address(line1, line2, line3, line4, safePostcode, Country.GB)
   }
 
-  def lines: Seq[String] = Seq(Some(addressLine1), addressLine2, addressLine3, addressLine4, postCodeFormatter(postalCode)).flatten
+  def lines: Seq[String] = Seq(Some(addressLine1), addressLine2, addressLine3, addressLine4, postCodeFormatter(postalCode), country.map(_.description)).flatten
 
   def linesWithoutCountry: Seq[String] = Seq(
     Some(addressLine1),
