@@ -96,11 +96,6 @@ POST        /select-address                                               contro
 GET         /change-select-address                                        controllers.addFinancialInstitution.SelectAddressController.onPageLoad(mode: Mode = CheckMode)
 POST        /change-select-address                                        controllers.addFinancialInstitution.SelectAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET         /address-non-uk                                               controllers.addFinancialInstitution.NonUkAddressController.onPageLoad(mode: Mode = NormalMode)
-POST        /address-non-uk                                               controllers.addFinancialInstitution.NonUkAddressController.onSubmit(mode: Mode = NormalMode)
-GET         /change-address-non-uk                                        controllers.addFinancialInstitution.NonUkAddressController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-address-non-uk                                        controllers.addFinancialInstitution.NonUkAddressController.onSubmit(mode: Mode = CheckMode)
-
 GET         /address-uk                                                   controllers.addFinancialInstitution.UkAddressController.onPageLoad(mode: Mode = NormalMode)
 POST        /address-uk                                                   controllers.addFinancialInstitution.UkAddressController.onSubmit(mode: Mode = NormalMode)
 GET         /change-address-uk                                            controllers.addFinancialInstitution.UkAddressController.onPageLoad(mode: Mode = CheckMode)
@@ -115,11 +110,6 @@ GET         /giin                                                         contro
 POST        /giin                                                         controllers.addFinancialInstitution.WhatIsGIINController.onSubmit(mode: Mode = NormalMode)
 GET         /change-giin                                                  controllers.addFinancialInstitution.WhatIsGIINController.onPageLoad(mode: Mode = CheckMode)
 POST        /change-giin                                                  controllers.addFinancialInstitution.WhatIsGIINController.onSubmit(mode: Mode = CheckMode)
-
-GET         /where-is-fi-based                                            controllers.addFinancialInstitution.WhereIsFIBasedController.onPageLoad(mode: Mode = NormalMode)
-POST        /where-is-fi-based                                            controllers.addFinancialInstitution.WhereIsFIBasedController.onSubmit(mode: Mode = NormalMode)
-GET         /change-where-is-fi-based                                     controllers.addFinancialInstitution.WhereIsFIBasedController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-where-is-fi-based                                     controllers.addFinancialInstitution.WhereIsFIBasedController.onSubmit(mode: Mode = CheckMode)
 
 GET         /check-answers                                                controllers.addFinancialInstitution.CheckYourAnswersController.onPageLoad()
 POST        /check-answers                                                controllers.addFinancialInstitution.CheckYourAnswersController.confirmAndAdd()

@@ -51,7 +51,6 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
       arbitrary[(UkAddressPage.type, JsValue)] ::
       arbitrary[(WhatIsGIINPage.type, JsValue)] ::
       arbitrary[(WhatIsUniqueTaxpayerReferencePage.type, JsValue)] ::
-      arbitrary[(WhereIsFIBasedPage.type, JsValue)] ::
       Nil
 
   private def genJsObj(gens: Gen[(QuestionPage[_], JsValue)]*): Gen[JsObject] =
@@ -80,23 +79,6 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
             genJsObj(arbitrary[(UkAddressPage.type, JsValue)])
           }
       } yield postCode ++ data
-    }
-
-  private lazy val address =
-    Arbitrary {
-      for {
-        whereDoYouLive <- arbitrary[Boolean]
-        data <-
-          if (whereDoYouLive) {
-            ukAddress.arbitrary
-          } else {
-            genJsObj(arbitrary[(NonUkAddressPage.type, JsValue)])
-          }
-        obj = setFields(
-          Json.obj(),
-          WhereIsFIBasedPage.path -> Json.toJson(whereDoYouLive)
-        ) ++ data
-      } yield obj
     }
 
   private def phoneNumberArbitrary[T <: QuestionPage[Boolean], U <: QuestionPage[String]](
@@ -189,7 +171,7 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
       isThisBusinessName          <- arbitrary[Boolean]
       haveGIIN                    <- arbitrary[Boolean]
       isAddressCorrect            <- arbitrary[Boolean]
-      address                     <- address.arbitrary
+      address                     <- ukAddress.arbitrary
       fiName <-
         pageArbitrary(NameOfFinancialInstitutionPage).arbitrary
       report <-
@@ -210,26 +192,20 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
         } else {
           Gen.const(Json.obj())
         }
-      whereIsFIBased <-
-        if (isAddressCorrect) {
-          Gen.const(Json.obj())
-        } else {
-          pageArbitrary(WhereIsFIBasedPage).arbitrary
-        }
       obj = setFields(
         Json.obj(),
         ReportForRegisteredBusinessPage.path              -> Json.toJson(reportForRegisteredBusiness),
         IsThisYourBusinessNamePage.path                   -> Json.toJson(isThisBusinessName),
         IsRegisteredBusiness.IsTheAddressCorrectPage.path -> Json.toJson(isAddressCorrect),
         HaveGIINPage.path                                 -> Json.toJson(haveGIIN)
-      ) ++ fiName ++ report ++ businessName ++ whatIsGIIN ++ whereIsFIBased ++ address
+      ) ++ fiName ++ report ++ businessName ++ whatIsGIIN ++ address
     } yield obj
   }
 
   lazy val fiNotRegistered: Arbitrary[UserAnswers] = Arbitrary {
     for {
       id             <- nonEmptyString
-      address        <- address.arbitrary
+      address        <- ukAddress.arbitrary
       contactDetails <- firstAndSecondContactDetails.arbitrary
       nameUTRandGIIN <- nameUTRandGIINDetails.arbitrary
       obj =
@@ -283,7 +259,6 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
         HaveUniqueTaxpayerReferencePage,
         WhatIsGIINPage,
         WhatIsUniqueTaxpayerReferencePage,
-        WhereIsFIBasedPage,
         SecondContactEmailPage,
         SecondContactExistsPage,
         SecondContactNamePage,

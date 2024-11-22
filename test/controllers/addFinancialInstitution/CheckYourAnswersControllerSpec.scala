@@ -122,8 +122,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         .withPage(NameOfFinancialInstitutionPage, "test")
         .withPage(HaveUniqueTaxpayerReferencePage, false)
         .withPage(HaveGIINPage, false)
-        .withPage(WhereIsFIBasedPage, false)
-        .withPage(WhereIsFIBasedPage, true)
         .withPage(SelectedAddressLookupPage, testAddressLookup)
         .withPage(IsThisAddressPage, true)
         .withPage(FirstContactNamePage, "MrTest")
