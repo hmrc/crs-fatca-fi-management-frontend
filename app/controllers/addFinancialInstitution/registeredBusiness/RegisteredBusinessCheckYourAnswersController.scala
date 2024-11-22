@@ -19,7 +19,7 @@ package controllers.addFinancialInstitution.registeredBusiness
 import com.google.inject.Inject
 import controllers.actions._
 import controllers.routes
-import models.{CREATE, UserAnswers}
+import models.UserAnswers
 import pages.Page
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -61,7 +61,7 @@ class RegisteredBusinessCheckYourAnswersController @Inject() (
   def confirmAndAdd(): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkForInformationSent).async {
     implicit request =>
       financialInstitutionsService
-        .addOrUpdateFinancialInstitution(request.fatcaId, request.userAnswers, CREATE)
+        .addFinancialInstitution(request.fatcaId, request.userAnswers)
         .map(
           _ => Redirect(controllers.addFinancialInstitution.routes.FinancialInstitutionAddedConfirmationController.onPageLoad)
         )

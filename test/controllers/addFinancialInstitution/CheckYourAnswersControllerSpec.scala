@@ -19,7 +19,7 @@ package controllers.addFinancialInstitution
 import base.SpecBase
 import controllers.routes
 import generators.{ModelGenerators, UserAnswersGenerator}
-import models.{RequestType, UserAnswers}
+import models.UserAnswers
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -131,7 +131,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       "must redirect to error page when an exception is thrown" in {
 
-        when(mockService.addOrUpdateFinancialInstitution(any[String](), any[UserAnswers](), any[RequestType]())(any[HeaderCarrier](), any[ExecutionContext]()))
+        when(mockService.addFinancialInstitution(any[String](), any[UserAnswers]())(any[HeaderCarrier](), any[ExecutionContext]()))
           .thenReturn(Future.failed(new Exception("Something went wrong")))
 
         val application = applicationBuilder(userAnswers = Some(someUserAnswers))
@@ -149,7 +149,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         }
       }
       "must redirect to confirmation page when submitting answers" in {
-        when(mockService.addOrUpdateFinancialInstitution(any[String](), any[UserAnswers](), any[RequestType]())(any[HeaderCarrier](), any[ExecutionContext]()))
+        when(mockService.addFinancialInstitution(any[String](), any[UserAnswers]())(any[HeaderCarrier](), any[ExecutionContext]()))
           .thenReturn(Future.successful())
 
         val application = applicationBuilder(userAnswers = Some(someUserAnswers))

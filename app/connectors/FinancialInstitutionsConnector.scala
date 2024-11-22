@@ -17,10 +17,9 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.FinancialInstitutions.{CreateFIDetails, RemoveFIDetail}
-import models.{CREATE, RequestType, UPDATE}
+import models.FinancialInstitutions.{BaseFIDetail, CreateFIDetails, FIDetail, RemoveFIDetail}
 import play.api.i18n.Lang.logger
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, Writes}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
@@ -46,13 +45,14 @@ class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, v
       .get(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/$subscriptionId/$fiId")
       .execute[HttpResponse]
 
-  def addOrUpdateFI(fiDetails: CreateFIDetails, requestType: RequestType)(implicit
+  def addOrUpdateFI(fiDetails: BaseFIDetail)(implicit
     hc: HeaderCarrier,
-    ec: ExecutionContext
+    ec: ExecutionContext,
+    writes: Writes[BaseFIDetail]
   ): Future[HttpResponse] =
-    (requestType match {
-      case CREATE => httpClient.post(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/create")
-      case UPDATE => httpClient.put(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/update")
+    (fiDetails match {
+      case _: CreateFIDetails => httpClient.post(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/create")
+      case _: FIDetail        => httpClient.put(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/update")
     }).withBody(Json.toJson(fiDetails))
       .execute[HttpResponse]
       .andThen {
