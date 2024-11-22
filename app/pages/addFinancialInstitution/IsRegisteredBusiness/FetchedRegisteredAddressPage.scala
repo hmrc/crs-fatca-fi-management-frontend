@@ -18,7 +18,7 @@ package pages.addFinancialInstitution.IsRegisteredBusiness
 
 import models.{AddressResponse, UserAnswers}
 import pages.QuestionPage
-import pages.addFinancialInstitution.{NonUkAddressPage, SelectedAddressLookupPage, UkAddressPage}
+import pages.addFinancialInstitution.{SelectedAddressLookupPage, UkAddressPage}
 import play.api.libs.json.JsPath
 
 import scala.util.Try
