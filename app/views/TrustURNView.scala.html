@@ -24,11 +24,11 @@
     govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, fiName: String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("trustURN.title"))) {
 
-    @formHelper(action = routes.TrustURNController.onSubmit(mode)) {
+    @formHelper(action = controllers.addFinancialInstitution.routes.TrustURNController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
@@ -37,9 +37,10 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("trustURN.heading")).asPageHeading()
+                label = LabelViewModel(messages("trustURN.heading", fiName)).asPageHeading()
             )
-            .withWidth(Full)
+            .withWidth(Fixed20)
+            .withHint(HintViewModel(HtmlContent(messages("trustURN.hint"))))
         )
 
         @govukButton(

@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.common
 
-import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.TrustURNPage
 import play.api.i18n.Messages
@@ -34,7 +33,7 @@ object TrustURNSummary {
           key = "trustURN.checkYourAnswersLabel",
           value = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.TrustURNController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", controllers.addFinancialInstitution.routes.TrustURNController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("trustURN.change.hidden"))
           )
         )

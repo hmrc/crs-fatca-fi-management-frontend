@@ -17,16 +17,19 @@
 package forms
 
 import javax.inject.Inject
-
 import forms.mappings.Mappings
 import play.api.data.Form
+import utils.RegexConstants
 
-class TrustURNFormProvider @Inject() extends Mappings {
+class TrustURNFormProvider @Inject() extends Mappings with RegexConstants {
 
   def apply(): Form[String] =
     Form(
-      "value" -> text("trustURN.error.required")
-        .verifying(maxLength(20, "trustURN.error.length"))
+      "value" -> validatedURN(
+        "trustURN.error.required",
+        "trustURN.error.invalidChar",
+        "trustURN.error.invalidFormat"
+      )
     )
 
 }
