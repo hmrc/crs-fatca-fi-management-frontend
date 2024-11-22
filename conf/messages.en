@@ -138,15 +138,24 @@ nameOfFinancialInstitution.error.length = Financial institution name must be 105
 nameOfFinancialInstitution.error.invalid = Financial institution name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, backslashes, carets (^), grave accents (`), hyphens and spaces
 nameOfFinancialInstitution.change.hidden = Change financial institution name
 
-whatIsUniqueTaxpayerReference.title = What is the Corporation Tax Unique Taxpayer Reference (UTR)?
-whatIsUniqueTaxpayerReference.heading = What is the Corporation Tax Unique Taxpayer Reference (UTR) for {0}?
+whatIsUniqueTaxpayerReference.title = What is the Unique Taxpayer Reference (UTR)?
+whatIsUniqueTaxpayerReference.heading = What is the Unique Taxpayer Reference (UTR) for {0}?
 whatIsUniqueTaxpayerReference.checkYourAnswersLabel = Unique Taxpayer Reference
 whatIsUniqueTaxpayerReference.error.required = Enter the financial institution’s Unique Taxpayer Reference
 whatIsUniqueTaxpayerReference.error.invalid = Unique Taxpayer Reference must only include numbers 0 to 9
-whatIsUniqueTaxpayerReference.error.invalidFormat = Unique Taxpayer Reference must include 10 numbers, for example 1234567890
-whatIsUniqueTaxpayerReference.p1 = You can
-whatIsUniqueTaxpayerReference.p1.link = find a lost UTR
+whatIsUniqueTaxpayerReference.error.invalidFormat = Enter the Unique Taxpayer Reference in the right format
+whatIsUniqueTaxpayerReference.hint = The UTR can be 10 or 13 digits long.
 whatIsUniqueTaxpayerReference.change.hidden = Change Unique Taxpayer Reference
+
+whatIsCompanyRegistrationNumber.title = What is the Company Registration Number (CRN) for the financial institution?
+whatIsCompanyRegistrationNumber.heading = What is the Company Registration Number for {0}?
+whatIsCompanyRegistrationNumber.hint = The CRN is 8 characters long, for example 01234567 or AC012345.
+whatIsCompanyRegistrationNumber.checkYourAnswersLabel = Company Registration Number
+whatIsCompanyRegistrationNumber.p1 = You can
+whatIsCompanyRegistrationNumber.p1.link = search Companies House for a Company Registration Number (opens in new tab)
+whatIsCompanyRegistrationNumber.error.required = Enter the financial institution’s Company Registration Number
+whatIsCompanyRegistrationNumber.error.invalid = Company Registration Number must only include letters A to Z and numbers 0 to 9
+whatIsCompanyRegistrationNumber.error.invalidFormat = 	Enter the Company Registration Number in the right format
 
 haveGIIN.title = Global Intermediary Identification Number (GIIN)
 haveGIIN.heading = Global Intermediary Identification Number (GIIN)

@@ -86,18 +86,9 @@ class CheckYourAnswersViewModelSpec extends SpecBase {
       }
     }
     "getAddressChangeRoute" - {
-      "must be WhereIsFIBased when adding another business" in {
-        val answers = ua.withPage(ReportForRegisteredBusinessPage, false)
-
-        getAddressChangeRoute(ua) mustBe
-          controllers.addFinancialInstitution.routes.WhereIsFIBasedController.onPageLoad(CheckMode).url
-        getAddressChangeRoute(answers) mustBe
-          controllers.addFinancialInstitution.routes.WhereIsFIBasedController.onPageLoad(CheckMode).url
-      }
-      "must be IsTheAddressCorrect when the user is adding themselves as an FI" in {
-        val answers = ua.withPage(ReportForRegisteredBusinessPage, true)
-        getAddressChangeRoute(answers) mustBe
-          controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(CheckMode).url
+      "must be /uk-postcode" in {
+        getAddressChangeRoute mustBe
+          controllers.addFinancialInstitution.routes.PostcodeController.onPageLoad(CheckMode).url
       }
 
     }

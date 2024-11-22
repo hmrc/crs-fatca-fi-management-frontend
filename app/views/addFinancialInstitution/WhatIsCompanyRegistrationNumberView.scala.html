@@ -14,29 +14,41 @@
  * limitations under the License.
  *@
 
+@import viewmodels.InputWidth._
+@import config.FrontendAppConfig
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
+    govukInput: GovukInput,
+    link: components.Link,
+    heading: components.Heading,
+    appConfig: FrontendAppConfig,
     govukButton: GovukButton
 )
 
 @(form: Form[_], mode: Mode, fiName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("whereIsFIBased.title"))) {
+@layout(pageTitle = title(form, messages("whatIsCompanyRegistrationNumber.title"))) {
 
-    @formHelper(action = controllers.addFinancialInstitution.routes.WhereIsFIBasedController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.addFinancialInstitution.routes.WhatIsCompanyRegistrationNumberController.onSubmit()) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @govukRadios(
-            RadiosViewModel.yesNo(
-                field  = form("value"),
-                legend = LegendViewModel(messages("whereIsFIBased.heading", fiName)).asPageHeading()
+        @heading(messages("whatIsCompanyRegistrationNumber.heading", fiName))
+
+        <p class="govuk-body">@messages("whatIsCompanyRegistrationNumber.p1") @link(appConfig.searchCrn, "whatIsCompanyRegistrationNumber.p1.link", openInNewWindow = true).</p>
+
+        @govukInput(
+            InputViewModel(
+                field = form("value"),
+                label = LabelViewModel(messages("whatIsCompanyRegistrationNumber.heading", fiName)).visuallyHidden(),
+                hint = Some(HintViewModel(messages("whatIsCompanyRegistrationNumber.hint"))),
             )
+            .withWidth(Fixed10)
         )
 
         @govukButton(
