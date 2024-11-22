@@ -75,8 +75,10 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar with 
             .overrides(bind[RegistrationWithUtrService].toInstance(mockRegService))
             .build()
 
+          val addressResponseWithCountryName = addressResponse.copy(countryCode = Country.GB.code, country = Some(Country.GB))
+
           when(mockRegService.fetchAddress(any())(any[HeaderCarrier](), any[ExecutionContext]()))
-            .thenReturn(Future.successful(addressResponse.copy(countryCode = Country.GB.code)))
+            .thenReturn(Future.successful(addressResponseWithCountryName))
 
           running(application) {
             val request = FakeRequest(GET, isTheAddressCorrectRoute)
@@ -86,7 +88,6 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar with 
             val view = application.injector.instanceOf[IsTheAddressCorrectView]
 
             status(result) mustEqual OK
-            val addressResponseWithCountryName = addressResponse.copy(countryCode = Country.GB.description)
             contentAsString(result) mustEqual view(form, NormalMode, fiName, addressResponseWithCountryName)(request, messages(application)).toString
           }
       }
@@ -104,8 +105,10 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar with 
             .overrides(bind[RegistrationWithUtrService].toInstance(mockRegService))
             .build()
 
+          val addressResponseWithCountryName = addressResponse.copy(countryCode = Country.GB.code, country = Some(Country.GB))
+
           when(mockRegService.fetchAddress(any())(any[HeaderCarrier](), any[ExecutionContext]()))
-            .thenReturn(Future.successful(addressResponse.copy(countryCode = Country.GB.code)))
+            .thenReturn(Future.successful(addressResponseWithCountryName))
 
           running(application) {
             val request = FakeRequest(GET, isTheAddressCorrectRoute)
@@ -115,7 +118,6 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar with 
             val result = route(application, request).value
 
             status(result) mustEqual OK
-            val addressResponseWithCountryName = addressResponse.copy(countryCode = Country.GB.description)
             contentAsString(result) mustEqual view(form.fill(true), NormalMode, fiName, addressResponseWithCountryName)(request, messages(application)).toString
           }
       }
