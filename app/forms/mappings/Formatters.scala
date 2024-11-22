@@ -186,11 +186,12 @@ trait Formatters extends Transforms with RegexConstants {
 
   }
 
-  protected def validatedUtrFormatter(requiredKey: String,
-                                      invalidKey: String,
-                                      invalidFormatKey: String,
-                                      regex: String,
-                                      msgArg: String = ""
+  protected def validatedIdFormatter(requiredKey: String,
+                                     invalidKey: String,
+                                     invalidFormatKey: String,
+                                     regex: String,
+                                     msgArg: String = "",
+                                     acceptedLengths: Seq[Int] = Seq(10, 13)
   ): Formatter[String] =
     new Formatter[String] {
 
@@ -198,8 +199,7 @@ trait Formatters extends Transforms with RegexConstants {
         if (msgArg.isEmpty) FormError(key, errorKey) else FormError(key, errorKey, Seq(msgArg))
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
-        val acceptedLengths = Seq(10, 13)
-        val trimmedUtr      = data.get(key).map(_.replaceAll("[kK\\s]", ""))
+        val trimmedUtr = data.get(key).map(_.replaceAll("[kK\\s]", ""))
         trimmedUtr match {
           case None | Some("")                                => Left(Seq(formatError(key, requiredKey, msgArg)))
           case Some(s) if !s.matches(regex)                   => Left(Seq(formatError(key, invalidKey, msgArg)))

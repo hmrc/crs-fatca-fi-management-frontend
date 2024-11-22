@@ -43,6 +43,7 @@ trait RegexConstants {
   final val nonApiNameRegex             = """^[a-zA-Z0-9 "'&,\-\\\/]*$"""
   final val orgNameRegex                = """^[a-zA-Z0-9 &`\-\'\\\^]*$"""
   final val utrRegex                    = "^[0-9]*$"
+  final val crnRegex                    = "^[A-Z0-9]*$"
   final val invalidGIINRegex            = "^[a-zA-Z0-9]{6}\\.[a-zA-Z0-9]{5}\\.[a-zA-Z0-9]{2}\\.[a-zA-Z0-9]{3}$"
   final val giinFormatRegex             = "^[A-NP-Z0-9]{6}\\.[A-Z0-9]{5}\\.[A-Z0-9]{2}\\.[A-Z0-9]{3}$"
 
