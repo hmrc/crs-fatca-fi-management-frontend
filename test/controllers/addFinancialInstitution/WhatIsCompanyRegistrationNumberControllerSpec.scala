@@ -20,6 +20,7 @@ import base.SpecBase
 import forms.addFinancialInstitution.CompanyRegistrationNumberFormProvider
 import models.NormalMode
 import org.scalatestplus.mockito.MockitoSugar
+import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.addFinancialInstitution.WhatIsCompanyRegistrationNumberView
@@ -35,7 +36,12 @@ class WhatIsCompanyRegistrationNumberControllerSpec extends SpecBase with Mockit
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder().build()
+      val userAnswers = emptyUserAnswers
+        .set(NameOfFinancialInstitutionPage, "Financial Institution")
+        .success
+        .value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, whatIsCompanyRegistrationNumberRoute)
@@ -51,7 +57,12 @@ class WhatIsCompanyRegistrationNumberControllerSpec extends SpecBase with Mockit
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder().build()
+      val userAnswers = emptyUserAnswers
+        .set(NameOfFinancialInstitutionPage, "Financial Institution")
+        .success
+        .value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request =
