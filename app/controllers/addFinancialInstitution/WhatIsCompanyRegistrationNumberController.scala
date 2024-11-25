@@ -16,6 +16,7 @@
 
 package controllers.addFinancialInstitution
 
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.addFinancialInstitution.CompanyRegistrationNumberFormProvider
 import models.Mode
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -29,6 +30,9 @@ import javax.inject.Inject
 class WhatIsCompanyRegistrationNumberController @Inject() (
   override val messagesApi: MessagesApi,
   formProvider: CompanyRegistrationNumberFormProvider,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   view: WhatIsCompanyRegistrationNumberView
 ) extends FrontendBaseController
@@ -37,17 +41,19 @@ class WhatIsCompanyRegistrationNumberController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = Action {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      Ok(view(form, mode, "Financial Institution"))
+      val fiName = getFinancialInstitutionName(request.userAnswers)
+      Ok(view(form, mode, fiName))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = Action {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
+      val fiName = getFinancialInstitutionName(request.userAnswers)
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => BadRequest(view(formWithErrors, mode, "Financial Institution")),
+          formWithErrors => BadRequest(view(formWithErrors, mode, fiName)),
           _ => Redirect(controllers.addFinancialInstitution.routes.WhatIsCompanyRegistrationNumberController.onPageLoad().url)
         )
   }
