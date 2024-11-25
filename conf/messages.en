@@ -403,3 +403,14 @@ detailsUpdated.title = Details updated
 detailsUpdated.heading = Details updated for {0}
 detailsUpdated.p1 = Back to manage your financial institutions
 detailsUpdated.p2 = Back to manage your CRS and FATCA reports
+
+whichIdentificationNumbers.title = Which identification numbers can you provide for the financial institution?
+whichIdentificationNumbers.heading = Which identification numbers can you provide for {0}?
+whichIdentificationNumbers.hint = Select at least one option.
+whichIdentificationNumbers.UTR = Unique Taxpayer Reference (UTR)
+whichIdentificationNumbers.CRN = Company Registration Number (CRN)
+whichIdentificationNumbers.TRN = Trust Unique Reference Number (URN)
+whichIdentificationNumbers.or = or
+whichIdentificationNumbers.checkYourAnswersLabel = whichIdentificationNumbers
+whichIdentificationNumbers.error.required = Select whichIdentificationNumbers
+whichIdentificationNumbers.change.hidden = WhichIdentificationNumbers
