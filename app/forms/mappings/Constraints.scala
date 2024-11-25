@@ -16,9 +16,11 @@
 
 package forms.mappings
 
-import java.time.LocalDate
-
+import models.WhichIdentificationNumbers
+import models.WhichIdentificationNumbers.TRN
 import play.api.data.validation.{Constraint, Invalid, Valid}
+
+import java.time.LocalDate
 
 trait Constraints {
 
@@ -105,6 +107,12 @@ trait Constraints {
         Valid
       case _ =>
         Invalid(errorKey)
+    }
+
+  protected def noMixedTrn(errorKey: String): Constraint[Set[WhichIdentificationNumbers]] =
+    Constraint {
+      case set if !(set.contains(TRN) && set.size > 1) => Valid
+      case _                                           => Invalid(errorKey)
     }
 
 }

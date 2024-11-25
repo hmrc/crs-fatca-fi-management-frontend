@@ -412,5 +412,6 @@ whichIdentificationNumbers.CRN = Company Registration Number (CRN)
 whichIdentificationNumbers.TRN = Trust Unique Reference Number (URN)
 whichIdentificationNumbers.or = or
 whichIdentificationNumbers.checkYourAnswersLabel = whichIdentificationNumbers
-whichIdentificationNumbers.error.required = Select whichIdentificationNumbers
+whichIdentificationNumbers.error.required = Select which identification numbers you can provide for the financial institution
+whichIdentificationNumbers.error.noMixedTrn = Select ‘Trust Unique Reference Number (URN)’ only or select one or both of the other options
 whichIdentificationNumbers.change.hidden = WhichIdentificationNumbers

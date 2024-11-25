@@ -22,7 +22,7 @@ import play.api.data.FormError
 
 class WhichIdentificationNumbersFormProviderSpec extends CheckboxFieldBehaviours {
 
-  val form = new WhichIdentificationNumbersFormProvider()()
+  val formProvider = new WhichIdentificationNumbersFormProvider()()
 
   ".value" - {
 
@@ -30,17 +30,32 @@ class WhichIdentificationNumbersFormProviderSpec extends CheckboxFieldBehaviours
     val requiredKey = "whichIdentificationNumbers.error.required"
 
     behave like checkboxField[WhichIdentificationNumbers](
-      form,
+      formProvider,
       fieldName,
       validValues = WhichIdentificationNumbers.values,
       invalidError = FormError(s"$fieldName[0]", "error.invalid")
     )
 
     behave like mandatoryCheckboxField(
-      form,
+      formProvider,
       fieldName,
       requiredKey
     )
+  }
+
+  "bind when UTR and CRN are selected" in {
+    val form = formProvider.bind(Map("value[0]" -> "UTR", "value[1]" -> "CRN"))
+    form.errors mustBe empty
+  }
+
+  "fail to bind when URN is selected with UTR" in {
+    val form = formProvider.bind(Map("value[0]" -> "UTR", "value[2]" -> "URN"))
+    form.errors must contain(FormError("value[2]", "error.invalid"))
+  }
+
+  "fail to bind when URN is selected with CRN" in {
+    val form = formProvider.bind(Map("value[0]" -> "CRN", "value[2]" -> "URN"))
+    form.errors must contain(FormError("value[2]", "error.invalid"))
   }
 
 }
