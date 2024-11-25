@@ -34,7 +34,7 @@ object SelectedAddressLookupSummary {
           key = "selectAddress.checkYourAnswersLabel",
           value = ValueViewModel(formatAddressLookupBlock(answer)),
           actions = Seq(
-            accessibleActionItem("site.change", getAddressChangeRoute)
+            accessibleActionItem("site.change", getAddressChangeRoute(answers))
               .withVisuallyHiddenText(messages("selectAddress.change.hidden"))
           )
         )
