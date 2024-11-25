@@ -19,14 +19,15 @@ package services
 import base.SpecBase
 import connectors.FinancialInstitutionsConnector
 import generators.{ModelGenerators, UserAnswersGenerator}
-import models.FinancialInstitutions.FIDetail
-import models.{CREATE, UserAnswers}
+import models.FinancialInstitutions.{BaseFIDetail, FIDetail}
+import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.http.Status.OK
-import play.api.libs.json.{JsArray, JsObject, Json}
+import play.api.libs.json.{JsArray, JsObject, Json, Writes}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -91,7 +92,7 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
       sut.getInstitutionById(fiDetails, noFiid) mustBe None
 
     }
-    "addFinancialInstitution" - {
+    "addOrUpdateFinancialInstitution" - {
       val subscriptionId = "XE5123456789"
 
       "adds FI details" in {
@@ -99,8 +100,20 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
 
         forAll(fiNotRegistered.arbitrary) {
           (userAnswers: UserAnswers) =>
-            when(mockConnector.addOrUpdateFI(any(), any())(any[HeaderCarrier](), any[ExecutionContext]())).thenReturn(mockResponse)
-            val result = sut.addOrUpdateFinancialInstitution(subscriptionId, userAnswers, CREATE)
+            when(mockConnector.addOrUpdateFI(any())(any[HeaderCarrier](), any[ExecutionContext](), any[Writes[BaseFIDetail]])).thenReturn(mockResponse)
+            val result = sut.addFinancialInstitution(subscriptionId, userAnswers)
+            result.futureValue mustBe ()
+        }
+      }
+
+      "updates FI details" in {
+        val mockResponse = Future.successful(HttpResponse(OK, "{}"))
+
+        forAll(fiRegistered.arbitrary) {
+          (userAnswers: UserAnswers) =>
+            val updatedAnswers = userAnswers.withPage(ChangeFiDetailsInProgressId, "123456789")
+            when(mockConnector.addOrUpdateFI(any())(any[HeaderCarrier](), any[ExecutionContext](), any[Writes[BaseFIDetail]])).thenReturn(mockResponse)
+            val result = sut.updateFinancialInstitution(subscriptionId, updatedAnswers)
             result.futureValue mustBe ()
         }
       }

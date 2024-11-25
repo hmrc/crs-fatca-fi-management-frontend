@@ -20,6 +20,21 @@ import models.Address
 import play.api.libs.json.{Json, OFormat}
 import utils.CountryListFactory
 
+sealed trait BaseFIDetail {
+  val FIName: String
+  val SubscriptionID: String
+  val TINDetails: Seq[TINDetails]
+  val IsFIUser: Boolean
+  val IsFATCAReporting: Boolean
+  val AddressDetails: AddressDetails
+  val PrimaryContactDetails: Option[ContactDetails]
+  val SecondaryContactDetails: Option[ContactDetails]
+}
+
+object BaseFIDetail {
+  implicit val format: OFormat[BaseFIDetail] = Json.format[BaseFIDetail]
+}
+
 final case class FIDetail(
   FIID: String,
   FIName: String,
@@ -30,7 +45,7 @@ final case class FIDetail(
   AddressDetails: AddressDetails,
   PrimaryContactDetails: Option[ContactDetails],
   SecondaryContactDetails: Option[ContactDetails]
-)
+) extends BaseFIDetail
 
 object FIDetail {
   implicit val format: OFormat[FIDetail] = Json.format[FIDetail]
@@ -91,7 +106,7 @@ final case class CreateFIDetails(
   AddressDetails: AddressDetails,
   PrimaryContactDetails: Option[ContactDetails],
   SecondaryContactDetails: Option[ContactDetails]
-)
+) extends BaseFIDetail
 
 object CreateFIDetails {
   implicit val format: OFormat[CreateFIDetails] = Json.format[CreateFIDetails]

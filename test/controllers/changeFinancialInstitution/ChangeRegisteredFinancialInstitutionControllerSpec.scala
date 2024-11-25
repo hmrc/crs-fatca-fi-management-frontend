@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.routes
 import generators.{ModelGenerators, UserAnswersGenerator}
 import models.FinancialInstitutions.FIDetail
-import models.{UPDATE, UserAnswers}
+import models.UserAnswers
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => mockitoEq}
 import org.mockito.Mockito.when
@@ -250,9 +250,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
 
         when(mockFinancialInstitutionUpdateService.clearUserAnswers(any[UserAnswers])).thenReturn(Future.successful(true))
         when(
-          mockFinancialInstitutionsService.addOrUpdateFinancialInstitution(any[String], any[UserAnswers], mockitoEq(UPDATE))(any[HeaderCarrier],
-                                                                                                                             any[ExecutionContext]
-          )
+          mockFinancialInstitutionsService.updateFinancialInstitution(any[String], any[UserAnswers])(any[HeaderCarrier], any[ExecutionContext])
         )
           .thenReturn(Future.successful())
 
@@ -271,9 +269,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
 
       "must return INTERNAL_SERVER_ERROR for a POST when an error occurs when clearing user answers" in {
         when(
-          mockFinancialInstitutionsService.addOrUpdateFinancialInstitution(any[String], any[UserAnswers], mockitoEq(UPDATE))(any[HeaderCarrier],
-                                                                                                                             any[ExecutionContext]
-          )
+          mockFinancialInstitutionsService.updateFinancialInstitution(any[String], any[UserAnswers])(any[HeaderCarrier], any[ExecutionContext])
         )
           .thenReturn(Future.successful())
         when(mockFinancialInstitutionUpdateService.clearUserAnswers(any[UserAnswers]))

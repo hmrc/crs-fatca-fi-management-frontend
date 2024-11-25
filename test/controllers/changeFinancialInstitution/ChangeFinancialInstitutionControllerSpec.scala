@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.routes
 import generators.{ModelGenerators, UserAnswersGenerator}
 import models.FinancialInstitutions.FIDetail
-import models.{RequestType, UserAnswers}
+import models.UserAnswers
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => mockitoEq}
 import org.mockito.Mockito.when
@@ -253,7 +253,7 @@ class ChangeFinancialInstitutionControllerSpec
 
       "must redirect to error page when an exception is thrown" in {
 
-        when(mockService.addOrUpdateFinancialInstitution(any[String](), any[UserAnswers](), any[RequestType]())(any[HeaderCarrier](), any[ExecutionContext]()))
+        when(mockService.updateFinancialInstitution(any[String](), any[UserAnswers]())(any[HeaderCarrier](), any[ExecutionContext]()))
           .thenReturn(Future.failed(new Exception("Something went wrong")))
 
         val application = applicationBuilder(userAnswers = Some(someUserAnswers))
@@ -263,15 +263,16 @@ class ChangeFinancialInstitutionControllerSpec
           .build()
 
         running(application) {
-          val request = FakeRequest(POST, controllers.addFinancialInstitution.routes.CheckYourAnswersController.confirmAndAdd().url)
+          val request = FakeRequest(POST, controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.confirmAndAdd().url)
           val result  = route(application, request).value
+          val view    = application.injector.instanceOf[ThereIsAProblemView]
 
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+          status(result) mustEqual INTERNAL_SERVER_ERROR
+          contentAsString(result) mustEqual view()(request, messages(application)).toString
         }
       }
       "must redirect to details updated page when submitting answers" in {
-        when(mockService.addOrUpdateFinancialInstitution(any[String](), any[UserAnswers](), any[RequestType]())(any[HeaderCarrier](), any[ExecutionContext]()))
+        when(mockService.updateFinancialInstitution(any[String](), any[UserAnswers]())(any[HeaderCarrier](), any[ExecutionContext]()))
           .thenReturn(Future.successful())
 
         val application = applicationBuilder(userAnswers = Some(someUserAnswers))

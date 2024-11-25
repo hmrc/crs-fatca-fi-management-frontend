@@ -19,7 +19,7 @@ package controllers.changeFinancialInstitution
 import com.google.inject.Inject
 import controllers.actions._
 import controllers.routes
-import models.{UPDATE, UserAnswers}
+import models.UserAnswers
 import models.requests.DataRequest
 import pages.Page
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
@@ -94,7 +94,7 @@ class ChangeRegisteredFinancialInstitutionController @Inject() (
   def confirmAndAdd(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       financialInstitutionsService
-        .addOrUpdateFinancialInstitution(request.fatcaId, request.userAnswers, UPDATE)
+        .updateFinancialInstitution(request.fatcaId, request.userAnswers)
         .flatMap(
           _ => financialInstitutionUpdateService.clearUserAnswers(request.userAnswers)
         )
