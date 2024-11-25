@@ -98,4 +98,12 @@ trait FieldBehaviours extends FormSpec with ScalaCheckPropertyChecks with Genera
     }
   }
 
+  def fieldWithInvalidFormat(form: Form[_], fieldName: String, invalidString: String, error: FormError, suffix: Option[String] = None): Unit = {
+    val testName = if (suffix.isEmpty) "not bind invalid data when format incorrect" else s"not bind invalid data ${suffix.get} - format incorrect"
+    testName in {
+      val result = form.bind(Map(fieldName -> invalidString)).apply(fieldName)
+      result.errors mustEqual Seq(error)
+    }
+  }
+
 }

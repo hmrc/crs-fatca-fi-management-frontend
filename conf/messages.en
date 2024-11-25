@@ -413,3 +413,11 @@ detailsUpdated.title = Details updated
 detailsUpdated.heading = Details updated for {0}
 detailsUpdated.p1 = Back to manage your financial institutions
 detailsUpdated.p2 = Back to manage your CRS and FATCA reports
+
+trustURN.title = What is the trust Unique Reference Number (URN) for the financial institution?
+trustURN.heading = What is the trust Unique Reference Number (URN) for {0}?
+trustURN.hint = The trust URN is 15 characters long, for example ABTRUST12345678.
+trustURN.error.required = Enter the trust Unique Reference Number
+trustURN.error.invalidChar = Trust Unique Reference Number must only include letters A to Z and numbers 0 to 9
+trustURN.error.invalidFormat = Enter the trust Unique Reference Number in the right format
+trustURN.error.real = Enter a real trust Unique Reference Number

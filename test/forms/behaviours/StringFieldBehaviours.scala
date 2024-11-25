@@ -31,6 +31,11 @@ trait StringFieldBehaviours extends FieldBehaviours {
       }
     }
 
+  def fieldWithUrnFormat(form: Form[_], fieldName: String, formatError: FormError): Unit =
+    s"not bind strings with incorrect urn format" in {
+      forAll()
+    }
+
   def fieldWithMaxLengthPhoneNumber(form: Form[_], fieldName: String, maxLength: Int, lengthError: FormError): Unit =
     s"must not bind strings longer than $maxLength characters" in {
 

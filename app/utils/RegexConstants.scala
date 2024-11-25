@@ -47,6 +47,9 @@ trait RegexConstants {
   final val invalidGIINRegex            = "^[a-zA-Z0-9]{6}\\.[a-zA-Z0-9]{5}\\.[a-zA-Z0-9]{2}\\.[a-zA-Z0-9]{3}$"
   final val giinFormatRegex             = "^[A-NP-Z0-9]{6}\\.[A-Z0-9]{5}\\.[A-Z0-9]{2}\\.[A-Z0-9]{3}$"
 
+  final val urnCharsRegex  = "^[a-zA-Z0-9]+$"
+  final val urnFormatRegex = "^[a-zA-Z]{7}[0-9]{8}$"
+
   final val emailRegex = "^(?:[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+)*)" +
     "@(?:[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+)*)$"
 

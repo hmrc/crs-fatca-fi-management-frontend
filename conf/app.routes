@@ -152,3 +152,8 @@ GET         /registered-business/change-answers/:fiid                     contro
 POST        /registered-business/change-answers                           controllers.changeFinancialInstitution.ChangeRegisteredFinancialInstitutionController.confirmAndAdd()
 
 GET        /details-updated                                               controllers.DetailsUpdatedController.onPageLoad()
+
+GET        /trust-urn                         controllers.addFinancialInstitution.TrustURNController.onPageLoad(mode: Mode = NormalMode)
+POST       /trust-urn                         controllers.addFinancialInstitution.TrustURNController.onSubmit(mode: Mode = NormalMode)
+GET        /change-trust-urn                  controllers.addFinancialInstitution.TrustURNController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-trust-urn                  controllers.addFinancialInstitution.TrustURNController.onSubmit(mode: Mode = CheckMode)

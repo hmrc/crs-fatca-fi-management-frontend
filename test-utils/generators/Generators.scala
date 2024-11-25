@@ -201,6 +201,12 @@ trait Generators extends RegexConstants {
     } yield s"$pt1.$pt2.$pt3.$pt4"
   }
 
+  def validUrn: Gen[String] =
+    for {
+      pt1 <- Gen.listOfN(7, Gen.alphaUpperChar).map(_.mkString)
+      pt2 <- Gen.listOfN(8, Gen.numChar).map(_.mkString)
+    } yield s"$pt1$pt2"
+
   def invalidCountry: Gen[String] = Gen.oneOf(Set("Invalid Country 1", "Invalid Country 2", "&nbsp"))
 
   def validSubscriptionID: Gen[String] = RegexpGen.from(subscriptionIDRegex)
