@@ -33,7 +33,7 @@ object FetchedRegisteredAddressSummary {
           key = s"selectAddress.${pageType.labelPrefix}YourAnswersLabel",
           value = ValueViewModel(formatAddressResponse(answer)),
           actions = Seq(
-            accessibleActionItem("site.change", getAddressChangeRoute)
+            accessibleActionItem("site.change", getAddressChangeRoute(answers))
               .withVisuallyHiddenText(messages("selectAddress.change.hidden"))
           )
         )

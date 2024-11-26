@@ -18,6 +18,7 @@ package viewmodels
 
 import models.{AnswersReviewPageType, CheckMode, UserAnswers}
 import pages.addFinancialInstitution.HaveGIINPage
+import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, SummaryListRow}
@@ -26,8 +27,12 @@ import viewmodels.govuk.summarylist._
 
 package object common {
 
-  def getAddressChangeRoute: String =
-    controllers.addFinancialInstitution.routes.PostcodeController.onPageLoad(CheckMode).url
+  def getAddressChangeRoute(answers: UserAnswers): String =
+    answers
+      .get(ReportForRegisteredBusinessPage) match {
+      case Some(true) => controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(CheckMode).url
+      case _          => controllers.addFinancialInstitution.routes.PostcodeController.onPageLoad(CheckMode).url
+    }
 
   def accessibleActionItem(messageKey: String, href: String)(implicit messages: Messages): ActionItem =
     ActionItemViewModel(
