@@ -14,41 +14,37 @@
  * limitations under the License.
  *@
 
-@import components._
+@import viewmodels.InputWidth._
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukRadios: GovukRadios,
-    govukButton: GovukButton,
-    heading: Heading,
-    addressBlock: AddressBlock
+    govukInput: GovukInput,
+    govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode, fiName: String, address: AddressResponse)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, fiName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("isTheAddressCorrect.title", fiName))) {
+@layout(pageTitle = title(form, messages("trustURN.title"))) {
 
-    @formHelper(action = controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = controllers.addFinancialInstitution.routes.TrustURNController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @heading(messages("isTheAddressCorrect.heading", fiName))
-
-       @addressBlock(addressRes = Some(address), withCountry = true)
-
-        @govukRadios(
-            RadiosViewModel.yesNo(
+        @govukInput(
+            InputViewModel(
                 field = form("value"),
-                legend = LegendViewModel(messages("isTheAddressCorrect.heading", fiName)).withCssClass("govuk-visually-hidden")
+                label = LabelViewModel(messages("trustURN.heading", fiName)).asPageHeading()
             )
+            .withWidth(Fixed20)
+            .withHint(HintViewModel(HtmlContent(messages("trustURN.hint"))))
         )
 
         @govukButton(
-            ButtonViewModel(messages("site.continue")).withAttribute("id" -> "submit")
+            ButtonViewModel(messages("site.continue"))
         )
     }
 }

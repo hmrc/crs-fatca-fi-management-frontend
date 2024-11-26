@@ -26,10 +26,16 @@ final case class UniqueTaxpayerReference(override val value: String) extends Tax
 
 final case class GIINumber(override val value: String) extends TaxIdentificationNumber
 
+final case class CompanyRegistrationNumber(override val value: String) extends TaxIdentificationNumber
+
 object UniqueTaxpayerReference {
   implicit val format: OFormat[UniqueTaxpayerReference] = Json.format[UniqueTaxpayerReference]
 }
 
 object GIINumber {
   implicit val format: OFormat[GIINumber] = Json.format[GIINumber]
+}
+
+object CompanyRegistrationNumber {
+  implicit val format: OFormat[CompanyRegistrationNumber] = Json.format[CompanyRegistrationNumber]
 }

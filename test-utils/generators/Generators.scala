@@ -166,6 +166,10 @@ trait Generators extends RegexConstants {
     chars <- listOfN(10, Gen.oneOf(List(1, 2, 3, 4, 5, 6, 7, 8, 9)))
   } yield chars.mkString
 
+  def validCrn: Gen[String] = for {
+    chars <- listOfN(8, Gen.numChar)
+  } yield chars.mkString
+
   def validPostCodes: Gen[String] = {
     val disallowed = List('c', 'i', 'k', 'm', 'o', 'v')
     for {
@@ -196,6 +200,12 @@ trait Generators extends RegexConstants {
       pt4 <- Gen.listOfN(3, Gen.alphaNumChar).map(_.mkString)
     } yield s"$pt1.$pt2.$pt3.$pt4"
   }
+
+  def validUrn: Gen[String] =
+    for {
+      pt1 <- Gen.listOfN(7, Gen.alphaUpperChar).map(_.mkString)
+      pt2 <- Gen.listOfN(8, Gen.numChar).map(_.mkString)
+    } yield s"$pt1$pt2"
 
   def invalidCountry: Gen[String] = Gen.oneOf(Set("Invalid Country 1", "Invalid Country 2", "&nbsp"))
 

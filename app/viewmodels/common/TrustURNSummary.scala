@@ -14,28 +14,27 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.common
 
-import models.UserAnswers
-import pages.addFinancialInstitution._
+import models.{CheckMode, UserAnswers}
+import pages.TrustURNPage
 import play.api.i18n.Messages
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import utils.AddressHelper.formatAddressBlock
-import viewmodels.common.{accessibleActionItem, getAddressChangeRoute}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object NonUkAddressSummary {
+object TrustURNSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(NonUkAddressPage).map {
+    answers.get(TrustURNPage).map {
       answer =>
         SummaryListRowViewModel(
-          key = "selectAddress.checkYourAnswersLabel",
-          value = ValueViewModel(formatAddressBlock(answer)),
+          key = "trustURN.checkYourAnswersLabel",
+          value = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
-            accessibleActionItem("site.change", getAddressChangeRoute(answers))
-              .withVisuallyHiddenText(messages("selectAddress.change.hidden"))
+            ActionItemViewModel("site.change", controllers.addFinancialInstitution.routes.TrustURNController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("trustURN.change.hidden"))
           )
         )
     }

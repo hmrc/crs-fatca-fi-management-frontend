@@ -73,7 +73,13 @@ trait Mappings extends Formatters with Constraints {
     of(new LocalDateFormatter(invalidKey, allRequiredKey, twoRequiredKey, requiredKey, args))
 
   protected def validatedUTR(requiredKey: String, invalidKey: String, invalidFormatKey: String, regex: String, msgArg: String = ""): FieldMapping[String] =
-    of(validatedUtrFormatter(requiredKey, invalidKey, invalidFormatKey, regex, msgArg))
+    of(validatedIdFormatter(requiredKey, invalidKey, invalidFormatKey, regex, msgArg))
+
+  protected def validatedCRN(requiredKey: String, invalidKey: String, invalidFormatKey: String, regex: String, msgArg: String = ""): FieldMapping[String] =
+    of(validatedIdFormatter(requiredKey, invalidKey, invalidFormatKey, regex, msgArg, acceptedLengths = Seq(8)))
+
+  protected def validatedURN(requiredKey: String, invalidKey: String, invalidFormatKey: String, msgArg: String = ""): FieldMapping[String] =
+    of(validatedUrnFormatter(requiredKey, invalidKey, invalidFormatKey, msgArg))
 
   protected def mandatoryPostcode(requiredKey: String,
                                   lengthKey: String,

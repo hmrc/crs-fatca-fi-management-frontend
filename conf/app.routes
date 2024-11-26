@@ -76,6 +76,9 @@ POST        /name                                                         contro
 GET         /change-name                                                  controllers.addFinancialInstitution.NameOfFinancialInstitutionController.onPageLoad(mode: Mode = CheckMode)
 POST        /change-name                                                  controllers.addFinancialInstitution.NameOfFinancialInstitutionController.onSubmit(mode: Mode = CheckMode)
 
+GET         /crn                                                          controllers.addFinancialInstitution.WhatIsCompanyRegistrationNumberController.onPageLoad(mode: Mode = NormalMode)
+POST        /crn                                                          controllers.addFinancialInstitution.WhatIsCompanyRegistrationNumberController.onSubmit(mode: Mode = NormalMode)
+
 GET         /utr                                                          controllers.addFinancialInstitution.WhatIsUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = NormalMode)
 POST        /utr                                                          controllers.addFinancialInstitution.WhatIsUniqueTaxpayerReferenceController.onSubmit(mode: Mode = NormalMode)
 GET         /change-utr                                                   controllers.addFinancialInstitution.WhatIsUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = CheckMode)
@@ -149,6 +152,11 @@ GET         /registered-business/change-answers/:fiid                     contro
 POST        /registered-business/change-answers                           controllers.changeFinancialInstitution.ChangeRegisteredFinancialInstitutionController.confirmAndAdd()
 
 GET        /details-updated                                               controllers.DetailsUpdatedController.onPageLoad()
+
+GET        /trust-urn                         controllers.addFinancialInstitution.TrustURNController.onPageLoad(mode: Mode = NormalMode)
+POST       /trust-urn                         controllers.addFinancialInstitution.TrustURNController.onSubmit(mode: Mode = NormalMode)
+GET        /change-trust-urn                  controllers.addFinancialInstitution.TrustURNController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-trust-urn                  controllers.addFinancialInstitution.TrustURNController.onSubmit(mode: Mode = CheckMode)
 
 GET        /identification-numbers                        controllers.addFinancialInstitution.WhichIdentificationNumbersController.onPageLoad(mode: Mode = NormalMode)
 POST       /identification-numbers                        controllers.addFinancialInstitution.WhichIdentificationNumbersController.onSubmit(mode: Mode = NormalMode)

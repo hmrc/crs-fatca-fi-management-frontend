@@ -18,21 +18,18 @@
 
 @this()
 
-@(address: Option[Address] = None, addressRes: Option[AddressResponse]= None, classes: String = "govuk-body")
-
+@(address: Option[Address] = None, addressRes: Option[AddressResponse]= None, withCountry: Boolean = false, classes: String = "govuk-body")
 
 @lines = @{
     val rows = (address.isDefined, addressRes.isDefined) match {
-      case (true, _) => address.get.linesWithoutCountry
-      case (_, true) => addressRes.get.linesWithoutCountry
+        case (true, _) => if (withCountry) address.get.lines else address.get.linesWithoutCountry
+        case (_, true) => if (withCountry) addressRes.get.lines else addressRes.get.linesWithoutCountry
     }
     rows.map {
         case line => s"<p class='govuk-!-margin-top-0 govuk-!-margin-bottom-0'>$line</p>"
         case _    => ""
-      }
-      .mkString("")
-  }
-
+    }.mkString("")
+}
 
 <div class= "@classes">
     @Html(lines)

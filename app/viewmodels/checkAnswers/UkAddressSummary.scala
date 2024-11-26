@@ -34,7 +34,7 @@ object UkAddressSummary {
           key = "selectAddress.checkYourAnswersLabel",
           value = ValueViewModel(formatAddressBlock(answer)),
           actions = Seq(
-            accessibleActionItem("site.change", getAddressChangeRoute)
+            accessibleActionItem("site.change", getAddressChangeRoute(answers))
               .withVisuallyHiddenText(messages("selectAddress.change.hidden"))
           )
         )

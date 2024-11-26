@@ -1,0 +1,58 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import viewmodels.InputWidth._
+@import config.FrontendAppConfig
+
+@this(
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    govukInput: GovukInput,
+    link: components.Link,
+    heading: components.Heading,
+    appConfig: FrontendAppConfig,
+    govukButton: GovukButton
+)
+
+@(form: Form[_], mode: Mode, fiName: String)(implicit request: Request[_], messages: Messages)
+
+@layout(pageTitle = title(form, messages("whatIsCompanyRegistrationNumber.title"))) {
+
+    @formHelper(action = controllers.addFinancialInstitution.routes.WhatIsCompanyRegistrationNumberController.onSubmit()) {
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
+
+        @heading(messages("whatIsCompanyRegistrationNumber.heading", fiName))
+
+        <p class="govuk-body">@messages("whatIsCompanyRegistrationNumber.p1") @link(appConfig.searchCrn, "whatIsCompanyRegistrationNumber.p1.link", openInNewWindow = true).</p>
+
+        @govukInput(
+            InputViewModel(
+                field = form("value"),
+                label = LabelViewModel(messages("whatIsCompanyRegistrationNumber.heading", fiName)).visuallyHidden(),
+                hint = Some(HintViewModel(messages("whatIsCompanyRegistrationNumber.hint"))),
+            )
+            .withWidth(Fixed10)
+        )
+
+        @govukButton(
+            ButtonViewModel(messages("site.continue")).withAttribute("id" -> "submit")
+        )
+    }
+}

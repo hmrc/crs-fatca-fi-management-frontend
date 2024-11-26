@@ -19,7 +19,7 @@ package controllers.changeFinancialInstitution
 import com.google.inject.Inject
 import controllers.actions._
 import models.requests.DataRequest
-import models.{ChangeAnswers, UPDATE, UserAnswers}
+import models.{ChangeAnswers, UserAnswers}
 import pages.Page
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.Logging
@@ -94,7 +94,7 @@ class ChangeFinancialInstitutionController @Inject() (
   def confirmAndAdd(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       financialInstitutionsService
-        .addOrUpdateFinancialInstitution(request.fatcaId, request.userAnswers, UPDATE)
+        .updateFinancialInstitution(request.fatcaId, request.userAnswers)
         .flatMap(
           _ => financialInstitutionUpdateService.clearUserAnswers(request.userAnswers)
         )

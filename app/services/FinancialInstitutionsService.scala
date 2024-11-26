@@ -19,9 +19,10 @@ package services
 import connectors.FinancialInstitutionsConnector
 import models.FinancialInstitutions.TINType.{GIIN, UTR}
 import models.FinancialInstitutions._
-import models.{RequestType, UserAnswers}
+import models.UserAnswers
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
+import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.libs.json.{JsResult, JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -63,13 +64,25 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
     listsResult.get
   }
 
-  def addOrUpdateFinancialInstitution(subscriptionId: String, userAnswers: UserAnswers, requestType: RequestType)(implicit
+  def updateFinancialInstitution(subscriptionId: String, userAnswers: UserAnswers)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Unit] = {
-    val fiDetailsRequest = buildFiDetailsRequest(subscriptionId, userAnswers)
+    val fiDetailsRequest = buildUpdateFiDetailsRequest(subscriptionId, userAnswers)
     connector
-      .addOrUpdateFI(fiDetailsRequest, requestType)
+      .addOrUpdateFI(fiDetailsRequest)
+      .map(
+        _ => ()
+      )
+  }
+
+  def addFinancialInstitution(subscriptionId: String, userAnswers: UserAnswers)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[Unit] = {
+    val fiDetailsRequest = buildCreateFiDetailsRequest(subscriptionId, userAnswers)
+    connector
+      .addOrUpdateFI(fiDetailsRequest)
       .map(
         _ => ()
       )
@@ -84,11 +97,28 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
     connector.removeFi(removeFIDetail).map(_.body)
   }
 
-  private def buildFiDetailsRequest(subscriptionId: String, userAnswers: UserAnswers): CreateFIDetails =
+  private def buildCreateFiDetailsRequest(subscriptionId: String, userAnswers: UserAnswers): BaseFIDetail =
     (for {
       fiName  <- userAnswers.get(NameOfFinancialInstitutionPage)
       address <- extractAddress(userAnswers)
     } yield CreateFIDetails(
+      FIName = fiName,
+      SubscriptionID = subscriptionId,
+      TINDetails = extractTinDetails(userAnswers),
+      IsFIUser = userAnswers.get(ReportForRegisteredBusinessPage).contains(true),
+      IsFATCAReporting = true,
+      AddressDetails = address,
+      PrimaryContactDetails = extractPrimaryContactDetails(userAnswers),
+      SecondaryContactDetails = extractSecondaryContactDetails(userAnswers)
+    )).getOrElse(throw new IllegalStateException("Unable to build FIDetail"))
+
+  private def buildUpdateFiDetailsRequest(subscriptionId: String, userAnswers: UserAnswers): BaseFIDetail =
+    (for {
+      fiid    <- userAnswers.get(ChangeFiDetailsInProgressId)
+      fiName  <- userAnswers.get(NameOfFinancialInstitutionPage)
+      address <- extractAddress(userAnswers)
+    } yield FIDetail(
+      FIID = fiid,
       FIName = fiName,
       SubscriptionID = subscriptionId,
       TINDetails = extractTinDetails(userAnswers),

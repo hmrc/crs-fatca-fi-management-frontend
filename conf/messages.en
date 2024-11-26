@@ -147,6 +147,16 @@ whatIsUniqueTaxpayerReference.error.invalidFormat = Enter the Unique Taxpayer Re
 whatIsUniqueTaxpayerReference.hint = The UTR can be 10 or 13 digits long.
 whatIsUniqueTaxpayerReference.change.hidden = Change Unique Taxpayer Reference
 
+whatIsCompanyRegistrationNumber.title = What is the Company Registration Number (CRN) for the financial institution?
+whatIsCompanyRegistrationNumber.heading = What is the Company Registration Number for {0}?
+whatIsCompanyRegistrationNumber.hint = The CRN is 8 characters long, for example 01234567 or AC012345.
+whatIsCompanyRegistrationNumber.checkYourAnswersLabel = Company Registration Number
+whatIsCompanyRegistrationNumber.p1 = You can
+whatIsCompanyRegistrationNumber.p1.link = search Companies House for a Company Registration Number (opens in new tab)
+whatIsCompanyRegistrationNumber.error.required = Enter the financial institution’s Company Registration Number
+whatIsCompanyRegistrationNumber.error.invalid = Company Registration Number must only include letters A to Z and numbers 0 to 9
+whatIsCompanyRegistrationNumber.error.invalidFormat = 	Enter the Company Registration Number in the right format
+
 haveGIIN.title = Global Intermediary Identification Number (GIIN)
 haveGIIN.heading = Global Intermediary Identification Number (GIIN)
 haveGIIN.subheading = Would you like to provide a GIIN for {0} now?
@@ -397,13 +407,18 @@ isFIRegistered.changeYourAnswersLabel = Is this financial institution the busine
 isThisYourBusinessName.changeYourAnswersLabel = What is the name of the financial institution?
 reportForRegisteredBusiness.changeYourAnswersLabel = Is this financial institution the business you registered as?
 
-
-
 detailsUpdated.title = Details updated
 detailsUpdated.heading = Details updated for {0}
 detailsUpdated.p1 = Back to manage your financial institutions
 detailsUpdated.p2 = Back to manage your CRS and FATCA reports
 
+trustURN.title = What is the trust Unique Reference Number (URN) for the financial institution?
+trustURN.heading = What is the trust Unique Reference Number (URN) for {0}?
+trustURN.hint = The trust URN is 15 characters long, for example ABTRUST12345678.
+trustURN.error.required = Enter the trust Unique Reference Number
+trustURN.error.invalidChar = Trust Unique Reference Number must only include letters A to Z and numbers 0 to 9
+trustURN.error.invalidFormat = Enter the trust Unique Reference Number in the right format
+trustURN.error.real = Enter a real trust Unique Reference Number
 whichIdentificationNumbers.title = Which identification numbers can you provide for the financial institution?
 whichIdentificationNumbers.heading = Which identification numbers can you provide for {0}?
 whichIdentificationNumbers.hint = Select at least one option.
