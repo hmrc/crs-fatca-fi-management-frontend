@@ -58,7 +58,7 @@ class WhichIdentificationNumbersControllerSpec extends SpecBase with MockitoSuga
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(fiName, form, NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -76,7 +76,7 @@ class WhichIdentificationNumbersControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(WhichIdentificationNumbers.values.toSet), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(fiName, form.fill(WhichIdentificationNumbers.values.toSet), NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -122,7 +122,7 @@ class WhichIdentificationNumbersControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(fiName, boundForm, NormalMode)(request, messages(application)).toString
       }
     }
 

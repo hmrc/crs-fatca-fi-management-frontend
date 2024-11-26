@@ -25,6 +25,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.ContactHelper
 import views.html.addFinancialInstitution.WhichIdentificationNumbersView
 
 import javax.inject.Inject
@@ -42,26 +43,28 @@ class WhichIdentificationNumbersController @Inject() (
   view: WhichIdentificationNumbersView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
+    with ContactHelper
     with I18nSupport {
 
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
+      val fiName = getFinancialInstitutionName(request.userAnswers)
       val preparedForm = request.userAnswers.get(WhichIdentificationNumbersPage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
-
-      Ok(view(preparedForm, mode))
+      Ok(view(fiName, preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+      val fiName = getFinancialInstitutionName(request.userAnswers)
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          formWithErrors => Future.successful(BadRequest(view(fiName, formWithErrors, mode))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(WhichIdentificationNumbersPage, value))

@@ -19,7 +19,6 @@ package models
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
 import viewmodels.govuk.checkbox._
 
 sealed trait WhichIdentificationNumbers
@@ -36,8 +35,8 @@ object WhichIdentificationNumbers extends Enumerable.Implicits {
     TRN
   )
 
-  def checkboxItems(implicit messages: Messages): Seq[CheckboxItem] =
-    values.zipWithIndex.map {
+  def checkboxItems(implicit messages: Messages): Seq[CheckboxItem] = {
+    val items = values.zipWithIndex.map {
       case (value, index) =>
         CheckboxItemViewModel(
           content = Text(messages(s"whichIdentificationNumbers.${value.toString}")),
@@ -46,6 +45,9 @@ object WhichIdentificationNumbers extends Enumerable.Implicits {
           value = value.toString
         )
     }
+    items.patch(2, Seq(CheckboxItem(divider = Some("or"))), 0)
+
+  }
 
   implicit val enumerable: Enumerable[WhichIdentificationNumbers] =
     Enumerable(
