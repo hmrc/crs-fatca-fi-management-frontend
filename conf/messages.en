@@ -407,8 +407,6 @@ isFIRegistered.changeYourAnswersLabel = Is this financial institution the busine
 isThisYourBusinessName.changeYourAnswersLabel = What is the name of the financial institution?
 reportForRegisteredBusiness.changeYourAnswersLabel = Is this financial institution the business you registered as?
 
-
-
 detailsUpdated.title = Details updated
 detailsUpdated.heading = Details updated for {0}
 detailsUpdated.p1 = Back to manage your financial institutions
@@ -421,3 +419,14 @@ trustURN.error.required = Enter the trust Unique Reference Number
 trustURN.error.invalidChar = Trust Unique Reference Number must only include letters A to Z and numbers 0 to 9
 trustURN.error.invalidFormat = Enter the trust Unique Reference Number in the right format
 trustURN.error.real = Enter a real trust Unique Reference Number
+whichIdentificationNumbers.title = Which identification numbers can you provide for the financial institution?
+whichIdentificationNumbers.heading = Which identification numbers can you provide for {0}?
+whichIdentificationNumbers.hint = Select at least one option.
+whichIdentificationNumbers.UTR = Unique Taxpayer Reference (UTR)
+whichIdentificationNumbers.CRN = Company Registration Number (CRN)
+whichIdentificationNumbers.TRN = Trust Unique Reference Number (URN)
+whichIdentificationNumbers.or = or
+whichIdentificationNumbers.checkYourAnswersLabel = whichIdentificationNumbers
+whichIdentificationNumbers.error.required = Select which identification numbers you can provide for the financial institution
+whichIdentificationNumbers.error.noMixedTrn = Select ‘Trust Unique Reference Number (URN)’ only or select one or both of the other options
+whichIdentificationNumbers.change.hidden = WhichIdentificationNumbers
