@@ -35,16 +35,13 @@
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
 
-        @heading(messages("whichIdentificationNumbers.heading", fiName))
-        <div class="govuk-hint"> @messages("whichIdentificationNumbers.hint") </div>
-
         @govukCheckboxes(
             CheckboxesViewModel(
                 form   = form,
                 name   = "value",
-                legend = LegendViewModel(""),
+                legend = LegendViewModel(messages("whichIdentificationNumbers.heading", fiName)).asPageHeading(),
                 items  = WhichIdentificationNumbers.checkboxItems
-            )
+            ).withHint(Hint(content = Text(messages("whichIdentificationNumbers.hint"))))
         )
 
         @govukButton(
