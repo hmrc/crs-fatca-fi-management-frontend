@@ -18,7 +18,7 @@ package controllers.addFinancialInstitution
 
 import controllers.actions._
 import forms.addFinancialInstitution.IsThisAddressFormProvider
-import models.Mode
+import models.{Country, Mode}
 import navigation.Navigator
 import pages.addFinancialInstitution.{AddressLookupPage, IsThisAddressPage, SelectedAddressLookupPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -74,11 +74,15 @@ class IsThisAddressController @Inject() (
               formWithErrors =>
                 Future.successful(BadRequest(view(formWithErrors, mode, getFinancialInstitutionName(request.userAnswers), address.head.toAddress))),
               value =>
-                for {
-                  updatedAnswers                    <- Future.fromTry(ua.set(IsThisAddressPage, value))
-                  updatedAnswersWithSelectedAddress <- Future.fromTry(updatedAnswers.set(SelectedAddressLookupPage, address.head))
-                  _                                 <- sessionRepository.set(updatedAnswersWithSelectedAddress)
-                } yield Redirect(navigator.nextPage(IsThisAddressPage, mode, updatedAnswersWithSelectedAddress))
+                (address.head.country, ua.get(IsThisAddressPage)) match {
+                  case (country, Some(true)) if country != Country.GB => Future.successful(Redirect(controllers.routes.NotInUKController.onPageLoad()))
+                  case _ =>
+                    for {
+                      updatedAnswers                    <- Future.fromTry(ua.set(IsThisAddressPage, value))
+                      updatedAnswersWithSelectedAddress <- Future.fromTry(updatedAnswers.set(SelectedAddressLookupPage, address.head))
+                      _                                 <- sessionRepository.set(updatedAnswersWithSelectedAddress)
+                    } yield Redirect(navigator.nextPage(IsThisAddressPage, mode, updatedAnswersWithSelectedAddress))
+                }
             )
         case None => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 

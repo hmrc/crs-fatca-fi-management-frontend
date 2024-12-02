@@ -30,6 +30,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
+import views.html.NotInUKView
 import views.html.addFinancialInstitution.IsThisAddressView
 
 import scala.concurrent.Future
@@ -61,7 +62,19 @@ class IsThisAddressControllerSpec extends SpecBase with MockitoSugar {
     country = Some(Country.GB)
   )
 
-  val userAnswers: UserAnswers = emptyUserAnswers.set(AddressLookupPage, Seq(addressLookup)).success.value
+  val nonUKAddressLookup: AddressLookup = AddressLookup(
+    Some("1 address street"),
+    addressLine2 = None,
+    addressLine3 = None,
+    addressLine4 = None,
+    town = "Address town",
+    county = Some("Wessex"),
+    postcode = "postcode",
+    country = Some(Country.NonGB)
+  )
+
+  val userAnswers: UserAnswers      = emptyUserAnswers.set(AddressLookupPage, Seq(addressLookup)).success.value
+  val nonUKUserAnswers: UserAnswers = emptyUserAnswers.set(AddressLookupPage, Seq(nonUKAddressLookup)).success.value
 
   lazy val isThisAddressRoute = routes.IsThisAddressController.onPageLoad(NormalMode).url
 
@@ -112,6 +125,28 @@ class IsThisAddressControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form.fill(true), NormalMode, fiName, address)(request, messages(application)).toString
+      }
+    }
+
+    "must redirect to NotInUK page when nonUK address returned and answer is yes on submit" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(nonUKUserAnswers.set(IsThisAddressPage, true).success.value))
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, isThisAddressRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.NotInUKController.onPageLoad().url
       }
     }
 
