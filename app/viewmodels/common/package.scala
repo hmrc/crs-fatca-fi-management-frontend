@@ -16,9 +16,10 @@
 
 package viewmodels
 
-import models.{AnswersReviewPageType, CheckMode, UserAnswers}
-import pages.addFinancialInstitution.HaveGIINPage
+import models.WhichIdentificationNumbers._
+import models.{AnswersReviewPageType, CheckMode, UserAnswers, WhichIdentificationNumbers}
 import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
+import pages.addFinancialInstitution.{HaveGIINPage, WhichIdentificationNumbersPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, SummaryListRow}
@@ -66,6 +67,18 @@ package object common {
       case Some(true)  => Seq(HaveGIINSummary.row(ua, pageType), WhatIsGIINSummary.row(ua, pageType)).flatten
       case Some(false) => Seq(HaveGIINSummary.row(ua, pageType)).flatten
       case _           => Seq.empty
+    }
+  }
+
+  def getIdRows(ua: UserAnswers, pageType: AnswersReviewPageType)(implicit messages: Messages): Seq[SummaryListRow] = {
+    val idsUsed: Seq[WhichIdentificationNumbers] = ua.get(WhichIdentificationNumbersPage).fold(Seq.empty[WhichIdentificationNumbers])(_.toSeq)
+    idsUsed match {
+      case Seq(UTR) => Seq(WhichIdentificationNumbersSummary.row(ua), WhatIsUniqueTaxpayerReferenceSummary.row(ua, pageType)).flatten
+      case Seq(CRN) => Seq(WhichIdentificationNumbersSummary.row(ua), CompanyRegistrationNumberSummary.row(ua)).flatten
+      case Seq(UTR, CRN) =>
+        Seq(WhichIdentificationNumbersSummary.row(ua), WhatIsUniqueTaxpayerReferenceSummary.row(ua, pageType), CompanyRegistrationNumberSummary.row(ua)).flatten
+      case Seq(TRN) => Seq(WhichIdentificationNumbersSummary.row(ua), TrustURNSummary.row(ua)).flatten
+      case _        => Seq.empty[SummaryListRow]
     }
   }
 

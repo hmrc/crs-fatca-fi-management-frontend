@@ -18,7 +18,7 @@ package controllers.addFinancialInstitution
 
 import controllers.actions._
 import forms.addFinancialInstitution.WhichIdentificationNumbersFormProvider
-import models.Mode
+import models.{Mode, WhichIdentificationNumbers}
 import navigation.Navigator
 import pages.addFinancialInstitution.WhichIdentificationNumbersPage
 import play.api.i18n.{I18nSupport, MessagesApi}
