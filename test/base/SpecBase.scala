@@ -210,7 +210,11 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
 
   val testAddress: Address                 = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"), Country.GB)
   val testAddressResponse: AddressResponse = AddressResponse("value 1", Some("value 2"), Some("value 3"), Some("value 4"), Some("XX9 9XX"), Country.GB.code)
-  val testAddressLookup: AddressLookup     = AddressLookup(Some("1 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ", Some(Country.GB))
+
+  val testNonUKAddressResponse: AddressResponse =
+    AddressResponse("value 1", Some("value 2"), Some("value 3"), Some("value 4"), Some("XX9 9XX"), Country.NonGB.code)
+
+  val testAddressLookup: AddressLookup = AddressLookup(Some("1 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ", Some(Country.GB))
 
   val userAnswersForAddFI: UserAnswers = emptyUserAnswers
     .withPage(NameOfFinancialInstitutionPage, "testfi")

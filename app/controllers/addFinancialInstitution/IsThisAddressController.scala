@@ -75,7 +75,6 @@ class IsThisAddressController @Inject() (
                 Future.successful(BadRequest(view(formWithErrors, mode, getFinancialInstitutionName(request.userAnswers), address.head.toAddress))),
               value =>
                 (address.head.country, ua.get(IsThisAddressPage)) match {
-                  case (country, Some(true)) if country != Country.GB => Future.successful(Redirect(controllers.routes.NotInUKController.onPageLoad()))
                   case _ =>
                     for {
                       updatedAnswers                    <- Future.fromTry(ua.set(IsThisAddressPage, value))
