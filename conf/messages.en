@@ -407,8 +407,6 @@ isFIRegistered.changeYourAnswersLabel = Is this financial institution the busine
 isThisYourBusinessName.changeYourAnswersLabel = What is the name of the financial institution?
 reportForRegisteredBusiness.changeYourAnswersLabel = Is this financial institution the business you registered as?
 
-
-
 detailsUpdated.title = Details updated
 detailsUpdated.heading = Details updated for {0}
 detailsUpdated.p1 = Back to manage your financial institutions
@@ -428,3 +426,15 @@ notInUK.p1 = You have confirmed that the registered business address for ABC Ban
 notInUK.p2 = If you confirmed this by mistake, then you can {0}.
 notInUK.p2.link = review and change the address to the right one
 notInUK.p3 = Email {0} if you need help with this service.
+
+whichIdentificationNumbers.title = Which identification numbers can you provide for the financial institution?
+whichIdentificationNumbers.heading = Which identification numbers can you provide for {0}?
+whichIdentificationNumbers.hint = Select at least one option.
+whichIdentificationNumbers.UTR = Unique Taxpayer Reference (UTR)
+whichIdentificationNumbers.CRN = Company Registration Number (CRN)
+whichIdentificationNumbers.TRN = Trust Unique Reference Number (URN)
+whichIdentificationNumbers.or = or
+whichIdentificationNumbers.checkYourAnswersLabel = whichIdentificationNumbers
+whichIdentificationNumbers.error.required = Select which identification numbers you can provide for the financial institution
+whichIdentificationNumbers.error.noMixedTrn = Select ‘Trust Unique Reference Number (URN)’ only or select one or both of the other options
+whichIdentificationNumbers.change.hidden = WhichIdentificationNumbers

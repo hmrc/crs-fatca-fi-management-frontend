@@ -25,6 +25,11 @@ import utils.RegexConstants
 
 trait ModelGenerators extends RegexConstants with Generators {
 
+  implicit lazy val arbitraryWhichIdentificationNumbers: Arbitrary[WhichIdentificationNumbers] =
+    Arbitrary {
+      Gen.oneOf(WhichIdentificationNumbers.values)
+    }
+
   val maximumNumber     = 999999
   val minimumNumber     = 1
   val countryNumber     = 2
