@@ -117,13 +117,14 @@ class IsTheAddressCorrectController @Inject() (
                   Future
                     .successful(BadRequest(view(formWithErrors, mode, getFinancialInstitutionName(request.userAnswers), address))),
                 value =>
-                  (address.country, request.userAnswers.get(IsTheAddressCorrectPage)) match {
-                    case (country, Some(true)) if country != Country.GB => Future.successful(Redirect(controllers.routes.NotInUKController.onPageLoad()))
+                  for {
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(IsTheAddressCorrectPage, value))
+                    _              <- sessionRepository.set(updatedAnswers)
+                  } yield (address.country, value) match {
+                    case (country, true) if country != Country.GB =>
+                      Redirect(controllers.routes.NotInUKController.onPageLoad())
                     case _ =>
-                      for {
-                        updatedAnswers <- Future.fromTry(request.userAnswers.set(IsTheAddressCorrectPage, value))
-                        _              <- sessionRepository.set(updatedAnswers)
-                      } yield Redirect(navigator.nextPage(IsTheAddressCorrectPage, mode, updatedAnswers))
+                      Redirect(navigator.nextPage(IsTheAddressCorrectPage, mode, updatedAnswers))
                   }
               )
         }
