@@ -121,7 +121,7 @@ class IsTheAddressCorrectController @Inject() (
                     updatedAnswers <- Future.fromTry(request.userAnswers.set(IsTheAddressCorrectPage, value))
                     _              <- sessionRepository.set(updatedAnswers)
                   } yield (address.country, value) match {
-                    case (country, true) if country != Country.GB =>
+                    case (country, true) if country.exists(_ != Country.GB) =>
                       Redirect(controllers.routes.NotInUKController.onPageLoad())
                     case _ =>
                       Redirect(navigator.nextPage(IsTheAddressCorrectPage, mode, updatedAnswers))

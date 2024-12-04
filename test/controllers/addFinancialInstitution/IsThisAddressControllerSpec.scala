@@ -30,7 +30,6 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import views.html.NotInUKView
 import views.html.addFinancialInstitution.IsThisAddressView
 
 import scala.concurrent.Future

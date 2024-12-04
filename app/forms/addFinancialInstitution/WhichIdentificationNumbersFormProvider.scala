@@ -18,7 +18,6 @@ package forms.addFinancialInstitution
 
 import forms.mappings.Mappings
 import models.WhichIdentificationNumbers
-import models.WhichIdentificationNumbers.CRN
 import play.api.data.Form
 import play.api.data.Forms.set
 
