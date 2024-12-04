@@ -16,7 +16,7 @@
 
 package viewmodels.common
 
-import models.UserAnswers
+import models.{CheckMode, UserAnswers}
 import pages.CompanyRegistrationNumberPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
@@ -33,7 +33,7 @@ object CompanyRegistrationNumberSummary {
           key = "CRN.checkYourAnswersLabel",
           value = ValueViewModel(HtmlFormat.escape(answer.value).toString),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.addFinancialInstitution.routes.WhatIsCompanyRegistrationNumberController.onPageLoad().url)
+            ActionItemViewModel("site.change", controllers.addFinancialInstitution.routes.WhatIsCompanyRegistrationNumberController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("CRN.change.hidden"))
           )
         )
