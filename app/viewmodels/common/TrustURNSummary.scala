@@ -33,7 +33,7 @@ object TrustURNSummary {
           key = "trustURN.checkYourAnswersLabel",
           value = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.addFinancialInstitution.routes.TrustURNController.onPageLoad(CheckMode).url)
+            accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.TrustURNController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("trustURN.change.hidden"))
           )
         )

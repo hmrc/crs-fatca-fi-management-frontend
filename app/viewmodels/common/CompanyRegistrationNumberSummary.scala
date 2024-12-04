@@ -33,7 +33,7 @@ object CompanyRegistrationNumberSummary {
           key = "CRN.checkYourAnswersLabel",
           value = ValueViewModel(HtmlFormat.escape(answer.value).toString),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.addFinancialInstitution.routes.WhatIsCompanyRegistrationNumberController.onPageLoad(CheckMode).url)
+            accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.WhatIsCompanyRegistrationNumberController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("CRN.change.hidden"))
           )
         )
