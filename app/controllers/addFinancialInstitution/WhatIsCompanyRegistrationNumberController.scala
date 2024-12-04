@@ -51,7 +51,11 @@ class WhatIsCompanyRegistrationNumberController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
       val fiName = getFinancialInstitutionName(request.userAnswers)
-      Ok(view(form, mode, fiName))
+      val preparedForm = request.userAnswers.get(CompanyRegistrationNumberPage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
+      }
+      Ok(view(preparedForm, mode, fiName))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
