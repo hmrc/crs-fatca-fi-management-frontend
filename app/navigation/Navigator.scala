@@ -153,7 +153,10 @@ class Navigator @Inject() () {
           controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
           routes.FirstContactNameController.onPageLoad(NormalMode)
         )
-    case RemoveAreYouSurePage => _ => controllers.routes.YourFinancialInstitutionsController.onPageLoad()
+    case RemoveAreYouSurePage           => _ => controllers.routes.YourFinancialInstitutionsController.onPageLoad()
+    case WhichIdentificationNumbersPage => redirectToCheckYouAnswers // proper navigation will be added in 3404
+    case CompanyRegistrationNumberPage  => redirectToCheckYouAnswers
+    case TrustURNPage                   => redirectToCheckYouAnswers
     case _ =>
       _ => controllers.routes.IndexController.onPageLoad()
   }
@@ -253,7 +256,7 @@ class Navigator @Inject() () {
     case _ => redirectToCheckYouAnswers
   }
 
-  private def redirectToCheckYouAnswers(ua: UserAnswers): Call = resolveAnswersVerificationRoute(ua)
+  def redirectToCheckYouAnswers(ua: UserAnswers): Call = resolveAnswersVerificationRoute(ua)
 
   private def isFiUser(ua: UserAnswers, yesCall: => Call, noCall: => Call): Call =
     ua.get(ReportForRegisteredBusinessPage) match {
