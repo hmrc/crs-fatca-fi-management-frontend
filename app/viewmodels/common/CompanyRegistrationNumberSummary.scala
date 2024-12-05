@@ -17,24 +17,24 @@
 package viewmodels.common
 
 import models.{CheckMode, UserAnswers}
-import pages.TrustURNPage
+import pages.CompanyRegistrationNumberPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object TrustURNSummary {
+object CompanyRegistrationNumberSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(TrustURNPage).map {
+    answers.get(CompanyRegistrationNumberPage).map {
       answer =>
         SummaryListRowViewModel(
-          key = "trustURN.checkYourAnswersLabel",
-          value = ValueViewModel(HtmlFormat.escape(answer).toString),
+          key = "CRN.checkYourAnswersLabel",
+          value = ValueViewModel(HtmlFormat.escape(answer.value).toString),
           actions = Seq(
-            accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.TrustURNController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("trustURN.change.hidden"))
+            accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.WhatIsCompanyRegistrationNumberController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("CRN.change.hidden"))
           )
         )
     }

@@ -150,12 +150,13 @@ whatIsUniqueTaxpayerReference.change.hidden = Change Unique Taxpayer Reference
 whatIsCompanyRegistrationNumber.title = What is the Company Registration Number (CRN) for the financial institution?
 whatIsCompanyRegistrationNumber.heading = What is the Company Registration Number for {0}?
 whatIsCompanyRegistrationNumber.hint = The CRN is 8 characters long, for example 01234567 or AC012345.
-whatIsCompanyRegistrationNumber.checkYourAnswersLabel = Company Registration Number
 whatIsCompanyRegistrationNumber.p1 = You can
 whatIsCompanyRegistrationNumber.p1.link = search Companies House for a Company Registration Number (opens in new tab)
 whatIsCompanyRegistrationNumber.error.required = Enter the financial institution’s Company Registration Number
 whatIsCompanyRegistrationNumber.error.invalid = Company Registration Number must only include letters A to Z and numbers 0 to 9
 whatIsCompanyRegistrationNumber.error.invalidFormat = 	Enter the Company Registration Number in the right format
+CRN.checkYourAnswersLabel = Company Registration Number
+CRN.change.hidden = Change Company Registration Number
 
 haveGIIN.title = Global Intermediary Identification Number (GIIN)
 haveGIIN.heading = Global Intermediary Identification Number (GIIN)
@@ -427,6 +428,9 @@ notInUK.p2 = If you confirmed this by mistake, then you can {0}
 notInUK.p2.link = review and change the address to the right one
 notInUK.p3 = Email {0} if you need help with this service.
 
+trustURN.checkYourAnswersLabel = Trust Unique Reference Number
+trustURN.change.hidden = Change trust Unique Reference Number
+
 whichIdentificationNumbers.title = Which identification numbers can you provide for the financial institution?
 whichIdentificationNumbers.heading = Which identification numbers can you provide for {0}?
 whichIdentificationNumbers.hint = Select at least one option.
@@ -434,7 +438,7 @@ whichIdentificationNumbers.UTR = Unique Taxpayer Reference (UTR)
 whichIdentificationNumbers.CRN = Company Registration Number (CRN)
 whichIdentificationNumbers.TRN = Trust Unique Reference Number (URN)
 whichIdentificationNumbers.or = or
-whichIdentificationNumbers.checkYourAnswersLabel = whichIdentificationNumbers
+whichIdentificationNumbers.checkYourAnswersLabel = Which identification numbers can you provide for them?
 whichIdentificationNumbers.error.required = Select which identification numbers you can provide for the financial institution
 whichIdentificationNumbers.error.noMixedTrn = Select ‘Trust Unique Reference Number (URN)’ only or select one or both of the other options
-whichIdentificationNumbers.change.hidden = WhichIdentificationNumbers
+whichIdentificationNumbers.change.hidden = Change which identification numbers you can provide for them
