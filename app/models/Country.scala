@@ -24,7 +24,5 @@ object Country {
 
   val GB = Country("", "GB", "United Kingdom")
 
-  val NonGB = Country("", "DE", "Germany")
-
   implicit val format: OFormat[Country] = Json.format[Country]
 }
