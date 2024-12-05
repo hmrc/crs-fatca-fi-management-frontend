@@ -16,12 +16,13 @@
 
 package generators
 
-import java.time.{Instant, LocalDate, ZoneOffset}
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen._
 import org.scalacheck.{Gen, Shrink}
 import utils.RegexConstants
 import wolfendale.scalacheck.regexp.RegexpGen
+
+import java.time.{Instant, LocalDate, ZoneOffset}
 
 trait Generators extends RegexConstants {
 
@@ -156,11 +157,15 @@ trait Generators extends RegexConstants {
     }
   }
 
-  def stringsNotOfFixedLengthNumeric(givenLength: Int): Gen[String] = for {
-    maxLength <- givenLength + 50
-    length    <- Gen.chooseNum(1, maxLength).suchThat(_ != givenLength)
-    chars     <- listOfN(length, Gen.numChar)
-  } yield chars.mkString
+  def stringsNotOfFixedLengthsNumeric(validLengths: Set[Int]): Gen[String] =
+    Gen
+      .choose(1, 50)
+      .suchThat(
+        len => !validLengths.contains(len)
+      )
+      .flatMap(
+        len => Gen.listOfN(len, Gen.numChar).map(_.mkString)
+      )
 
   def validUtr: Gen[String] = for {
     chars <- listOfN(10, Gen.oneOf(List(1, 2, 3, 4, 5, 6, 7, 8, 9)))

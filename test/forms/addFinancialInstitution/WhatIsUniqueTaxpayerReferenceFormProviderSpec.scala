@@ -21,10 +21,10 @@ import play.api.data.FormError
 
 class WhatIsUniqueTaxpayerReferenceFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey      = "whatIsUniqueTaxpayerReference.error.required"
-  val invalidFormatKey = "whatIsUniqueTaxpayerReference.error.invalidFormat"
-  val invalidKey       = "whatIsUniqueTaxpayerReference.error.invalid"
-  val fixedLength      = 10
+  val requiredKey              = "whatIsUniqueTaxpayerReference.error.required"
+  val invalidFormatKey         = "whatIsUniqueTaxpayerReference.error.invalidFormat"
+  val invalidKey               = "whatIsUniqueTaxpayerReference.error.invalid"
+  val allowedLengths: Set[Int] = Set(10, 13)
 
   val form = new WhatIsUniqueTaxpayerReferenceFormProvider()()
 
@@ -38,10 +38,10 @@ class WhatIsUniqueTaxpayerReferenceFormProviderSpec extends StringFieldBehaviour
       validUtr
     )
 
-    behave like fieldWithFixedLengthNumeric(
+    behave like fieldWithFixedLengthsNumeric(
       form,
       fieldName,
-      fixedLength,
+      allowedLengths,
       lengthError = FormError(fieldName, invalidFormatKey)
     )
 
@@ -63,6 +63,7 @@ class WhatIsUniqueTaxpayerReferenceFormProviderSpec extends StringFieldBehaviour
       "jjdjdj£%^&kfkf",
       FormError(fieldName, invalidKey)
     )
+
   }
 
 }
