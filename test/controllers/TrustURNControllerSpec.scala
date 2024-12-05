@@ -24,7 +24,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.TrustURNPage
-import pages.addFinancialInstitution.{FirstContactNamePage, NameOfFinancialInstitutionPage}
+import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest

@@ -74,11 +74,14 @@ class IsThisAddressController @Inject() (
               formWithErrors =>
                 Future.successful(BadRequest(view(formWithErrors, mode, getFinancialInstitutionName(request.userAnswers), address.head.toAddress))),
               value =>
-                for {
-                  updatedAnswers                    <- Future.fromTry(ua.set(IsThisAddressPage, value))
-                  updatedAnswersWithSelectedAddress <- Future.fromTry(updatedAnswers.set(SelectedAddressLookupPage, address.head))
-                  _                                 <- sessionRepository.set(updatedAnswersWithSelectedAddress)
-                } yield Redirect(navigator.nextPage(IsThisAddressPage, mode, updatedAnswersWithSelectedAddress))
+                (address.head.country, ua.get(IsThisAddressPage)) match {
+                  case _ =>
+                    for {
+                      updatedAnswers                    <- Future.fromTry(ua.set(IsThisAddressPage, value))
+                      updatedAnswersWithSelectedAddress <- Future.fromTry(updatedAnswers.set(SelectedAddressLookupPage, address.head))
+                      _                                 <- sessionRepository.set(updatedAnswersWithSelectedAddress)
+                    } yield Redirect(navigator.nextPage(IsThisAddressPage, mode, updatedAnswersWithSelectedAddress))
+                }
             )
         case None => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 

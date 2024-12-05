@@ -420,6 +420,14 @@ trustURN.error.required = Enter the trust Unique Reference Number
 trustURN.error.invalidChar = Trust Unique Reference Number must only include letters A to Z and numbers 0 to 9
 trustURN.error.invalidFormat = Enter the trust Unique Reference Number in the right format
 trustURN.error.real = Enter a real trust Unique Reference Number
+
+notInUK.title = This service is only for financial institutions based in the UK
+notInUK.heading = This service is only for financial institutions based in the UK
+notInUK.p1 = You have confirmed that the registered business address for ABC Bank plc is not in the UK.
+notInUK.p2 = If you confirmed this by mistake, then you can {0}
+notInUK.p2.link = review and change the address to the right one
+notInUK.p3 = Email {0} if you need help with this service.
+
 trustURN.checkYourAnswersLabel = Trust Unique Reference Number
 trustURN.change.hidden = Change trust Unique Reference Number
 

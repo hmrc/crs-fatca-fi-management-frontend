@@ -39,7 +39,7 @@
 
         @heading(messages("selectAddress.heading", fiName))
 
-        <p class="govuk-body">@Html(messages( "selectAddress.p1.part1", link(controllers.addFinancialInstitution.routes.UkAddressController.onPageLoad(mode).url, "selectAddress.p1.part2", Some("manualAddress")))).</p>
+        <p class="govuk-body">@Html(messages( "selectAddress.p1.part1", link(controllers.addFinancialInstitution.routes.UkAddressController.onPageLoad(NormalMode).url, "selectAddress.p1.part2", Some("manualAddress")))).</p>
 
         @govukRadios(
             RadiosViewModel.apply(
