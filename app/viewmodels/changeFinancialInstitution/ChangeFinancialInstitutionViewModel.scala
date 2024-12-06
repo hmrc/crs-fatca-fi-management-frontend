@@ -27,8 +27,7 @@ object ChangeFinancialInstitutionViewModel {
     Seq(
       Option(FinancialInstitutionIdSummary.row(fiId)),
       NameOfFinancialInstitutionSummary.row(userAnswers, ChangeAnswers),
-      HaveUniqueTaxpayerReferenceSummary.row(userAnswers, ChangeAnswers),
-      WhatIsUniqueTaxpayerReferenceSummary.row(userAnswers, ChangeAnswers),
+      getIdRows(userAnswers, ChangeAnswers),
       getGIINRows(userAnswers, ChangeAnswers),
       getAddressRow(userAnswers, ChangeAnswers)
     ).flatten
