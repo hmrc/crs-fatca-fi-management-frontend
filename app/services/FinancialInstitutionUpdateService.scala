@@ -17,6 +17,7 @@
 package services
 
 import com.google.inject.Inject
+import controllers.routes
 import models.FinancialInstitutions.TINType.{GIIN, UTR}
 import models.FinancialInstitutions._
 import models.{GIINumber, TaxIdentificationNumber, UniqueTaxpayerReference, UserAnswers}
@@ -25,15 +26,18 @@ import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPa
 import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.libs.json.{Json, Reads}
+import play.api.mvc.Results.Redirect
 import repositories.SessionRepository
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.CountryListFactory
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class FinancialInstitutionUpdateService @Inject() (
   countryListFactory: CountryListFactory,
-  sessionRepository: SessionRepository
-)(implicit ec: ExecutionContext) {
+  sessionRepository: SessionRepository,
+  subscriptionService: SubscriptionService
+)(implicit ec: ExecutionContext, hc: HeaderCarrier) {
 
   def populateAndSaveFiDetails(userAnswers: UserAnswers, fiDetails: FIDetail): Future[UserAnswers] =
     for {
@@ -87,7 +91,7 @@ class FinancialInstitutionUpdateService @Inject() (
       b <- Future.fromTry(a.set(NameOfFinancialInstitutionPage, fiDetails.FIName, cleanup = false))
       c <- setGIIN(b, fiDetails.TINDetails)
       d <- setAddress(c, fiDetails.AddressDetails)
-      e <- setFiUserDetails(d)
+      e <- setFiUserDetails(d, fiDetails)
     } yield e
 
   private def setUTR(userAnswers: UserAnswers, tinDetails: Seq[TINDetails])(implicit ec: ExecutionContext): Future[UserAnswers] =
@@ -161,12 +165,21 @@ class FinancialInstitutionUpdateService @Inject() (
         } yield b
     }
 
-  private def setFiUserDetails(userAnswers: UserAnswers): Future[UserAnswers] = for {
-    a <- Future.fromTry(userAnswers.set(ReportForRegisteredBusinessPage, true, cleanup = false))
-    b <- Future.fromTry(a.set(IsThisYourBusinessNamePage, true, cleanup = false))
-    c <- Future.fromTry(b.set(IsThisAddressPage, true, cleanup = false))
-    d <- Future.fromTry(c.set(IsTheAddressCorrectPage, true, cleanup = false))
-  } yield d
+  private def setFiUserDetails(userAnswers: UserAnswers, fiDetails: FIDetail): Future[UserAnswers] = {
+
+    val doesFiNameMatch: Future[Boolean] = subscriptionService.getSubscription(fiDetails.FIID).map {
+      subscription =>
+        subscription.businessName.get == userAnswers.get(NameOfFinancialInstitutionPage).getOrElse("")
+    }
+
+    for {
+      doesNameMatchValue <- doesFiNameMatch
+      a                  <- Future.fromTry(userAnswers.set(ReportForRegisteredBusinessPage, true, cleanup = false))
+      b                  <- Future.fromTry(a.set(IsThisYourBusinessNamePage, doesNameMatchValue, cleanup = false))
+      c                  <- Future.fromTry(b.set(IsThisAddressPage, true, cleanup = false))
+      d                  <- Future.fromTry(c.set(IsTheAddressCorrectPage, true, cleanup = false))
+    } yield d
+  }
 
   private def setSecondaryContactDetails(userAnswers: UserAnswers, fiDetails: FIDetail)(implicit ec: ExecutionContext): Future[UserAnswers] =
     for {
