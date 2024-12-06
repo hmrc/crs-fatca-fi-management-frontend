@@ -17,29 +17,49 @@
 package viewmodels.checkAnswers
 
 import base.SpecBase
-import models.{AddressResponse, CheckAnswers, CheckMode, GIINumber, UserAnswers}
-import org.scalatestplus.mockito.MockitoSugar.mock
+import models.WhichIdentificationNumbers._
+import models.{AddressResponse, CheckAnswers, CheckMode, CompanyRegistrationNumber, GIINumber, UniqueTaxpayerReference, UserAnswers, WhichIdentificationNumbers}
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
+import pages.{CompanyRegistrationNumberPage, TrustURNPage}
 import play.api.i18n.Messages
+import play.api.test.Helpers.stubMessages
 import viewmodels.common.{getAddressChangeRoute, getFirstContactSummaries, getSecondContactSummaries}
 
 class CheckYourAnswersViewModelSpec extends SpecBase {
 
-  implicit val mockMessages: Messages     = mock[Messages]
+  implicit val mockMessages: Messages     = stubMessages()
   val sut: CheckYourAnswersViewModel.type = CheckYourAnswersViewModel
   val ua: UserAnswers                     = emptyUserAnswers
 
   "CheckYourAnswersViewModel" - {
     "getFinancialInstitutionSummaries must" - {
       val ua1 = emptyUserAnswers.withPage(NameOfFinancialInstitutionPage, "TestFinancialInstitutionName")
-      val ua2 = ua1.withPage(HaveUniqueTaxpayerReferencePage, true)
-      val ua3 = ua2.withPage(FirstContactEmailPage, "test@email.com")
+      val ua2 = ua1.withPage(FirstContactEmailPage, "test@email.com")
 
       "only return rows for relevant populated answers" in {
         sut.getFinancialInstitutionSummaries(emptyUserAnswers).length mustBe 0
         sut.getFinancialInstitutionSummaries(ua1).length mustBe 1
-        sut.getFinancialInstitutionSummaries(ua2).length mustBe 2
+        sut.getFinancialInstitutionSummaries(ua2).length mustBe 1
+      }
+    }
+    "getIdRows must" - {
+      "display relevant rows" in {
+        val identifiers: Set[WhichIdentificationNumbers] = Set(WhichIdentificationNumbers.UTR)
+        val ua1 = ua
+          .withPage(WhichIdentificationNumbersPage, identifiers)
+          .withPage(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference("test"))
+          .withPage(CompanyRegistrationNumberPage, CompanyRegistrationNumber("test"))
+        val ua2 = ua
+          .withPage(WhichIdentificationNumbersPage, Set(UTR: WhichIdentificationNumbers, CRN: WhichIdentificationNumbers))
+          .withPage(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference("test"))
+          .withPage(CompanyRegistrationNumberPage, CompanyRegistrationNumber("test"))
+        val ua3 = ua
+          .withPage(WhichIdentificationNumbersPage, Set(TRN: WhichIdentificationNumbers))
+          .withPage(TrustURNPage, "test")
+
+        sut.getFinancialInstitutionSummaries(ua1).length mustBe 2
+        sut.getFinancialInstitutionSummaries(ua2).length mustBe 3
         sut.getFinancialInstitutionSummaries(ua3).length mustBe 2
       }
     }

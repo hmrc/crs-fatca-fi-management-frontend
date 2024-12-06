@@ -21,10 +21,10 @@ import play.api.data.FormError
 
 class CompanyRegistrationNumberFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey      = "whatIsCompanyRegistrationNumber.error.required"
-  val invalidFormatKey = "whatIsCompanyRegistrationNumber.error.invalidFormat"
-  val invalidKey       = "whatIsCompanyRegistrationNumber.error.invalid"
-  val fixedLength      = 8
+  val requiredKey           = "whatIsCompanyRegistrationNumber.error.required"
+  val invalidFormatKey      = "whatIsCompanyRegistrationNumber.error.invalidFormat"
+  val invalidKey            = "whatIsCompanyRegistrationNumber.error.invalid"
+  val fixedLength: Set[Int] = Set(8)
 
   val form = new CompanyRegistrationNumberFormProvider()()
 
@@ -38,7 +38,7 @@ class CompanyRegistrationNumberFormProviderSpec extends StringFieldBehaviours {
       validCrn
     )
 
-    behave like fieldWithFixedLengthNumeric(
+    behave like fieldWithFixedLengthsNumeric(
       form,
       fieldName,
       fixedLength,

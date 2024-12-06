@@ -27,8 +27,7 @@ object CheckYourAnswersViewModel {
     Seq(
       ReportForRegisteredBusinessSummary.row(ua, CheckAnswers),
       NameOfFinancialInstitutionSummary.row(ua, CheckAnswers),
-      HaveUniqueTaxpayerReferenceSummary.row(ua, CheckAnswers),
-      WhatIsUniqueTaxpayerReferenceSummary.row(ua, CheckAnswers),
+      getIdRows(ua, CheckAnswers),
       getGIINRows(ua, CheckAnswers),
       getAddressRow(ua, CheckAnswers)
     ).flatten

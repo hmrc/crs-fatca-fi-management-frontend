@@ -22,6 +22,7 @@ import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.common.accessibleActionItem
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
@@ -44,7 +45,7 @@ object WhichIdentificationNumbersSummary {
           key = "whichIdentificationNumbers.checkYourAnswersLabel",
           value = value,
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.addFinancialInstitution.routes.WhichIdentificationNumbersController.onPageLoad(CheckMode).url)
+            accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.WhichIdentificationNumbersController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("whichIdentificationNumbers.change.hidden"))
           )
         )

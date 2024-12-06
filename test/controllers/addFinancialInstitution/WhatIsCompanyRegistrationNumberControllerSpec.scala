@@ -30,7 +30,7 @@ class WhatIsCompanyRegistrationNumberControllerSpec extends SpecBase with Mockit
   val formProvider = new CompanyRegistrationNumberFormProvider()
   val form         = formProvider()
 
-  lazy val whatIsCompanyRegistrationNumberRoute = routes.WhatIsCompanyRegistrationNumberController.onPageLoad().url
+  lazy val whatIsCompanyRegistrationNumberRoute = routes.WhatIsCompanyRegistrationNumberController.onPageLoad(NormalMode).url
 
   "WhatIsCompanyRegistrationNumber Controller" - {
 
