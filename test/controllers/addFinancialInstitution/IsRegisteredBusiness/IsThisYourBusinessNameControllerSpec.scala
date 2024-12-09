@@ -85,7 +85,7 @@ class IsThisYourBusinessNameControllerSpec extends SpecBase with MockitoSugar wi
         }
       }
 
-      "must populate the view with TRUE on a GET when fetched name doesn't match name in User Answers" in {
+      "must populate the view with TRUE on a GET when fetched name does match name in User Answers" in {
         when(mockSubscriptionService.getSubscription(any())(any[HeaderCarrier](), any[ExecutionContext]()))
           .thenReturn(Future.successful(organisationSubscription))
 
