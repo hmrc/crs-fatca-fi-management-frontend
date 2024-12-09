@@ -26,7 +26,7 @@ import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.SubscriptionService
+import services.{FinancialInstitutionUpdateService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.addFinancialInstitution.IsRegisteredBusiness.IsThisYourBusinessNameView
 
@@ -59,8 +59,10 @@ class IsThisYourBusinessNameController @Inject() (
               Redirect(routes.JourneyRecoveryController.onPageLoad())
             case Some(fiName) =>
               val preparedForm = request.userAnswers.get(IsThisYourBusinessNamePage) match {
-                case None        => form
-                case Some(value) => form.fill(value)
+                case None => form
+                case Some(_) =>
+                  val nameMatches = if (fiName == request.userAnswers.get(NameOfFinancialInstitutionPage).get) true else false
+                  form.fill(nameMatches)
               }
 
               Ok(view(preparedForm, mode, fiName))

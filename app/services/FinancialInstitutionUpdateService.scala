@@ -17,6 +17,7 @@
 package services
 
 import com.google.inject.Inject
+import controllers.routes
 import models.FinancialInstitutions.TINType.{GIIN, UTR}
 import models.FinancialInstitutions._
 import models.{GIINumber, TaxIdentificationNumber, UniqueTaxpayerReference, UserAnswers}
@@ -25,7 +26,9 @@ import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPa
 import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.libs.json.{Json, Reads}
+import play.api.mvc.Results.Redirect
 import repositories.SessionRepository
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.CountryListFactory
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -161,12 +164,13 @@ class FinancialInstitutionUpdateService @Inject() (
         } yield b
     }
 
-  private def setFiUserDetails(userAnswers: UserAnswers): Future[UserAnswers] = for {
-    a <- Future.fromTry(userAnswers.set(ReportForRegisteredBusinessPage, true, cleanup = false))
-    b <- Future.fromTry(a.set(IsThisYourBusinessNamePage, true, cleanup = false))
-    c <- Future.fromTry(b.set(IsThisAddressPage, true, cleanup = false))
-    d <- Future.fromTry(c.set(IsTheAddressCorrectPage, true, cleanup = false))
-  } yield d
+  private def setFiUserDetails(userAnswers: UserAnswers): Future[UserAnswers] =
+    for {
+      a <- Future.fromTry(userAnswers.set(ReportForRegisteredBusinessPage, true, cleanup = false))
+      b <- Future.fromTry(a.set(IsThisYourBusinessNamePage, true, cleanup = false))
+      c <- Future.fromTry(b.set(IsThisAddressPage, true, cleanup = false))
+      d <- Future.fromTry(c.set(IsTheAddressCorrectPage, true, cleanup = false))
+    } yield d
 
   private def setSecondaryContactDetails(userAnswers: UserAnswers, fiDetails: FIDetail)(implicit ec: ExecutionContext): Future[UserAnswers] =
     for {
