@@ -35,9 +35,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class FinancialInstitutionUpdateService @Inject() (
   countryListFactory: CountryListFactory,
-  sessionRepository: SessionRepository,
-  subscriptionService: SubscriptionService
-)(implicit ec: ExecutionContext, hc: HeaderCarrier) {
+  sessionRepository: SessionRepository
+)(implicit ec: ExecutionContext) {
 
   def populateAndSaveFiDetails(userAnswers: UserAnswers, fiDetails: FIDetail): Future[UserAnswers] =
     for {
@@ -91,7 +90,7 @@ class FinancialInstitutionUpdateService @Inject() (
       b <- Future.fromTry(a.set(NameOfFinancialInstitutionPage, fiDetails.FIName, cleanup = false))
       c <- setGIIN(b, fiDetails.TINDetails)
       d <- setAddress(c, fiDetails.AddressDetails)
-      e <- setFiUserDetails(d, fiDetails)
+      e <- setFiUserDetails(d)
     } yield e
 
   private def setUTR(userAnswers: UserAnswers, tinDetails: Seq[TINDetails])(implicit ec: ExecutionContext): Future[UserAnswers] =
@@ -165,21 +164,13 @@ class FinancialInstitutionUpdateService @Inject() (
         } yield b
     }
 
-  private def setFiUserDetails(userAnswers: UserAnswers, fiDetails: FIDetail): Future[UserAnswers] = {
-
-    val doesFiNameMatch: Future[Boolean] = subscriptionService.getSubscription(fiDetails.FIID).map {
-      subscription =>
-        subscription.businessName.get == userAnswers.get(NameOfFinancialInstitutionPage).getOrElse("")
-    }
-
+  private def setFiUserDetails(userAnswers: UserAnswers): Future[UserAnswers] =
     for {
-      doesNameMatchValue <- doesFiNameMatch
-      a                  <- Future.fromTry(userAnswers.set(ReportForRegisteredBusinessPage, true, cleanup = false))
-      b                  <- Future.fromTry(a.set(IsThisYourBusinessNamePage, doesNameMatchValue, cleanup = false))
-      c                  <- Future.fromTry(b.set(IsThisAddressPage, true, cleanup = false))
-      d                  <- Future.fromTry(c.set(IsTheAddressCorrectPage, true, cleanup = false))
+      a <- Future.fromTry(userAnswers.set(ReportForRegisteredBusinessPage, true, cleanup = false))
+      b <- Future.fromTry(a.set(IsThisYourBusinessNamePage, true, cleanup = false))
+      c <- Future.fromTry(b.set(IsThisAddressPage, true, cleanup = false))
+      d <- Future.fromTry(c.set(IsTheAddressCorrectPage, true, cleanup = false))
     } yield d
-  }
 
   private def setSecondaryContactDetails(userAnswers: UserAnswers, fiDetails: FIDetail)(implicit ec: ExecutionContext): Future[UserAnswers] =
     for {
