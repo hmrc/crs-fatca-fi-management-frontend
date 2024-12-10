@@ -17,7 +17,6 @@
 package services
 
 import com.google.inject.Inject
-import controllers.routes
 import models.FinancialInstitutions.TINType.{GIIN, UTR}
 import models.FinancialInstitutions._
 import models.{GIINumber, TaxIdentificationNumber, UniqueTaxpayerReference, UserAnswers}
@@ -26,9 +25,7 @@ import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPa
 import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.libs.json.{Json, Reads}
-import play.api.mvc.Results.Redirect
 import repositories.SessionRepository
-import uk.gov.hmrc.http.HeaderCarrier
 import utils.CountryListFactory
 
 import scala.concurrent.{ExecutionContext, Future}

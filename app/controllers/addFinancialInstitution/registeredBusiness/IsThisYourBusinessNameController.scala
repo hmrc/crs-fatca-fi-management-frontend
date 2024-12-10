@@ -23,10 +23,11 @@ import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.addFinancialInstitution.IsRegisteredBusiness.IsThisYourBusinessNamePage
 import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.{FinancialInstitutionUpdateService, SubscriptionService}
+import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.addFinancialInstitution.IsRegisteredBusiness.IsThisYourBusinessNameView
 
@@ -48,7 +49,7 @@ class IsThisYourBusinessNameController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>

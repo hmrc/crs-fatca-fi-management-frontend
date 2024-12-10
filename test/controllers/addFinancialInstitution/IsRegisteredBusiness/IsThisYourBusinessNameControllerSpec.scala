@@ -19,9 +19,9 @@ package controllers.addFinancialInstitution.IsRegisteredBusiness
 import base.SpecBase
 import controllers.routes
 import forms.addFinancialInstitution.IsRegisteredBusiness.IsThisYourBusinessNameFormProvider
+import models.NormalMode
 import models.subscription.request.{ContactInformation, IndividualDetails, OrganisationDetails}
 import models.subscription.response.UserSubscription
-import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -43,7 +43,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class IsThisYourBusinessNameControllerSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider        = new IsThisYourBusinessNameFormProvider()
   val form: Form[Boolean] = formProvider()
