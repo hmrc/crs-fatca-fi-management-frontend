@@ -23,6 +23,7 @@ import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.addFinancialInstitution.IsRegisteredBusiness.IsThisYourBusinessNamePage
 import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -48,7 +49,7 @@ class IsThisYourBusinessNameController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -59,8 +60,10 @@ class IsThisYourBusinessNameController @Inject() (
               Redirect(routes.JourneyRecoveryController.onPageLoad())
             case Some(fiName) =>
               val preparedForm = request.userAnswers.get(IsThisYourBusinessNamePage) match {
-                case None        => form
-                case Some(value) => form.fill(value)
+                case None => form
+                case Some(_) =>
+                  val nameMatches = request.userAnswers.get(NameOfFinancialInstitutionPage).contains(fiName)
+                  form.fill(nameMatches)
               }
 
               Ok(view(preparedForm, mode, fiName))

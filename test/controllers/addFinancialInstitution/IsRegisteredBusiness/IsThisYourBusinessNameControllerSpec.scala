@@ -19,15 +19,16 @@ package controllers.addFinancialInstitution.IsRegisteredBusiness
 import base.SpecBase
 import controllers.routes
 import forms.addFinancialInstitution.IsRegisteredBusiness.IsThisYourBusinessNameFormProvider
+import models.NormalMode
 import models.subscription.request.{ContactInformation, IndividualDetails, OrganisationDetails}
 import models.subscription.response.UserSubscription
-import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import pages.addFinancialInstitution.IsRegisteredBusiness.IsThisYourBusinessNamePage
+import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -42,7 +43,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class IsThisYourBusinessNameControllerSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider        = new IsThisYourBusinessNameFormProvider()
   val form: Form[Boolean] = formProvider()
@@ -84,11 +85,13 @@ class IsThisYourBusinessNameControllerSpec extends SpecBase with MockitoSugar wi
         }
       }
 
-      "must populate the view correctly on a GET when the question has previously been answered" in {
+      "must populate the view with TRUE on a GET when fetched name does match name in User Answers" in {
         when(mockSubscriptionService.getSubscription(any())(any[HeaderCarrier](), any[ExecutionContext]()))
           .thenReturn(Future.successful(organisationSubscription))
 
-        val userAnswers = UserAnswers(userAnswersId).set(IsThisYourBusinessNamePage, true).success.value
+        val userAnswers = emptyUserAnswers
+          .withPage(IsThisYourBusinessNamePage, true)
+          .withPage(NameOfFinancialInstitutionPage, "testName")
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
@@ -105,6 +108,32 @@ class IsThisYourBusinessNameControllerSpec extends SpecBase with MockitoSugar wi
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual view(form.fill(true), NormalMode, "testName")(request, messages(application)).toString
+        }
+      }
+
+      "must populate the view with FALSE on a GET when fetched name doesn't match name in User Answers" in {
+        when(mockSubscriptionService.getSubscription(any())(any[HeaderCarrier](), any[ExecutionContext]()))
+          .thenReturn(Future.successful(organisationSubscription))
+
+        val userAnswers = emptyUserAnswers
+          .withPage(IsThisYourBusinessNamePage, true)
+          .withPage(NameOfFinancialInstitutionPage, "testNameFail")
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, isThisYourBusinessNameRoute)
+
+          val view = application.injector.instanceOf[IsThisYourBusinessNameView]
+
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual view(form.fill(false), NormalMode, "testName")(request, messages(application)).toString
         }
       }
 
