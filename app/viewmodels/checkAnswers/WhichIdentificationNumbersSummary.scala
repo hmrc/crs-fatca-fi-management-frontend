@@ -33,11 +33,12 @@ object WhichIdentificationNumbersSummary {
       answers =>
         val value = ValueViewModel(
           HtmlContent(
-            answers
-              .map {
-                answer => HtmlFormat.escape(messages(s"whichIdentificationNumbers.$answer")).toString
-              }
-              .mkString(",<br>")
+            s"<ul style='list-style-type: none; margin: 0; padding: 0;'>${answers
+                .map {
+                  answer =>
+                    s"<li>${HtmlFormat.escape(messages(s"whichIdentificationNumbersSummary.$answer"))}</li>"
+                }
+                .mkString("")}</ul>"
           )
         )
 

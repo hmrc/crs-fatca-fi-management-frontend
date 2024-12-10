@@ -429,6 +429,11 @@ whichIdentificationNumbers.hint = Select at least one option.
 whichIdentificationNumbers.UTR = Unique Taxpayer Reference (UTR)
 whichIdentificationNumbers.CRN = Company Registration Number (CRN)
 whichIdentificationNumbers.TRN = Trust Unique Reference Number (URN)
+
+whichIdentificationNumbersSummary.UTR = Unique Taxpayer Reference
+whichIdentificationNumbersSummary.CRN = Company Registration Number
+whichIdentificationNumbersSummary.TRN = Trust Unique Reference Number
+
 whichIdentificationNumbers.or = or
 whichIdentificationNumbers.checkYourAnswersLabel = Which identification numbers can you provide for them?
 whichIdentificationNumbers.error.required = Select which identification numbers you can provide for the financial institution
