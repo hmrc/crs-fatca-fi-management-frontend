@@ -61,7 +61,7 @@ class IsThisYourBusinessNameController @Inject() (
               val preparedForm = request.userAnswers.get(IsThisYourBusinessNamePage) match {
                 case None => form
                 case Some(_) =>
-                  val nameMatches = if (fiName == request.userAnswers.get(NameOfFinancialInstitutionPage).get) true else false
+                  val nameMatches = request.userAnswers.get(NameOfFinancialInstitutionPage).contains(fiName)
                   form.fill(nameMatches)
               }
 
