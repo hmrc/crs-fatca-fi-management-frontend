@@ -17,23 +17,29 @@
 package controllers
 
 import controllers.actions._
+
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.ContactHelper
 import views.html.NotInUKView
 
 class NotInUKController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   view: NotInUKView
 ) extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with ContactHelper {
 
-  def onPageLoad: Action[AnyContent] = identify {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      Ok(view())
+      val fiName = getFinancialInstitutionName(request.userAnswers)
+      Ok(view(fiName))
   }
 
 }

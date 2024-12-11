@@ -423,7 +423,7 @@ trustURN.error.real = Enter a real trust Unique Reference Number
 
 notInUK.title = This service is only for financial institutions based in the UK
 notInUK.heading = This service is only for financial institutions based in the UK
-notInUK.p1 = You have confirmed that the registered business address for ABC Bank plc is not in the UK.
+notInUK.p1 = You have confirmed that the registered business address for {0} is not in the UK.
 notInUK.p2 = If you confirmed this by mistake, then you can {0}
 notInUK.p2.link = review and change the address to the right one
 notInUK.p3 = Email {0} if you need help with this service.

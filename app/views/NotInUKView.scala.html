@@ -23,17 +23,17 @@
         appConfig: FrontendAppConfig
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@(fiName: String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("notInUK.title"))) {
 
     <h1 class="govuk-heading-l">@messages("notInUK.heading")</h1>
 
-    <p class="govuk-body">@messages("notInUK.p1")</p>
+    <p class="govuk-body">@messages("notInUK.p1", fiName)</p>
 
     <p class="govuk-body">@Html(messages("notInUK.p2", link(controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(NormalMode).url, "notInUK.p2.link"))).</p>
 
-    <p class="govuk-body">@Html(messages("notInUK.p3" , link(s"mailto:${appConfig.emailEnquiries}", "enquiries.email", openInNewWindow = true)))</p>
+    <p class="govuk-body">@Html(messages("notInUK.p3" , link(s"mailto:${appConfig.emailEnquiries}", "enquiries.email", openInNewWindow = false)))</p>
 
 
 }
