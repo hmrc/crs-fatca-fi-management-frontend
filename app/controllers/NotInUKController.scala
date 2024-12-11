@@ -14,24 +14,26 @@
  * limitations under the License.
  */
 
-package forms.addFinancialInstitution
+package controllers
 
-import forms.mappings.Mappings
-import models.WhichIdentificationNumbers
-import play.api.data.Form
-import play.api.data.Forms.set
-
+import controllers.actions._
 import javax.inject.Inject
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.NotInUKView
 
-class WhichIdentificationNumbersFormProvider @Inject() extends Mappings {
+class NotInUKController @Inject() (
+  override val messagesApi: MessagesApi,
+  identify: IdentifierAction,
+  val controllerComponents: MessagesControllerComponents,
+  view: NotInUKView
+) extends FrontendBaseController
+    with I18nSupport {
 
-  def apply(): Form[Set[WhichIdentificationNumbers]] =
-    Form(
-      "value" -> set(enumerable[WhichIdentificationNumbers]("whichIdentificationNumbers.error.required"))
-        .verifying(
-          nonEmptySet("whichIdentificationNumbers.error.required"),
-          noMixedTrn("whichIdentificationNumbers.error.noMixedTrn")
-        )
-    )
+  def onPageLoad: Action[AnyContent] = identify {
+    implicit request =>
+      Ok(view())
+  }
 
 }

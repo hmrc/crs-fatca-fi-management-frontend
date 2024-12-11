@@ -19,7 +19,7 @@ package controllers.addFinancialInstitution.registeredBusiness
 import controllers.actions._
 import controllers.routes
 import forms.addFinancialInstitution.IsRegisteredBusiness.IsTheAddressCorrectFormProvider
-import models.{AddressResponse, Mode}
+import models.{AddressResponse, Country, Mode}
 import navigation.Navigator
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, IsTheAddressCorrectPage}
 import play.api.Logging
@@ -118,10 +118,14 @@ class IsTheAddressCorrectController @Inject() (
                     .successful(BadRequest(view(formWithErrors, mode, getFinancialInstitutionName(request.userAnswers), address))),
                 value =>
                   for {
-
                     updatedAnswers <- Future.fromTry(request.userAnswers.set(IsTheAddressCorrectPage, value))
                     _              <- sessionRepository.set(updatedAnswers)
-                  } yield Redirect(navigator.nextPage(IsTheAddressCorrectPage, mode, updatedAnswers))
+                  } yield (address.countryCode, value) match {
+                    case (country, true) if country != Country.GB.code =>
+                      Redirect(controllers.routes.NotInUKController.onPageLoad())
+                    case _ =>
+                      Redirect(navigator.nextPage(IsTheAddressCorrectPage, mode, updatedAnswers))
+                  }
               )
         }
   }
