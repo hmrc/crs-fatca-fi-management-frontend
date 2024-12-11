@@ -161,12 +161,13 @@ class FinancialInstitutionUpdateService @Inject() (
         } yield b
     }
 
-  private def setFiUserDetails(userAnswers: UserAnswers): Future[UserAnswers] = for {
-    a <- Future.fromTry(userAnswers.set(ReportForRegisteredBusinessPage, true, cleanup = false))
-    b <- Future.fromTry(a.set(IsThisYourBusinessNamePage, true, cleanup = false))
-    c <- Future.fromTry(b.set(IsThisAddressPage, true, cleanup = false))
-    d <- Future.fromTry(c.set(IsTheAddressCorrectPage, true, cleanup = false))
-  } yield d
+  private def setFiUserDetails(userAnswers: UserAnswers): Future[UserAnswers] =
+    for {
+      a <- Future.fromTry(userAnswers.set(ReportForRegisteredBusinessPage, true, cleanup = false))
+      b <- Future.fromTry(a.set(IsThisYourBusinessNamePage, true, cleanup = false))
+      c <- Future.fromTry(b.set(IsThisAddressPage, true, cleanup = false))
+      d <- Future.fromTry(c.set(IsTheAddressCorrectPage, true, cleanup = false))
+    } yield d
 
   private def setSecondaryContactDetails(userAnswers: UserAnswers, fiDetails: FIDetail)(implicit ec: ExecutionContext): Future[UserAnswers] =
     for {
