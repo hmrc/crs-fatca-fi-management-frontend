@@ -17,6 +17,9 @@
 package controllers
 
 import base.SpecBase
+import models.UserAnswers
+import pages.RemoveInstitutionDetail
+import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.NotInUKView
@@ -27,7 +30,9 @@ class NotInUKControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers = UserAnswers(userAnswersId).set(NameOfFinancialInstitutionPage, "fiName").success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, routes.NotInUKController.onPageLoad().url)
@@ -37,7 +42,7 @@ class NotInUKControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[NotInUKView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, messages(application)).toString
+        contentAsString(result) mustEqual view("fiName")(request, messages(application)).toString
       }
     }
   }
