@@ -66,11 +66,6 @@ POST        /have-phone                                                   contro
 GET         /change-have-phone                                            controllers.addFinancialInstitution.FirstContactHavePhoneController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST        /change-have-phone                                            controllers.addFinancialInstitution.FirstContactHavePhoneController.onSubmit(mode: models.Mode = models.CheckMode)
 
-GET         /have-utr                                                     controllers.addFinancialInstitution.HaveUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = NormalMode)
-POST        /have-utr                                                     controllers.addFinancialInstitution.HaveUniqueTaxpayerReferenceController.onSubmit(mode: Mode = NormalMode)
-GET         /change-have-utr                                              controllers.addFinancialInstitution.HaveUniqueTaxpayerReferenceController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-have-utr                                              controllers.addFinancialInstitution.HaveUniqueTaxpayerReferenceController.onSubmit(mode: Mode = CheckMode)
-
 GET         /name                                                         controllers.addFinancialInstitution.NameOfFinancialInstitutionController.onPageLoad(mode: Mode = NormalMode)
 POST        /name                                                         controllers.addFinancialInstitution.NameOfFinancialInstitutionController.onSubmit(mode: Mode = NormalMode)
 GET         /change-name                                                  controllers.addFinancialInstitution.NameOfFinancialInstitutionController.onPageLoad(mode: Mode = CheckMode)

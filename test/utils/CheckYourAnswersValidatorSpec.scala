@@ -71,7 +71,6 @@ class CheckYourAnswersValidatorSpec extends AnyFreeSpec with Matchers with Model
           (userAnswers: UserAnswers) =>
             val result = CheckYourAnswersValidator(userAnswers).changeAnswersRedirectUrl
             Set(
-              controllers.addFinancialInstitution.routes.HaveUniqueTaxpayerReferenceController.onPageLoad(CheckMode).url,
               controllers.addFinancialInstitution.routes.HaveGIINController.onPageLoad(CheckMode).url,
               controllers.addFinancialInstitution.routes.PostcodeController.onPageLoad(CheckMode).url,
               controllers.addFinancialInstitution.routes.FirstContactHavePhoneController.onPageLoad(CheckMode).url,

@@ -130,8 +130,6 @@ class CheckYourAnswersValidator(val userAnswers: UserAnswers) extends AddFIValid
   def validate: Seq[Page] = checkNameUTRGIINMissingAnswers ++ checkAddressMissingAnswers ++ checkContactDetailsMissingAnswers
 
   def changeAnswersRedirectUrl: String = validate.headOption match {
-    case Some(HaveUniqueTaxpayerReferencePage) =>
-      controllers.addFinancialInstitution.routes.HaveUniqueTaxpayerReferenceController.onPageLoad(CheckMode).url
     case Some(HaveGIINPage) =>
       controllers.addFinancialInstitution.routes.HaveGIINController.onPageLoad(CheckMode).url
     case Some(PostcodePage) =>
