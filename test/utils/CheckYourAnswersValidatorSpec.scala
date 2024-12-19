@@ -45,12 +45,12 @@ class CheckYourAnswersValidatorSpec extends AnyFreeSpec with Matchers with Model
             result mustNot be(empty)
             Set(
               NameOfFinancialInstitutionPage,
+              WhichIdentificationNumbersPage,
               FirstContactEmailPage,
               FirstContactHavePhonePage,
               FirstContactNamePage,
               FirstContactPhoneNumberPage,
               HaveGIINPage,
-              HaveUniqueTaxpayerReferencePage,
               IsThisAddressPage,
               SelectAddressPage,
               SelectedAddressLookupPage,

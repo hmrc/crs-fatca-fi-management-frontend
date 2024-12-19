@@ -16,7 +16,7 @@
 
 package utils
 
-import models.{CheckMode, UserAnswers}
+import models.{CheckMode, UserAnswers, WhichIdentificationNumbers}
 import pages._
 import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
@@ -62,15 +62,6 @@ sealed trait AddFIValidator {
     _ => PostcodePage
   ).toSeq
 
-  private def fiUTRMissingAnswers: Seq[Page] = (userAnswers.get(HaveUniqueTaxpayerReferencePage) match {
-    case Some(true) =>
-      checkPage(WhatIsUniqueTaxpayerReferencePage).map(
-        _ => HaveUniqueTaxpayerReferencePage
-      )
-    case Some(false) => None
-    case _           => Some(HaveUniqueTaxpayerReferencePage)
-  }).toSeq
-
   private def fiGIINMissingAnswers: Seq[Page] = (userAnswers.get(HaveGIINPage) match {
     case Some(true) =>
       checkPage(WhatIsGIINPage).map(
@@ -107,9 +98,30 @@ sealed trait AddFIValidator {
     case _ => Some(IsTheAddressCorrectPage)
   }).toSeq
 
-  private[utils] def checkNameUTRGIINMissingAnswers: Seq[Page] = Seq(
+  private[utils] def checkNameIdNumbersGIINMissingAnswers: Seq[Page] = Seq(
     checkPage(NameOfFinancialInstitutionPage)
-  ).flatten ++ fiUTRMissingAnswers ++ fiGIINMissingAnswers
+  ).flatten ++ checkIdentificationNumbersMissingAnswers ++ fiGIINMissingAnswers
+
+  private def checkIdentificationNumbersMissingAnswers: Seq[Page] =
+    userAnswers.get(WhichIdentificationNumbersPage) match {
+      case Some(selectedIds) =>
+        selectedIds.flatMap {
+          case WhichIdentificationNumbers.UTR =>
+            checkPage(WhatIsUniqueTaxpayerReferencePage).map(
+              _ => WhatIsUniqueTaxpayerReferencePage
+            )
+          case WhichIdentificationNumbers.CRN =>
+            checkPage(CompanyRegistrationNumberPage).map(
+              _ => CompanyRegistrationNumberPage
+            )
+          case WhichIdentificationNumbers.TRN =>
+            checkPage(TrustURNPage).map(
+              _ => TrustURNPage
+            )
+        }.toSeq
+      case None =>
+        Seq(WhichIdentificationNumbersPage)
+    }
 
   private[utils] def checkRegisteredBusiness: Seq[Page] = Seq(
     checkReportForRegisteredMissingAnswers ++ checkRegisteredBusinessName ++ fiGIINMissingAnswers ++ checkRegisteredBusinessAddress
@@ -127,11 +139,9 @@ class CheckYourAnswersValidator(val userAnswers: UserAnswers) extends AddFIValid
 
   private[utils] def any(checkPages: Option[Page]*): Option[Page] = checkPages.find(_.isEmpty).getOrElse(checkPages.last)
 
-  def validate: Seq[Page] = checkNameUTRGIINMissingAnswers ++ checkAddressMissingAnswers ++ checkContactDetailsMissingAnswers
+  def validate: Seq[Page] = checkNameIdNumbersGIINMissingAnswers ++ checkAddressMissingAnswers ++ checkContactDetailsMissingAnswers
 
   def changeAnswersRedirectUrl: String = validate.headOption match {
-    case Some(HaveGIINPage) =>
-      controllers.addFinancialInstitution.routes.HaveGIINController.onPageLoad(CheckMode).url
     case Some(PostcodePage) =>
       controllers.addFinancialInstitution.routes.PostcodeController.onPageLoad(CheckMode).url
     case Some(FirstContactPhoneNumberPage) =>
