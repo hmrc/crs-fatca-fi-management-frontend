@@ -19,7 +19,7 @@ package services
 import com.google.inject.Inject
 import models.FinancialInstitutions.TINType.{GIIN, UTR}
 import models.FinancialInstitutions._
-import models.{GIINumber, TaxIdentificationNumber, UniqueTaxpayerReference, UserAnswers}
+import models.{GIINumber, TaxIdentificationNumber, UniqueTaxpayerReference, UserAnswers, WhichIdentificationNumbers}
 import pages.QuestionPage
 import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
@@ -51,7 +51,7 @@ class FinancialInstitutionUpdateService @Inject() (
 
   def fiDetailsHasChanged(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean =
     userAnswers.get(NameOfFinancialInstitutionPage).exists(_ != fiDetails.FIName) ||
-      checkTaxIdentifierForChanges(userAnswers, fiDetails.TINDetails, UTR, HaveUniqueTaxpayerReferencePage, WhatIsUniqueTaxpayerReferencePage) ||
+//      checkTaxIdentifierForChanges(userAnswers, fiDetails.TINDetails, UTR, HaveUniqueTaxpayerReferencePage, WhatIsUniqueTaxpayerReferencePage) ||todo
       checkTaxIdentifierForChanges(userAnswers, fiDetails.TINDetails, GIIN, HaveGIINPage, WhatIsGIINPage) ||
       checkAddressForChanges(userAnswers, fiDetails.AddressDetails) ||
       checkPrimaryContactForChanges(userAnswers, fiDetails) ||
@@ -71,7 +71,7 @@ class FinancialInstitutionUpdateService @Inject() (
   )(implicit ec: ExecutionContext): Future[UserAnswers] =
     for {
       a <- Future.fromTry(userAnswers.set(NameOfFinancialInstitutionPage, fiDetails.FIName, cleanup = false))
-      b <- setUTR(a, fiDetails.TINDetails)
+      b <- setUTR(a, fiDetails.TINDetails) // TODO: will need updating for the other TIN details
       c <- setGIIN(b, fiDetails.TINDetails)
       d <- setAddress(c, fiDetails.AddressDetails)
       e <- setPrimaryContactDetails(d, fiDetails)
@@ -94,12 +94,12 @@ class FinancialInstitutionUpdateService @Inject() (
     tinDetails.find(_.TINType == UTR) match {
       case Some(details) =>
         for {
-          a <- Future.fromTry(userAnswers.set(HaveUniqueTaxpayerReferencePage, true, cleanup = false))
+          a <- Future.fromTry(userAnswers.set(WhichIdentificationNumbersPage, Set[WhichIdentificationNumbers](WhichIdentificationNumbers.UTR), cleanup = false))
           b <- Future.fromTry(a.set(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference(details.TIN), cleanup = false))
         } yield b
       case None =>
         for {
-          a <- Future.fromTry(userAnswers.set(HaveUniqueTaxpayerReferencePage, false, cleanup = false))
+          a <- Future.fromTry(userAnswers.set(WhichIdentificationNumbersPage, Set[WhichIdentificationNumbers](WhichIdentificationNumbers.UTR), cleanup = false))
           b <- Future.fromTry(a.remove(WhatIsUniqueTaxpayerReferencePage))
         } yield b
     }

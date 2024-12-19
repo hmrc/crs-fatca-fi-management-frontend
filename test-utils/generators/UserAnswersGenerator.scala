@@ -37,7 +37,6 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
       arbitrary[(FirstContactNamePage.type, JsValue)] ::
       arbitrary[(FirstContactPhoneNumberPage.type, JsValue)] ::
       arbitrary[(HaveGIINPage.type, JsValue)] ::
-      arbitrary[(HaveUniqueTaxpayerReferencePage.type, JsValue)] ::
       arbitrary[(IsThisAddressPage.type, JsValue)] ::
       arbitrary[(NameOfFinancialInstitutionPage.type, JsValue)] ::
       arbitrary[(NonUkAddressPage.type, JsValue)] ::
@@ -159,11 +158,11 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
 
   private lazy val UTRDetails = Arbitrary {
     for {
-      whichId <- arbitrary[WhichIdentificationNumbers] suchThat (_ == WhichIdentificationNumbers.UTR)
+      whichId <- Gen.const(WhichIdentificationNumbers.UTR)
       utr     <- pageArbitrary(WhatIsUniqueTaxpayerReferencePage).arbitrary
     } yield Json
       .obj(
-        WhichIdentificationNumbersPage.toString -> Json.toJson(Set(whichId))
+        WhichIdentificationNumbersPage.toString -> Json.toJson(Set(whichId.toString))
       )
       .deepMerge(utr)
   }
