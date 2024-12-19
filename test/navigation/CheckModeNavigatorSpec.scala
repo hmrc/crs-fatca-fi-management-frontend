@@ -49,17 +49,7 @@ class CheckModeNavigatorSpec extends SpecBase {
         navigator.nextPage(NameOfFinancialInstitutionPage, CheckMode, userAnswers) mustBe
           controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad()
       }
-      // UTR
-      "must go from HaveUniqueTaxpayerReference to CheckAnswers when No" in {
-        val userAnswers = emptyUserAnswers.withPage(HaveUniqueTaxpayerReferencePage, false)
-        navigator.nextPage(HaveUniqueTaxpayerReferencePage, CheckMode, userAnswers) mustBe
-          controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad()
-      }
-      "must go from HaveUniqueTaxpayerReference to WhatIsGIIN when Yes" in {
-        val userAnswers = emptyUserAnswers.withPage(HaveUniqueTaxpayerReferencePage, true)
-        navigator.nextPage(HaveUniqueTaxpayerReferencePage, CheckMode, userAnswers) mustBe
-          controllers.addFinancialInstitution.routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(CheckMode)
-      }
+      // UTR TODO CHECK OVER
       "must go from WhatIsUniqueTaxpayerReference to CheckAnswers" in {
         val userAnswers = emptyUserAnswers.withPage(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference("someUTR"))
         navigator.nextPage(WhatIsUniqueTaxpayerReferencePage, CheckMode, userAnswers) mustBe

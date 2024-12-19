@@ -18,7 +18,6 @@ package controllers
 
 import base.SpecBase
 import models.UserAnswers
-import pages.RemoveInstitutionDetail
 import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

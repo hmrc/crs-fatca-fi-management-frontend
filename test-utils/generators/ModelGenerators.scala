@@ -147,7 +147,6 @@ trait ModelGenerators extends RegexConstants with Generators {
     )
   }
 
-//Line holder for template scripts
   implicit val arbitraryUniqueTaxpayerReference: Arbitrary[UniqueTaxpayerReference] = Arbitrary {
     for {
       id <- arbitrary[String]
