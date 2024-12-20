@@ -15,6 +15,7 @@
  *@
 
 @import components._
+@import models.FinancialInstitutions.TINType
 
 @this(
     layout: templates.Layout,
@@ -40,7 +41,7 @@
                 form   = form,
                 name   = "value",
                 legend = LegendViewModel(messages("whichIdentificationNumbers.heading", fiName)).asPageHeading(),
-                items  = WhichIdentificationNumbers.checkboxItems
+                items  = TINType.checkboxItems
             ).withHint(Hint(content = Text(messages("whichIdentificationNumbers.hint"))))
         )
 

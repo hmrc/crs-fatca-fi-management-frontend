@@ -16,7 +16,8 @@
 
 package utils
 
-import models.{CheckMode, UserAnswers, WhichIdentificationNumbers}
+import models.FinancialInstitutions.TINType
+import models.{CheckMode, UserAnswers}
 import pages._
 import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
@@ -106,15 +107,15 @@ sealed trait AddFIValidator {
     userAnswers.get(WhichIdentificationNumbersPage) match {
       case Some(selectedIds) =>
         selectedIds.flatMap {
-          case WhichIdentificationNumbers.UTR =>
+          case TINType.UTR =>
             checkPage(WhatIsUniqueTaxpayerReferencePage).map(
               _ => WhatIsUniqueTaxpayerReferencePage
             )
-          case WhichIdentificationNumbers.CRN =>
+          case TINType.CRN =>
             checkPage(CompanyRegistrationNumberPage).map(
               _ => CompanyRegistrationNumberPage
             )
-          case WhichIdentificationNumbers.TRN =>
+          case TINType.TRN =>
             checkPage(TrustURNPage).map(
               _ => TrustURNPage
             )

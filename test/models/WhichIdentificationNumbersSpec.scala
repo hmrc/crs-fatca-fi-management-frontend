@@ -17,44 +17,48 @@
 package models
 
 import generators.ModelGenerators
+import models.FinancialInstitutions.TINType
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import org.scalatest.OptionValues
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsString, Json}
 
 class WhichIdentificationNumbersSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues with ModelGenerators {
 
-  "WhichIdentificationNumbers" - {
+  "TINType" - {
 
     "must deserialise valid values" in {
 
-      val gen = arbitrary[WhichIdentificationNumbers]
+      val gen = arbitrary[TINType]
 
       forAll(gen) {
-        whichIdentificationNumbers =>
-          JsString(whichIdentificationNumbers.toString).validate[WhichIdentificationNumbers].asOpt.value mustEqual whichIdentificationNumbers
+        tin =>
+          JsString(tin.toString).validate[TINType].asOpt.value mustEqual tin
       }
     }
 
     "must fail to deserialise invalid values" in {
 
-      val gen = arbitrary[String] suchThat (!WhichIdentificationNumbers.values.map(_.toString).contains(_))
+      val gen = arbitrary[String] suchThat {
+        str =>
+          str.nonEmpty && !TINType.allValues.exists(_.toString == str)
+      }
 
       forAll(gen) {
         invalidValue =>
-          JsString(invalidValue).validate[WhichIdentificationNumbers] mustEqual JsError("error.invalid")
+          JsString(invalidValue).validate[TINType] mustEqual JsError("error.invalid")
       }
     }
 
     "must serialise" in {
 
-      val gen = arbitrary[WhichIdentificationNumbers]
+      val gen = arbitrary[TINType]
 
       forAll(gen) {
-        whichIdentificationNumbers =>
-          Json.toJson(whichIdentificationNumbers) mustEqual JsString(whichIdentificationNumbers.toString)
+        tin =>
+          Json.toJson(tin) mustEqual JsString(tin.toString)
       }
     }
   }

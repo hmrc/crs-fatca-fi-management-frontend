@@ -18,7 +18,8 @@ package navigation
 
 import base.SpecBase
 import controllers.addFinancialInstitution.routes
-import models.WhichIdentificationNumbers.{CRN, TRN, UTR}
+import models.FinancialInstitutions.TINType
+import models.FinancialInstitutions.TINType._
 import models._
 import pages._
 import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
@@ -125,22 +126,22 @@ class NavigatorSpec extends SpecBase {
 
       "must go from WhichIdentificationNumbersPage " - {
         "to WhatIsUniqueTaxpayerReference page when UTR selected" in {
-          val userAnswers = emptyUserAnswers.withPage(WhichIdentificationNumbersPage, Set(UTR: WhichIdentificationNumbers))
+          val userAnswers = emptyUserAnswers.withPage(WhichIdentificationNumbersPage, Set(UTR: TINType))
           navigator.nextPage(WhichIdentificationNumbersPage, NormalMode, userAnswers) mustBe
             routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(NormalMode)
         }
         "to WhatIsUniqueTaxpayerReference page when both UTR and CRN are selected" in {
-          val userAnswers = emptyUserAnswers.withPage(WhichIdentificationNumbersPage, Set(UTR: WhichIdentificationNumbers, CRN: WhichIdentificationNumbers))
+          val userAnswers = emptyUserAnswers.withPage(WhichIdentificationNumbersPage, Set(UTR: TINType, CRN: TINType))
           navigator.nextPage(WhichIdentificationNumbersPage, NormalMode, userAnswers) mustBe
             routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(NormalMode)
         }
         "to WhatIsCompanyRegistrationNumber page when CRN selected" in {
-          val userAnswers = emptyUserAnswers.withPage(WhichIdentificationNumbersPage, Set(CRN: WhichIdentificationNumbers))
+          val userAnswers = emptyUserAnswers.withPage(WhichIdentificationNumbersPage, Set(CRN: TINType))
           navigator.nextPage(WhichIdentificationNumbersPage, NormalMode, userAnswers) mustBe
             routes.WhatIsCompanyRegistrationNumberController.onPageLoad(NormalMode)
         }
         "to TrustURN page when TRN selected" in {
-          val userAnswers = emptyUserAnswers.withPage(WhichIdentificationNumbersPage, Set(TRN: WhichIdentificationNumbers))
+          val userAnswers = emptyUserAnswers.withPage(WhichIdentificationNumbersPage, Set(TRN: TINType))
           navigator.nextPage(WhichIdentificationNumbersPage, NormalMode, userAnswers) mustBe
             routes.TrustURNController.onPageLoad(NormalMode)
         }
@@ -148,12 +149,12 @@ class NavigatorSpec extends SpecBase {
       }
       "must go from WhatIsUniqueTaxpayerReference" - {
         "to WhatIsCompanyRegistrationNumber if CRN was also selected" in {
-          val userAnswers = emptyUserAnswers.withPage(WhichIdentificationNumbersPage, Set(UTR: WhichIdentificationNumbers, CRN: WhichIdentificationNumbers))
+          val userAnswers = emptyUserAnswers.withPage(WhichIdentificationNumbersPage, Set(UTR: TINType, CRN: TINType))
           navigator.nextPage(WhatIsUniqueTaxpayerReferencePage, NormalMode, userAnswers) mustBe
             routes.WhatIsCompanyRegistrationNumberController.onPageLoad(NormalMode)
         }
         "to HaveGIIN if only UTR was selected" in {
-          val userAnswers = emptyUserAnswers.withPage(WhichIdentificationNumbersPage, Set(UTR: WhichIdentificationNumbers))
+          val userAnswers = emptyUserAnswers.withPage(WhichIdentificationNumbersPage, Set(UTR: TINType))
           navigator.nextPage(WhatIsUniqueTaxpayerReferencePage, NormalMode, userAnswers) mustBe
             routes.HaveGIINController.onPageLoad(NormalMode)
         }

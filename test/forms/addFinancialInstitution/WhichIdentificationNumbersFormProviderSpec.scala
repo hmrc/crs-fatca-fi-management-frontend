@@ -17,7 +17,7 @@
 package forms.addFinancialInstitution
 
 import forms.behaviours.CheckboxFieldBehaviours
-import models.WhichIdentificationNumbers
+import models.FinancialInstitutions.TINType
 import play.api.data.FormError
 
 class WhichIdentificationNumbersFormProviderSpec extends CheckboxFieldBehaviours {
@@ -29,10 +29,10 @@ class WhichIdentificationNumbersFormProviderSpec extends CheckboxFieldBehaviours
     val fieldName   = "value"
     val requiredKey = "whichIdentificationNumbers.error.required"
 
-    behave like checkboxField[WhichIdentificationNumbers](
+    behave like checkboxField[TINType](
       formProvider,
       fieldName,
-      validValues = WhichIdentificationNumbers.values,
+      validValues = TINType.whichIdValues,
       invalidError = FormError(s"$fieldName[0]", "error.invalid")
     )
 

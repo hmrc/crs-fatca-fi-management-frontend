@@ -25,9 +25,9 @@ import utils.RegexConstants
 
 trait ModelGenerators extends RegexConstants with Generators {
 
-  implicit lazy val arbitraryWhichIdentificationNumbers: Arbitrary[WhichIdentificationNumbers] =
+  implicit lazy val arbitraryTINType: Arbitrary[TINType] =
     Arbitrary {
-      Gen.oneOf(WhichIdentificationNumbers.values)
+      Gen.oneOf(TINType.allValues)
     }
 
   val maximumNumber     = 999999
@@ -117,7 +117,7 @@ trait ModelGenerators extends RegexConstants with Generators {
   implicit val arbitraryTINDetails: Arbitrary[TINDetails] =
     Arbitrary {
       for {
-        tinType  <- Gen.oneOf(TINType.values)
+        tinType  <- Gen.oneOf(TINType.allValues)
         tin      <- stringOfLength(25)
         issuedBy <- stringOfLength(2)
       } yield TINDetails(tinType, tin, issuedBy.toUpperCase)

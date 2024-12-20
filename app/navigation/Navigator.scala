@@ -17,7 +17,7 @@
 package navigation
 
 import controllers.addFinancialInstitution.routes
-import models.WhichIdentificationNumbers._
+import models.FinancialInstitutions.TINType._
 import models._
 import pages._
 import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
@@ -45,7 +45,7 @@ class Navigator @Inject() () {
     case WhatIsUniqueTaxpayerReferencePage =>
       userAnswers =>
         userAnswers.get(WhichIdentificationNumbersPage) match {
-          case Some(identificationNumbers) if identificationNumbers.contains(WhichIdentificationNumbers.CRN) =>
+          case Some(identificationNumbers) if identificationNumbers.contains(CRN) =>
             routes.WhatIsCompanyRegistrationNumberController.onPageLoad(NormalMode)
           case _ =>
             routes.HaveGIINController.onPageLoad(NormalMode)

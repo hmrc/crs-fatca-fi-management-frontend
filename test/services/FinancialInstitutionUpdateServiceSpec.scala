@@ -464,10 +464,16 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
     populatedUserAnswers.get(NameOfFinancialInstitutionPage).value mustBe fiDetails.FIName
 
     val maybeUTR: Option[TINDetails] = fiDetails.TINDetails.find(_.TINType == UTR)
-    populatedUserAnswers.get(WhichIdentificationNumbersPage).value mustBe maybeUTR.isDefined //todo check this
-    populatedUserAnswers.get(WhatIsUniqueTaxpayerReferencePage) mustBe maybeUTR.map(
-      id => UniqueTaxpayerReference(id.TIN)
-    )
+    maybeUTR match {
+      case Some(details) =>
+        if (populatedUserAnswers.get(WhichIdentificationNumbersPage).isDefined) {
+          populatedUserAnswers.get(WhichIdentificationNumbersPage).get must contain(details.TINType)
+        }
+        populatedUserAnswers.get(WhatIsUniqueTaxpayerReferencePage) mustBe maybeUTR.map(
+          id => UniqueTaxpayerReference(id.TIN)
+        )
+      case None => populatedUserAnswers.get(WhichIdentificationNumbersPage) mustBe empty
+    }
 
     val maybeGIIN = fiDetails.TINDetails.find(_.TINType == GIIN)
     populatedUserAnswers.get(HaveGIINPage).value mustBe maybeGIIN.isDefined

@@ -16,7 +16,8 @@
 
 package generators
 
-import models.{RichJsObject, UserAnswers, WhichIdentificationNumbers}
+import models.FinancialInstitutions.TINType
+import models.{RichJsObject, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.TryValues
@@ -158,7 +159,7 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
 
   private lazy val UTRDetails = Arbitrary {
     for {
-      whichId <- Gen.const(WhichIdentificationNumbers.UTR)
+      whichId <- Gen.const(TINType.UTR)
       utr     <- pageArbitrary(WhatIsUniqueTaxpayerReferencePage).arbitrary
     } yield Json
       .obj(
