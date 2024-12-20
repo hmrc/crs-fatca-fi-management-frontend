@@ -37,6 +37,13 @@ object WhichIdentificationNumbers extends Enumerable.Implicits {
 
   def checkboxItems(implicit messages: Messages): Seq[CheckboxItem] = {
     val items = values.zipWithIndex.map {
+      case (TRN, index) =>
+        CheckboxItemViewModel(
+          content = Text(messages(s"whichIdentificationNumbers.${TRN.toString}")),
+          fieldId = "value",
+          index = index,
+          value = TRN.toString
+        ).withAttribute(("data-behaviour", "exclusive"))
       case (value, index) =>
         CheckboxItemViewModel(
           content = Text(messages(s"whichIdentificationNumbers.${value.toString}")),
