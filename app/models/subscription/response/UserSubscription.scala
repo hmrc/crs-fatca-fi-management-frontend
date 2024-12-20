@@ -19,8 +19,14 @@ package models.subscription.response
 import models.subscription.request.{ContactInformation, OrganisationDetails}
 import play.api.libs.json.{Json, OFormat}
 
+case class CrfaSubscriptionDetails(crfaSubscriptionDetails: UserSubscription)
+
+object CrfaSubscriptionDetails {
+  implicit lazy val format: OFormat[CrfaSubscriptionDetails] = Json.format[CrfaSubscriptionDetails]
+}
+
 case class UserSubscription(
-  id: String,
+  crfaReference: String,
   tradingName: Option[String],
   gbUser: Boolean,
   primaryContact: ContactInformation,

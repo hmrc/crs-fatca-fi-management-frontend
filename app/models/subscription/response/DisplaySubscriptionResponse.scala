@@ -18,7 +18,7 @@ package models.subscription.response
 
 import play.api.libs.json.{Json, OFormat}
 
-case class DisplaySubscriptionResponse(success: UserSubscription)
+case class DisplaySubscriptionResponse(success: CrfaSubscriptionDetails)
 
 object DisplaySubscriptionResponse {
   implicit lazy val format: OFormat[DisplaySubscriptionResponse] = Json.format[DisplaySubscriptionResponse]
