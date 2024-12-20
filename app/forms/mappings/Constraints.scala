@@ -16,8 +16,8 @@
 
 package forms.mappings
 
-import models.WhichIdentificationNumbers
-import models.WhichIdentificationNumbers.TRN
+import models.FinancialInstitutions.TINType
+import models.FinancialInstitutions.TINType.TRN
 import play.api.data.validation.{Constraint, Invalid, Valid}
 
 import java.time.LocalDate
@@ -109,7 +109,7 @@ trait Constraints {
         Invalid(errorKey)
     }
 
-  protected def noMixedTrn(errorKey: String): Constraint[Set[WhichIdentificationNumbers]] =
+  protected def noMixedTrn(errorKey: String): Constraint[Set[TINType]] =
     Constraint {
       case set if !(set.contains(TRN) && set.size > 1) => Valid
       case _                                           => Invalid(errorKey)

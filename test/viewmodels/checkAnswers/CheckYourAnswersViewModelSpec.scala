@@ -17,8 +17,9 @@
 package viewmodels.checkAnswers
 
 import base.SpecBase
-import models.WhichIdentificationNumbers._
-import models.{AddressResponse, CheckAnswers, CheckMode, CompanyRegistrationNumber, GIINumber, UniqueTaxpayerReference, UserAnswers, WhichIdentificationNumbers}
+import models.FinancialInstitutions.TINType
+import models.FinancialInstitutions.TINType._
+import models.{AddressResponse, CheckAnswers, CheckMode, CompanyRegistrationNumber, GIINumber, UniqueTaxpayerReference, UserAnswers}
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 import pages.{CompanyRegistrationNumberPage, TrustURNPage}
@@ -45,17 +46,17 @@ class CheckYourAnswersViewModelSpec extends SpecBase {
     }
     "getIdRows must" - {
       "display relevant rows" in {
-        val identifiers: Set[WhichIdentificationNumbers] = Set(WhichIdentificationNumbers.UTR)
+        val identifiers: Set[TINType] = Set(UTR: TINType)
         val ua1 = ua
           .withPage(WhichIdentificationNumbersPage, identifiers)
           .withPage(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference("test"))
           .withPage(CompanyRegistrationNumberPage, CompanyRegistrationNumber("test"))
         val ua2 = ua
-          .withPage(WhichIdentificationNumbersPage, Set(UTR: WhichIdentificationNumbers, CRN: WhichIdentificationNumbers))
+          .withPage(WhichIdentificationNumbersPage, Set(UTR: TINType, CRN: TINType))
           .withPage(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference("test"))
           .withPage(CompanyRegistrationNumberPage, CompanyRegistrationNumber("test"))
         val ua3 = ua
-          .withPage(WhichIdentificationNumbersPage, Set(TRN: WhichIdentificationNumbers))
+          .withPage(WhichIdentificationNumbersPage, Set(TRN: TINType))
           .withPage(TrustURNPage, "test")
 
         sut.getFinancialInstitutionSummaries(ua1).length mustBe 2

@@ -22,6 +22,7 @@ sealed trait TaxIdentificationNumber {
   def value: String
 }
 
+//TODO: add TRN
 final case class UniqueTaxpayerReference(override val value: String) extends TaxIdentificationNumber
 
 final case class GIINumber(override val value: String) extends TaxIdentificationNumber

@@ -16,16 +16,50 @@
 
 package models.FinancialInstitutions
 
-import enumeratum._
+import models.Enumerable
+import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import viewmodels.govuk.checkbox._
 
-sealed trait TINType extends EnumEntry
+sealed trait TINType
 
-object TINType extends PlayEnum[TINType] {
-
-  val values: IndexedSeq[TINType] = findValues
+object TINType extends Enumerable.Implicits {
 
   case object UTR extends TINType
   case object GIIN extends TINType
-  case object OTHER extends TINType
+  case object CRN extends TINType
+  case object TRN extends TINType
+
+  val allValues: IndexedSeq[TINType]     = IndexedSeq(UTR, CRN, TRN, GIIN)
+  val whichIdValues: IndexedSeq[TINType] = IndexedSeq(UTR, CRN, TRN)
+
+  def checkboxItems(implicit messages: Messages): Seq[CheckboxItem] = {
+    val items = whichIdValues.zipWithIndex.map {
+      case (TRN, index) =>
+        CheckboxItemViewModel(
+          content = Text(messages(s"whichIdentificationNumbers.${TRN.toString}")),
+          fieldId = "value",
+          index = index,
+          value = TRN.toString
+        ).withAttribute(("data-behaviour", "exclusive"))
+      case (value, index) =>
+        CheckboxItemViewModel(
+          content = Text(messages(s"whichIdentificationNumbers.${value.toString}")),
+          fieldId = "value",
+          index = index,
+          value = value.toString
+        )
+    }
+    items.patch(2, Seq(CheckboxItem(divider = Some("or"))), 0)
+
+  }
+
+  implicit val enumerable: Enumerable[TINType] =
+    Enumerable(
+      allValues.map(
+        v => v.toString -> v
+      ): _*
+    )
 
 }

@@ -51,7 +51,7 @@ class FinancialInstitutionUpdateService @Inject() (
 
   def fiDetailsHasChanged(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean =
     userAnswers.get(NameOfFinancialInstitutionPage).exists(_ != fiDetails.FIName) ||
-      checkTaxIdentifierForChanges(userAnswers, fiDetails.TINDetails, UTR, HaveUniqueTaxpayerReferencePage, WhatIsUniqueTaxpayerReferencePage) ||
+      checkTINTypeForChanges(userAnswers, fiDetails.TINDetails, UTR, WhatIsUniqueTaxpayerReferencePage) ||
       checkTaxIdentifierForChanges(userAnswers, fiDetails.TINDetails, GIIN, HaveGIINPage, WhatIsGIINPage) ||
       checkAddressForChanges(userAnswers, fiDetails.AddressDetails) ||
       checkPrimaryContactForChanges(userAnswers, fiDetails) ||
@@ -71,7 +71,7 @@ class FinancialInstitutionUpdateService @Inject() (
   )(implicit ec: ExecutionContext): Future[UserAnswers] =
     for {
       a <- Future.fromTry(userAnswers.set(NameOfFinancialInstitutionPage, fiDetails.FIName, cleanup = false))
-      b <- setUTR(a, fiDetails.TINDetails)
+      b <- setUTR(a, fiDetails.TINDetails) // TODO: will need updating for the other TIN details
       c <- setGIIN(b, fiDetails.TINDetails)
       d <- setAddress(c, fiDetails.AddressDetails)
       e <- setPrimaryContactDetails(d, fiDetails)
@@ -90,17 +90,17 @@ class FinancialInstitutionUpdateService @Inject() (
       e <- setFiUserDetails(d)
     } yield e
 
+  // TODO: include setting of all TIN types
   private def setUTR(userAnswers: UserAnswers, tinDetails: Seq[TINDetails])(implicit ec: ExecutionContext): Future[UserAnswers] =
     tinDetails.find(_.TINType == UTR) match {
       case Some(details) =>
         for {
-          a <- Future.fromTry(userAnswers.set(HaveUniqueTaxpayerReferencePage, true, cleanup = false))
+          a <- Future.fromTry(userAnswers.set(WhichIdentificationNumbersPage, Set[TINType](TINType.UTR), cleanup = false))
           b <- Future.fromTry(a.set(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference(details.TIN), cleanup = false))
         } yield b
       case None =>
         for {
-          a <- Future.fromTry(userAnswers.set(HaveUniqueTaxpayerReferencePage, false, cleanup = false))
-          b <- Future.fromTry(a.remove(WhatIsUniqueTaxpayerReferencePage))
+          b <- Future.fromTry(userAnswers.remove(WhatIsUniqueTaxpayerReferencePage))
         } yield b
     }
 
@@ -202,6 +202,20 @@ class FinancialInstitutionUpdateService @Inject() (
         userAnswers.get(idTypePage).exists(_.value.toLowerCase != id.TIN.toLowerCase)
       case None =>
         userAnswers.get(haveIdTypePage).contains(true)
+    }
+
+  private def checkTINTypeForChanges[T <: TaxIdentificationNumber](
+    userAnswers: UserAnswers,
+    tinDetails: Seq[TINDetails],
+    idType: TINType,
+    idTypePage: QuestionPage[T]
+  )(implicit reads: Reads[T]): Boolean =
+    tinDetails.find(_.TINType == idType) match {
+      case Some(id) =>
+        !userAnswers.get(WhichIdentificationNumbersPage).contains(Set(idType)) ||
+        userAnswers.get(idTypePage).exists(_.value.toLowerCase != id.TIN.toLowerCase)
+      case None =>
+        userAnswers.get(WhichIdentificationNumbersPage).contains(Set(idType))
     }
 
   private def checkAddressForChanges(userAnswers: UserAnswers, addressDetails: AddressDetails): Boolean = {

@@ -38,7 +38,6 @@ class ReportForRegisteredBusinessPageSpec extends PageBehaviours {
         WhatIsGIINPage.toString
       )
       result.get.data.keys must contain noElementsOf List(
-        HaveUniqueTaxpayerReferencePage.toString,
         WhatIsUniqueTaxpayerReferencePage.toString,
         FirstContactNamePage.toString,
         FirstContactEmailPage.toString,
