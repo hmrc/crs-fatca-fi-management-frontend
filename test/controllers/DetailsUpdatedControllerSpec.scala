@@ -28,22 +28,17 @@ class DetailsUpdatedControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
 
-      val userAnswers = emptyUserAnswers
-        .set(NameOfFinancialInstitutionPage, "answer")
-        .success
-        .value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.DetailsUpdatedController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.DetailsUpdatedController.onPageLoad(fiName).url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[DetailsUpdatedView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view("answer")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(fiName)(request, messages(application)).toString
       }
     }
   }

@@ -261,7 +261,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.DetailsUpdatedController.onPageLoad().url
+          redirectLocation(result).value mustEqual routes.DetailsUpdatedController.onPageLoad(fiName).url
 
           verify(mockFinancialInstitutionUpdateService, times(1)).clearUserAnswers(userAnswers)
         }
