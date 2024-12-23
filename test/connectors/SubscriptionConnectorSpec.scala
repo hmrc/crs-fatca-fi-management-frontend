@@ -45,18 +45,20 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
 
   val exampleResponse = s"""{
     "success": {
-      "processingDate": "2023-05-17T09:26:17Z",
-      "id": "[subscriptionId]",
-      "tradingName": "James Hank",
-      "gbUser": true,
-      "primaryContact": {
-      "organisation": {
-      "name": "Mark Ltd"
-    },
-      "email": "james@test.com",
-      "phone": "0202731454",
-      "mobile": "07896543333"
-    }
+    "crfaSubscriptionDetails": {
+        "processingDate": "2023-05-17T09:26:17Z",
+        "crfaReference": "[subscriptionId]",
+        "tradingName": "James Hank",
+        "gbUser": true,
+        "primaryContact": {
+        "organisation": {
+        "name": "Mark Ltd"
+      },
+        "email": "james@test.com",
+        "phone": "0202731454",
+        "mobile": "07896543333"
+      }
+      }
     }
   }""".stripMargin
 
