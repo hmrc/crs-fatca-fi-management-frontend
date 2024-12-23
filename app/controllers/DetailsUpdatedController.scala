@@ -38,9 +38,8 @@ class DetailsUpdatedController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(fiName: String): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val fiName = getFinancialInstitutionName(request.userAnswers)
       Ok(view(fiName))
   }
 
