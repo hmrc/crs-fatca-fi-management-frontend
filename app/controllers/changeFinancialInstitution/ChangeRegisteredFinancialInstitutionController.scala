@@ -100,7 +100,7 @@ class ChangeRegisteredFinancialInstitutionController @Inject() (
           _ => financialInstitutionUpdateService.clearUserAnswers(request.userAnswers)
         )
         .map(
-          _ => Redirect(controllers.routes.DetailsUpdatedController.onPageLoad(fiName))
+          _ => Redirect(controllers.routes.DetailsUpdatedController.onPageLoad()).flashing("fiName" -> fiName)
         )
         .recoverWith {
           exception =>

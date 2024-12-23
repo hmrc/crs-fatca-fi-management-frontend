@@ -38,9 +38,13 @@ class DetailsUpdatedController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad(fiName: String): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      Ok(view(fiName))
+      request.flash.get("fiName") match {
+        case Some(fiName) => Ok(view(fiName)) // Render the view with fiName
+        case _            => Ok(view("")) // Handle missing fiName
+      }
+
   }
 
 }

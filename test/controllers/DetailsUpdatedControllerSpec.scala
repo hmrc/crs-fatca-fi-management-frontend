@@ -17,7 +17,6 @@
 package controllers
 
 import base.SpecBase
-import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.DetailsUpdatedView
@@ -31,7 +30,7 @@ class DetailsUpdatedControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.DetailsUpdatedController.onPageLoad(fiName).url)
+        val request = FakeRequest(GET, routes.DetailsUpdatedController.onPageLoad().url).withFlash("fiName" -> fiName)
 
         val result = route(application, request).value
 

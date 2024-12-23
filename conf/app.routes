@@ -153,7 +153,7 @@ POST        /change-answers                                               contro
 GET         /registered-business/change-answers/:fiid                     controllers.changeFinancialInstitution.ChangeRegisteredFinancialInstitutionController.onPageLoad(fiid: String)
 POST        /registered-business/change-answers                           controllers.changeFinancialInstitution.ChangeRegisteredFinancialInstitutionController.confirmAndAdd()
 
-GET        /details-updated                                               controllers.DetailsUpdatedController.onPageLoad(fiName: String)
+GET        /details-updated                                               controllers.DetailsUpdatedController.onPageLoad()
 
 GET        /trust-urn                                                     controllers.addFinancialInstitution.TrustURNController.onPageLoad(mode: Mode = NormalMode)
 POST       /trust-urn                                                     controllers.addFinancialInstitution.TrustURNController.onSubmit(mode: Mode = NormalMode)
