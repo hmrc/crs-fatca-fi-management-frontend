@@ -44,12 +44,28 @@ case class Address(
     postCode
   ).flatten
 
-  val isGB: Boolean           = this.country.code == Address.GBCountryCode
-  val isOtherCountry: Boolean = this.country.code != Address.GBCountryCode
+  override def equals(obj: Any): Boolean = obj match {
+    case that: Address =>
+      this.addressLine1 == that.addressLine1 &&
+      this.addressLine2 == that.addressLine2 &&
+      this.addressLine3 == that.addressLine3 &&
+      this.addressLine4 == that.addressLine4 &&
+      this.postCode == that.postCode &&
+      this.country.code == that.country.code
+    case _ => false
+  }
+
+  override def hashCode(): Int = {
+    val state = Seq(addressLine1, addressLine2, addressLine3, addressLine4, postCode, country.code)
+    state
+      .map(_.hashCode)
+      .foldLeft(0)(
+        (a, b) => 31 * a + b
+      )
+  }
+
 }
 
 object Address {
-  val GBCountryCode = "GB"
-
   implicit val format: OFormat[Address] = Json.format[Address]
 }
