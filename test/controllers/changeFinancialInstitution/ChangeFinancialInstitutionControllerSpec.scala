@@ -241,7 +241,7 @@ class ChangeFinancialInstitutionControllerSpec
       val mockService = mock[FinancialInstitutionsService]
 
       val someUserAnswers = emptyUserAnswers
-        .withPage(NameOfFinancialInstitutionPage, "test")
+        .withPage(NameOfFinancialInstitutionPage, fiName)
         .withPage(HaveUniqueTaxpayerReferencePage, false)
         .withPage(HaveGIINPage, false)
         .withPage(SelectedAddressLookupPage, testAddressLookup)
