@@ -127,6 +127,19 @@ class SecondContactExistsControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    "must redirect to information-sent page for a GET when the user answers is empty" in {
+      val application = applicationBuilder(userAnswers = Option(emptyUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, secondContactExistsRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.InformationSentController.onPageLoad.url
+      }
+    }
+
     "must redirect to Journey Recovery for a GET if no existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
