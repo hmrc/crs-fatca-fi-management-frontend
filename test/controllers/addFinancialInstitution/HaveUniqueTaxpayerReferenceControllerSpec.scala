@@ -23,7 +23,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.addFinancialInstitution.HaveUniqueTaxpayerReferencePage
+import pages.addFinancialInstitution.{HaveUniqueTaxpayerReferencePage, NameOfFinancialInstitutionPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -46,7 +46,9 @@ class HaveUniqueTaxpayerReferenceControllerSpec extends SpecBase with MockitoSug
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers = UserAnswers(userAnswersId).set(NameOfFinancialInstitutionPage, fiName).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, haveUniqueTaxpayerReferenceRoute)

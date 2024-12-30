@@ -41,6 +41,7 @@ class SecondContactCanWePhoneController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: SecondContactCanWePhoneFormProvider,
+  checkForInformationSentAction: CheckForInformationSentAction,
   val controllerComponents: MessagesControllerComponents,
   view: SecondContactCanWePhoneView
 )(implicit ec: ExecutionContext)
@@ -51,7 +52,7 @@ class SecondContactCanWePhoneController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkForInformationSentAction) {
     implicit request =>
       val preparedForm = request.userAnswers.get(SecondContactCanWePhonePage) match {
         case None        => form

@@ -40,6 +40,7 @@ class FirstContactEmailController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: FirstContactEmailFormProvider,
+  checkForInformationSent: CheckForInformationSentAction,
   val controllerComponents: MessagesControllerComponents,
   view: FirstContactEmailView
 )(implicit ec: ExecutionContext)
@@ -49,7 +50,7 @@ class FirstContactEmailController @Inject() (
 
   val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkForInformationSent) {
     implicit request =>
       val ua = request.userAnswers
       val fi = getFinancialInstitutionName(ua)

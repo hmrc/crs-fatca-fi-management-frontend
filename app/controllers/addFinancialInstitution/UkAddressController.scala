@@ -41,6 +41,7 @@ class UkAddressController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: UkAddressFormProvider,
+  checkForInformationSentAction: CheckForInformationSentAction,
   val controllerComponents: MessagesControllerComponents,
   view: UkAddressView
 )(implicit ec: ExecutionContext)
@@ -51,7 +52,7 @@ class UkAddressController @Inject() (
 
   lazy val countriesList: Seq[Country] = countryListFactory.countryListWithUKCountries
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkForInformationSentAction) {
     implicit request =>
       val form = formProvider()
       val preparedForm = request.userAnswers.get(UkAddressPage) match {

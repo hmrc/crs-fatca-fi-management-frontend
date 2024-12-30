@@ -16,7 +16,7 @@
 
 package controllers.addFinancialInstitution
 
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{CheckForInformationSentAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.addFinancialInstitution.CompanyRegistrationNumberFormProvider
 import models.Mode
 import navigation.Navigator
@@ -39,6 +39,7 @@ class WhatIsCompanyRegistrationNumberController @Inject() (
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
+  checkForInformationSentAction: CheckForInformationSentAction,
   val controllerComponents: MessagesControllerComponents,
   view: WhatIsCompanyRegistrationNumberView
 )(implicit ec: ExecutionContext)
@@ -48,7 +49,7 @@ class WhatIsCompanyRegistrationNumberController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkForInformationSentAction) {
     implicit request =>
       val fiName = getFinancialInstitutionName(request.userAnswers)
       val preparedForm = request.userAnswers.get(CompanyRegistrationNumberPage) match {
