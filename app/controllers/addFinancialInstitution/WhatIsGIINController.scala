@@ -41,6 +41,7 @@ class WhatIsGIINController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: WhatIsGIINFormProvider,
+  checkForInformationSentAction: CheckForInformationSentAction,
   val controllerComponents: MessagesControllerComponents,
   view: WhatIsGIINView
 )(implicit ec: ExecutionContext)
@@ -50,7 +51,7 @@ class WhatIsGIINController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkForInformationSentAction) {
     implicit request =>
       val preparedForm = request.userAnswers.get(WhatIsGIINPage) match {
         case None        => form
