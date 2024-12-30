@@ -39,6 +39,7 @@ class FirstContactPhoneNumberController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: FirstContactPhoneNumberFormProvider,
+  checkForInformationSentAction: CheckForInformationSentAction,
   val controllerComponents: MessagesControllerComponents,
   view: FirstContactPhoneNumberView
 )(implicit ec: ExecutionContext)
@@ -48,7 +49,7 @@ class FirstContactPhoneNumberController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkForInformationSentAction) {
     implicit request =>
       val preparedForm = request.userAnswers.get(FirstContactPhoneNumberPage) match {
         case None        => form
