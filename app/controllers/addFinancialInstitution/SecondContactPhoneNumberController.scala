@@ -53,7 +53,6 @@ class SecondContactPhoneNumberController @Inject() (
     implicit request =>
       val contactName = request.userAnswers.get(SecondContactNamePage).getOrElse("the second contact")
       // should it kick out if therre is a problem getting SecondContactNamePage?
-      Console.println(Console.GREEN + "THIS" + Console.WHITE)
       val preparedForm = request.userAnswers.get(SecondContactPhoneNumberPage) match {
         case None        => form
         case Some(value) => form.fill(value)
