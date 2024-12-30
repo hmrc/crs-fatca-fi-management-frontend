@@ -42,6 +42,7 @@ class SecondContactEmailController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: SecondContactEmailFormProvider,
+  checkForInformationSentAction: CheckForInformationSentAction,
   val controllerComponents: MessagesControllerComponents,
   view: SecondContactEmailView
 )(implicit ec: ExecutionContext)
@@ -51,7 +52,7 @@ class SecondContactEmailController @Inject() (
 
   val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkForInformationSentAction) {
     implicit request =>
       val ua = request.userAnswers
       val fi = getFinancialInstitutionName(ua)
