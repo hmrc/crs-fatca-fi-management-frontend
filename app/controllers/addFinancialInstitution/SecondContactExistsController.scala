@@ -41,6 +41,7 @@ class SecondContactExistsController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: SecondContactExistsFormProvider,
+  checkForInformationSent: CheckForInformationSentAction,
   val controllerComponents: MessagesControllerComponents,
   view: SecondContactExistsView
 )(implicit ec: ExecutionContext)
@@ -50,7 +51,7 @@ class SecondContactExistsController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkForInformationSent) {
     implicit request =>
       val preparedForm = request.userAnswers.get(SecondContactExistsPage) match {
         case None        => form
