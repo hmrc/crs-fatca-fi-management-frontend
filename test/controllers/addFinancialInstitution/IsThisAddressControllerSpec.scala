@@ -83,9 +83,22 @@ class IsThisAddressControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    "must redirect to information-sent page for a GET when the user answers is empty" in {
+      val application = applicationBuilder(userAnswers = Option(emptyUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, isThisAddressRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.InformationSentController.onPageLoad.url
+      }
+    }
+
     "must redirect to JourneyRecovery for a GET when missing AddressLookupPage" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
         val request = FakeRequest(GET, isThisAddressRoute)

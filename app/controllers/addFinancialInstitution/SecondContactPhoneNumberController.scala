@@ -38,6 +38,7 @@ class SecondContactPhoneNumberController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: SecondContactPhoneNumberFormProvider,
+  checkForInformationSent: CheckForInformationSentAction,
   val controllerComponents: MessagesControllerComponents,
   view: SecondContactPhoneNumberView
 )(implicit ec: ExecutionContext)
@@ -46,7 +47,7 @@ class SecondContactPhoneNumberController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkForInformationSent) {
     implicit request =>
       val contactName = request.userAnswers.get(SecondContactNamePage).getOrElse("the second contact")
       // should it kick out if therre is a problem getting SecondContactNamePage?

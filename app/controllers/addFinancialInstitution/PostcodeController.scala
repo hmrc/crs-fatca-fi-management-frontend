@@ -42,6 +42,7 @@ class PostcodeController @Inject() (
   requireData: DataRequiredAction,
   formProvider: PostcodeFormProvider,
   addressLookupConnector: AddressLookupConnector,
+  checkForInformationSentAction: CheckForInformationSentAction,
   val controllerComponents: MessagesControllerComponents,
   view: PostcodeView
 )(implicit ec: ExecutionContext)
@@ -51,7 +52,7 @@ class PostcodeController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkForInformationSentAction) {
     implicit request =>
       val preparedForm = request.userAnswers.get(PostcodePage) match {
         case None        => form

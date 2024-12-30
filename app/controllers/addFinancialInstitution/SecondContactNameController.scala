@@ -39,6 +39,7 @@ class SecondContactNameController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: SecondContactNameFormProvider,
+  checkForInformationSentAction: CheckForInformationSentAction,
   val controllerComponents: MessagesControllerComponents,
   view: SecondContactNameView
 )(implicit ec: ExecutionContext)
@@ -48,7 +49,7 @@ class SecondContactNameController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkForInformationSentAction) {
     implicit request =>
       val ua = request.userAnswers
 
