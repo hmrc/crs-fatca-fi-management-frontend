@@ -90,7 +90,7 @@ package object common {
     val fetchedAddress = FetchedRegisteredAddressSummary.row(ua, pageType)
 
     (addressLookup.isDefined, nonUkAddress.isDefined, ukAddress.isDefined, fetchedAddress.isDefined) match {
-      case (false, false, true, _)     => ukAddress
+      case (_, false, true, _)         => ukAddress
       case (false, true, false, false) => nonUkAddress
       case (true, false, false, _)     => addressLookup
       case (_, _, _, true)             => fetchedAddress

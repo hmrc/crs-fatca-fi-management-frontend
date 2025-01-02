@@ -93,13 +93,14 @@ class ChangeFinancialInstitutionController @Inject() (
 
   def confirmAndAdd(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+      val fiName = getFinancialInstitutionName(request.userAnswers)
       financialInstitutionsService
         .updateFinancialInstitution(request.fatcaId, request.userAnswers)
         .flatMap(
           _ => financialInstitutionUpdateService.clearUserAnswers(request.userAnswers)
         )
         .map(
-          _ => Redirect(controllers.routes.DetailsUpdatedController.onPageLoad())
+          _ => Redirect(controllers.routes.DetailsUpdatedController.onPageLoad()).flashing("fiName" -> fiName)
         )
         .recoverWith {
           exception =>
