@@ -40,8 +40,7 @@ class DetailsUpdatedController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val x: Option[String] = request.flash.get("fiName")
-      Ok(view(x))
+      Ok(view(request.flash.get("fiName")))
   }
 
 }
