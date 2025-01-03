@@ -25,28 +25,32 @@ import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPa
 import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.libs.json.{Json, Reads}
-import repositories.SessionRepository
+import repositories.{ChangeUserAnswersRepository, SessionRepository}
 import utils.CountryListFactory
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class FinancialInstitutionUpdateService @Inject() (
   countryListFactory: CountryListFactory,
-  sessionRepository: SessionRepository
+  sessionRepository: SessionRepository,
+  changeUserAnswersRepository: ChangeUserAnswersRepository
 )(implicit ec: ExecutionContext) {
 
-  def populateAndSaveFiDetails(userAnswers: UserAnswers, fiDetails: FIDetail): Future[UserAnswers] =
-    for {
-      userAnswersWithProgressFlag <- Future.fromTry(userAnswers.set(ChangeFiDetailsInProgressId, fiDetails.FIID, cleanup = false))
-      updatedUserAnswers          <- populateUserAnswersWithFiDetail(fiDetails, userAnswersWithProgressFlag)
-      _                           <- sessionRepository.set(updatedUserAnswers)
-    } yield updatedUserAnswers
+  def populateAndSaveFiDetails(userAnswers: UserAnswers, fiDetails: FIDetail): Future[UserAnswers] = for {
+    userAnswersWithProgressFlag <- Future.fromTry(userAnswers.set(ChangeFiDetailsInProgressId, fiDetails.FIID, cleanup = false))
+    changeId = s"${fiDetails.SubscriptionID}-${fiDetails.FIID}"
+    changeAnswers      <- changeUserAnswersRepository.get(changeId).map(_.map(_.copy(id = userAnswers.id)))
+    updatedUserAnswers <- changeAnswers.fold(populateUserAnswersWithFiDetail(fiDetails, userAnswersWithProgressFlag))(Future.successful)
+    _                  <- sessionRepository.set(updatedUserAnswers)
+  } yield updatedUserAnswers
 
   def populateAndSaveRegisteredFiDetails(userAnswers: UserAnswers, fiDetails: FIDetail): Future[UserAnswers] =
     for {
       userAnswersWithProgressFlag <- Future.fromTry(userAnswers.set(ChangeFiDetailsInProgressId, fiDetails.FIID, cleanup = false))
-      updatedUserAnswers          <- populateUserAnswersWithRegisteredFiDetail(fiDetails, userAnswersWithProgressFlag)
-      _                           <- sessionRepository.set(updatedUserAnswers)
+      changeId = s"${fiDetails.SubscriptionID}-${fiDetails.FIID}"
+      changeAnswers      <- changeUserAnswersRepository.get(changeId).map(_.map(_.copy(id = userAnswers.id)))
+      updatedUserAnswers <- changeAnswers.fold(populateUserAnswersWithRegisteredFiDetail(fiDetails, userAnswersWithProgressFlag))(Future.successful)
+      _                  <- sessionRepository.set(updatedUserAnswers)
     } yield updatedUserAnswers
 
   def fiDetailsHasChanged(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean =
