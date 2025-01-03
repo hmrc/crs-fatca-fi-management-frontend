@@ -177,7 +177,7 @@ trait Generators extends RegexConstants {
 
   def validPostCodes: Gen[String] = {
     val disallowed = List('c', 'i', 'k', 'm', 'o', 'v')
-    for {
+    (for {
       pt1Quantity <- Gen.choose(1, 2)
       pt1         <- Gen.listOfN(pt1Quantity, Gen.alphaChar).map(_.mkString)
       pt2         <- Gen.choose(0, 9)
@@ -191,7 +191,9 @@ trait Generators extends RegexConstants {
       pt5b <- Gen.alphaChar suchThat (
         ch => !disallowed.contains(ch.toLower)
       )
-    } yield s"$pt1$pt2$pt3 $pt4$pt5a$pt5b"
+    } yield s"$pt1$pt2$pt3 $pt4$pt5a$pt5b") suchThat {
+      postCode => !Seq("GY", "JE", "IM").contains(postCode.take(2).toUpperCase)
+    }
   }
 
   def validGIIN: Gen[String] = {
