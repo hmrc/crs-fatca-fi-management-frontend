@@ -404,6 +404,7 @@ detailsUpdated.title = Details updated
 detailsUpdated.heading = Details updated for {0}
 detailsUpdated.p1 = Back to manage your financial institutions
 detailsUpdated.p2 = Back to manage your CRS and FATCA reports
+detailsUpdated.default.fi = the financial institution
 
 trustURN.title = What is the trust Unique Reference Number (URN) for the financial institution?
 trustURN.heading = What is the trust Unique Reference Number (URN) for {0}?

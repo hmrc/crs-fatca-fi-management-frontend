@@ -40,11 +40,7 @@ class DetailsUpdatedController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      request.flash.get("fiName") match {
-        case Some(fiName) => Ok(view(fiName))
-        case _            => Ok(view(""))
-      }
-
+      Ok(view(request.flash.get("fiName")))
   }
 
 }
