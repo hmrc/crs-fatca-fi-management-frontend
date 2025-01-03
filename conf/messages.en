@@ -123,13 +123,6 @@ firstContactHavePhone.p1 = We will call if we have any questions about reports f
 firstContactHavePhone.error.required.individual = Select yes if we can contact you by telephone
 firstContactHavePhone.error.required.business = Select yes if they can be contacted by telephone
 
-haveUniqueTaxpayerReference.title = Is there a Unique Taxpayer Reference (UTR)?
-haveUniqueTaxpayerReference.heading = Does {0} have a Unique Taxpayer Reference (UTR)?
-haveUniqueTaxpayerReference.hint = This is 10 numbers, for example 1234567890. It will be on tax returns and other letters about Corporation Tax. It may be called ‘reference’, ‘UTR’ or ‘official use’.
-haveUniqueTaxpayerReference.checkYourAnswersLabel = Do they have a Unique Taxpayer Reference?
-haveUniqueTaxpayerReference.error.required = Select yes if the financial institution has a Unique Taxpayer Reference
-haveUniqueTaxpayerReference.change.hidden = Change if they have a Unique Taxpayer Reference
-
 nameOfFinancialInstitution.title = What is the name of the financial institution?
 nameOfFinancialInstitution.heading = What is the name of the financial institution?
 nameOfFinancialInstitution.checkYourAnswersLabel = What is the name of the financial institution?
@@ -392,7 +385,6 @@ changeYourRegisteredAnswers.submit.button = Confirm and send
 
 financialInstitutionId.changeYourAnswersLabel = FI ID
 nameOfFinancialInstitution.changeYourAnswersLabel = What is the name of the financial institution?
-haveUniqueTaxpayerReference.changeYourAnswersLabel = Do they have a Unique Taxpayer Reference?
 whatIsUniqueTaxpayerReference.changeYourAnswersLabel = Unique Taxpayer Reference
 haveGIIN.changeYourAnswersLabel = Would you like to provide a Global Intermediary Identification Number?
 whatIsGIIN.changeYourAnswersLabel = Global Intermediary Identification Number

@@ -120,7 +120,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       val someUserAnswers = emptyUserAnswers
         .withPage(NameOfFinancialInstitutionPage, "test")
-        .withPage(HaveUniqueTaxpayerReferencePage, false)
         .withPage(HaveGIINPage, false)
         .withPage(SelectedAddressLookupPage, testAddressLookup)
         .withPage(IsThisAddressPage, true)

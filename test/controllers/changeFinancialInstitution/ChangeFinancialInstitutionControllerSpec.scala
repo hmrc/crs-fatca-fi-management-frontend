@@ -242,7 +242,6 @@ class ChangeFinancialInstitutionControllerSpec
 
       val someUserAnswers = emptyUserAnswers
         .withPage(NameOfFinancialInstitutionPage, fiName)
-        .withPage(HaveUniqueTaxpayerReferencePage, false)
         .withPage(HaveGIINPage, false)
         .withPage(SelectedAddressLookupPage, testAddressLookup)
         .withPage(IsThisAddressPage, true)

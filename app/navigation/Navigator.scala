@@ -17,6 +17,8 @@
 package navigation
 
 import controllers.addFinancialInstitution.routes
+import models.FinancialInstitutions.TINType
+import models.FinancialInstitutions.TINType._
 import models._
 import pages._
 import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
@@ -38,24 +40,25 @@ class Navigator @Inject() () {
         isFiUser(
           userAnswers,
           routes.HaveGIINController.onPageLoad(NormalMode),
-          routes.HaveUniqueTaxpayerReferenceController.onPageLoad(NormalMode)
+          routes.WhichIdentificationNumbersController.onPageLoad(NormalMode)
         )
+    case WhichIdentificationNumbersPage => userAnswers => whichIdPage(userAnswers)
     case WhatIsUniqueTaxpayerReferencePage =>
-      _ => routes.HaveGIINController.onPageLoad(NormalMode)
+      userAnswers =>
+        userAnswers.get(WhichIdentificationNumbersPage) match {
+          case Some(identificationNumbers) if identificationNumbers.contains(CRN) =>
+            routes.WhatIsCompanyRegistrationNumberController.onPageLoad(NormalMode)
+          case _ =>
+            routes.HaveGIINController.onPageLoad(NormalMode)
+        }
+    case CompanyRegistrationNumberPage => _ => routes.HaveGIINController.onPageLoad(NormalMode)
+    case TrustURNPage                  => _ => routes.HaveGIINController.onPageLoad(NormalMode)
     case WhatIsGIINPage =>
       userAnswers =>
         isFiUser(
           userAnswers,
           controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(NormalMode),
           controllers.addFinancialInstitution.routes.PostcodeController.onPageLoad(NormalMode)
-        )
-    case HaveUniqueTaxpayerReferencePage =>
-      userAnswers =>
-        yesNoPage(
-          userAnswers,
-          HaveUniqueTaxpayerReferencePage,
-          routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(NormalMode),
-          routes.HaveGIINController.onPageLoad(NormalMode)
         )
     case FirstContactNamePage =>
       _ => routes.FirstContactEmailController.onPageLoad(NormalMode)
@@ -153,10 +156,7 @@ class Navigator @Inject() () {
           controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
           routes.FirstContactNameController.onPageLoad(NormalMode)
         )
-    case RemoveAreYouSurePage           => _ => controllers.routes.YourFinancialInstitutionsController.onPageLoad()
-    case WhichIdentificationNumbersPage => redirectToCheckYouAnswers // proper navigation will be added in 3404
-    case CompanyRegistrationNumberPage  => redirectToCheckYouAnswers
-    case TrustURNPage                   => redirectToCheckYouAnswers
+    case RemoveAreYouSurePage => _ => controllers.routes.YourFinancialInstitutionsController.onPageLoad()
     case _ =>
       _ => controllers.routes.IndexController.onPageLoad()
   }
@@ -169,27 +169,18 @@ class Navigator @Inject() () {
           val validationResult = if (registeredBusinessRoute) validator.validateRegisteredBusiness else validator.validate
 
           validationResult match {
-            case Nil => redirectToCheckYouAnswers(userAnswers)
+            case Nil => redirectToCheckYourAnswers(userAnswers)
             case _ if registeredBusinessRoute =>
               controllers.addFinancialInstitution.registeredBusiness.routes.IsThisYourBusinessNameController.onPageLoad(NormalMode)
             case _ =>
               controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode)
           }
         }
-
         yesNoPage(
           userAnswers,
           ReportForRegisteredBusinessPage,
-          resolveRoute(userAnswers, true),
-          resolveRoute(userAnswers, false)
-        )
-    case HaveUniqueTaxpayerReferencePage =>
-      userAnswers =>
-        yesNoPage(
-          userAnswers,
-          HaveUniqueTaxpayerReferencePage,
-          routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(CheckMode),
-          redirectToCheckYouAnswers(userAnswers)
+          resolveRoute(userAnswers, registeredBusinessRoute = true),
+          resolveRoute(userAnswers, registeredBusinessRoute = false)
         )
     case FirstContactHavePhonePage =>
       userAnswers =>
@@ -197,7 +188,7 @@ class Navigator @Inject() () {
           userAnswers,
           FirstContactHavePhonePage,
           routes.FirstContactPhoneNumberController.onPageLoad(CheckMode),
-          redirectToCheckYouAnswers(userAnswers)
+          redirectToCheckYourAnswers(userAnswers)
         )
     case SecondContactExistsPage =>
       userAnswers =>
@@ -218,14 +209,14 @@ class Navigator @Inject() () {
           userAnswers,
           SecondContactCanWePhonePage,
           routes.SecondContactPhoneNumberController.onPageLoad(CheckMode),
-          redirectToCheckYouAnswers(userAnswers)
+          redirectToCheckYourAnswers(userAnswers)
         )
     case IsTheAddressCorrectPage =>
       userAnswers =>
         yesNoPage(
           userAnswers,
           IsTheAddressCorrectPage,
-          redirectToCheckYouAnswers(userAnswers),
+          redirectToCheckYourAnswers(userAnswers),
           controllers.addFinancialInstitution.routes.PostcodeController.onPageLoad(CheckMode)
         )
     case IsThisAddressPage =>
@@ -233,7 +224,7 @@ class Navigator @Inject() () {
         yesNoPage(
           userAnswers,
           IsThisAddressPage,
-          redirectToCheckYouAnswers(userAnswers),
+          redirectToCheckYourAnswers(userAnswers),
           routes.UkAddressController.onPageLoad(CheckMode)
         )
     case PostcodePage => addressLookupNavigation(CheckMode)
@@ -243,20 +234,35 @@ class Navigator @Inject() () {
           userAnswers,
           HaveGIINPage,
           routes.WhatIsGIINController.onPageLoad(CheckMode),
-          redirectToCheckYouAnswers(userAnswers)
+          redirectToCheckYourAnswers(userAnswers)
         )
     case IsThisYourBusinessNamePage =>
       userAnswers =>
         yesNoPage(
           userAnswers,
           IsThisYourBusinessNamePage,
-          redirectToCheckYouAnswers(userAnswers),
+          redirectToCheckYourAnswers(userAnswers),
           routes.NameOfFinancialInstitutionController.onPageLoad(CheckMode)
         )
-    case _ => redirectToCheckYouAnswers
+    case WhichIdentificationNumbersPage => changeWhichIdPage
+    case WhatIsUniqueTaxpayerReferencePage =>
+      userAnswers =>
+        userAnswers
+          .get(WhichIdentificationNumbersPage)
+          .fold(controllers.routes.JourneyRecoveryController.onPageLoad()) {
+            identificationNumbers =>
+              if (
+                identificationNumbers.contains(UTR) &&
+                identificationNumbers.contains(CRN) &&
+                userAnswers.get(CompanyRegistrationNumberPage).isEmpty
+              ) routes.WhatIsCompanyRegistrationNumberController.onPageLoad(CheckMode)
+              else redirectToCheckYourAnswers(userAnswers)
+          }
+
+    case _ => redirectToCheckYourAnswers
   }
 
-  def redirectToCheckYouAnswers(ua: UserAnswers): Call = resolveAnswersVerificationRoute(ua)
+  def redirectToCheckYourAnswers(ua: UserAnswers): Call = resolveAnswersVerificationRoute(ua)
 
   private def isFiUser(ua: UserAnswers, yesCall: => Call, noCall: => Call): Call =
     ua.get(ReportForRegisteredBusinessPage) match {
@@ -274,6 +280,42 @@ class Navigator @Inject() () {
     ua.get(fromPage)
       .map(if (_) yesCall else noCall)
       .getOrElse(controllers.routes.JourneyRecoveryController.onPageLoad())
+
+  private def whichIdPage(ua: UserAnswers): Call =
+    ua.get(WhichIdentificationNumbersPage).fold(controllers.routes.JourneyRecoveryController.onPageLoad()) {
+      case set if set.contains(UTR) => routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(NormalMode)
+      case set if set.contains(CRN) => routes.WhatIsCompanyRegistrationNumberController.onPageLoad(NormalMode)
+      case set if set.contains(TRN) => routes.TrustURNController.onPageLoad(NormalMode)
+      case _                        => controllers.routes.JourneyRecoveryController.onPageLoad()
+    }
+
+  private def changeWhichIdPage(ua: UserAnswers): Call = {
+    def isMissing[A](page: QuestionPage[A])(implicit reads: Reads[A]): Boolean =
+      ua.get(page).isEmpty
+
+    def handleCombinedTINs(set: Set[TINType]): Option[Call] =
+      (set.contains(UTR), set.contains(CRN)) match {
+        case (true, true) if isMissing(WhatIsUniqueTaxpayerReferencePage) =>
+          Some(routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(CheckMode))
+        case (true, true) if isMissing(CompanyRegistrationNumberPage) =>
+          Some(routes.WhatIsCompanyRegistrationNumberController.onPageLoad(CheckMode))
+        case _ => None
+      }
+    def handleSingleCases(selectedTINs: Set[TINType]): Option[Call] =
+      selectedTINs.collectFirst {
+        case UTR if isMissing(WhatIsUniqueTaxpayerReferencePage) =>
+          routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(CheckMode)
+        case CRN if isMissing(CompanyRegistrationNumberPage) =>
+          routes.WhatIsCompanyRegistrationNumberController.onPageLoad(CheckMode)
+        case TRN if isMissing(TrustURNPage) =>
+          routes.TrustURNController.onPageLoad(CheckMode)
+      }
+
+    ua.get(WhichIdentificationNumbersPage).fold(controllers.routes.JourneyRecoveryController.onPageLoad()) {
+      selectedTINs =>
+        handleCombinedTINs(selectedTINs).orElse(handleSingleCases(selectedTINs)).getOrElse(redirectToCheckYourAnswers(ua))
+    }
+  }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>

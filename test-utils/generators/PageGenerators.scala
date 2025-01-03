@@ -48,9 +48,6 @@ trait PageGenerators {
   implicit lazy val arbitraryHaveGIINPage: Arbitrary[pages.addFinancialInstitution.HaveGIINPage.type] =
     Arbitrary(pages.addFinancialInstitution.HaveGIINPage)
 
-  implicit lazy val arbitraryHaveUniqueTaxpayerReferencePage: Arbitrary[pages.addFinancialInstitution.HaveUniqueTaxpayerReferencePage.type] =
-    Arbitrary(pages.addFinancialInstitution.HaveUniqueTaxpayerReferencePage)
-
   implicit lazy val arbitraryIsThisAddressPage: Arbitrary[pages.addFinancialInstitution.IsThisAddressPage.type] =
     Arbitrary(pages.addFinancialInstitution.IsThisAddressPage)
 
