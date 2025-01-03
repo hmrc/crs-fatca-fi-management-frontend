@@ -50,7 +50,7 @@ case class Address(
       this.addressLine2 == that.addressLine2 &&
       this.addressLine3 == that.addressLine3 &&
       this.addressLine4 == that.addressLine4 &&
-      this.postCode == that.postCode &&
+      this.postCode.map(_.trim.replaceAll(" ", "")) == that.postCode.map(_.trim.replaceAll(" ", "")) &&
       this.country.code == that.country.code
     case _ => false
   }
