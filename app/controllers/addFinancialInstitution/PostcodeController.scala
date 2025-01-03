@@ -22,10 +22,11 @@ import forms.addFinancialInstitution.PostcodeFormProvider
 import models.Mode
 import navigation.Navigator
 import pages.addFinancialInstitution.{AddressLookupPage, PostcodePage}
+import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.data.FormError
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
+import repositories.{ChangeUserAnswersRepository, SessionRepository}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ContactHelper
 import views.html.addFinancialInstitution.PostcodeView
@@ -36,6 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class PostcodeController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
+  changeUserAnswersRepository: ChangeUserAnswersRepository,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
@@ -79,6 +81,7 @@ class PostcodeController @Inject() (
                   updatedAnswers            <- Future.fromTry(request.userAnswers.set(PostcodePage, postCode))
                   updatedAnswersWithAddress <- Future.fromTry(updatedAnswers.set(AddressLookupPage, addresses))
                   _                         <- sessionRepository.set(updatedAnswersWithAddress)
+                  _                         <- changeUserAnswersRepository.set(request.fatcaId, updatedAnswers.get(ChangeFiDetailsInProgressId), updatedAnswers)
                 } yield Redirect(navigator.nextPage(PostcodePage, mode, updatedAnswersWithAddress))
             }
         )

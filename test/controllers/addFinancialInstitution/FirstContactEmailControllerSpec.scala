@@ -28,7 +28,7 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.SessionRepository
+import repositories.{ChangeUserAnswersRepository, SessionRepository}
 import views.html.addFinancialInstitution.FirstContactEmailView
 
 import scala.concurrent.Future
@@ -88,14 +88,16 @@ class FirstContactEmailControllerSpec extends SpecBase with MockitoSugar {
     "must redirect to the next page when valid data is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      val mockChangeUserAnswersRepository = mock[ChangeUserAnswersRepository]
+      when(mockChangeUserAnswersRepository.set(any(), any(), any())) thenReturn Future.successful(true)
 
       val application =
         applicationBuilder(userAnswers = Some(ua))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[ChangeUserAnswersRepository].toInstance(mockChangeUserAnswersRepository)
           )
           .build()
 

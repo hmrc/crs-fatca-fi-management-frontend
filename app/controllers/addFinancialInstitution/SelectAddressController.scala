@@ -21,10 +21,11 @@ import forms.addFinancialInstitution.SelectAddressFormProvider
 import models.{AddressLookup, Mode}
 import navigation.Navigator
 import pages.addFinancialInstitution.{AddressLookupPage, SelectAddressPage, SelectedAddressLookupPage}
+import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
+import repositories.{ChangeUserAnswersRepository, SessionRepository}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -38,6 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class SelectAddressController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
+  changeUserAnswersRepository: ChangeUserAnswersRepository,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
@@ -91,6 +93,8 @@ class SelectAddressController @Inject() (
                     request.userAnswers.set(SelectedAddressLookupPage, addressToStore).flatMap(_.remove(AddressLookupPage))
                   )
                   _ <- sessionRepository.set(updatedAnswersWithSelectedAddress)
+                  _ <- changeUserAnswersRepository
+                    .set(request.fatcaId, updatedAnswersWithSelectedAddress.get(ChangeFiDetailsInProgressId), updatedAnswersWithSelectedAddress)
                 } yield Redirect(navigator.nextPage(SelectAddressPage, mode, updatedAnswersWithSelectedAddress))
               }
             )

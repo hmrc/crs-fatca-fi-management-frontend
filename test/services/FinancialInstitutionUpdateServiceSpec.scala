@@ -27,7 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import pages.addFinancialInstitution._
 import play.api.libs.json.Json
-import repositories.SessionRepository
+import repositories.{ChangeUserAnswersRepository, SessionRepository}
 import utils.CountryListFactory
 
 import java.util.UUID
@@ -36,15 +36,16 @@ import scala.concurrent.Future
 
 class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar with UserAnswersGenerator with BeforeAndAfterEach {
 
-  private val mockCountryListFactory = mock[CountryListFactory]
-  private val mockSessionRepository  = mock[SessionRepository]
+  private val mockCountryListFactory          = mock[CountryListFactory]
+  private val mockSessionRepository           = mock[SessionRepository]
+  private val mockChangeUserAnswersRepository = mock[ChangeUserAnswersRepository]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockCountryListFactory, mockSessionRepository)
   }
 
-  private val service = new FinancialInstitutionUpdateService(mockCountryListFactory, mockSessionRepository)
+  private val service = new FinancialInstitutionUpdateService(mockCountryListFactory, mockSessionRepository, mockChangeUserAnswersRepository)
 
   private val nonUkCountry = Country("valid", "AX", "Aland Islands")
 
@@ -59,6 +60,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
           (fiDetails: FIDetail, isUkAddress: Boolean) =>
             val country        = if (isUkAddress) Country.GB else nonUkCountry
             val ukCountryCodes = if (isUkAddress) Set(country.code, fiDetails.AddressDetails.CountryCode.value) else Set.empty[String]
+            when(mockChangeUserAnswersRepository.get(any)).thenReturn(Future.successful(None))
             when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
             when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(country))
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(ukCountryCodes)
@@ -73,6 +75,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
       "must return error when there is a failure while persisting the user answers" in {
         forAll {
           fiDetails: FIDetail =>
+            when(mockChangeUserAnswersRepository.get(any)).thenReturn(Future.successful(None))
             when(mockSessionRepository.set(any())).thenReturn(Future.failed(persistenceError))
             when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(Country.GB))
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(fiDetails.AddressDetails.CountryCode.toSet)

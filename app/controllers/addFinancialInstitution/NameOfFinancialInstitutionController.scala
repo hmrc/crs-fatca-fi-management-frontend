@@ -21,10 +21,11 @@ import forms.addFinancialInstitution.NameOfFinancialInstitutionFormProvider
 import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
+import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
+import repositories.{ChangeUserAnswersRepository, SessionRepository}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.addFinancialInstitution.NameOfFinancialInstitutionView
 
@@ -34,6 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class NameOfFinancialInstitutionController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
+  changeUserAnswersRepository: ChangeUserAnswersRepository,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
@@ -81,6 +83,7 @@ class NameOfFinancialInstitutionController @Inject() (
                   .set(NameOfFinancialInstitutionPage, value)
               )
               _ <- sessionRepository.set(updatedAnswers)
+              _ <- changeUserAnswersRepository.set(request.fatcaId, updatedAnswers.get(ChangeFiDetailsInProgressId), updatedAnswers)
             } yield Redirect(navigator.nextPage(NameOfFinancialInstitutionPage, mode, updatedAnswers))
         )
   }
