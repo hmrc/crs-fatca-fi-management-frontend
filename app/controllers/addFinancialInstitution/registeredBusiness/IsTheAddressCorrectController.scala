@@ -46,6 +46,7 @@ class IsTheAddressCorrectController @Inject() (
   regService: RegistrationWithUtrService,
   retrieveCtUTR: CtUtrRetrievalAction,
   countryListFactory: CountryListFactory,
+  checkForInformationSentAction: CheckForInformationSentAction,
   val controllerComponents: MessagesControllerComponents,
   view: IsTheAddressCorrectView
 )(implicit ec: ExecutionContext)
@@ -56,38 +57,39 @@ class IsTheAddressCorrectController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen retrieveCtUTR() andThen getData andThen requireData).async {
-    implicit request =>
-      request.ctutr match {
-        case Some(utr) =>
-          regService
-            .fetchAddress(utr)
-            .flatMap {
-              address =>
-                for {
-                  addressWithCountry <- Future.fromTry(addCountryToAddress(address))
-                  updatedAnswers     <- Future.fromTry(request.userAnswers.set(FetchedRegisteredAddressPage, addressWithCountry, cleanup = false))
-                  result <- sessionRepository.set(updatedAnswers).map {
-                    _ =>
-                      val preparedForm = request.userAnswers.get(IsTheAddressCorrectPage) match {
-                        case None        => form
-                        case Some(value) => form.fill(value)
-                      }
-                      Ok(view(preparedForm, mode, getFinancialInstitutionName(request.userAnswers), addressWithCountry))
-                  }
-                } yield result
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    (identify andThen retrieveCtUTR() andThen getData andThen requireData andThen checkForInformationSentAction).async {
+      implicit request =>
+        request.ctutr match {
+          case Some(utr) =>
+            regService
+              .fetchAddress(utr)
+              .flatMap {
+                address =>
+                  for {
+                    addressWithCountry <- Future.fromTry(addCountryToAddress(address))
+                    updatedAnswers     <- Future.fromTry(request.userAnswers.set(FetchedRegisteredAddressPage, addressWithCountry, cleanup = false))
+                    result <- sessionRepository.set(updatedAnswers).map {
+                      _ =>
+                        val preparedForm = request.userAnswers.get(IsTheAddressCorrectPage) match {
+                          case None        => form
+                          case Some(value) => form.fill(value)
+                        }
+                        Ok(view(preparedForm, mode, getFinancialInstitutionName(request.userAnswers), addressWithCountry))
+                    }
+                  } yield result
 
-            }
-            .recoverWith {
-              case e =>
-                logger.error(s"Failed to fetch address for UTR $utr", e)
-                Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
-            }
-        case None =>
-          Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
-      }
+              }
+              .recoverWith {
+                case e =>
+                  logger.error(s"Failed to fetch address for UTR $utr", e)
+                  Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+              }
+          case None =>
+            Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+        }
 
-  }
+    }
 
   private def addCountryToAddress(addressResponse: AddressResponse): Try[AddressResponse] =
     if (addressResponse.country.isDefined) {

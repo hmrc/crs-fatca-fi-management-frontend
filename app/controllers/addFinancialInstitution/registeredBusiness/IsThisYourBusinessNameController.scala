@@ -43,6 +43,7 @@ class IsThisYourBusinessNameController @Inject() (
   requireData: DataRequiredAction,
   subscriptionService: SubscriptionService,
   formProvider: IsThisYourBusinessNameFormProvider,
+  checkForInformationSentAction: CheckForInformationSentAction,
   val controllerComponents: MessagesControllerComponents,
   view: IsThisYourBusinessNameView
 )(implicit ec: ExecutionContext)
@@ -51,7 +52,7 @@ class IsThisYourBusinessNameController @Inject() (
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkForInformationSentAction).async {
     implicit request =>
       subscriptionService.getSubscription(request.fatcaId).flatMap {
         sub =>
