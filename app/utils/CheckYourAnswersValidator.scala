@@ -17,7 +17,7 @@
 package utils
 
 import models.FinancialInstitutions.TINType
-import models.{CheckMode, UserAnswers}
+import models.{CheckMode, NormalMode, UserAnswers}
 import pages._
 import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
@@ -142,20 +142,25 @@ class CheckYourAnswersValidator(val userAnswers: UserAnswers) extends AddFIValid
 
   def validate: Seq[Page] = checkNameIdNumbersGIINMissingAnswers ++ checkAddressMissingAnswers ++ checkContactDetailsMissingAnswers
 
-  def changeAnswersRedirectUrl: String = validate.headOption match {
-    case Some(PostcodePage) =>
-      controllers.addFinancialInstitution.routes.PostcodeController.onPageLoad(CheckMode).url
-    case Some(FirstContactPhoneNumberPage) =>
-      controllers.addFinancialInstitution.routes.FirstContactHavePhoneController.onPageLoad(CheckMode).url
-    case Some(SecondContactPhoneNumberPage) =>
-      controllers.addFinancialInstitution.routes.SecondContactCanWePhoneController.onPageLoad(CheckMode).url
-    case Some(SecondContactEmailPage) =>
-      controllers.addFinancialInstitution.routes.SecondContactEmailController.onPageLoad(CheckMode).url
-    case Some(SecondContactNamePage) | Some(SecondContactExistsPage) =>
-      controllers.addFinancialInstitution.routes.SecondContactExistsController.onPageLoad(CheckMode).url
-    case _ =>
-      controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(CheckMode).url
-  }
+  private val pageToRedirectUrl: Map[Page, String] = Map(
+    PostcodePage                      -> controllers.addFinancialInstitution.routes.PostcodeController.onPageLoad(CheckMode).url,
+    FirstContactPhoneNumberPage       -> controllers.addFinancialInstitution.routes.FirstContactHavePhoneController.onPageLoad(CheckMode).url,
+    SecondContactPhoneNumberPage      -> controllers.addFinancialInstitution.routes.SecondContactCanWePhoneController.onPageLoad(CheckMode).url,
+    SecondContactEmailPage            -> controllers.addFinancialInstitution.routes.SecondContactEmailController.onPageLoad(CheckMode).url,
+    SecondContactNamePage             -> controllers.addFinancialInstitution.routes.SecondContactExistsController.onPageLoad(CheckMode).url,
+    SecondContactExistsPage           -> controllers.addFinancialInstitution.routes.SecondContactExistsController.onPageLoad(CheckMode).url,
+    WhichIdentificationNumbersPage    -> controllers.addFinancialInstitution.routes.WhichIdentificationNumbersController.onPageLoad(CheckMode).url,
+    WhatIsUniqueTaxpayerReferencePage -> controllers.addFinancialInstitution.routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(CheckMode).url,
+    CompanyRegistrationNumberPage     -> controllers.addFinancialInstitution.routes.WhatIsCompanyRegistrationNumberController.onPageLoad(CheckMode).url,
+    TrustURNPage                      -> controllers.addFinancialInstitution.routes.TrustURNController.onPageLoad(CheckMode).url
+  )
+
+  def changeAnswersRedirectUrl: String =
+    validate.headOption
+      .flatMap(pageToRedirectUrl.get)
+      .getOrElse(
+        controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url
+      )
 
   def validateRegisteredBusiness: Seq[Page] =
     if (userAnswers.get(IsTheAddressCorrectPage).contains(true)) checkRegisteredBusiness else checkRegisteredBusiness ++ checkAddressMissingAnswers
