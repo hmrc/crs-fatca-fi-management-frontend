@@ -21,7 +21,12 @@ import models.FinancialInstitutions.TINType.{GIIN, UTR}
 import models.FinancialInstitutions._
 import models.{GIINumber, TaxIdentificationNumber, UniqueTaxpayerReference, UserAnswers}
 import pages.QuestionPage
-import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
+import pages.addFinancialInstitution.IsRegisteredBusiness.{
+  FetchedRegisteredAddressPage,
+  IsTheAddressCorrectPage,
+  IsThisYourBusinessNamePage,
+  ReportForRegisteredBusinessPage
+}
 import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.libs.json.{Json, Reads}
@@ -208,10 +213,11 @@ class FinancialInstitutionUpdateService @Inject() (
     val isUkAddress    = addressDetails.CountryCode.exists(countryListFactory.countryCodesForUkCountries.contains)
     val fetchedAddress = addressDetails.toAddress(countryListFactory)
     val enteredAddress = if (isUkAddress) {
-      (userAnswers.get(UkAddressPage), userAnswers.get(SelectedAddressLookupPage)) match {
-        case (Some(ukAddress), None)             => Option(ukAddress)
-        case (None, Some(selectedLookupAddress)) => Option(selectedLookupAddress.toAddress)
-        case _                                   => None
+      (userAnswers.get(UkAddressPage), userAnswers.get(SelectedAddressLookupPage), userAnswers.get(FetchedRegisteredAddressPage)) match {
+        case (Some(ukAddress), None, _)             => Option(ukAddress)
+        case (None, Some(selectedLookupAddress), _) => Option(selectedLookupAddress.toAddress)
+        case (None, None, Some(fetchedAddress))     => Option(fetchedAddress.toAddress)
+        case _                                      => None
       }
     } else {
       userAnswers.get(NonUkAddressPage)
