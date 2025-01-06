@@ -219,6 +219,20 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar with 
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
+
+    "must redirect to information-sent page for a GET when the user answers is empty" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, isTheAddressCorrectRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.InformationSentController.onPageLoad.url
+      }
+    }
+
   }
 
 }
