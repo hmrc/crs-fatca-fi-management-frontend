@@ -21,10 +21,11 @@ import forms.addFinancialInstitution.SecondContactEmailFormProvider
 import models.Mode
 import navigation.Navigator
 import pages.addFinancialInstitution.{SecondContactEmailPage, SecondContactNamePage}
+import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
+import repositories.{ChangeUserAnswersRepository, SessionRepository}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ContactHelper
 import views.html.addFinancialInstitution.SecondContactEmailView
@@ -35,6 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class SecondContactEmailController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
+  changeUserAnswersRepository: ChangeUserAnswersRepository,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
@@ -84,6 +86,7 @@ class SecondContactEmailController @Inject() (
                   for {
                     updatedAnswers <- Future.fromTry(ua.set(SecondContactEmailPage, value))
                     _              <- sessionRepository.set(updatedAnswers)
+                    _              <- changeUserAnswersRepository.set(request.fatcaId, updatedAnswers.get(ChangeFiDetailsInProgressId), updatedAnswers)
                   } yield Redirect(navigator.nextPage(SecondContactEmailPage, mode, updatedAnswers))
               )
         }

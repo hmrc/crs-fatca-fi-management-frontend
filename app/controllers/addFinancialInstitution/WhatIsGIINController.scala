@@ -21,9 +21,10 @@ import forms.addFinancialInstitution.WhatIsGIINFormProvider
 import models.Mode
 import navigation.Navigator
 import pages.addFinancialInstitution.{HaveGIINPage, WhatIsGIINPage}
+import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
+import repositories.{ChangeUserAnswersRepository, SessionRepository}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ContactHelper
 import views.html.addFinancialInstitution.WhatIsGIINView
@@ -34,6 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class WhatIsGIINController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
+  changeUserAnswersRepository: ChangeUserAnswersRepository,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
@@ -78,6 +80,7 @@ class WhatIsGIINController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsGIINPage, value))
               _              <- sessionRepository.set(updatedAnswers)
+              _              <- changeUserAnswersRepository.set(request.fatcaId, updatedAnswers.get(ChangeFiDetailsInProgressId), updatedAnswers)
             } yield Redirect(navigator.nextPage(WhatIsGIINPage, mode, updatedAnswers))
         )
   }

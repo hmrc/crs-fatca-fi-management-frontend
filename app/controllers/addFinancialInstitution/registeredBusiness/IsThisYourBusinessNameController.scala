@@ -23,10 +23,11 @@ import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.addFinancialInstitution.IsRegisteredBusiness.IsThisYourBusinessNamePage
 import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
+import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
+import repositories.{ChangeUserAnswersRepository, SessionRepository}
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.addFinancialInstitution.IsRegisteredBusiness.IsThisYourBusinessNameView
@@ -37,6 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class IsThisYourBusinessNameController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
+  changeUserAnswersRepository: ChangeUserAnswersRepository,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
@@ -91,6 +93,7 @@ class IsThisYourBusinessNameController @Inject() (
                       updatedAnswers <- Future.fromTry(request.userAnswers.set(IsThisYourBusinessNamePage, value))
                       updatedFIName  <- setFIName(value, fiName, updatedAnswers)
                       _              <- sessionRepository.set(updatedFIName)
+                      _              <- changeUserAnswersRepository.set(request.fatcaId, updatedAnswers.get(ChangeFiDetailsInProgressId), updatedAnswers)
                     } yield Redirect(navigator.nextPage(IsThisYourBusinessNamePage, mode, updatedAnswers))
                 )
           }

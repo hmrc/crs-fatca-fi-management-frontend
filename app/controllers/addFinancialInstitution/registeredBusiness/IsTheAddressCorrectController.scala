@@ -22,10 +22,11 @@ import forms.addFinancialInstitution.IsRegisteredBusiness.IsTheAddressCorrectFor
 import models.{AddressResponse, Country, Mode}
 import navigation.Navigator
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, IsTheAddressCorrectPage}
+import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
+import repositories.{ChangeUserAnswersRepository, SessionRepository}
 import services.RegistrationWithUtrService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{ContactHelper, CountryListFactory}
@@ -38,6 +39,7 @@ import scala.util.{Failure, Success, Try}
 class IsTheAddressCorrectController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
+  changeUserAnswersRepository: ChangeUserAnswersRepository,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
@@ -122,6 +124,7 @@ class IsTheAddressCorrectController @Inject() (
                   for {
                     updatedAnswers <- Future.fromTry(request.userAnswers.set(IsTheAddressCorrectPage, value))
                     _              <- sessionRepository.set(updatedAnswers)
+                    _              <- changeUserAnswersRepository.set(request.fatcaId, updatedAnswers.get(ChangeFiDetailsInProgressId), updatedAnswers)
                   } yield (address.countryCode, value) match {
                     case (country, true) if country != Country.GB.code =>
                       Redirect(controllers.routes.NotInUKController.onPageLoad())

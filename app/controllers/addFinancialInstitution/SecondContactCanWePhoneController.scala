@@ -22,10 +22,11 @@ import models.Mode
 import models.requests.DataRequest
 import navigation.Navigator
 import pages.addFinancialInstitution.{NameOfFinancialInstitutionPage, SecondContactCanWePhonePage}
+import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import repositories.SessionRepository
+import repositories.{ChangeUserAnswersRepository, SessionRepository}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ContactHelper
 import views.html.addFinancialInstitution.SecondContactCanWePhoneView
@@ -36,6 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class SecondContactCanWePhoneController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
+  changeUserAnswersRepository: ChangeUserAnswersRepository,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
@@ -79,6 +81,7 @@ class SecondContactCanWePhoneController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondContactCanWePhonePage, value))
               _              <- sessionRepository.set(updatedAnswers)
+              _              <- changeUserAnswersRepository.set(request.fatcaId, updatedAnswers.get(ChangeFiDetailsInProgressId), updatedAnswers)
             } yield Redirect(navigator.nextPage(SecondContactCanWePhonePage, mode, updatedAnswers))
         )
   }

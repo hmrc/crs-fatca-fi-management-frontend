@@ -28,7 +28,7 @@ import play.api.inject.bind
 import play.api.mvc.RequestHeader
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.SessionRepository
+import repositories.{ChangeUserAnswersRepository, SessionRepository}
 import services.{FinancialInstitutionsService, SubscriptionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.IndexView
@@ -39,14 +39,18 @@ class IndexControllerSpec extends SpecBase {
 
   val mockSubscriptionService: SubscriptionService                   = mock[SubscriptionService]
   val mockSessionRepository: SessionRepository                       = mock[SessionRepository]
+  val mockChangeUserAnswersRepository: ChangeUserAnswersRepository   = mock[ChangeUserAnswersRepository]
   val mockAppConfig: FrontendAppConfig                               = mock[FrontendAppConfig]
   val mockFinancialInstitutionsService: FinancialInstitutionsService = mock[FinancialInstitutionsService]
 
   when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
   when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+  when(mockChangeUserAnswersRepository.get(any())) thenReturn Future.successful(None)
+  when(mockChangeUserAnswersRepository.set(any(), any(), any())) thenReturn Future.successful(true)
   when(mockAppConfig.changeIndividualDetailsUrl) thenReturn "/change-contact/individual/details"
   when(mockAppConfig.changeOrganisationDetailsUrl) thenReturn "/change-contact/organisation/details"
   when(mockAppConfig.feedbackUrl(any[RequestHeader]())) thenReturn "test"
+  when(mockAppConfig.changeAnswersCacheTtl).thenReturn(3600)
 
   when(mockFinancialInstitutionsService.getListOfFinancialInstitutions(any())(any[HeaderCarrier](), any[ExecutionContext]()))
     .thenReturn(Future.successful(testFiDetails))

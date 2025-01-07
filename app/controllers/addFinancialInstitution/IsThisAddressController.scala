@@ -21,9 +21,10 @@ import forms.addFinancialInstitution.IsThisAddressFormProvider
 import models.Mode
 import navigation.Navigator
 import pages.addFinancialInstitution.{AddressLookupPage, IsThisAddressPage, SelectedAddressLookupPage}
+import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
+import repositories.{ChangeUserAnswersRepository, SessionRepository}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ContactHelper
 import views.html.addFinancialInstitution.IsThisAddressView
@@ -34,6 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class IsThisAddressController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
+  changeUserAnswersRepository: ChangeUserAnswersRepository,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
@@ -79,6 +81,8 @@ class IsThisAddressController @Inject() (
                   updatedAnswers                    <- Future.fromTry(ua.set(IsThisAddressPage, value))
                   updatedAnswersWithSelectedAddress <- Future.fromTry(updatedAnswers.set(SelectedAddressLookupPage, address.head))
                   _                                 <- sessionRepository.set(updatedAnswersWithSelectedAddress)
+                  _ <- changeUserAnswersRepository
+                    .set(request.fatcaId, updatedAnswersWithSelectedAddress.get(ChangeFiDetailsInProgressId), updatedAnswersWithSelectedAddress)
                 } yield Redirect(navigator.nextPage(IsThisAddressPage, mode, updatedAnswersWithSelectedAddress))
             )
         case None => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
