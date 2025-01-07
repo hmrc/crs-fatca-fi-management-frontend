@@ -21,9 +21,10 @@ import forms.addFinancialInstitution.FirstContactPhoneNumberFormProvider
 import models.Mode
 import navigation.Navigator
 import pages.addFinancialInstitution.FirstContactPhoneNumberPage
+import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
+import repositories.{ChangeUserAnswersRepository, SessionRepository}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ContactHelper
 import views.html.addFinancialInstitution.FirstContactPhoneNumberView
@@ -34,6 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class FirstContactPhoneNumberController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
+  changeUserAnswersRepository: ChangeUserAnswersRepository,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
@@ -68,6 +70,7 @@ class FirstContactPhoneNumberController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(FirstContactPhoneNumberPage, value))
               _              <- sessionRepository.set(updatedAnswers)
+              _              <- changeUserAnswersRepository.set(request.fatcaId, updatedAnswers.get(ChangeFiDetailsInProgressId), updatedAnswers)
             } yield Redirect(navigator.nextPage(FirstContactPhoneNumberPage, mode, updatedAnswers))
         )
   }

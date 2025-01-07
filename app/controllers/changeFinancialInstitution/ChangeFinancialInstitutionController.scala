@@ -25,6 +25,7 @@ import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import repositories.ChangeUserAnswersRepository
 import services.{FinancialInstitutionUpdateService, FinancialInstitutionsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{CheckYourAnswersValidator, ContactHelper}
@@ -41,6 +42,7 @@ class ChangeFinancialInstitutionController @Inject() (
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
+  changeUserAnswersRepository: ChangeUserAnswersRepository,
   financialInstitutionsService: FinancialInstitutionsService,
   financialInstitutionUpdateService: FinancialInstitutionUpdateService,
   val controllerComponents: MessagesControllerComponents,
@@ -69,9 +71,10 @@ class ChangeFinancialInstitutionController @Inject() (
                     Future.successful(Redirect(controllers.routes.SomeInformationMissingController.onPageLoad()))
                 }
               case _ =>
+                val hasChanges = financialInstitutionUpdateService.fiDetailsHasChanged(userAnswers, fiDetails)
                 financialInstitutionUpdateService
                   .populateAndSaveFiDetails(userAnswers, fiDetails)
-                  .map(createPage(fiid, _, hasChanges = false))
+                  .map(createPage(fiid, _, hasChanges = hasChanges))
                   .recoverWith {
                     exception =>
                       logger.error(s"Failed to populate and save FI details to user answers for subscription Id: [${request.fatcaId}] and FI Id [$fiid]",
@@ -98,6 +101,9 @@ class ChangeFinancialInstitutionController @Inject() (
         .updateFinancialInstitution(request.fatcaId, request.userAnswers)
         .flatMap(
           _ => financialInstitutionUpdateService.clearUserAnswers(request.userAnswers)
+        )
+        .flatMap(
+          _ => changeUserAnswersRepository.clear(request.userId, request.userAnswers.get(ChangeFiDetailsInProgressId))
         )
         .map(
           _ => Redirect(controllers.routes.DetailsUpdatedController.onPageLoad()).flashing("fiName" -> fiName)
