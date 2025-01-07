@@ -17,9 +17,10 @@
 package services
 
 import connectors.FinancialInstitutionsConnector
-import models.FinancialInstitutions.TINType.{GIIN, UTR}
+import models.FinancialInstitutions.TINType.{CRN, GIIN, TRN, UTR}
 import models.FinancialInstitutions._
 import models.UserAnswers
+import pages.{CompanyRegistrationNumberPage, TrustURNPage}
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
@@ -130,8 +131,16 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
     )).getOrElse(throw new IllegalStateException("Unable to build FIDetail"))
 
   private def extractTinDetails(userAnswers: UserAnswers): Seq[TINDetails] = {
+    val crn = userAnswers.get(CompanyRegistrationNumberPage) match {
+      case Some(crn) => Seq(TINDetails(CRN, crn.value, "GB"))
+      case _         => Seq.empty
+    }
     val utr = userAnswers.get(WhatIsUniqueTaxpayerReferencePage) match {
       case Some(utr) => Seq(TINDetails(UTR, utr.value, "GB"))
+      case _         => Seq.empty
+    }
+    val trn = userAnswers.get(TrustURNPage) match {
+      case Some(trn) => Seq(TINDetails(CRN, trn, "GB"))
       case _         => Seq.empty
     }
 
@@ -140,7 +149,9 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
       case _          => Seq.empty
     }
 
-    utr ++ giin
+    val tins = utr ++ crn ++ trn ++ giin
+
+    tins
   }
 
   private def extractPrimaryContactDetails(userAnswers: UserAnswers): Option[ContactDetails] = for {

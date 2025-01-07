@@ -17,13 +17,13 @@
 package services
 
 import com.google.inject.Inject
-import models.FinancialInstitutions.TINType.{GIIN, UTR}
+import models.FinancialInstitutions.TINType._
 import models.FinancialInstitutions._
-import models.{GIINumber, TaxIdentificationNumber, UniqueTaxpayerReference, UserAnswers}
-import pages.QuestionPage
+import models.{CompanyRegistrationNumber, GIINumber, TaxIdentificationNumber, UniqueTaxpayerReference, UserAnswers}
 import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
+import pages.{CompanyRegistrationNumberPage, QuestionPage, TrustURNPage}
 import play.api.libs.json.{Json, Reads}
 import repositories.SessionRepository
 import utils.CountryListFactory
@@ -71,7 +71,7 @@ class FinancialInstitutionUpdateService @Inject() (
   )(implicit ec: ExecutionContext): Future[UserAnswers] =
     for {
       a <- Future.fromTry(userAnswers.set(NameOfFinancialInstitutionPage, fiDetails.FIName, cleanup = false))
-      b <- setUTR(a, fiDetails.TINDetails) // TODO: will need updating for the other TIN details
+      b <- setTaxIdentifier(a, fiDetails.TINDetails)
       c <- setGIIN(b, fiDetails.TINDetails)
       d <- setAddress(c, fiDetails.AddressDetails)
       e <- setPrimaryContactDetails(d, fiDetails)
@@ -85,23 +85,45 @@ class FinancialInstitutionUpdateService @Inject() (
     for {
       a <- Future.fromTry(userAnswers.set(ReportForRegisteredBusinessPage, fiDetails.IsFIUser, cleanup = false))
       b <- Future.fromTry(a.set(NameOfFinancialInstitutionPage, fiDetails.FIName, cleanup = false))
-      c <- setGIIN(b, fiDetails.TINDetails)
-      d <- setAddress(c, fiDetails.AddressDetails)
-      e <- setFiUserDetails(d)
-    } yield e
+      c <- setTaxIdentifier(b, fiDetails.TINDetails)
+      d <- setGIIN(c, fiDetails.TINDetails)
+      e <- setAddress(d, fiDetails.AddressDetails)
+      f <- setFiUserDetails(e)
+    } yield f
 
-  // TODO: include setting of all TIN types
-  private def setUTR(userAnswers: UserAnswers, tinDetails: Seq[TINDetails])(implicit ec: ExecutionContext): Future[UserAnswers] =
-    tinDetails.find(_.TINType == UTR) match {
-      case Some(details) =>
-        for {
-          a <- Future.fromTry(userAnswers.set(WhichIdentificationNumbersPage, Set[TINType](TINType.UTR), cleanup = false))
-          b <- Future.fromTry(a.set(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference(details.TIN), cleanup = false))
-        } yield b
-      case None =>
-        for {
-          b <- Future.fromTry(userAnswers.remove(WhatIsUniqueTaxpayerReferencePage))
-        } yield b
+
+  private def setTaxIdentifier(userAnswers: UserAnswers, listOfTinDetails: Seq[TINDetails])(implicit ec: ExecutionContext): Future[UserAnswers] =
+    listOfTinDetails.foldLeft(Future.successful(userAnswers)) {
+      (futureAnswers, details) =>
+        futureAnswers.flatMap {
+          answers =>
+            details.TINType match {
+              case UTR =>
+                Future.fromTry(
+                  answers
+                    .set(WhichIdentificationNumbersPage, answers.get(WhichIdentificationNumbersPage).getOrElse(Set.empty) + TINType.UTR, cleanup = false)
+                    .flatMap(_.set(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference(details.TIN), cleanup = false))
+                )
+              case CRN =>
+                Future.fromTry(
+                  answers
+                    .set(WhichIdentificationNumbersPage, answers.get(WhichIdentificationNumbersPage).getOrElse(Set.empty) + TINType.CRN, cleanup = false)
+                    .flatMap(_.set(CompanyRegistrationNumberPage, CompanyRegistrationNumber(details.TIN), cleanup = false))
+                )
+              case TRN =>
+                Future.fromTry(
+                  answers
+                    .set(WhichIdentificationNumbersPage, answers.get(WhichIdentificationNumbersPage).getOrElse(Set.empty) + TINType.TRN, cleanup = false)
+                    .flatMap(_.set(TrustURNPage, details.TIN, cleanup = false))
+                )
+              case _ =>
+                Future.fromTry(
+                  answers
+                    .set(HaveGIINPage, true, cleanup = false)
+                    .flatMap(_.set(WhatIsGIINPage, GIINumber(details.TIN), cleanup = false))
+                )
+            }
+        }
     }
 
   private def setGIIN(userAnswers: UserAnswers, tinDetails: Seq[TINDetails])(implicit ec: ExecutionContext): Future[UserAnswers] =
