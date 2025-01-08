@@ -20,6 +20,7 @@
     layout: templates.Layout,
     govukSummaryList: GovukSummaryList,
     heading: Heading,
+    subheading: Subheading,
     para: Paragraph,
     formHelper: FormWithCSRF,
     govukButton: GovukButton
@@ -33,7 +34,7 @@
 
     @govukSummaryList(financialInstitutionList)
 
-    @heading(messages("registeredBusinessCheckYourAnswers.subheading"),"m")
+    @subheading(messages("registeredBusinessCheckYourAnswers.subheading"))
     @para(Html(messages("registeredBusinessCheckYourAnswers.para")))
 
     @formHelper(action =  controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.confirmAndAdd()) {
