@@ -20,33 +20,42 @@ import com.google.inject.Inject
 import models.FinancialInstitutions.TINType._
 import models.FinancialInstitutions._
 import models.{CompanyRegistrationNumber, GIINumber, UniqueTaxpayerReference, UserAnswers}
-import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
+import pages.addFinancialInstitution.IsRegisteredBusiness.{
+  FetchedRegisteredAddressPage,
+  IsTheAddressCorrectPage,
+  IsThisYourBusinessNamePage,
+  ReportForRegisteredBusinessPage
+}
 import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import pages.{CompanyRegistrationNumberPage, QuestionPage, TrustURNPage}
 import play.api.libs.json.Json
-import repositories.SessionRepository
+import repositories.{ChangeUserAnswersRepository, SessionRepository}
 import utils.CountryListFactory
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class FinancialInstitutionUpdateService @Inject() (
   countryListFactory: CountryListFactory,
-  sessionRepository: SessionRepository
+  sessionRepository: SessionRepository,
+  changeUserAnswersRepository: ChangeUserAnswersRepository
 )(implicit ec: ExecutionContext) {
 
-  def populateAndSaveFiDetails(userAnswers: UserAnswers, fiDetails: FIDetail): Future[UserAnswers] =
-    for {
-      userAnswersWithProgressFlag <- Future.fromTry(userAnswers.set(ChangeFiDetailsInProgressId, fiDetails.FIID, cleanup = false))
-      updatedUserAnswers          <- populateUserAnswersWithFiDetail(fiDetails, userAnswersWithProgressFlag)
-      _                           <- sessionRepository.set(updatedUserAnswers)
-    } yield updatedUserAnswers
+  def populateAndSaveFiDetails(userAnswers: UserAnswers, fiDetails: FIDetail): Future[UserAnswers] = for {
+    userAnswersWithProgressFlag <- Future.fromTry(userAnswers.set(ChangeFiDetailsInProgressId, fiDetails.FIID, cleanup = false))
+    changeId = s"${fiDetails.SubscriptionID}-${fiDetails.FIID}"
+    changeAnswers      <- changeUserAnswersRepository.get(changeId).map(_.map(_.copy(id = userAnswers.id)))
+    updatedUserAnswers <- changeAnswers.fold(populateUserAnswersWithFiDetail(fiDetails, userAnswersWithProgressFlag))(Future.successful)
+    _                  <- sessionRepository.set(updatedUserAnswers)
+  } yield updatedUserAnswers
 
   def populateAndSaveRegisteredFiDetails(userAnswers: UserAnswers, fiDetails: FIDetail): Future[UserAnswers] =
     for {
       userAnswersWithProgressFlag <- Future.fromTry(userAnswers.set(ChangeFiDetailsInProgressId, fiDetails.FIID, cleanup = false))
-      updatedUserAnswers          <- populateUserAnswersWithRegisteredFiDetail(fiDetails, userAnswersWithProgressFlag)
-      _                           <- sessionRepository.set(updatedUserAnswers)
+      changeId = s"${fiDetails.SubscriptionID}-${fiDetails.FIID}"
+      changeAnswers      <- changeUserAnswersRepository.get(changeId).map(_.map(_.copy(id = userAnswers.id)))
+      updatedUserAnswers <- changeAnswers.fold(populateUserAnswersWithRegisteredFiDetail(fiDetails, userAnswersWithProgressFlag))(Future.successful)
+      _                  <- sessionRepository.set(updatedUserAnswers)
     } yield updatedUserAnswers
 
   def fiDetailsHasChanged(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean =
@@ -273,10 +282,11 @@ class FinancialInstitutionUpdateService @Inject() (
     val isUkAddress    = addressDetails.CountryCode.exists(countryListFactory.countryCodesForUkCountries.contains)
     val fetchedAddress = addressDetails.toAddress(countryListFactory)
     val enteredAddress = if (isUkAddress) {
-      (userAnswers.get(UkAddressPage), userAnswers.get(SelectedAddressLookupPage)) match {
-        case (Some(ukAddress), None)             => Option(ukAddress)
-        case (None, Some(selectedLookupAddress)) => Option(selectedLookupAddress.toAddress)
-        case _                                   => None
+      (userAnswers.get(UkAddressPage), userAnswers.get(SelectedAddressLookupPage), userAnswers.get(FetchedRegisteredAddressPage)) match {
+        case (Some(ukAddress), None, _)             => Option(ukAddress)
+        case (None, Some(selectedLookupAddress), _) => Option(selectedLookupAddress.toAddress)
+        case (None, None, Some(fetchedAddress))     => Option(fetchedAddress.toAddress)
+        case _                                      => None
       }
     } else {
       userAnswers.get(NonUkAddressPage)

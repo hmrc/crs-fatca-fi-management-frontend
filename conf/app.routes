@@ -148,16 +148,16 @@ POST        /change-answers                                               contro
 GET         /registered-business/change-answers/:fiid                     controllers.changeFinancialInstitution.ChangeRegisteredFinancialInstitutionController.onPageLoad(fiid: String)
 POST        /registered-business/change-answers                           controllers.changeFinancialInstitution.ChangeRegisteredFinancialInstitutionController.confirmAndAdd()
 
-GET        /details-updated                                               controllers.DetailsUpdatedController.onPageLoad()
+GET         /details-updated                                              controllers.DetailsUpdatedController.onPageLoad()
 
-GET        /trust-urn                                                     controllers.addFinancialInstitution.TrustURNController.onPageLoad(mode: Mode = NormalMode)
-POST       /trust-urn                                                     controllers.addFinancialInstitution.TrustURNController.onSubmit(mode: Mode = NormalMode)
-GET        /change-trust-urn                                              controllers.addFinancialInstitution.TrustURNController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-trust-urn                                              controllers.addFinancialInstitution.TrustURNController.onSubmit(mode: Mode = CheckMode)
+GET         /trust-urn                                                    controllers.addFinancialInstitution.TrustURNController.onPageLoad(mode: Mode = NormalMode)
+POST        /trust-urn                                                    controllers.addFinancialInstitution.TrustURNController.onSubmit(mode: Mode = NormalMode)
+GET         /change-trust-urn                                             controllers.addFinancialInstitution.TrustURNController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-trust-urn                                             controllers.addFinancialInstitution.TrustURNController.onSubmit(mode: Mode = CheckMode)
 
-GET        /problem/not-in-uk                                             controllers.NotInUKController.onPageLoad()
+GET         /problem/not-in-uk                                            controllers.NotInUKController.onPageLoad()
 
-GET        /identification-numbers                        controllers.addFinancialInstitution.WhichIdentificationNumbersController.onPageLoad(mode: Mode = NormalMode)
-POST       /identification-numbers                        controllers.addFinancialInstitution.WhichIdentificationNumbersController.onSubmit(mode: Mode = NormalMode)
-GET        /change-identification-numbers                  controllers.addFinancialInstitution.WhichIdentificationNumbersController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-identification-numbers                  controllers.addFinancialInstitution.WhichIdentificationNumbersController.onSubmit(mode: Mode = CheckMode)
+GET         /identification-numbers                                       controllers.addFinancialInstitution.WhichIdentificationNumbersController.onPageLoad(mode: Mode = NormalMode)
+POST        /identification-numbers                                       controllers.addFinancialInstitution.WhichIdentificationNumbersController.onSubmit(mode: Mode = NormalMode)
+GET         /change-identification-numbers                                controllers.addFinancialInstitution.WhichIdentificationNumbersController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-identification-numbers                                controllers.addFinancialInstitution.WhichIdentificationNumbersController.onSubmit(mode: Mode = CheckMode)

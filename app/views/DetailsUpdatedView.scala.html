@@ -28,7 +28,7 @@
 
 @(fiName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@fi = @{fiName.getOrElse(messages("detailsUpdated.default.fi"))}
+@fi = @{fiName.getOrElse(messages("default.FI.name"))}
 
 @layout(pageTitle = titleNoForm(messages("detailsUpdated.title")), showBackLink = false) {
     @govukPanel(
