@@ -51,8 +51,6 @@ class CheckModeNavigatorSpec extends SpecBase {
         navigator.nextPage(NameOfFinancialInstitutionPage, CheckMode, userAnswers) mustBe
           controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad()
       }
-      // TINs TODO CHECK OVER
-
       "must go from WhichIdentificationNumbersPage" - {
         "with UTR selected" - {
           "to CheckAnswers if WhatIsUniqueTaxpayerReferencePage is populated" in {

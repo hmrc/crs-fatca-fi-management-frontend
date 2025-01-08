@@ -18,7 +18,7 @@ package pages
 
 import play.api.libs.json.JsPath
 
-case object TrustURNPage extends QuestionPage[String] { // TODO: use a TRN class that extends TaxIdentificationNumber
+case object TrustURNPage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString
 
