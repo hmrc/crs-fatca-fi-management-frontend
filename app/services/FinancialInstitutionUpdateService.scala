@@ -19,12 +19,12 @@ package services
 import com.google.inject.Inject
 import models.FinancialInstitutions.TINType._
 import models.FinancialInstitutions._
-import models.{CompanyRegistrationNumber, GIINumber, TaxIdentificationNumber, UniqueTaxpayerReference, UserAnswers}
+import models.{CompanyRegistrationNumber, GIINumber, UniqueTaxpayerReference, UserAnswers}
 import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import pages.{CompanyRegistrationNumberPage, QuestionPage, TrustURNPage}
-import play.api.libs.json.{Json, Reads}
+import play.api.libs.json.Json
 import repositories.SessionRepository
 import utils.CountryListFactory
 
@@ -51,15 +51,14 @@ class FinancialInstitutionUpdateService @Inject() (
 
   def fiDetailsHasChanged(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean =
     userAnswers.get(NameOfFinancialInstitutionPage).exists(_ != fiDetails.FIName) ||
-      checkTINTypeForChanges(userAnswers, fiDetails.TINDetails, UTR, WhatIsUniqueTaxpayerReferencePage) ||
-      checkTaxIdentifierForChanges(userAnswers, fiDetails.TINDetails, GIIN, HaveGIINPage, WhatIsGIINPage) ||
+      checkTINTypeForChanges(userAnswers, fiDetails.TINDetails) ||
       checkAddressForChanges(userAnswers, fiDetails.AddressDetails) ||
       checkPrimaryContactForChanges(userAnswers, fiDetails) ||
       checkSecondaryContactForChanges(userAnswers, fiDetails)
 
   def registeredFiDetailsHasChanged(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean =
     userAnswers.get(NameOfFinancialInstitutionPage).exists(_ != fiDetails.FIName) ||
-      checkTaxIdentifierForChanges(userAnswers, fiDetails.TINDetails, GIIN, HaveGIINPage, WhatIsGIINPage) ||
+      checkTINTypeForChanges(userAnswers, fiDetails.TINDetails) ||
       checkAddressForChanges(userAnswers, fiDetails.AddressDetails)
 
   def clearUserAnswers(userAnswers: UserAnswers): Future[Boolean] =
@@ -90,7 +89,6 @@ class FinancialInstitutionUpdateService @Inject() (
       e <- setAddress(d, fiDetails.AddressDetails)
       f <- setFiUserDetails(e)
     } yield f
-
 
   private def setTaxIdentifier(userAnswers: UserAnswers, listOfTinDetails: Seq[TINDetails])(implicit ec: ExecutionContext): Future[UserAnswers] =
     listOfTinDetails.foldLeft(Future.successful(userAnswers)) {
@@ -211,34 +209,65 @@ class FinancialInstitutionUpdateService @Inject() (
       }
     } yield b
 
-  private def checkTaxIdentifierForChanges[T <: TaxIdentificationNumber](
+  private def checkGIINForChanges(
     userAnswers: UserAnswers,
-    tinDetails: Seq[TINDetails],
-    idType: TINType,
-    haveIdTypePage: QuestionPage[Boolean],
-    idTypePage: QuestionPage[T]
-  )(implicit reads: Reads[T]): Boolean =
-    tinDetails.find(_.TINType == idType) match {
+    tinDetails: Seq[TINDetails]
+  ): Boolean =
+    tinDetails.find(_.TINType == GIIN) match {
       case Some(id) =>
-        userAnswers.get(haveIdTypePage).contains(false) ||
-        userAnswers.get(idTypePage).exists(_.value.toLowerCase != id.TIN.toLowerCase)
+        userAnswers.get(HaveGIINPage).contains(false) ||
+        userAnswers.get(WhatIsGIINPage).exists(_.value.toLowerCase != id.TIN.toLowerCase)
       case None =>
-        userAnswers.get(haveIdTypePage).contains(true)
+        userAnswers.get(HaveGIINPage).contains(true)
     }
 
-  private def checkTINTypeForChanges[T <: TaxIdentificationNumber](
+  def checkUTRforChange(userAnswers: UserAnswers, tinDetails: Seq[TINDetails]): Boolean = {
+    val uaValue: Option[String]     = userAnswers.get(WhatIsUniqueTaxpayerReferencePage).map(_.value)
+    val detailValue: Option[String] = tinDetails.find(_.TINType == UTR).map(_.TIN)
+    uaValue != detailValue
+  }
+
+  def checkCRNforChange(userAnswers: UserAnswers, tinDetails: Seq[TINDetails]): Boolean = {
+    val uaValue: Option[String]     = userAnswers.get(CompanyRegistrationNumberPage).map(_.value)
+    val detailValue: Option[String] = tinDetails.find(_.TINType == CRN).map(_.TIN)
+    uaValue != detailValue
+  }
+
+  def checkTRNforChange(userAnswers: UserAnswers, tinDetails: Seq[TINDetails]): Boolean = {
+    val uaValue: Option[String]     = userAnswers.get(TrustURNPage)
+    val detailValue: Option[String] = tinDetails.find(_.TINType == TRN).map(_.TIN)
+    uaValue != detailValue
+  }
+
+  private def checkTINTypeForChanges(
     userAnswers: UserAnswers,
-    tinDetails: Seq[TINDetails],
-    idType: TINType,
-    idTypePage: QuestionPage[T]
-  )(implicit reads: Reads[T]): Boolean =
-    tinDetails.find(_.TINType == idType) match {
-      case Some(id) =>
-        !userAnswers.get(WhichIdentificationNumbersPage).contains(Set(idType)) ||
-        userAnswers.get(idTypePage).exists(_.value.toLowerCase != id.TIN.toLowerCase)
-      case None =>
-        userAnswers.get(WhichIdentificationNumbersPage).contains(Set(idType))
+    tinDetails: Seq[TINDetails]
+  ): Boolean = {
+
+    val maybeGIIN: Set[TINType] = if (userAnswers.get(HaveGIINPage).get) {
+      Set(GIIN)
+    } else {
+      Set.empty
     }
+    val uaTinTypes: Set[TINType]        = userAnswers.get(WhichIdentificationNumbersPage).getOrElse(Set.empty) ++ maybeGIIN
+    val detailTinTypes: Set[TINType]    = tinDetails.map(_.TINType).toSet
+    val identifiersHaveChanged: Boolean = uaTinTypes != detailTinTypes
+    val valuesHaveChanged: Boolean = if (!identifiersHaveChanged) {
+      detailTinTypes.toSeq.exists {
+        tinType =>
+          tinType match {
+            case TINType.UTR  => checkUTRforChange(userAnswers, tinDetails)
+            case TINType.CRN  => checkCRNforChange(userAnswers, tinDetails)
+            case TINType.TRN  => checkTRNforChange(userAnswers, tinDetails)
+            case TINType.GIIN => checkGIINForChanges(userAnswers, tinDetails)
+            case _            => false
+          }
+      }
+    } else {
+      false
+    }
+    identifiersHaveChanged || valuesHaveChanged
+  }
 
   private def checkAddressForChanges(userAnswers: UserAnswers, addressDetails: AddressDetails): Boolean = {
     val isUkAddress    = addressDetails.CountryCode.exists(countryListFactory.countryCodesForUkCountries.contains)

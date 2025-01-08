@@ -19,7 +19,6 @@ package generators
 import models.FinancialInstitutions._
 import models._
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen.listOf
 import org.scalacheck.{Arbitrary, Gen}
 import utils.RegexConstants
 
@@ -128,7 +127,9 @@ trait ModelGenerators extends RegexConstants with Generators {
       fiId                    <- stringOfLength(15)
       fiName                  <- stringOfLength(105)
       subscriptionId          <- validSubscriptionID
-      tinDetails              <- listOf(arbitrary[TINDetails])
+      tinType                 <- Gen.oneOf(TINType.UTR, TINType.CRN, TINType.TRN, TINType.GIIN)
+      tin                     <- stringOfLength(10)
+      tinDetails              <- Gen.const(List(TINDetails(tinType, tin, "GB")))
       isFIUser                <- arbitrary[Boolean]
       isFATCAReporting        <- arbitrary[Boolean]
       addressDetails          <- arbitrary[AddressDetails]
