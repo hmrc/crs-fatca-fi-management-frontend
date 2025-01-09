@@ -253,12 +253,12 @@ class FinancialInstitutionUpdateService @Inject() (
     tinDetails: Seq[TINDetails]
   ): Boolean = {
 
-    val maybeGIIN: Set[TINType] = if (userAnswers.get(HaveGIINPage).get) {
-      Set(GIIN)
-    } else {
-      Set.empty
-    }
-    val uaTinTypes: Set[TINType]        = userAnswers.get(WhichIdentificationNumbersPage).getOrElse(Set.empty) ++ maybeGIIN
+    val uaTinTypes: Set[TINType] =
+      userAnswers
+        .get(WhichIdentificationNumbersPage)
+        .getOrElse(Set.empty) ++
+        (if (userAnswers.get(HaveGIINPage).contains(true)) Set(GIIN) else Set.empty)
+
     val detailTinTypes: Set[TINType]    = tinDetails.map(_.TINType).toSet
     val identifiersHaveChanged: Boolean = uaTinTypes != detailTinTypes
     val valuesHaveChanged: Boolean = if (!identifiersHaveChanged) {
