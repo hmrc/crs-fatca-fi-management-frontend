@@ -41,6 +41,7 @@ class HaveUniqueTaxpayerReferenceController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: HaveUniqueTaxpayerReferenceFormProvider,
+  checkForInformationSentAction: CheckForInformationSentAction,
   val controllerComponents: MessagesControllerComponents,
   view: HaveUniqueTaxpayerReferenceView
 )(implicit ec: ExecutionContext)
@@ -50,7 +51,7 @@ class HaveUniqueTaxpayerReferenceController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkForInformationSentAction) {
     implicit request =>
       val preparedForm = request.userAnswers.get(HaveUniqueTaxpayerReferencePage) match {
         case None        => form

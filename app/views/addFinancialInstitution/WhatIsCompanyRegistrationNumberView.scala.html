@@ -32,7 +32,7 @@
 
 @layout(pageTitle = title(form, messages("whatIsCompanyRegistrationNumber.title"))) {
 
-    @formHelper(action = controllers.addFinancialInstitution.routes.WhatIsCompanyRegistrationNumberController.onSubmit(NormalMode)) {
+    @formHelper(action = controllers.addFinancialInstitution.routes.WhatIsCompanyRegistrationNumberController.onSubmit(NormalMode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

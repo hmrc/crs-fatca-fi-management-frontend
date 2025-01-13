@@ -67,7 +67,10 @@ class IsThisYourBusinessNameControllerSpec extends SpecBase with MockitoSugar wi
         when(mockSubscriptionService.getSubscription(any())(any[HeaderCarrier](), any[ExecutionContext]()))
           .thenReturn(Future.successful(organisationSubscription))
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        val userAnswers = emptyUserAnswers
+          .withPage(NameOfFinancialInstitutionPage, "testName")
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[SubscriptionService].toInstance(mockSubscriptionService)
           )
@@ -166,6 +169,26 @@ class IsThisYourBusinessNameControllerSpec extends SpecBase with MockitoSugar wi
         }
       }
 
+      "must redirect to information-sent page for a GET when the user answers is empty" in {
+        when(mockSubscriptionService.getSubscription(any())(any[HeaderCarrier](), any[ExecutionContext]()))
+          .thenReturn(Future.successful(organisationSubscription))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, isThisYourBusinessNameRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.InformationSentController.onPageLoad.url
+        }
+      }
+
     }
 
     "if the user has an individual subscription" - {
@@ -174,7 +197,10 @@ class IsThisYourBusinessNameControllerSpec extends SpecBase with MockitoSugar wi
         when(mockSubscriptionService.getSubscription(any())(any[HeaderCarrier](), any[ExecutionContext]()))
           .thenReturn(Future.successful(individualSubscription))
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        val userAnswers = emptyUserAnswers
+          .withPage(NameOfFinancialInstitutionPage, "testName")
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[SubscriptionService].toInstance(mockSubscriptionService)
           )

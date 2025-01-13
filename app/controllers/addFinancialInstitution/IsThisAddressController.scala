@@ -41,6 +41,7 @@ class IsThisAddressController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: IsThisAddressFormProvider,
+  checkForInformationSentAction: CheckForInformationSentAction,
   val controllerComponents: MessagesControllerComponents,
   view: IsThisAddressView
 )(implicit ec: ExecutionContext)
@@ -50,7 +51,7 @@ class IsThisAddressController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkForInformationSentAction) {
     implicit request =>
       val ua = request.userAnswers
       ua.get(AddressLookupPage) match {
