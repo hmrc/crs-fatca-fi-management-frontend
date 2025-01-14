@@ -70,9 +70,15 @@ class WhichIdentificationNumbersController @Inject() (
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(WhichIdentificationNumbersPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-              _              <- changeUserAnswersRepository.set(request.fatcaId, updatedAnswers.get(ChangeFiDetailsInProgressId), updatedAnswers)
-            } yield Redirect(navigator.nextPage(WhichIdentificationNumbersPage, mode, updatedAnswers))
+              cleanedAnswers <- Future.fromTry(
+                WhichIdentificationNumbersPage.cleanUpUnselectedTINPages(
+                  selectedTINs = value.map(_.toString),
+                  userAnswers = updatedAnswers
+                )
+              )
+              _ <- sessionRepository.set(cleanedAnswers)
+              _ <- changeUserAnswersRepository.set(request.fatcaId, cleanedAnswers.get(ChangeFiDetailsInProgressId), cleanedAnswers)
+            } yield Redirect(navigator.nextPage(WhichIdentificationNumbersPage, mode, cleanedAnswers))
         )
   }
 
