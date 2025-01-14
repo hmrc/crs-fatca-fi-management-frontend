@@ -37,6 +37,20 @@ class WhichIdentificationNumbersPageSpec extends PageBehaviours {
       result.get(TrustURNPage) mustBe empty
     }
 
+    "must remove pages for unselected TINs - UTR & TRN not selected" in {
+      val userAnswers = emptyUserAnswers
+        .withPage(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference("222333444"))
+        .withPage(CompanyRegistrationNumberPage, CompanyRegistrationNumber("test"))
+        .withPage(TrustURNPage, "someTRN")
+
+      val selectedTINs = Set("CRN")
+      val result       = WhichIdentificationNumbersPage.cleanUpUnselectedTINPages(selectedTINs, userAnswers).success.value
+
+      result.get(WhatIsUniqueTaxpayerReferencePage) mustBe empty
+      result.get(CompanyRegistrationNumberPage).get mustEqual CompanyRegistrationNumber("test")
+      result.get(TrustURNPage) mustBe empty
+    }
+
     "must remove pages for unselected TINs - TRN not selected" in {
       val userAnswers = emptyUserAnswers
         .withPage(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference("222333444"))
