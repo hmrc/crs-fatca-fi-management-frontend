@@ -28,11 +28,11 @@ case object WhichIdentificationNumbersPage extends QuestionPage[Set[WhichIdentif
 
   override def toString: String = "whichIdentificationNumbers"
 
-  def cleanUpUnselectedTINPages(selectedTINs: Set[String], userAnswers: UserAnswers): Try[UserAnswers] = {
+  def cleanUpUnselectedTINPages(selectedTINs: Set[WhichIdentificationNumbers], userAnswers: UserAnswers): Try[UserAnswers] = {
     val tinPages = Seq(
-      "UTR" -> WhatIsUniqueTaxpayerReferencePage,
-      "CRN" -> CompanyRegistrationNumberPage,
-      "TRN" -> TrustURNPage
+      WhichIdentificationNumbers.UTR -> WhatIsUniqueTaxpayerReferencePage,
+      WhichIdentificationNumbers.CRN -> CompanyRegistrationNumberPage,
+      WhichIdentificationNumbers.TRN -> TrustURNPage
     ).collect {
       case (tin, page) if !selectedTINs.contains(tin) => page
     }

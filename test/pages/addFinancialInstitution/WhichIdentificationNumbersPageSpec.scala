@@ -16,7 +16,7 @@
 
 package pages.addFinancialInstitution
 
-import models.{CompanyRegistrationNumber, UniqueTaxpayerReference}
+import models.{CompanyRegistrationNumber, UniqueTaxpayerReference, WhichIdentificationNumbers}
 import pages.{CompanyRegistrationNumberPage, TrustURNPage}
 import pages.addFinancialInstitution.behaviours.PageBehaviours
 
@@ -29,8 +29,8 @@ class WhichIdentificationNumbersPageSpec extends PageBehaviours {
         .withPage(CompanyRegistrationNumberPage, CompanyRegistrationNumber("test"))
         .withPage(TrustURNPage, "someTRN")
 
-      val selectedTINs = Set("UTR")
-      val result       = WhichIdentificationNumbersPage.cleanUpUnselectedTINPages(selectedTINs, userAnswers).success.value
+      val selectedTINs: Set[WhichIdentificationNumbers] = Set(WhichIdentificationNumbers.UTR)
+      val result                                        = WhichIdentificationNumbersPage.cleanUpUnselectedTINPages(selectedTINs, userAnswers).success.value
 
       result.get(WhatIsUniqueTaxpayerReferencePage).get mustEqual UniqueTaxpayerReference("222333444")
       result.get(CompanyRegistrationNumberPage) mustBe empty
@@ -43,8 +43,8 @@ class WhichIdentificationNumbersPageSpec extends PageBehaviours {
         .withPage(CompanyRegistrationNumberPage, CompanyRegistrationNumber("test"))
         .withPage(TrustURNPage, "someTRN")
 
-      val selectedTINs = Set("CRN")
-      val result       = WhichIdentificationNumbersPage.cleanUpUnselectedTINPages(selectedTINs, userAnswers).success.value
+      val selectedTINs: Set[WhichIdentificationNumbers] = Set(WhichIdentificationNumbers.CRN)
+      val result                                        = WhichIdentificationNumbersPage.cleanUpUnselectedTINPages(selectedTINs, userAnswers).success.value
 
       result.get(WhatIsUniqueTaxpayerReferencePage) mustBe empty
       result.get(CompanyRegistrationNumberPage).get mustEqual CompanyRegistrationNumber("test")
@@ -57,8 +57,8 @@ class WhichIdentificationNumbersPageSpec extends PageBehaviours {
         .withPage(CompanyRegistrationNumberPage, CompanyRegistrationNumber("test"))
         .withPage(TrustURNPage, "someTRN")
 
-      val selectedTINs = Set("UTR", "CRN")
-      val result       = WhichIdentificationNumbersPage.cleanUpUnselectedTINPages(selectedTINs, userAnswers).success.value
+      val selectedTINs: Set[WhichIdentificationNumbers] = Set(WhichIdentificationNumbers.UTR, WhichIdentificationNumbers.CRN)
+      val result                                        = WhichIdentificationNumbersPage.cleanUpUnselectedTINPages(selectedTINs, userAnswers).success.value
 
       result.get(WhatIsUniqueTaxpayerReferencePage).get mustEqual UniqueTaxpayerReference("222333444")
       result.get(CompanyRegistrationNumberPage).get mustEqual CompanyRegistrationNumber("test")
@@ -71,8 +71,8 @@ class WhichIdentificationNumbersPageSpec extends PageBehaviours {
         .withPage(CompanyRegistrationNumberPage, CompanyRegistrationNumber("test"))
         .withPage(TrustURNPage, "someTRN")
 
-      val selectedTINs = Set("TRN")
-      val result       = WhichIdentificationNumbersPage.cleanUpUnselectedTINPages(selectedTINs, userAnswers).success.value
+      val selectedTINs: Set[WhichIdentificationNumbers] = Set(WhichIdentificationNumbers.TRN)
+      val result                                        = WhichIdentificationNumbersPage.cleanUpUnselectedTINPages(selectedTINs, userAnswers).success.value
 
       result.get(WhatIsUniqueTaxpayerReferencePage) mustBe empty
       result.get(CompanyRegistrationNumberPage) mustBe empty

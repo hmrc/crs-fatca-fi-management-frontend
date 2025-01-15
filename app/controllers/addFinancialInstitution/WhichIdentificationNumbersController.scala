@@ -72,7 +72,7 @@ class WhichIdentificationNumbersController @Inject() (
               updatedAnswers <- Future.fromTry(request.userAnswers.set(WhichIdentificationNumbersPage, value))
               cleanedAnswers <- Future.fromTry(
                 WhichIdentificationNumbersPage.cleanUpUnselectedTINPages(
-                  selectedTINs = value.map(_.toString),
+                  selectedTINs = value,
                   userAnswers = updatedAnswers
                 )
               )
