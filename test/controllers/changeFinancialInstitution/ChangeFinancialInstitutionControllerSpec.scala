@@ -310,6 +310,6 @@ class ChangeFinancialInstitutionControllerSpec
   private def mockSuccessfulUserAnswersPersistence(userAnswers: UserAnswers, fiDetail: FIDetail) =
     when(
       mockFinancialInstitutionUpdateService.populateAndSaveFiDetails(mockitoEq(userAnswers), mockitoEq(fiDetail))
-    ).thenReturn(Future.successful(userAnswers))
+    ).thenReturn(Future.successful((userAnswers, false)))
 
 }

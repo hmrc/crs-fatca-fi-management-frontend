@@ -41,22 +41,22 @@ class FinancialInstitutionUpdateService @Inject() (
   changeUserAnswersRepository: ChangeUserAnswersRepository
 )(implicit ec: ExecutionContext) {
 
-  def populateAndSaveFiDetails(userAnswers: UserAnswers, fiDetails: FIDetail): Future[UserAnswers] = for {
+  def populateAndSaveFiDetails(userAnswers: UserAnswers, fiDetails: FIDetail): Future[(UserAnswers, Boolean)] = for {
     userAnswersWithProgressFlag <- Future.fromTry(userAnswers.set(ChangeFiDetailsInProgressId, fiDetails.FIID, cleanup = false))
     changeId = s"${fiDetails.SubscriptionID}-${fiDetails.FIID}"
     changeAnswers      <- changeUserAnswersRepository.get(changeId).map(_.map(_.copy(id = userAnswers.id)))
     updatedUserAnswers <- changeAnswers.fold(populateUserAnswersWithFiDetail(fiDetails, userAnswersWithProgressFlag))(Future.successful)
     _                  <- sessionRepository.set(updatedUserAnswers)
-  } yield updatedUserAnswers
+  } yield (updatedUserAnswers, changeAnswers.isDefined)
 
-  def populateAndSaveRegisteredFiDetails(userAnswers: UserAnswers, fiDetails: FIDetail): Future[UserAnswers] =
+  def populateAndSaveRegisteredFiDetails(userAnswers: UserAnswers, fiDetails: FIDetail): Future[(UserAnswers, Boolean)] =
     for {
       userAnswersWithProgressFlag <- Future.fromTry(userAnswers.set(ChangeFiDetailsInProgressId, fiDetails.FIID, cleanup = false))
       changeId = s"${fiDetails.SubscriptionID}-${fiDetails.FIID}"
       changeAnswers      <- changeUserAnswersRepository.get(changeId).map(_.map(_.copy(id = userAnswers.id)))
       updatedUserAnswers <- changeAnswers.fold(populateUserAnswersWithRegisteredFiDetail(fiDetails, userAnswersWithProgressFlag))(Future.successful)
       _                  <- sessionRepository.set(updatedUserAnswers)
-    } yield updatedUserAnswers
+    } yield (updatedUserAnswers, changeAnswers.isDefined)
 
   def fiDetailsHasChanged(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean =
     userAnswers.get(NameOfFinancialInstitutionPage).exists(_ != fiDetails.FIName) ||

@@ -71,10 +71,11 @@ class ChangeRegisteredFinancialInstitutionController @Inject() (
                     Future.successful(Redirect(routes.SomeInformationMissingController.onPageLoad()))
                 }
               case _ =>
-                val hasChanges = financialInstitutionUpdateService.registeredFiDetailsHasChanged(userAnswers, fiDetails)
                 financialInstitutionUpdateService
                   .populateAndSaveRegisteredFiDetails(userAnswers, fiDetails)
-                  .map(createPage(fiid, _, hasChanges = hasChanges))
+                  .map {
+                    case (ua, fromChangedAnswers) => createPage(fiid, ua, hasChanges = fromChangedAnswers)
+                  }
                   .recoverWith {
                     exception =>
                       logger.error(s"Failed to populate and save FI details to user answers for subscription Id: [${request.fatcaId}] and FI Id [$fiid]",
@@ -103,7 +104,7 @@ class ChangeRegisteredFinancialInstitutionController @Inject() (
           _ => financialInstitutionUpdateService.clearUserAnswers(request.userAnswers)
         )
         .flatMap(
-          _ => changeUserAnswersRepository.clear(request.userId, request.userAnswers.get(ChangeFiDetailsInProgressId))
+          _ => changeUserAnswersRepository.clear(request.fatcaId, request.userAnswers.get(ChangeFiDetailsInProgressId))
         )
         .map(
           _ => Redirect(controllers.routes.DetailsUpdatedController.onPageLoad()).flashing("fiName" -> fiName)
