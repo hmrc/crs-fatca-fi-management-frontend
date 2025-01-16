@@ -30,7 +30,7 @@
 
 @layout(pageTitle = title(form, messages("whatIsGIIN.title"))) {
 
-    @formHelper(action = controllers.addFinancialInstitution.routes.WhatIsGIINController.onSubmit(mode)) {
+    @formHelper(action = controllers.addFinancialInstitution.routes.WhatIsGIINController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

@@ -66,7 +66,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
             when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(country))
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(ukCountryCodes)
 
-            val populatedUserAnswers = service.populateAndSaveFiDetails(emptyUserAnswers, fiDetails).futureValue
+            val (populatedUserAnswers, _) = service.populateAndSaveFiDetails(emptyUserAnswers, fiDetails).futureValue
 
             verify(mockSessionRepository, times(1)).set(populatedUserAnswers)
             verifyUserAnswersMatchFIDetails(fiDetails, populatedUserAnswers, isUkAddress)
@@ -95,7 +95,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
             when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(Country.GB))
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(fiDetails.AddressDetails.CountryCode.toSet)
 
-            val populatedUserAnswers = service
+            val (populatedUserAnswers, _) = service
               .populateAndSaveFiDetails(emptyUserAnswers, fiDetails)
               .futureValue
 
@@ -110,9 +110,11 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
             when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(Country.GB))
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(fiDetails.AddressDetails.CountryCode.toSet)
 
-            val populatedUserAnswers = service
+            val (result, _) = service
               .populateAndSaveFiDetails(emptyUserAnswers, fiDetails)
               .futureValue
+
+            val populatedUserAnswers = result
               .withPage(NameOfFinancialInstitutionPage, UUID.randomUUID() + "suffix")
 
             service.fiDetailsHasChanged(populatedUserAnswers, fiDetails) mustBe true
@@ -127,9 +129,11 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
             when(mockCountryListFactory.countryCodesForUkCountries)
               .thenReturn(Set(fiDetails.AddressDetails.CountryCode.value, newAddress.CountryCode.value))
 
-            val populatedUserAnswers = service
+            val (result, _) = service
               .populateAndSaveFiDetails(emptyUserAnswers, fiDetails)
               .futureValue
+
+            val populatedUserAnswers = result
               .removePage(NonUkAddressPage)
               .removePage(SelectedAddressLookupPage)
               .withPage(UkAddressPage, newAddress.toAddress(mockCountryListFactory).value)
@@ -146,9 +150,11 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
             when(mockCountryListFactory.countryCodesForUkCountries)
               .thenReturn(Set(fiDetails.AddressDetails.CountryCode.value, newAddress.CountryCode.value))
 
-            val populatedUserAnswers = service
+            val (result, _) = service
               .populateAndSaveFiDetails(emptyUserAnswers, fiDetails)
               .futureValue
+
+            val populatedUserAnswers = result
               .removePage(UkAddressPage)
               .removePage(SelectedAddressLookupPage)
               .withPage(NonUkAddressPage, newAddress.toAddress(mockCountryListFactory).value)
@@ -165,9 +171,11 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
             when(mockCountryListFactory.countryCodesForUkCountries)
               .thenReturn(Set(fiDetails.AddressDetails.CountryCode.value, Country.GB.code))
 
-            val populatedUserAnswers = service
+            val (result, _) = service
               .populateAndSaveFiDetails(emptyUserAnswers, fiDetails)
               .futureValue
+
+            val populatedUserAnswers = result
               .removePage(UkAddressPage)
               .removePage(NonUkAddressPage)
               .withPage(SelectedAddressLookupPage, newAddress)
@@ -183,9 +191,11 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
             when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(Country.GB))
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(fiDetails.AddressDetails.CountryCode.toSet)
 
-            val populatedUserAnswers = service
+            val (result, _) = service
               .populateAndSaveFiDetails(emptyUserAnswers, fiDetails)
               .futureValue
+
+            val populatedUserAnswers = result
               .withPage(FirstContactNamePage, UUID.randomUUID() + "suffix")
 
             service.fiDetailsHasChanged(populatedUserAnswers, fiDetails) mustBe true
@@ -199,9 +209,11 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
             when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(Country.GB))
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(fiDetails.AddressDetails.CountryCode.toSet)
 
-            val populatedUserAnswers = service
+            val (result, _) = service
               .populateAndSaveFiDetails(emptyUserAnswers, fiDetails)
               .futureValue
+
+            val populatedUserAnswers = result
               .withPage(FirstContactEmailPage, UUID.randomUUID() + "suffix")
 
             service.fiDetailsHasChanged(populatedUserAnswers, fiDetails) mustBe true
@@ -215,9 +227,11 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
             when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(Country.GB))
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(fiDetails.AddressDetails.CountryCode.toSet)
 
-            val populatedUserAnswers = service
+            val (result, _) = service
               .populateAndSaveFiDetails(emptyUserAnswers, fiDetails)
               .futureValue
+
+            val populatedUserAnswers = result
               .withPage(FirstContactHavePhonePage, fiDetails.PrimaryContactDetails.map(_.PhoneNumber).isEmpty)
 
             service.fiDetailsHasChanged(populatedUserAnswers, fiDetails) mustBe true
@@ -231,9 +245,11 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
             when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(Country.GB))
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(fiDetails.AddressDetails.CountryCode.toSet)
 
-            val populatedUserAnswers = service
+            val (result, _) = service
               .populateAndSaveFiDetails(emptyUserAnswers, fiDetails)
               .futureValue
+
+            val populatedUserAnswers = result
               .withPage(SecondContactExistsPage, fiDetails.SecondaryContactDetails.isEmpty)
 
             service.fiDetailsHasChanged(populatedUserAnswers, fiDetails) mustBe true
@@ -249,11 +265,12 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
             when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(Country.GB))
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(fiDetails.AddressDetails.CountryCode.toSet)
 
-            val populatedUserAnswers = service
+            val (result, _) = service
               .populateAndSaveFiDetails(emptyUserAnswers, fiDetailsWithUTR)
               .futureValue
+
+            val populatedUserAnswers = result
               .withPage(WhichIdentificationNumbersPage, Set[TINType](UTR))
-              .withPage(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference(UUID.randomUUID().toString))
 
             service.fiDetailsHasChanged(populatedUserAnswers, fiDetailsWithUTR) mustBe true
         }
@@ -268,9 +285,11 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
             when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(Country.GB))
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(fiDetails.AddressDetails.CountryCode.toSet)
 
-            val populatedUserAnswers = service
-              .populateAndSaveFiDetails(emptyUserAnswers, fiDetailsWithGIIN)
+            val (result, _) = service
+              .populateAndSaveFiDetails(emptyUserAnswers, fiDetails)
               .futureValue
+
+            val populatedUserAnswers = result
               .withPage(WhatIsGIINPage, GIINumber(UUID.randomUUID().toString))
 
             service.fiDetailsHasChanged(populatedUserAnswers, fiDetailsWithGIIN) mustBe true
@@ -286,9 +305,11 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
             when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(Country.GB))
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(fiDetails.AddressDetails.CountryCode.toSet)
 
-            val populatedUserAnswers = service
+            val (result, _) = service
               .populateAndSaveFiDetails(emptyUserAnswers, fiDetails)
               .futureValue
+
+            val populatedUserAnswers = result
               .withPage(FirstContactHavePhonePage, false)
 
             service.fiDetailsHasChanged(populatedUserAnswers, fiDetailsWithSecondaryContact) mustBe true
@@ -304,9 +325,11 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
             when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(Country.GB))
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(fiDetails.AddressDetails.CountryCode.toSet)
 
-            val populatedUserAnswers = service
+            val (result, _) = service
               .populateAndSaveFiDetails(emptyUserAnswers, fiDetails)
               .futureValue
+
+            val populatedUserAnswers = result
               .withPage(FirstContactHavePhonePage, true)
 
             service.fiDetailsHasChanged(populatedUserAnswers, fiDetailsWithSecondaryContact) mustBe true
@@ -322,9 +345,11 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
             when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(Country.GB))
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(fiDetails.AddressDetails.CountryCode.toSet)
 
-            val populatedUserAnswers = service
+            val (result, _) = service
               .populateAndSaveFiDetails(emptyUserAnswers, fiDetails)
               .futureValue
+
+            val populatedUserAnswers = result
               .withPage(SecondContactExistsPage, true)
               .withPage(SecondContactNamePage, UUID.randomUUID().toString + "suffix")
               .withPage(SecondContactEmailPage, email)
@@ -343,9 +368,11 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
             when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(Country.GB))
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(fiDetails.AddressDetails.CountryCode.toSet)
 
-            val populatedUserAnswers = service
+            val (result, _) = service
               .populateAndSaveFiDetails(emptyUserAnswers, fiDetails)
               .futureValue
+
+            val populatedUserAnswers = result
               .withPage(SecondContactExistsPage, true)
               .withPage(SecondContactNamePage, name)
               .withPage(SecondContactEmailPage, UUID.randomUUID().toString + "suffix")
@@ -364,9 +391,11 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
             when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(Country.GB))
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(fiDetails.AddressDetails.CountryCode.toSet)
 
-            val populatedUserAnswers = service
+            val (result, _) = service
               .populateAndSaveFiDetails(emptyUserAnswers, fiDetails)
               .futureValue
+
+            val populatedUserAnswers = result
               .withPage(SecondContactExistsPage, true)
               .withPage(SecondContactNamePage, name)
               .withPage(SecondContactEmailPage, email)
@@ -386,9 +415,11 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
             when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(Country.GB))
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(fiDetails.AddressDetails.CountryCode.toSet)
 
-            val populatedUserAnswers = service
+            val (result, _) = service
               .populateAndSaveFiDetails(emptyUserAnswers, fiDetails)
               .futureValue
+
+            val populatedUserAnswers = result
               .withPage(SecondContactExistsPage, false)
               .withPage(SecondContactNamePage, name)
               .withPage(SecondContactEmailPage, email)
@@ -407,9 +438,11 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
             when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(Country.GB))
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(fiDetails.AddressDetails.CountryCode.toSet)
 
-            val populatedUserAnswers = service
+            val (result, _) = service
               .populateAndSaveFiDetails(emptyUserAnswers, fiDetails)
               .futureValue
+
+            val populatedUserAnswers = result
               .withPage(SecondContactExistsPage, true)
               .withPage(SecondContactNamePage, name)
               .withPage(SecondContactEmailPage, email)
@@ -428,9 +461,11 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
             when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(Country.GB))
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(fiDetails.AddressDetails.CountryCode.toSet)
 
-            val populatedUserAnswers = service
+            val (result, _) = service
               .populateAndSaveFiDetails(emptyUserAnswers, fiDetails)
               .futureValue
+
+            val populatedUserAnswers = result
               .withPage(SecondContactExistsPage, true)
               .withPage(SecondContactNamePage, name)
               .withPage(SecondContactEmailPage, email)

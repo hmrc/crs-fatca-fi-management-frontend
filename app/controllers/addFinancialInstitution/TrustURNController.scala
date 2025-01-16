@@ -41,6 +41,7 @@ class TrustURNController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: TrustURNFormProvider,
+  checkForInformationSentAction: CheckForInformationSentAction,
   val controllerComponents: MessagesControllerComponents,
   view: TrustURNView
 )(implicit ec: ExecutionContext)
@@ -50,7 +51,7 @@ class TrustURNController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkForInformationSentAction) {
     implicit request =>
       val ua = request.userAnswers
 

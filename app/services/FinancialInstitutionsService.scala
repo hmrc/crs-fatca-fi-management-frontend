@@ -17,13 +17,13 @@
 package services
 
 import connectors.FinancialInstitutionsConnector
-import models.FinancialInstitutions.TINType.{CRN, GIIN, TRN, UTR}
+import models.FinancialInstitutions.TINType.{CRN, GIIN, UTR}
 import models.FinancialInstitutions._
 import models.UserAnswers
-import pages.{CompanyRegistrationNumberPage, TrustURNPage}
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
+import pages.{CompanyRegistrationNumberPage, TrustURNPage}
 import play.api.libs.json.{JsResult, JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 

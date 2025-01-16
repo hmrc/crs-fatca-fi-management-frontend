@@ -20,6 +20,7 @@
     layout: templates.Layout,
     govukSummaryList: GovukSummaryList,
     heading: Heading,
+    subheading: Subheading,
     para: Paragraph,
     formHelper: FormWithCSRF,
     govukButton: GovukButton,
@@ -38,7 +39,7 @@
     <p class="govuk-!-margin-bottom-9"></p>
 
     @if(hasChanges){
-        @heading(messages("changeYourRegisteredAnswers.changed.subheading"), "m")
+        @subheading(messages("changeYourRegisteredAnswers.changed.subheading"))
         @para(Html(messages("changeYourRegisteredAnswers.changed.p2")))
 
         @formHelper(action = controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.confirmAndAdd()) {
