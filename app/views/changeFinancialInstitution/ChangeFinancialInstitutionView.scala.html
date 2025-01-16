@@ -20,6 +20,7 @@
     layout: templates.Layout,
     govukSummaryList: GovukSummaryList,
     heading: Heading,
+    subheading: Subheading,
     para: Paragraph,
     formHelper: FormWithCSRF,
     govukButton: GovukButton,
@@ -37,16 +38,16 @@
     @govukSummaryList(financialInstitutionList)
     <p class="govuk-!-margin-bottom-9"></p>
 
-    @heading(messages("changeYourAnswers.subheading.FirstContact"), "m")
+    @subheading(messages("changeYourAnswers.subheading.FirstContact"))
     @govukSummaryList(firstContactList)
     <p class="govuk-!-margin-bottom-9"></p>
 
-    @{ if (secondContactExists) heading(messages("changeYourAnswers.subheading.SecondContact"), "m") }
+    @{ if (secondContactExists) subheading(messages("changeYourAnswers.subheading.SecondContact")) }
     @govukSummaryList(secondContactList)
     <p class="govuk-!-margin-bottom-9"></p>
 
     @if(hasChanges){
-        @heading(messages("changeYourAnswers.changed.subheading"), "m")
+        @subheading(messages("changeYourAnswers.changed.subheading"))
         @para(Html(messages("changeYourAnswers.changed.p2")))
 
         @formHelper(action = controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.confirmAndAdd()) {
