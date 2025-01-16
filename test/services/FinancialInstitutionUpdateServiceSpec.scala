@@ -259,20 +259,20 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
       "must return true when user answers UTR is different from UTR in FIDetail" in {
         forAll {
           fiDetails: FIDetail =>
-            val fiDetailsUTR     = UniqueTaxpayerReference(UUID.randomUUID().toString)
-            val fiDetailsWithUTR = fiDetails.copy(TINDetails = Seq(TINDetails(TINType = UTR, TIN = fiDetailsUTR.value, "")))
+            val fiDetailsUTR = UniqueTaxpayerReference(UUID.randomUUID().toString)
             when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
             when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(Country.GB))
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(fiDetails.AddressDetails.CountryCode.toSet)
 
             val (result, _) = service
-              .populateAndSaveFiDetails(emptyUserAnswers, fiDetailsWithUTR)
+              .populateAndSaveFiDetails(emptyUserAnswers, fiDetails)
               .futureValue
 
             val populatedUserAnswers = result
               .withPage(WhichIdentificationNumbersPage, Set[TINType](UTR))
+              .withPage(WhatIsUniqueTaxpayerReferencePage, fiDetailsUTR)
 
-            service.fiDetailsHasChanged(populatedUserAnswers, fiDetailsWithUTR) mustBe true
+            service.fiDetailsHasChanged(populatedUserAnswers, fiDetails) mustBe true
         }
       }
 
