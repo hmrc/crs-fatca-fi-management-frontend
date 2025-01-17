@@ -17,7 +17,7 @@
 package services
 
 import connectors.FinancialInstitutionsConnector
-import models.FinancialInstitutions.TINType.{CRN, GIIN, UTR}
+import models.FinancialInstitutions.TINType.{CRN, GIIN, TRN, UTR}
 import models.FinancialInstitutions._
 import models.UserAnswers
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, ReportForRegisteredBusinessPage}
@@ -70,6 +70,8 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
     ec: ExecutionContext
   ): Future[Unit] = {
     val fiDetailsRequest = buildUpdateFiDetailsRequest(subscriptionId, userAnswers)
+    println(s"\nupdateFinancialInstitution->\nTINdetails: ${fiDetailsRequest.TINDetails}\n\n")
+
     connector
       .addOrUpdateFI(fiDetailsRequest)
       .map(
@@ -140,7 +142,7 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
       case _         => Seq.empty
     }
     val trn = userAnswers.get(TrustURNPage) match {
-      case Some(trn) => Seq(TINDetails(CRN, trn.value, "GB"))
+      case Some(trn) => Seq(TINDetails(TRN, trn.value, "GB"))
       case _         => Seq.empty
     }
 
@@ -148,10 +150,7 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
       case Some(giin) => Seq(TINDetails(GIIN, giin.value, "US"))
       case _          => Seq.empty
     }
-
-    val tins = utr ++ crn ++ trn ++ giin
-
-    tins
+    utr ++ crn ++ trn ++ giin
   }
 
   private def extractPrimaryContactDetails(userAnswers: UserAnswers): Option[ContactDetails] = for {
