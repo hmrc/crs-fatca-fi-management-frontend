@@ -70,8 +70,6 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
     ec: ExecutionContext
   ): Future[Unit] = {
     val fiDetailsRequest = buildUpdateFiDetailsRequest(subscriptionId, userAnswers)
-    println(s"\nupdateFinancialInstitution->\nTINdetails: ${fiDetailsRequest.TINDetails}\n\n")
-
     connector
       .addOrUpdateFI(fiDetailsRequest)
       .map(
