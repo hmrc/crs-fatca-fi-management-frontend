@@ -93,8 +93,8 @@ class IsThisYourBusinessNameController @Inject() (
                       updatedAnswers <- Future.fromTry(request.userAnswers.set(IsThisYourBusinessNamePage, value))
                       updatedFIName  <- setFIName(value, fiName, updatedAnswers)
                       _              <- sessionRepository.set(updatedFIName)
-                      _              <- changeUserAnswersRepository.set(request.fatcaId, updatedAnswers.get(ChangeFiDetailsInProgressId), updatedAnswers)
-                    } yield Redirect(navigator.nextPage(IsThisYourBusinessNamePage, mode, updatedAnswers))
+                      _              <- changeUserAnswersRepository.set(request.fatcaId, updatedAnswers.get(ChangeFiDetailsInProgressId), updatedFIName)
+                    } yield Redirect(navigator.nextPage(IsThisYourBusinessNamePage, mode, updatedFIName))
                 )
           }
       }
