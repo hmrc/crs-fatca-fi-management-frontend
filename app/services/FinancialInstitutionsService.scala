@@ -17,12 +17,13 @@
 package services
 
 import connectors.FinancialInstitutionsConnector
-import models.FinancialInstitutions.TINType.{GIIN, UTR}
+import models.FinancialInstitutions.TINType.{CRN, GIIN, TRN, UTR}
 import models.FinancialInstitutions._
 import models.UserAnswers
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
+import pages.{CompanyRegistrationNumberPage, TrustURNPage}
 import play.api.libs.json.{JsResult, JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -130,8 +131,16 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
     )).getOrElse(throw new IllegalStateException("Unable to build FIDetail"))
 
   private def extractTinDetails(userAnswers: UserAnswers): Seq[TINDetails] = {
+    val crn = userAnswers.get(CompanyRegistrationNumberPage) match {
+      case Some(crn) => Seq(TINDetails(CRN, crn.value, "GB"))
+      case _         => Seq.empty
+    }
     val utr = userAnswers.get(WhatIsUniqueTaxpayerReferencePage) match {
       case Some(utr) => Seq(TINDetails(UTR, utr.value, "GB"))
+      case _         => Seq.empty
+    }
+    val trn = userAnswers.get(TrustURNPage) match {
+      case Some(trn) => Seq(TINDetails(TRN, trn.value, "GB"))
       case _         => Seq.empty
     }
 
@@ -139,8 +148,7 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
       case Some(giin) => Seq(TINDetails(GIIN, giin.value, "US"))
       case _          => Seq.empty
     }
-
-    utr ++ giin
+    utr ++ crn ++ trn ++ giin
   }
 
   private def extractPrimaryContactDetails(userAnswers: UserAnswers): Option[ContactDetails] = for {

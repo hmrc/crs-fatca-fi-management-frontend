@@ -18,17 +18,25 @@ package forms
 
 import javax.inject.Inject
 import forms.mappings.Mappings
+import models.TrustUniqueReferenceNumber
 import play.api.data.Form
+import play.api.data.Forms.mapping
 import utils.RegexConstants
 
 class TrustURNFormProvider @Inject() extends Mappings with RegexConstants {
 
-  def apply(): Form[String] =
+  def apply(): Form[TrustUniqueReferenceNumber] =
     Form(
-      "value" -> validatedURN(
-        "trustURN.error.required",
-        "trustURN.error.invalidChar",
-        "trustURN.error.invalidFormat"
+      mapping(
+        "value" -> validatedURN(
+          "trustURN.error.required",
+          "trustURN.error.invalidChar",
+          "trustURN.error.invalidFormat"
+        )
+      )(
+        TrustUniqueReferenceNumber.apply
+      )(
+        TrustUniqueReferenceNumber.unapply
       )
     )
 

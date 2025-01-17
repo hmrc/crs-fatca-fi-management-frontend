@@ -16,6 +16,7 @@
 
 package generators
 
+import models.FinancialInstitutions.TINType
 import models.{RichJsObject, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
@@ -37,7 +38,6 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
       arbitrary[(FirstContactNamePage.type, JsValue)] ::
       arbitrary[(FirstContactPhoneNumberPage.type, JsValue)] ::
       arbitrary[(HaveGIINPage.type, JsValue)] ::
-      arbitrary[(HaveUniqueTaxpayerReferencePage.type, JsValue)] ::
       arbitrary[(IsThisAddressPage.type, JsValue)] ::
       arbitrary[(NameOfFinancialInstitutionPage.type, JsValue)] ::
       arbitrary[(NonUkAddressPage.type, JsValue)] ::
@@ -139,18 +139,11 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
     } yield obj
   }
 
-  private lazy val nameUTRandGIINDetails = Arbitrary {
+  private lazy val nameAndGIINDetails = Arbitrary {
     for {
-      haveUTR  <- arbitrary[Boolean]
       haveGIIN <- arbitrary[Boolean]
       fiName <-
         pageArbitrary(NameOfFinancialInstitutionPage).arbitrary
-      utr <-
-        if (haveUTR) {
-          pageArbitrary(WhatIsUniqueTaxpayerReferencePage).arbitrary
-        } else {
-          Gen.const(Json.obj())
-        }
       giin <-
         if (haveGIIN) {
           pageArbitrary(WhatIsGIINPage).arbitrary
@@ -159,10 +152,20 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
         }
       obj = setFields(
         Json.obj(),
-        HaveUniqueTaxpayerReferencePage.path -> Json.toJson(haveUTR),
-        HaveGIINPage.path                    -> Json.toJson(haveGIIN)
-      ) ++ fiName ++ utr ++ giin
+        HaveGIINPage.path -> Json.toJson(haveGIIN)
+      ) ++ fiName ++ giin
     } yield obj
+  }
+
+  private lazy val UTRDetails = Arbitrary {
+    for {
+      whichId <- Gen.const(TINType.UTR)
+      utr     <- pageArbitrary(WhatIsUniqueTaxpayerReferencePage).arbitrary
+    } yield Json
+      .obj(
+        WhichIdentificationNumbersPage.toString -> Json.toJson(Set(whichId.toString))
+      )
+      .deepMerge(utr)
   }
 
   private lazy val registeredBusinessDetails = Arbitrary {
@@ -207,11 +210,12 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
       id             <- nonEmptyString
       address        <- ukAddress.arbitrary
       contactDetails <- firstAndSecondContactDetails.arbitrary
-      nameUTRandGIIN <- nameUTRandGIINDetails.arbitrary
+      nameAndGIIN    <- nameAndGIINDetails.arbitrary
+      utr            <- UTRDetails.arbitrary
       obj =
         setFields(
           Json.obj()
-        ) ++ address ++ contactDetails ++ nameUTRandGIIN
+        ) ++ address ++ contactDetails ++ nameAndGIIN ++ utr
     } yield UserAnswers(
       id = id,
       data = obj
@@ -251,12 +255,12 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
       fiNotRegistered,
       Seq(
         NameOfFinancialInstitutionPage,
+        WhichIdentificationNumbersPage,
         FirstContactEmailPage,
         FirstContactHavePhonePage,
         FirstContactNamePage,
         FirstContactPhoneNumberPage,
         HaveGIINPage,
-        HaveUniqueTaxpayerReferencePage,
         WhatIsGIINPage,
         WhatIsUniqueTaxpayerReferencePage,
         SecondContactEmailPage,

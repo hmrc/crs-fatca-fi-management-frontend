@@ -18,7 +18,7 @@ package base
 
 import controllers.actions._
 import models.FinancialInstitutions.TINType.GIIN
-import models.FinancialInstitutions.{AddressDetails, ContactDetails, FIDetail, TINDetails}
+import models.FinancialInstitutions._
 import models.{Address, AddressLookup, AddressResponse, Country, GIINumber, UniqueTaxpayerReference, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
@@ -218,7 +218,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
 
   val userAnswersForAddFI: UserAnswers = emptyUserAnswers
     .withPage(NameOfFinancialInstitutionPage, "testfi")
-    .withPage(HaveUniqueTaxpayerReferencePage, true)
+    .withPage(WhichIdentificationNumbersPage, Set[TINType](TINType.UTR))
     .withPage(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference("222333444"))
     .withPage(HaveGIINPage, true)
     .withPage(WhatIsGIINPage, GIINumber("98096B.00000.LE.350"))

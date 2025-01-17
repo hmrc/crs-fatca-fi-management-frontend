@@ -18,14 +18,15 @@ package services
 
 import base.SpecBase
 import generators.UserAnswersGenerator
-import models.FinancialInstitutions.TINType.{GIIN, UTR}
-import models.FinancialInstitutions.{AddressDetails, ContactDetails, FIDetail, TINDetails}
-import models.{AddressLookup, Country, GIINumber, UniqueTaxpayerReference, UserAnswers}
+import models.FinancialInstitutions.TINType._
+import models.FinancialInstitutions._
+import models.{AddressLookup, CompanyRegistrationNumber, Country, GIINumber, TrustUniqueReferenceNumber, UniqueTaxpayerReference, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import pages.addFinancialInstitution._
+import pages.{CompanyRegistrationNumberPage, TrustURNPage}
 import play.api.libs.json.Json
 import repositories.{ChangeUserAnswersRepository, SessionRepository}
 import utils.CountryListFactory
@@ -258,8 +259,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
       "must return true when user answers UTR is different from UTR in FIDetail" in {
         forAll {
           fiDetails: FIDetail =>
-            val fiDetailsUTR     = UniqueTaxpayerReference(UUID.randomUUID().toString)
-            val fiDetailsWithUTR = fiDetails.copy(TINDetails = Seq(TINDetails(TINType = UTR, TIN = fiDetailsUTR.value, "")))
+            val fiDetailsUTR = UniqueTaxpayerReference(UUID.randomUUID().toString)
             when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
             when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(Country.GB))
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(fiDetails.AddressDetails.CountryCode.toSet)
@@ -269,9 +269,10 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
               .futureValue
 
             val populatedUserAnswers = result
-              .withPage(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference(UUID.randomUUID().toString))
+              .withPage(WhichIdentificationNumbersPage, Set[TINType](UTR))
+              .withPage(WhatIsUniqueTaxpayerReferencePage, fiDetailsUTR)
 
-            service.fiDetailsHasChanged(populatedUserAnswers, fiDetailsWithUTR) mustBe true
+            service.fiDetailsHasChanged(populatedUserAnswers, fiDetails) mustBe true
         }
       }
 
@@ -502,17 +503,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
   private def verifyUserAnswersMatchFIDetails(fiDetails: FIDetail, populatedUserAnswers: UserAnswers, isUkAddress: Boolean) = {
     populatedUserAnswers.get(NameOfFinancialInstitutionPage).value mustBe fiDetails.FIName
 
-    val maybeUTR = fiDetails.TINDetails.find(_.TINType == UTR)
-    populatedUserAnswers.get(HaveUniqueTaxpayerReferencePage).value mustBe maybeUTR.isDefined
-    populatedUserAnswers.get(WhatIsUniqueTaxpayerReferencePage) mustBe maybeUTR.map(
-      id => UniqueTaxpayerReference(id.TIN)
-    )
-
-    val maybeGIIN = fiDetails.TINDetails.find(_.TINType == GIIN)
-    populatedUserAnswers.get(HaveGIINPage).value mustBe maybeGIIN.isDefined
-    populatedUserAnswers.get(WhatIsGIINPage) mustBe maybeGIIN.map(
-      id => GIINumber(id.TIN)
-    )
+    verifyTINMatch(fiDetails, populatedUserAnswers)
 
     val addressPage = if (isUkAddress) UkAddressPage else NonUkAddressPage
     populatedUserAnswers.get(addressPage).value mustBe fiDetails.AddressDetails.toAddress(mockCountryListFactory).value
@@ -527,6 +518,31 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
     populatedUserAnswers.get(SecondContactEmailPage) mustBe fiDetails.SecondaryContactDetails.map(_.EmailAddress)
     populatedUserAnswers.get(SecondContactCanWePhonePage) mustBe fiDetails.SecondaryContactDetails.map(_.PhoneNumber.isDefined)
     populatedUserAnswers.get(SecondContactPhoneNumberPage) mustBe fiDetails.SecondaryContactDetails.flatMap(_.PhoneNumber)
+  }
+
+  private def verifyTINMatch(fiDetails: FIDetail, populatedUserAnswers: UserAnswers) = {
+    val maybeUTR: Option[TINDetails] = fiDetails.TINDetails.find(_.TINType == UTR)
+    populatedUserAnswers.get(WhichIdentificationNumbersPage) contains UTR
+    populatedUserAnswers.get(WhatIsUniqueTaxpayerReferencePage) mustBe maybeUTR.map(
+      id => UniqueTaxpayerReference(id.TIN)
+    )
+    val maybeCRN: Option[TINDetails] = fiDetails.TINDetails.find(_.TINType == CRN)
+    populatedUserAnswers.get(WhichIdentificationNumbersPage) contains CRN
+    populatedUserAnswers.get(CompanyRegistrationNumberPage) mustBe maybeCRN.map(
+      id => CompanyRegistrationNumber(id.TIN)
+    )
+
+    val maybeTRN: Option[TINDetails] = fiDetails.TINDetails.find(_.TINType == TRN)
+    populatedUserAnswers.get(WhichIdentificationNumbersPage) contains TRN
+    populatedUserAnswers.get(TrustURNPage) mustBe maybeTRN.map(
+      id => TrustUniqueReferenceNumber(id.TIN)
+    )
+
+    val maybeGIIN = fiDetails.TINDetails.find(_.TINType == GIIN)
+    populatedUserAnswers.get(HaveGIINPage).value mustBe maybeGIIN.isDefined
+    populatedUserAnswers.get(WhatIsGIINPage) mustBe maybeGIIN.map(
+      id => GIINumber(id.TIN)
+    )
   }
 
 }

@@ -33,7 +33,6 @@ case object ReportForRegisteredBusinessPage extends QuestionPage[Boolean] {
     value match {
       case Some(true) =>
         val pagesToRemove = Seq(
-          HaveUniqueTaxpayerReferencePage,
           WhatIsUniqueTaxpayerReferencePage,
           FirstContactNamePage,
           FirstContactEmailPage,

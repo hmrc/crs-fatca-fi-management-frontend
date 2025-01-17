@@ -17,7 +17,7 @@
 package forms.addFinancialInstitution
 
 import forms.mappings.Mappings
-import models.WhichIdentificationNumbers
+import models.FinancialInstitutions.TINType
 import play.api.data.Form
 import play.api.data.Forms.set
 
@@ -25,9 +25,9 @@ import javax.inject.Inject
 
 class WhichIdentificationNumbersFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Set[WhichIdentificationNumbers]] =
+  def apply(): Form[Set[TINType]] =
     Form(
-      "value" -> set(enumerable[WhichIdentificationNumbers]("whichIdentificationNumbers.error.required"))
+      "value" -> set(enumerable[TINType]("whichIdentificationNumbers.error.required"))
         .verifying(
           nonEmptySet("whichIdentificationNumbers.error.required"),
           noMixedTrn("whichIdentificationNumbers.error.noMixedTrn")

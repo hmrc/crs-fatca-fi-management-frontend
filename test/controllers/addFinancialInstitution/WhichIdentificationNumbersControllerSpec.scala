@@ -19,7 +19,8 @@ package controllers.addFinancialInstitution
 import base.SpecBase
 import controllers.routes
 import forms.addFinancialInstitution.WhichIdentificationNumbersFormProvider
-import models.{NormalMode, UserAnswers, WhichIdentificationNumbers}
+import models.FinancialInstitutions.TINType
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -64,7 +65,7 @@ class WhichIdentificationNumbersControllerSpec extends SpecBase with MockitoSuga
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(WhichIdentificationNumbersPage, WhichIdentificationNumbers.values.toSet).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(WhichIdentificationNumbersPage, TINType.allValues.toSet).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -76,7 +77,7 @@ class WhichIdentificationNumbersControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(fiName, form.fill(WhichIdentificationNumbers.values.toSet), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(fiName, form.fill(TINType.allValues.toSet), NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -97,7 +98,7 @@ class WhichIdentificationNumbersControllerSpec extends SpecBase with MockitoSuga
       running(application) {
         val request =
           FakeRequest(POST, whichIdentificationNumbersRoute)
-            .withFormUrlEncodedBody(("value[0]", WhichIdentificationNumbers.values.head.toString))
+            .withFormUrlEncodedBody(("value[0]", TINType.allValues.head.toString))
 
         val result = route(application, request).value
 
@@ -147,7 +148,7 @@ class WhichIdentificationNumbersControllerSpec extends SpecBase with MockitoSuga
       running(application) {
         val request =
           FakeRequest(POST, whichIdentificationNumbersRoute)
-            .withFormUrlEncodedBody(("value[0]", WhichIdentificationNumbers.values.head.toString))
+            .withFormUrlEncodedBody(("value[0]", TINType.allValues.head.toString))
 
         val result = route(application, request).value
 

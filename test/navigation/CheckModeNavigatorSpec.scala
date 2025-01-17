@@ -18,6 +18,8 @@ package navigation
 
 import base.SpecBase
 import controllers.addFinancialInstitution.routes
+import models.FinancialInstitutions.TINType
+import models.FinancialInstitutions.TINType.{CRN, TRN, UTR}
 import models.{CheckMode, _}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
@@ -49,22 +51,98 @@ class CheckModeNavigatorSpec extends SpecBase {
         navigator.nextPage(NameOfFinancialInstitutionPage, CheckMode, userAnswers) mustBe
           controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad()
       }
-      // UTR
-      "must go from HaveUniqueTaxpayerReference to CheckAnswers when No" in {
-        val userAnswers = emptyUserAnswers.withPage(HaveUniqueTaxpayerReferencePage, false)
-        navigator.nextPage(HaveUniqueTaxpayerReferencePage, CheckMode, userAnswers) mustBe
-          controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad()
-      }
-      "must go from HaveUniqueTaxpayerReference to WhatIsGIIN when Yes" in {
-        val userAnswers = emptyUserAnswers.withPage(HaveUniqueTaxpayerReferencePage, true)
-        navigator.nextPage(HaveUniqueTaxpayerReferencePage, CheckMode, userAnswers) mustBe
-          controllers.addFinancialInstitution.routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(CheckMode)
+      "must go from WhichIdentificationNumbersPage" - {
+        "with UTR selected" - {
+          "to CheckAnswers if WhatIsUniqueTaxpayerReferencePage is populated" in {
+            val userAnswers = emptyUserAnswers
+              .withPage(WhichIdentificationNumbersPage, Set(UTR: TINType))
+              .withPage(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference("someUTR"))
+            navigator.nextPage(WhichIdentificationNumbersPage, CheckMode, userAnswers) mustBe
+              controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad()
+          }
+          "to WhatIsUniqueTaxpayerReference if WhatIsUniqueTaxpayerReferencePage is not populated" in {
+            val userAnswers = emptyUserAnswers
+              .withPage(WhichIdentificationNumbersPage, Set(UTR: TINType))
+            navigator.nextPage(WhichIdentificationNumbersPage, CheckMode, userAnswers) mustBe
+              controllers.addFinancialInstitution.routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(CheckMode)
+          }
+        }
+        "with CRN selected" - {
+          "to CheckAnswers if CompanyRegistrationNumberPage is populated" in {
+            val userAnswers = emptyUserAnswers
+              .withPage(WhichIdentificationNumbersPage, Set(CRN: TINType))
+              .withPage(CompanyRegistrationNumberPage, CompanyRegistrationNumber("someCRN"))
+            navigator.nextPage(WhichIdentificationNumbersPage, CheckMode, userAnswers) mustBe
+              controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad()
+          }
+          "to CompanyRegistrationNumber if CompanyRegistrationNumberPage is not populated" in {
+            val userAnswers = emptyUserAnswers
+              .withPage(WhichIdentificationNumbersPage, Set(CRN: TINType))
+            navigator.nextPage(WhichIdentificationNumbersPage, CheckMode, userAnswers) mustBe
+              controllers.addFinancialInstitution.routes.WhatIsCompanyRegistrationNumberController.onPageLoad(CheckMode)
+          }
+        }
+        "with TRN selected" - {
+          "to CheckAnswers if TrustURNPage is populated" in {
+            val userAnswers = emptyUserAnswers
+              .withPage(WhichIdentificationNumbersPage, Set(TRN: TINType))
+              .withPage(TrustURNPage, TrustUniqueReferenceNumber("someTRN"))
+            navigator.nextPage(WhichIdentificationNumbersPage, CheckMode, userAnswers) mustBe
+              controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad()
+          }
+          "to TrustURN if TrustURNPage is not populated" in {
+            val userAnswers = emptyUserAnswers
+              .withPage(WhichIdentificationNumbersPage, Set(TRN: TINType))
+            navigator.nextPage(WhichIdentificationNumbersPage, CheckMode, userAnswers) mustBe
+              controllers.addFinancialInstitution.routes.TrustURNController.onPageLoad(CheckMode)
+          }
+        }
+        "with both UTR and CRN selected" - {
+          "to CheckAnswers if both CompanyRegistrationNumberPage and WhatIsUniqueTaxpayerReferencePage is populated" in {
+            val userAnswers = emptyUserAnswers
+              .withPage(WhichIdentificationNumbersPage, Set(UTR: TINType, CRN: TINType))
+              .withPage(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference("someUTR"))
+              .withPage(CompanyRegistrationNumberPage, CompanyRegistrationNumber("someCRN"))
+
+            navigator.nextPage(WhichIdentificationNumbersPage, CheckMode, userAnswers) mustBe
+              controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad()
+          }
+          "to CompanyRegistrationNumberPage if WhatIsUniqueTaxpayerReferencePage is populated" in {
+            val userAnswers = emptyUserAnswers
+              .withPage(WhichIdentificationNumbersPage, Set(UTR: TINType, CRN: TINType))
+              .withPage(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference("someUTR"))
+
+            navigator.nextPage(WhichIdentificationNumbersPage, CheckMode, userAnswers) mustBe
+              controllers.addFinancialInstitution.routes.WhatIsCompanyRegistrationNumberController.onPageLoad(CheckMode)
+          }
+          "to WhatIsUniqueTaxpayerReferencePage if CompanyRegistrationNumberPage is populated" in {
+            val userAnswers = emptyUserAnswers
+              .withPage(WhichIdentificationNumbersPage, Set(UTR: TINType, CRN: TINType))
+              .withPage(CompanyRegistrationNumberPage, CompanyRegistrationNumber("someCRN"))
+
+            navigator.nextPage(WhichIdentificationNumbersPage, CheckMode, userAnswers) mustBe
+              controllers.addFinancialInstitution.routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(CheckMode)
+          }
+        }
       }
       "must go from WhatIsUniqueTaxpayerReference to CheckAnswers" in {
-        val userAnswers = emptyUserAnswers.withPage(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference("someUTR"))
+        val userAnswers = emptyUserAnswers
+          .withPage(WhichIdentificationNumbersPage, Set(UTR: TINType))
+          .withPage(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference("someUTR"))
         navigator.nextPage(WhatIsUniqueTaxpayerReferencePage, CheckMode, userAnswers) mustBe
           controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad()
       }
+      "must go from CompanyRegistrationNumber to CheckAnswers" in {
+        val userAnswers = emptyUserAnswers.withPage(CompanyRegistrationNumberPage, CompanyRegistrationNumber("someCRN"))
+        navigator.nextPage(CompanyRegistrationNumberPage, CheckMode, userAnswers) mustBe
+          controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad()
+      }
+      "must go from TrustURN to CheckAnswers" in {
+        val userAnswers = emptyUserAnswers.withPage(TrustURNPage, TrustUniqueReferenceNumber("someTRN"))
+        navigator.nextPage(TrustURNPage, CheckMode, userAnswers) mustBe
+          controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad()
+      }
+
       // Contact rows, first contact
       "must go from FirstContactName to CheckAnswers" in {
         val userAnswers = emptyUserAnswers.withPage(FirstContactNamePage, "testname")
@@ -277,7 +355,9 @@ class CheckModeNavigatorSpec extends SpecBase {
         "must navigate from WhatIsUniqueTaxpayerReferencePage to ChangeFinancialInstitution" in {
           forAll {
             fiId: String =>
-              val userAnswers = emptyUserAnswers.withPage(ChangeFiDetailsInProgressId, fiId)
+              val userAnswers = emptyUserAnswers
+                .withPage(ChangeFiDetailsInProgressId, fiId)
+                .withPage(WhichIdentificationNumbersPage, Set(UTR: TINType))
 
               navigator
                 .nextPage(WhatIsUniqueTaxpayerReferencePage, CheckMode, userAnswers)

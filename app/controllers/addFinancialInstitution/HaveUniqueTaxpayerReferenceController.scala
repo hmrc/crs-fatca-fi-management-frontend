@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,67 +13,3 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package controllers.addFinancialInstitution
-
-import controllers.actions._
-import forms.addFinancialInstitution.HaveUniqueTaxpayerReferenceFormProvider
-import models.Mode
-import navigation.Navigator
-import pages.addFinancialInstitution.HaveUniqueTaxpayerReferencePage
-import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.{ChangeUserAnswersRepository, SessionRepository}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.ContactHelper
-import views.html.addFinancialInstitution.HaveUniqueTaxpayerReferenceView
-
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
-
-class HaveUniqueTaxpayerReferenceController @Inject() (
-  override val messagesApi: MessagesApi,
-  sessionRepository: SessionRepository,
-  changeUserAnswersRepository: ChangeUserAnswersRepository,
-  navigator: Navigator,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
-  formProvider: HaveUniqueTaxpayerReferenceFormProvider,
-  checkForInformationSentAction: CheckForInformationSentAction,
-  val controllerComponents: MessagesControllerComponents,
-  view: HaveUniqueTaxpayerReferenceView
-)(implicit ec: ExecutionContext)
-    extends FrontendBaseController
-    with I18nSupport
-    with ContactHelper {
-
-  val form = formProvider()
-
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkForInformationSentAction) {
-    implicit request =>
-      val preparedForm = request.userAnswers.get(HaveUniqueTaxpayerReferencePage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
-
-      Ok(view(preparedForm, mode, getFinancialInstitutionName(request.userAnswers)))
-  }
-
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
-    implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, getFinancialInstitutionName(request.userAnswers)))),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(HaveUniqueTaxpayerReferencePage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-              _              <- changeUserAnswersRepository.set(request.fatcaId, updatedAnswers.get(ChangeFiDetailsInProgressId), updatedAnswers)
-            } yield Redirect(navigator.nextPage(HaveUniqueTaxpayerReferencePage, mode, updatedAnswers))
-        )
-  }
-
-}

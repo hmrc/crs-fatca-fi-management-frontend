@@ -17,10 +17,9 @@
 package services
 
 import com.google.inject.Inject
-import models.FinancialInstitutions.TINType.{GIIN, UTR}
+import models.FinancialInstitutions.TINType._
 import models.FinancialInstitutions._
-import models.{GIINumber, TaxIdentificationNumber, UniqueTaxpayerReference, UserAnswers}
-import pages.QuestionPage
+import models.{CompanyRegistrationNumber, GIINumber, TrustUniqueReferenceNumber, UniqueTaxpayerReference, UserAnswers}
 import pages.addFinancialInstitution.IsRegisteredBusiness.{
   FetchedRegisteredAddressPage,
   IsTheAddressCorrectPage,
@@ -29,7 +28,8 @@ import pages.addFinancialInstitution.IsRegisteredBusiness.{
 }
 import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
-import play.api.libs.json.{Json, Reads}
+import pages.{CompanyRegistrationNumberPage, QuestionPage, TrustURNPage}
+import play.api.libs.json.Json
 import repositories.{ChangeUserAnswersRepository, SessionRepository}
 import utils.CountryListFactory
 
@@ -60,15 +60,14 @@ class FinancialInstitutionUpdateService @Inject() (
 
   def fiDetailsHasChanged(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean =
     userAnswers.get(NameOfFinancialInstitutionPage).exists(_ != fiDetails.FIName) ||
-      checkTaxIdentifierForChanges(userAnswers, fiDetails.TINDetails, UTR, HaveUniqueTaxpayerReferencePage, WhatIsUniqueTaxpayerReferencePage) ||
-      checkTaxIdentifierForChanges(userAnswers, fiDetails.TINDetails, GIIN, HaveGIINPage, WhatIsGIINPage) ||
+      checkTINTypeForChanges(userAnswers, fiDetails.TINDetails) ||
       checkAddressForChanges(userAnswers, fiDetails.AddressDetails) ||
       checkPrimaryContactForChanges(userAnswers, fiDetails) ||
       checkSecondaryContactForChanges(userAnswers, fiDetails)
 
   def registeredFiDetailsHasChanged(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean =
     userAnswers.get(NameOfFinancialInstitutionPage).exists(_ != fiDetails.FIName) ||
-      checkTaxIdentifierForChanges(userAnswers, fiDetails.TINDetails, GIIN, HaveGIINPage, WhatIsGIINPage) ||
+      checkTINTypeForChanges(userAnswers, fiDetails.TINDetails) ||
       checkAddressForChanges(userAnswers, fiDetails.AddressDetails)
 
   def clearUserAnswers(userAnswers: UserAnswers): Future[Boolean] =
@@ -80,7 +79,7 @@ class FinancialInstitutionUpdateService @Inject() (
   )(implicit ec: ExecutionContext): Future[UserAnswers] =
     for {
       a <- Future.fromTry(userAnswers.set(NameOfFinancialInstitutionPage, fiDetails.FIName, cleanup = false))
-      b <- setUTR(a, fiDetails.TINDetails)
+      b <- setTaxIdentifier(a, fiDetails.TINDetails)
       c <- setGIIN(b, fiDetails.TINDetails)
       d <- setAddress(c, fiDetails.AddressDetails)
       e <- setPrimaryContactDetails(d, fiDetails)
@@ -94,23 +93,44 @@ class FinancialInstitutionUpdateService @Inject() (
     for {
       a <- Future.fromTry(userAnswers.set(ReportForRegisteredBusinessPage, fiDetails.IsFIUser, cleanup = false))
       b <- Future.fromTry(a.set(NameOfFinancialInstitutionPage, fiDetails.FIName, cleanup = false))
-      c <- setGIIN(b, fiDetails.TINDetails)
-      d <- setAddress(c, fiDetails.AddressDetails)
-      e <- setFiUserDetails(d)
-    } yield e
+      c <- setTaxIdentifier(b, fiDetails.TINDetails)
+      d <- setGIIN(c, fiDetails.TINDetails)
+      e <- setAddress(d, fiDetails.AddressDetails)
+      f <- setFiUserDetails(e)
+    } yield f
 
-  private def setUTR(userAnswers: UserAnswers, tinDetails: Seq[TINDetails])(implicit ec: ExecutionContext): Future[UserAnswers] =
-    tinDetails.find(_.TINType == UTR) match {
-      case Some(details) =>
-        for {
-          a <- Future.fromTry(userAnswers.set(HaveUniqueTaxpayerReferencePage, true, cleanup = false))
-          b <- Future.fromTry(a.set(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference(details.TIN), cleanup = false))
-        } yield b
-      case None =>
-        for {
-          a <- Future.fromTry(userAnswers.set(HaveUniqueTaxpayerReferencePage, false, cleanup = false))
-          b <- Future.fromTry(a.remove(WhatIsUniqueTaxpayerReferencePage))
-        } yield b
+  private def setTaxIdentifier(userAnswers: UserAnswers, listOfTinDetails: Seq[TINDetails])(implicit ec: ExecutionContext): Future[UserAnswers] =
+    listOfTinDetails.foldLeft(Future.successful(userAnswers)) {
+      (futureAnswers, details) =>
+        futureAnswers.flatMap {
+          answers =>
+            details.TINType match {
+              case UTR =>
+                Future.fromTry(
+                  answers
+                    .set(WhichIdentificationNumbersPage, answers.get(WhichIdentificationNumbersPage).getOrElse(Set.empty) + TINType.UTR, cleanup = false)
+                    .flatMap(_.set(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference(details.TIN), cleanup = false))
+                )
+              case CRN =>
+                Future.fromTry(
+                  answers
+                    .set(WhichIdentificationNumbersPage, answers.get(WhichIdentificationNumbersPage).getOrElse(Set.empty) + TINType.CRN, cleanup = false)
+                    .flatMap(_.set(CompanyRegistrationNumberPage, CompanyRegistrationNumber(details.TIN), cleanup = false))
+                )
+              case TRN =>
+                Future.fromTry(
+                  answers
+                    .set(WhichIdentificationNumbersPage, answers.get(WhichIdentificationNumbersPage).getOrElse(Set.empty) + TINType.TRN, cleanup = false)
+                    .flatMap(_.set(TrustURNPage, TrustUniqueReferenceNumber(details.TIN), cleanup = false))
+                )
+              case _ =>
+                Future.fromTry(
+                  answers
+                    .set(HaveGIINPage, true, cleanup = false)
+                    .flatMap(_.set(WhatIsGIINPage, GIINumber(details.TIN), cleanup = false))
+                )
+            }
+        }
     }
 
   private def setGIIN(userAnswers: UserAnswers, tinDetails: Seq[TINDetails])(implicit ec: ExecutionContext): Future[UserAnswers] =
@@ -198,20 +218,65 @@ class FinancialInstitutionUpdateService @Inject() (
       }
     } yield b
 
-  private def checkTaxIdentifierForChanges[T <: TaxIdentificationNumber](
+  private def checkGIINForChanges(
     userAnswers: UserAnswers,
-    tinDetails: Seq[TINDetails],
-    idType: TINType,
-    haveIdTypePage: QuestionPage[Boolean],
-    idTypePage: QuestionPage[T]
-  )(implicit reads: Reads[T]): Boolean =
-    tinDetails.find(_.TINType == idType) match {
+    tinDetails: Seq[TINDetails]
+  ): Boolean =
+    tinDetails.find(_.TINType == GIIN) match {
       case Some(id) =>
-        userAnswers.get(haveIdTypePage).contains(false) ||
-        userAnswers.get(idTypePage).exists(_.value.toLowerCase != id.TIN.toLowerCase)
+        userAnswers.get(HaveGIINPage).contains(false) ||
+        userAnswers.get(WhatIsGIINPage).exists(_.value.toLowerCase != id.TIN.toLowerCase)
       case None =>
-        userAnswers.get(haveIdTypePage).contains(true)
+        userAnswers.get(HaveGIINPage).contains(true)
     }
+
+  def checkUTRforChange(userAnswers: UserAnswers, tinDetails: Seq[TINDetails]): Boolean = {
+    val uaValue: Option[String]     = userAnswers.get(WhatIsUniqueTaxpayerReferencePage).map(_.value)
+    val detailValue: Option[String] = tinDetails.find(_.TINType == UTR).map(_.TIN)
+    uaValue != detailValue
+  }
+
+  def checkCRNforChange(userAnswers: UserAnswers, tinDetails: Seq[TINDetails]): Boolean = {
+    val uaValue: Option[String]     = userAnswers.get(CompanyRegistrationNumberPage).map(_.value)
+    val detailValue: Option[String] = tinDetails.find(_.TINType == CRN).map(_.TIN)
+    uaValue != detailValue
+  }
+
+  def checkTRNforChange(userAnswers: UserAnswers, tinDetails: Seq[TINDetails]): Boolean = {
+    val uaValue: Option[String]     = userAnswers.get(TrustURNPage).map(_.value)
+    val detailValue: Option[String] = tinDetails.find(_.TINType == TRN).map(_.TIN)
+    uaValue != detailValue
+  }
+
+  private def checkTINTypeForChanges(
+    userAnswers: UserAnswers,
+    tinDetails: Seq[TINDetails]
+  ): Boolean = {
+
+    val uaTinTypes: Set[TINType] =
+      userAnswers
+        .get(WhichIdentificationNumbersPage)
+        .getOrElse(Set.empty) ++
+        (if (userAnswers.get(HaveGIINPage).contains(true)) Set(GIIN) else Set.empty)
+
+    val detailTinTypes: Set[TINType]    = tinDetails.map(_.TINType).toSet
+    val identifiersHaveChanged: Boolean = uaTinTypes != detailTinTypes
+    val valuesHaveChanged: Boolean = if (!identifiersHaveChanged) {
+      detailTinTypes.toSeq.exists {
+        tinType =>
+          tinType match {
+            case TINType.UTR  => checkUTRforChange(userAnswers, tinDetails)
+            case TINType.CRN  => checkCRNforChange(userAnswers, tinDetails)
+            case TINType.TRN  => checkTRNforChange(userAnswers, tinDetails)
+            case TINType.GIIN => checkGIINForChanges(userAnswers, tinDetails)
+            case _            => false
+          }
+      }
+    } else {
+      false
+    }
+    identifiersHaveChanged || valuesHaveChanged
+  }
 
   private def checkAddressForChanges(userAnswers: UserAnswers, addressDetails: AddressDetails): Boolean = {
     val isUkAddress    = addressDetails.CountryCode.exists(countryListFactory.countryCodesForUkCountries.contains)

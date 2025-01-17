@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import forms.TrustURNFormProvider
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, TrustUniqueReferenceNumber, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -66,7 +66,7 @@ class TrustURNControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(TrustURNPage, "answer").success.value
+      val userAnswers = UserAnswers(userAnswersId).set(TrustURNPage, TrustUniqueReferenceNumber("answer")).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -78,7 +78,7 @@ class TrustURNControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode, fiName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(TrustUniqueReferenceNumber("answer")), NormalMode, fiName)(request, messages(application)).toString
       }
     }
 

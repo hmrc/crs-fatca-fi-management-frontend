@@ -19,15 +19,14 @@ package generators
 import models.FinancialInstitutions._
 import models._
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen.listOf
 import org.scalacheck.{Arbitrary, Gen}
 import utils.RegexConstants
 
 trait ModelGenerators extends RegexConstants with Generators {
 
-  implicit lazy val arbitraryWhichIdentificationNumbers: Arbitrary[WhichIdentificationNumbers] =
+  implicit lazy val arbitraryTINType: Arbitrary[TINType] =
     Arbitrary {
-      Gen.oneOf(WhichIdentificationNumbers.values)
+      Gen.oneOf(TINType.allValues)
     }
 
   val maximumNumber     = 999999
@@ -117,7 +116,7 @@ trait ModelGenerators extends RegexConstants with Generators {
   implicit val arbitraryTINDetails: Arbitrary[TINDetails] =
     Arbitrary {
       for {
-        tinType  <- Gen.oneOf(TINType.values)
+        tinType  <- Gen.oneOf(TINType.allValues)
         tin      <- stringOfLength(25)
         issuedBy <- stringOfLength(2)
       } yield TINDetails(tinType, tin, issuedBy.toUpperCase)
@@ -128,7 +127,9 @@ trait ModelGenerators extends RegexConstants with Generators {
       fiId                    <- stringOfLength(15)
       fiName                  <- stringOfLength(105)
       subscriptionId          <- validSubscriptionID
-      tinDetails              <- listOf(arbitrary[TINDetails])
+      tinType                 <- Gen.oneOf(TINType.UTR, TINType.CRN, TINType.TRN, TINType.GIIN)
+      tin                     <- stringOfLength(10)
+      tinDetails              <- Gen.const(List(TINDetails(tinType, tin, "GB")))
       isFIUser                <- arbitrary[Boolean]
       isFATCAReporting        <- arbitrary[Boolean]
       addressDetails          <- arbitrary[AddressDetails]
@@ -147,7 +148,6 @@ trait ModelGenerators extends RegexConstants with Generators {
     )
   }
 
-//Line holder for template scripts
   implicit val arbitraryUniqueTaxpayerReference: Arbitrary[UniqueTaxpayerReference] = Arbitrary {
     for {
       id <- arbitrary[String]

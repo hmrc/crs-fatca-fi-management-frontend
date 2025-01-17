@@ -16,8 +16,9 @@
 
 package viewmodels
 
-import models.WhichIdentificationNumbers._
-import models.{AnswersReviewPageType, CheckMode, UserAnswers, WhichIdentificationNumbers}
+import models.FinancialInstitutions.TINType
+import models.FinancialInstitutions.TINType._
+import models.{AnswersReviewPageType, CheckMode, UserAnswers}
 import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
 import pages.addFinancialInstitution.{HaveGIINPage, WhichIdentificationNumbersPage}
 import play.api.i18n.Messages
@@ -71,14 +72,14 @@ package object common {
   }
 
   def getIdRows(ua: UserAnswers, pageType: AnswersReviewPageType)(implicit messages: Messages): Seq[SummaryListRow] = {
-    val idsUsed: Seq[WhichIdentificationNumbers] = ua.get(WhichIdentificationNumbersPage).fold(Seq.empty[WhichIdentificationNumbers])(_.toSeq)
+    val idsUsed: Seq[TINType] = ua.get(WhichIdentificationNumbersPage).fold(Seq.empty[TINType])(_.toSeq)
     idsUsed match {
-      case Seq(UTR) => Seq(WhichIdentificationNumbersSummary.row(ua), WhatIsUniqueTaxpayerReferenceSummary.row(ua, pageType)).flatten
-      case Seq(CRN) => Seq(WhichIdentificationNumbersSummary.row(ua), CompanyRegistrationNumberSummary.row(ua)).flatten
-      case Seq(UTR, CRN) =>
+      case Seq(TINType.UTR) => Seq(WhichIdentificationNumbersSummary.row(ua), WhatIsUniqueTaxpayerReferenceSummary.row(ua, pageType)).flatten
+      case Seq(TINType.CRN) => Seq(WhichIdentificationNumbersSummary.row(ua), CompanyRegistrationNumberSummary.row(ua)).flatten
+      case Seq(TINType.UTR, TINType.CRN) =>
         Seq(WhichIdentificationNumbersSummary.row(ua), WhatIsUniqueTaxpayerReferenceSummary.row(ua, pageType), CompanyRegistrationNumberSummary.row(ua)).flatten
-      case Seq(TRN) => Seq(WhichIdentificationNumbersSummary.row(ua), TrustURNSummary.row(ua)).flatten
-      case _        => Seq.empty[SummaryListRow]
+      case Seq(TINType.TRN) => Seq(WhichIdentificationNumbersSummary.row(ua), TrustURNSummary.row(ua)).flatten
+      case _                => Seq.empty[SummaryListRow]
     }
   }
 

@@ -17,7 +17,7 @@
 package utils
 
 import generators.{ModelGenerators, UserAnswersGenerator}
-import models.{CheckMode, UserAnswers}
+import models.{CheckMode, NormalMode, UserAnswers}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -45,12 +45,12 @@ class CheckYourAnswersValidatorSpec extends AnyFreeSpec with Matchers with Model
             result mustNot be(empty)
             Set(
               NameOfFinancialInstitutionPage,
+              WhichIdentificationNumbersPage,
               FirstContactEmailPage,
               FirstContactHavePhonePage,
               FirstContactNamePage,
               FirstContactPhoneNumberPage,
               HaveGIINPage,
-              HaveUniqueTaxpayerReferencePage,
               IsThisAddressPage,
               SelectAddressPage,
               SelectedAddressLookupPage,
@@ -71,14 +71,17 @@ class CheckYourAnswersValidatorSpec extends AnyFreeSpec with Matchers with Model
           (userAnswers: UserAnswers) =>
             val result = CheckYourAnswersValidator(userAnswers).changeAnswersRedirectUrl
             Set(
-              controllers.addFinancialInstitution.routes.HaveUniqueTaxpayerReferenceController.onPageLoad(CheckMode).url,
+              controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url,
               controllers.addFinancialInstitution.routes.HaveGIINController.onPageLoad(CheckMode).url,
               controllers.addFinancialInstitution.routes.PostcodeController.onPageLoad(CheckMode).url,
               controllers.addFinancialInstitution.routes.FirstContactHavePhoneController.onPageLoad(CheckMode).url,
               controllers.addFinancialInstitution.routes.SecondContactCanWePhoneController.onPageLoad(CheckMode).url,
               controllers.addFinancialInstitution.routes.SecondContactEmailController.onPageLoad(CheckMode).url,
               controllers.addFinancialInstitution.routes.SecondContactExistsController.onPageLoad(CheckMode).url,
-              controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(CheckMode).url
+              controllers.addFinancialInstitution.routes.WhichIdentificationNumbersController.onPageLoad(CheckMode).url,
+              controllers.addFinancialInstitution.routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(CheckMode).url,
+              controllers.addFinancialInstitution.routes.WhatIsCompanyRegistrationNumberController.onPageLoad(CheckMode).url,
+              controllers.addFinancialInstitution.routes.TrustURNController.onPageLoad(CheckMode).url
             ) must contain(result)
         }
       }
