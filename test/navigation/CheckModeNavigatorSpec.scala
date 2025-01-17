@@ -86,7 +86,7 @@ class CheckModeNavigatorSpec extends SpecBase {
           "to CheckAnswers if TrustURNPage is populated" in {
             val userAnswers = emptyUserAnswers
               .withPage(WhichIdentificationNumbersPage, Set(TRN: TINType))
-              .withPage(TrustURNPage, "someTRN")
+              .withPage(TrustURNPage, TrustUniqueReferenceNumber("someTRN"))
             navigator.nextPage(WhichIdentificationNumbersPage, CheckMode, userAnswers) mustBe
               controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad()
           }
@@ -138,7 +138,7 @@ class CheckModeNavigatorSpec extends SpecBase {
           controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad()
       }
       "must go from TrustURN to CheckAnswers" in {
-        val userAnswers = emptyUserAnswers.withPage(TrustURNPage, "someTRN")
+        val userAnswers = emptyUserAnswers.withPage(TrustURNPage, TrustUniqueReferenceNumber("someTRN"))
         navigator.nextPage(TrustURNPage, CheckMode, userAnswers) mustBe
           controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad()
       }

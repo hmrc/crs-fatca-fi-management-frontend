@@ -16,9 +16,10 @@
 
 package pages
 
+import models.TrustUniqueReferenceNumber
 import play.api.libs.json.JsPath
 
-case object TrustURNPage extends QuestionPage[String] {
+case object TrustURNPage extends QuestionPage[TrustUniqueReferenceNumber] {
 
   override def path: JsPath = JsPath \ toString
 

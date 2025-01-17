@@ -19,7 +19,7 @@ package viewmodels.checkAnswers
 import base.SpecBase
 import models.FinancialInstitutions.TINType
 import models.FinancialInstitutions.TINType._
-import models.{AddressResponse, CheckAnswers, CheckMode, CompanyRegistrationNumber, GIINumber, UniqueTaxpayerReference, UserAnswers}
+import models.{AddressResponse, CheckAnswers, CheckMode, CompanyRegistrationNumber, GIINumber, TrustUniqueReferenceNumber, UniqueTaxpayerReference, UserAnswers}
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 import pages.{CompanyRegistrationNumberPage, TrustURNPage}
@@ -57,7 +57,7 @@ class CheckYourAnswersViewModelSpec extends SpecBase {
           .withPage(CompanyRegistrationNumberPage, CompanyRegistrationNumber("test"))
         val ua3 = ua
           .withPage(WhichIdentificationNumbersPage, Set(TRN: TINType))
-          .withPage(TrustURNPage, "test")
+          .withPage(TrustURNPage, TrustUniqueReferenceNumber("test"))
 
         sut.getFinancialInstitutionSummaries(ua1).length mustBe 2
         sut.getFinancialInstitutionSummaries(ua2).length mustBe 3

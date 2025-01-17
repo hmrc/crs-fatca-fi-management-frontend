@@ -16,9 +16,9 @@
 
 package forms.mappings
 
+import models.Enumerable
 import play.api.data.FormError
 import play.api.data.format.Formatter
-import models.Enumerable
 import utils.RegexConstants
 
 import scala.util.control.Exception.nonFatalCatch
@@ -213,6 +213,27 @@ trait Formatters extends Transforms with RegexConstants {
 
     }
 
+  protected def validatedUrnFormatter(requiredKey: String, invalidKey: String, invalidFormatKey: String, msgArg: String = ""): Formatter[String] =
+    new Formatter[String] {
+
+      def formatError(key: String, errorKey: String, msgArg: String): FormError =
+        if (msgArg.isEmpty) FormError(key, errorKey) else FormError(key, errorKey, Seq(msgArg))
+
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
+        val trimmedUrn = data.get(key).map(_.replaceAll("\\s", ""))
+        trimmedUrn match {
+          case None | Some("")                       => Left(Seq(formatError(key, requiredKey, msgArg)))
+          case Some(s) if !s.matches(urnCharsRegex)  => Left(Seq(formatError(key, invalidKey, msgArg)))
+          case Some(s) if !s.matches(urnFormatRegex) => Left(Seq(formatError(key, invalidFormatKey, msgArg)))
+          case Some(s)                               => Right(s)
+        }
+      }
+
+      override def unbind(key: String, value: String): Map[String, String] =
+        Map(key -> value)
+
+    }
+
   private[mappings] def mandatoryPostcodeFormatter(requiredKey: String,
                                                    lengthKey: String,
                                                    invalidKey: String,
@@ -278,27 +299,6 @@ trait Formatters extends Transforms with RegexConstants {
           case Some(value) if !value.matches(giinFormatRegex)  => Left(Seq(FormError(key, invalidKey)))
           case Some(value)                                     => Right(validGIINFormat(value))
           case _                                               => Left(Seq(FormError(key, invalidKey)))
-        }
-      }
-
-      override def unbind(key: String, value: String): Map[String, String] =
-        Map(key -> value)
-
-    }
-
-  protected def validatedUrnFormatter(requiredKey: String, invalidKey: String, invalidFormatKey: String, msgArg: String = ""): Formatter[String] =
-    new Formatter[String] {
-
-      def formatError(key: String, errorKey: String, msgArg: String): FormError =
-        if (msgArg.isEmpty) FormError(key, errorKey) else FormError(key, errorKey, Seq(msgArg))
-
-      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
-        val trimmedUrn = data.get(key).map(_.replaceAll("\\s", ""))
-        trimmedUrn match {
-          case None | Some("")                       => Left(Seq(formatError(key, requiredKey, msgArg)))
-          case Some(s) if !s.matches(urnCharsRegex)  => Left(Seq(formatError(key, invalidKey, msgArg)))
-          case Some(s) if !s.matches(urnFormatRegex) => Left(Seq(formatError(key, invalidFormatKey, msgArg)))
-          case Some(s)                               => Right(s)
         }
       }
 

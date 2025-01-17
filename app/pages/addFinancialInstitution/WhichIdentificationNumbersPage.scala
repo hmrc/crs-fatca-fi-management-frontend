@@ -17,12 +17,28 @@
 package pages.addFinancialInstitution
 
 import models.FinancialInstitutions.TINType
-import pages.QuestionPage
+import models.UserAnswers
+import pages.{CompanyRegistrationNumberPage, QuestionPage, TrustURNPage}
 import play.api.libs.json.JsPath
+
+import scala.util.Try
 
 case object WhichIdentificationNumbersPage extends QuestionPage[Set[TINType]] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "whichIdentificationNumbers"
+
+  def cleanUpUnselectedTINPages(selectedTINs: Set[TINType], userAnswers: UserAnswers): Try[UserAnswers] = {
+    val tinPages = Seq(
+      TINType.UTR -> WhatIsUniqueTaxpayerReferencePage,
+      TINType.CRN -> CompanyRegistrationNumberPage,
+      TINType.TRN -> TrustURNPage
+    ).collect {
+      case (tin, page) if !selectedTINs.contains(tin) => page
+    }
+
+    removePages(tinPages, userAnswers)
+  }
+
 }

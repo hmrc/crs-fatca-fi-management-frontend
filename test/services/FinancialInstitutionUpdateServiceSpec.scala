@@ -20,7 +20,7 @@ import base.SpecBase
 import generators.UserAnswersGenerator
 import models.FinancialInstitutions.TINType._
 import models.FinancialInstitutions._
-import models.{AddressLookup, CompanyRegistrationNumber, Country, GIINumber, UniqueTaxpayerReference, UserAnswers}
+import models.{AddressLookup, CompanyRegistrationNumber, Country, GIINumber, TrustUniqueReferenceNumber, UniqueTaxpayerReference, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
@@ -535,7 +535,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
     val maybeTRN: Option[TINDetails] = fiDetails.TINDetails.find(_.TINType == TRN)
     populatedUserAnswers.get(WhichIdentificationNumbersPage) contains TRN
     populatedUserAnswers.get(TrustURNPage) mustBe maybeTRN.map(
-      id => id.TIN
+      id => TrustUniqueReferenceNumber(id.TIN)
     )
 
     val maybeGIIN = fiDetails.TINDetails.find(_.TINType == GIIN)

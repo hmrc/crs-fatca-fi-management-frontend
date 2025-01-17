@@ -19,7 +19,7 @@ package services
 import com.google.inject.Inject
 import models.FinancialInstitutions.TINType._
 import models.FinancialInstitutions._
-import models.{CompanyRegistrationNumber, GIINumber, UniqueTaxpayerReference, UserAnswers}
+import models.{CompanyRegistrationNumber, GIINumber, TrustUniqueReferenceNumber, UniqueTaxpayerReference, UserAnswers}
 import pages.addFinancialInstitution.IsRegisteredBusiness.{
   FetchedRegisteredAddressPage,
   IsTheAddressCorrectPage,
@@ -121,7 +121,7 @@ class FinancialInstitutionUpdateService @Inject() (
                 Future.fromTry(
                   answers
                     .set(WhichIdentificationNumbersPage, answers.get(WhichIdentificationNumbersPage).getOrElse(Set.empty) + TINType.TRN, cleanup = false)
-                    .flatMap(_.set(TrustURNPage, details.TIN, cleanup = false))
+                    .flatMap(_.set(TrustURNPage, TrustUniqueReferenceNumber(details.TIN), cleanup = false))
                 )
               case _ =>
                 Future.fromTry(
@@ -243,7 +243,7 @@ class FinancialInstitutionUpdateService @Inject() (
   }
 
   def checkTRNforChange(userAnswers: UserAnswers, tinDetails: Seq[TINDetails]): Boolean = {
-    val uaValue: Option[String]     = userAnswers.get(TrustURNPage)
+    val uaValue: Option[String]     = userAnswers.get(TrustURNPage).map(_.value)
     val detailValue: Option[String] = tinDetails.find(_.TINType == TRN).map(_.TIN)
     uaValue != detailValue
   }

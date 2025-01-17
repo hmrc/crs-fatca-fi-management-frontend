@@ -140,7 +140,7 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
       case _         => Seq.empty
     }
     val trn = userAnswers.get(TrustURNPage) match {
-      case Some(trn) => Seq(TINDetails(CRN, trn, "GB"))
+      case Some(trn) => Seq(TINDetails(CRN, trn.value, "GB"))
       case _         => Seq.empty
     }
 

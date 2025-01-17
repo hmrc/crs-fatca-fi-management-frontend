@@ -67,12 +67,19 @@ class WhichIdentificationNumbersController @Inject() (
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(view(fiName, formWithErrors, mode))),
-          value =>
+          value => {
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(WhichIdentificationNumbersPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-              _              <- changeUserAnswersRepository.set(request.fatcaId, updatedAnswers.get(ChangeFiDetailsInProgressId), updatedAnswers)
-            } yield Redirect(navigator.nextPage(WhichIdentificationNumbersPage, mode, updatedAnswers))
+              cleanedAnswers <- Future.fromTry(
+                WhichIdentificationNumbersPage.cleanUpUnselectedTINPages(
+                  selectedTINs = value,
+                  userAnswers = updatedAnswers
+                )
+              )
+              _ <- sessionRepository.set(cleanedAnswers)
+              _ <- changeUserAnswersRepository.set(request.fatcaId, cleanedAnswers.get(ChangeFiDetailsInProgressId), cleanedAnswers)
+            } yield Redirect(navigator.nextPage(WhichIdentificationNumbersPage, mode, cleanedAnswers))
+          }
         )
   }
 

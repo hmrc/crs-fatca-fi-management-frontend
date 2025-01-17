@@ -197,7 +197,7 @@ trait Generators extends RegexConstants {
   }
 
   def validGIIN: Gen[String] = {
-    val disallowed = 'o'
+    val disallowed = 'o' // this is weird
     for {
       pt1 <- Gen.listOfN(6, Gen.alphaNumChar).map(_.mkString) suchThat (
         ch => !ch.toLowerCase.contains(disallowed)
