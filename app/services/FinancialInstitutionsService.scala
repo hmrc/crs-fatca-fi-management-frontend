@@ -60,7 +60,7 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
       .fold[Option[FIDetail]](None)(Some(_))
 
   def extractList(body: String): Seq[FIDetail] = {
-    val json: JsValue = Json.parse(body)
+    val json: JsValue                        = Json.parse(body)
     val listsResult: JsResult[Seq[FIDetail]] = (json \ "ViewFIDetails" \ "ResponseDetails" \ "FIDetails").validate[Seq[FIDetail]]
 
     listsResult.fold(
