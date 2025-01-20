@@ -24,7 +24,7 @@ import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddr
 import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import pages.{CompanyRegistrationNumberPage, TrustURNPage}
-import play.api.libs.json.{JsResult, JsValue, Json}
+import play.api.libs.json.{JsResult, JsResultException, JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -59,10 +59,14 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
       )
       .fold[Option[FIDetail]](None)(Some(_))
 
-  private def extractList(body: String) = {
+  def extractList(body: String): Seq[FIDetail] = {
     val json: JsValue                        = Json.parse(body)
     val listsResult: JsResult[Seq[FIDetail]] = (json \ "ViewFIDetails" \ "ResponseDetails" \ "FIDetails").validate[Seq[FIDetail]]
-    listsResult.get
+
+    listsResult.fold(
+      errors => throw JsResultException(errors),
+      value => value
+    )
   }
 
   def updateFinancialInstitution(subscriptionId: String, userAnswers: UserAnswers)(implicit

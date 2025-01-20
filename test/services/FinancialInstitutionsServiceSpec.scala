@@ -27,7 +27,7 @@ import org.scalatestplus.mockito.MockitoSugar._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.http.Status.OK
-import play.api.libs.json.{JsArray, JsObject, Json, Writes}
+import play.api.libs.json._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -52,6 +52,15 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
     }
 
     "getFinancialInstitution" - {
+      "must throw an exception when extractList yields json validation errors" in {
+        val invalidBody = """{ "invalidKey": "invalidValue" }"""
+
+        when(mockConnector.viewFi("subId", "fiId"))
+          .thenReturn(Future.successful(HttpResponse(OK, invalidBody, Map.empty)))
+
+        an[JsResultException] must be thrownBy sut.extractList(invalidBody)
+
+      }
 
       "must return financial institution details" in {
         forAll {
