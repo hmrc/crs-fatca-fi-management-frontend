@@ -31,13 +31,13 @@ class IsThisYourBusinessNamePageSpec extends PageBehaviours {
 
   "cleanup" - {
 
-    "when false" in {
-      val result = IsThisYourBusinessNamePage.cleanup(Some(false), userAnswersForAddFI)
+    "when true" in {
+      val result = IsThisYourBusinessNamePage.cleanup(Some(true), userAnswersForAddFI)
 
       result.get.data.value must not contain key(NameOfFinancialInstitutionPage.toString)
     }
-    "when true" in {
-      val result = IsThisYourBusinessNamePage.cleanup(Some(true), userAnswersForAddFI)
+    "when false" in {
+      val result = IsThisYourBusinessNamePage.cleanup(Some(false), userAnswersForAddFI)
       result.get mustBe userAnswersForAddFI
     }
   }
