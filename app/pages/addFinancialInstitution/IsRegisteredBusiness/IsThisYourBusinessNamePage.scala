@@ -31,7 +31,7 @@ case object IsThisYourBusinessNamePage extends QuestionPage[Boolean] {
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
-      case Some(false) =>
+      case Some(true) =>
         val pagesToRemove = Seq(NameOfFinancialInstitutionPage)
         removePages(pagesToRemove, userAnswers)
 

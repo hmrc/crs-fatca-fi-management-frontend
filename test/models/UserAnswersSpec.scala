@@ -28,13 +28,13 @@ class UserAnswersSpec extends SpecBase with Matchers {
       val usersAnswers = emptyUserAnswers
         .withPage(IsThisYourBusinessNamePage, true)
         .withPage(NameOfFinancialInstitutionPage, "test")
-      val result = usersAnswers.set(IsThisYourBusinessNamePage, false).get
+      val result = usersAnswers.set(IsThisYourBusinessNamePage, true).get
       result.data.value must not contain key(NameOfFinancialInstitutionPage.toString)
     }
 
     "should not cleanup when cleanup flag is false" in {
       val usersAnswers = emptyUserAnswers
-        .withPage(IsThisYourBusinessNamePage, true)
+        .withPage(IsThisYourBusinessNamePage, false)
         .withPage(NameOfFinancialInstitutionPage, "test")
       val result = usersAnswers.set(IsThisYourBusinessNamePage, false, cleanup = false).get
       result.data.value must contain key NameOfFinancialInstitutionPage.toString
