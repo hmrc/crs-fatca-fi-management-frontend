@@ -19,27 +19,31 @@ package controllers.addFinancialInstitution
 import controllers.actions.{CtUtrRetrievalAction, IdentifierAction}
 import models.NormalMode
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import services.FinancialInstitutionsService
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext
 
 class AddFIController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify: IdentifierAction,
-  retrieveCtUTR: CtUtrRetrievalAction
-) extends FrontendBaseController {
+  retrieveCtUTR: CtUtrRetrievalAction,
+  financialInstitutionsService: FinancialInstitutionsService
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController {
 
   def onPageLoad: Action[AnyContent] = (identify andThen retrieveCtUTR()).async {
     implicit request =>
-      Future.successful(Redirect(redirectUrl(request.autoMatched, request.userType)))
+      for (institutions <- financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId))
+        yield Redirect(redirectUrl(request.autoMatched, request.userType, institutions.nonEmpty))
   }
 
-  private def redirectUrl(autoMatched: Boolean, affinityGroup: AffinityGroup): Call =
-    (autoMatched, affinityGroup) match {
-      case (true, Organisation) =>
+  private def redirectUrl(autoMatched: Boolean, affinityGroup: AffinityGroup, hasSomeFIs: Boolean): Call =
+    (autoMatched, affinityGroup, hasSomeFIs) match {
+      case (true, Organisation, false) =>
         controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(NormalMode)
       case _ =>
         routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode)

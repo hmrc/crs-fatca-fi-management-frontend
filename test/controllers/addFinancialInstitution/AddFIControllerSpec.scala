@@ -19,6 +19,7 @@ package controllers.addFinancialInstitution
 import base.SpecBase
 import controllers.actions.{CtUtrRetrievalAction, FakeCtUtrRetrievalAction, IdentifierAction}
 import models.NormalMode
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.PrivateMethodTester
 import org.scalatestplus.mockito.MockitoSugar.mock
@@ -26,20 +27,27 @@ import play.api.inject.bind
 import play.api.mvc.{Call, MessagesControllerComponents}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.FinancialInstitutionsService
 import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
+import uk.gov.hmrc.http.HeaderCarrier
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class AddFIControllerSpec extends SpecBase with PrivateMethodTester {
 
   "Add FI Controller" - {
+    val mockCtUtrRetrievalAction: CtUtrRetrievalAction = mock[CtUtrRetrievalAction]
+    when(mockCtUtrRetrievalAction.apply()).thenReturn(new FakeCtUtrRetrievalAction())
+    val mockFinancialInstitutionsService = mock[FinancialInstitutionsService]
+    when(mockFinancialInstitutionsService.getListOfFinancialInstitutions(any())(any[HeaderCarrier](), any[ExecutionContext]()))
+      .thenReturn(Future.successful(Seq.empty))
 
     "if has CT UTR" - {
       "must redirect to report for registered business page" in {
-        val mockCtUtrRetrievalAction: CtUtrRetrievalAction = mock[CtUtrRetrievalAction]
-        when(mockCtUtrRetrievalAction.apply()).thenReturn(new FakeCtUtrRetrievalAction())
-
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[CtUtrRetrievalAction].toInstance(mockCtUtrRetrievalAction)
+            bind[CtUtrRetrievalAction].toInstance(mockCtUtrRetrievalAction),
+            bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService)
           )
           .build()
 
@@ -58,8 +66,11 @@ class AddFIControllerSpec extends SpecBase with PrivateMethodTester {
 
     "if does not have CT UTR" - {
       "must redirect to name of financial institution page" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService)
+          )
+          .build()
         running(application) {
           val request = FakeRequest(GET, routes.AddFIController.onPageLoad.url)
 
@@ -74,31 +85,41 @@ class AddFIControllerSpec extends SpecBase with PrivateMethodTester {
     "redirectUrl" - {
       val controllerComponents: MessagesControllerComponents = stubMessagesControllerComponents()
       val identify                                           = mock[IdentifierAction]
-      val retrieveCtUTR                                      = mock[CtUtrRetrievalAction]
+      val mockCtUtrRetrievalAction                           = mock[CtUtrRetrievalAction]
+      val mockFinancialInstitutionsService                   = mock[FinancialInstitutionsService]
+      implicit val ec: ExecutionContext                      = scala.concurrent.ExecutionContext.global
 
-      val sut = new AddFIController(controllerComponents, identify, retrieveCtUTR)
-
+      val sut                = new AddFIController(controllerComponents, identify, mockCtUtrRetrievalAction, mockFinancialInstitutionsService)(ec)
       val privateRedirectUrl = PrivateMethod[Call](Symbol("redirectUrl"))
 
-      "returns /report-for-registered-business when Org is autoMatched" in {
-        val result = sut.invokePrivate(privateRedirectUrl(true, Organisation))
+      "when user has already added fis" - {
+        "returns /report-for-registered-business when Org is autoMatched" in {
+          val result = sut.invokePrivate(privateRedirectUrl(true, Organisation, true))
 
-        result.url mustBe controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(NormalMode).url
+          result.url mustBe routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url
+        }
       }
-      "returns /name when Individual is autoMatched" in {
-        val result = sut.invokePrivate(privateRedirectUrl(true, Individual))
+      "when user does not already have fis added" - {
+        "returns /report-for-registered-business when Org is autoMatched" in {
+          val result = sut.invokePrivate(privateRedirectUrl(true, Organisation, false))
 
-        result.url mustBe routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url
-      }
-      "returns /name when not autoMatched and Org" in {
-        val orgResult = sut.invokePrivate(privateRedirectUrl(false, Organisation))
+          result.url mustBe controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(NormalMode).url
+        }
+        "returns /name when Individual is autoMatched" in {
+          val result = sut.invokePrivate(privateRedirectUrl(true, Individual, false))
 
-        orgResult.url mustBe routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url
-      }
-      "returns /name when not autoMatched and Ind" in {
-        val indResult = sut.invokePrivate(privateRedirectUrl(false, Individual))
+          result.url mustBe routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url
+        }
+        "returns /name when not autoMatched and Org" in {
+          val orgResult = sut.invokePrivate(privateRedirectUrl(false, Organisation, false))
 
-        indResult.url mustBe routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url
+          orgResult.url mustBe routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url
+        }
+        "returns /name when not autoMatched and Ind" in {
+          val indResult = sut.invokePrivate(privateRedirectUrl(false, Individual, false))
+
+          indResult.url mustBe routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url
+        }
       }
     }
   }
