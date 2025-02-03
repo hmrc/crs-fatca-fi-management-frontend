@@ -12,6 +12,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.ContactHelper
 import views.html.UserAccessView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -26,23 +27,25 @@ class UserAccessController @Inject()(
                                          formProvider: UserAccessFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: UserAccessView
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with ContactHelper {
 
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(UserAccessPage) match {
+      val ua = request.userAnswers
+
+      val preparedForm = ua.get(UserAccessPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-      val individual: Boolean = request.userAnswers.get(ReporterTypePage).exists(ReporterType.nonOrgReporterTypes.contains)
-      val organisation: Boolean = request.userAnswers.get(ReporterTypePage).exists(ReporterType.orgReporterTypes.contains)
-      val isRegistered: Boolean = request.userAnswers.get(ReportForRegisteredBusinessPage)
+      val individual: Boolean = true
+      val organisation: Boolean = false
+      val isRegistered: Boolean = request.userAnswers.get(ReportForRegisteredBusinessPage).contains(true)
 
-      Ok(view(preparedForm, mode))
+      Ok(view(individual, organisation, isRegistered, getFirstContactName(ua), getFinancialInstitutionName(ua), preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {

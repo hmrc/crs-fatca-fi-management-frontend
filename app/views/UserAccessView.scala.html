@@ -35,7 +35,7 @@
             @govukRadios(
                 RadiosViewModel.yesNo(
                     field = form("value"),
-                    legend = LegendViewModel(messages("userAccess.heading.registeredUser")).asPageHeading()
+                    legend = LegendViewModel(messages("userAccess.heading.registeredUser", fiName).asPageHeading()
                 )
             )
 
@@ -58,7 +58,7 @@
             @govukRadios(
                 RadiosViewModel.yesNo(
                     field = form("value"),
-                    legend = LegendViewModel(messages("userAccess.heading.individual")).asPageHeading()
+                    legend = LegendViewModel(messages("userAccess.heading.individual", fiName)).asPageHeading()
                 )
             )
 
@@ -81,7 +81,7 @@
             @govukRadios(
                 RadiosViewModel.yesNo(
                     field = form("value"),
-                    legend = LegendViewModel(messages("userAccess.heading.organisation")).asPageHeading()
+                    legend = LegendViewModel(messages("userAccess.heading.organisation", fiName, businessName)).asPageHeading()
                 )
             )
 
