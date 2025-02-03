@@ -161,3 +161,8 @@ GET         /identification-numbers                                       contro
 POST        /identification-numbers                                       controllers.addFinancialInstitution.WhichIdentificationNumbersController.onSubmit(mode: Mode = NormalMode)
 GET         /change-identification-numbers                                controllers.addFinancialInstitution.WhichIdentificationNumbersController.onPageLoad(mode: Mode = CheckMode)
 POST        /change-identification-numbers                                controllers.addFinancialInstitution.WhichIdentificationNumbersController.onSubmit(mode: Mode = CheckMode)
+
+GET        /userAccess                        controllers.UserAccessController.onPageLoad(mode: Mode = NormalMode)
+POST       /userAccess                        controllers.UserAccessController.onSubmit(mode: Mode = NormalMode)
+GET        /changeUserAccess                  controllers.UserAccessController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeUserAccess                  controllers.UserAccessController.onSubmit(mode: Mode = CheckMode)
