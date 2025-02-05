@@ -22,7 +22,7 @@ class UserAccessControllerSpec extends SpecBase with MockitoSugar {
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new UserAccessFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   lazy val userAccessRoute = routes.UserAccessController.onPageLoad(NormalMode).url
 
@@ -138,4 +138,5 @@ class UserAccessControllerSpec extends SpecBase with MockitoSugar {
       }
     }
   }
+
 }

@@ -6,7 +6,7 @@ import play.api.data.FormError
 class UserAccessFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "userAccess.error.required"
-  val invalidKey = "error.boolean"
+  val invalidKey  = "error.boolean"
 
   val form = new UserAccessFormProvider()()
 
@@ -26,4 +26,5 @@ class UserAccessFormProviderSpec extends BooleanFieldBehaviours {
       requiredError = FormError(fieldName, requiredKey)
     )
   }
+
 }
