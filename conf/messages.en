@@ -441,3 +441,12 @@ whichIdentificationNumbers.checkYourAnswersLabel = Which identification numbers 
 whichIdentificationNumbers.error.required = Select which identification numbers you can provide for the financial institution
 whichIdentificationNumbers.error.noMixedTrn = Select ‘Trust Unique Reference Number (URN)’ only or select one or both of the other options
 whichIdentificationNumbers.change.hidden = Change which identification numbers you can provide for them
+
+otherAccess.title = Could the financial institution or anyone who may act on their behalf need to access or update any previously sent reports for them?
+otherAccess.title.fiisuser = Could anyone who may act on behalf of your business in the future need to access or update any previously sent reports?
+otherAccess.heading = Could {0} or anyone who may act on their behalf need to access or update any previously sent reports for them?
+otherAccess.heading.fiisuser = Could anyone who may act on behalf of {0} in the future need to access or update any previously sent reports?
+otherAccess.error.required = Select yes if the financial institution or anyone who may act on their behalf may need to access or update any previously sent reports for them
+otherAccess.error.required.fiisuser = Select yes if anyone who may act on behalf of your business in the future may need to access or update any previously sent reports
+otherAccess.checkYourAnswersLabel = otherAccess
+otherAccess.change.hidden = OtherAccess
