@@ -24,7 +24,7 @@
 
 @(form: Form[_], isBusiness: Boolean, fiIsUser: Boolean, fiid: String, fiName: String, businessName: Option[String] = None)(implicit request: Request[_], messages: Messages)
 
-@if(registered) {
+@if(fiIsUser) {
     @layout(pageTitle = title(form, messages("userAccess.title.registeredUser"))) {
 
         @formHelper(action = routes.UserAccessController.onSubmit(fiid), Symbol("autoComplete") -> "off") {
@@ -73,7 +73,7 @@
 @if(isBusiness == true) {
     @layout(pageTitle = title(form, messages("userAccess.title.organisation"))) {
 
-        @formHelper(action = routes.UserAccessController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+        @formHelper(action = routes.UserAccessController.onSubmit(fiid), Symbol("autoComplete") -> "off") {
 
             @if(form.errors.nonEmpty) {
                 @govukErrorSummary(ErrorSummaryViewModel(form))

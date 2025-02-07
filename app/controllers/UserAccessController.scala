@@ -19,9 +19,6 @@ package controllers
 import controllers.actions._
 import forms.UserAccessFormProvider
 import navigation.Navigator
-import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
-import pages.UserAccessPage
-import play.api.i18n.Lang.logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -43,6 +40,7 @@ class UserAccessController @Inject() (
   formProvider: UserAccessFormProvider,
   val controllerComponents: MessagesControllerComponents,
   subscriptionService: SubscriptionService,
+  financialInstitutionsService: FinancialInstitutionsService,
   view: UserAccessView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -54,30 +52,24 @@ class UserAccessController @Inject() (
   def onPageLoad(fiid: String): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
       val fatcaId = request.fatcaId
+
       subscriptionService.getSubscription(fatcaId).flatMap {
         sub =>
-          if (sub.isBusiness && sub.businessName.isEmpty) {
-            logger.error(s"BusinessName is missing")
-            Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-          } else {
-            val ua = request.userAnswers
-            val preparedForm = ua.get(UserAccessPage) match {
-              case None        => form
-              case Some(value) => form.fill(value)
-            }
-
-            val isRegistered: Boolean = request.userAnswers.get(ReportForRegisteredBusinessPage).contains(true)
-
-            sessionRepository.get(fatcaId) flatMap {
-              case Some(_) =>
-                Ok(view(sub.isBusiness, isRegistered, getFirstContactName(ua), getFinancialInstitutionName(ua), preparedForm, mode))
-              case None =>
-                Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+          financialInstitutionsService.getListOfFinancialInstitutions(fatcaId).flatMap {
+            institutions =>
+              financialInstitutionsService.getInstitutionById(institutions, fiid) match {
+                case Some(institutionToRemove) =>
+                  Future.successful(
+                    Ok(view(form, sub.isBusiness, institutionToRemove.IsFIUser, institutionToRemove.FIID, institutionToRemove.FIName, sub.businessName))
+                  )
+                case None =>
+                  Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+              }
           }
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(fiid: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       val fatcaId = request.fatcaId
       subscriptionService.getSubscription(fatcaId).flatMap {
