@@ -1,8 +1,25 @@
+/*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers
 
 import base.SpecBase
-import forms.UserAccessFormProvider
-import models.{NormalMode, UserAnswers}
+import forms.{RemoveAreYouSureFormProvider, UserAccessFormProvider}
+import models.subscription.request.{ContactInformation, IndividualDetails, OrganisationDetails}
+import models.subscription.response.UserSubscription
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -13,9 +30,11 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
+import services.{FinancialInstitutionsService, SubscriptionService}
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.UserAccessView
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class UserAccessControllerSpec extends SpecBase with MockitoSugar {
 
@@ -24,13 +43,39 @@ class UserAccessControllerSpec extends SpecBase with MockitoSugar {
   val formProvider = new UserAccessFormProvider()
   val form         = formProvider()
 
-  lazy val userAccessRoute = routes.UserAccessController.onPageLoad(NormalMode).url
+  val fiid       = testFiid
+  val fiIsUser   = true
+  val isBusiness = true
+
+  val organisationSubscription: UserSubscription =
+    UserSubscription("FATCAID", None, gbUser = true, ContactInformation(OrganisationDetails("testName"), "test@test.com", None), None)
+
+  val individualSubscription: UserSubscription =
+    UserSubscription("FATCAID", None, gbUser = true, ContactInformation(IndividualDetails("firstname", "lastname"), "test@test.com", None), None)
+
+  lazy val userAccessRoute = routes.UserAccessController.onPageLoad(fiid).url
+
+  val mockFinancialInstitutionsService: FinancialInstitutionsService = mock[FinancialInstitutionsService]
+  val mockSubscriptionService: SubscriptionService                   = mock[SubscriptionService]
+
+  when(mockFinancialInstitutionsService.getListOfFinancialInstitutions(any())(any[HeaderCarrier](), any[ExecutionContext]()))
+    .thenReturn(Future.successful(testFiDetails))
+
+  when(mockFinancialInstitutionsService.getInstitutionById(Seq(any()), any())).thenReturn(Some(testFiDetail))
+
+  when(mockSubscriptionService.getSubscription(any())(any[HeaderCarrier](), any[ExecutionContext]()))
+    .thenReturn(Future.successful(organisationSubscription))
 
   "UserAccess Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder()
+        .overrides(
+          bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService),
+          bind[SubscriptionService].toInstance(mockSubscriptionService)
+        )
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, userAccessRoute)
@@ -40,25 +85,7 @@ class UserAccessControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[UserAccessView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
-      }
-    }
-
-    "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      val userAnswers = UserAnswers(userAnswersId).set(UserAccessPage, true).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, userAccessRoute)
-
-        val view = application.injector.instanceOf[UserAccessView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, isBusiness, fiIsUser, testFiid, fiName)(request, messages(application)).toString
       }
     }
 
@@ -104,7 +131,7 @@ class UserAccessControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, isBusiness, fiIsUser, testFiid, fiName)(request, messages(application)).toString
       }
     }
 
@@ -122,21 +149,6 @@ class UserAccessControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to Journey Recovery for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, userAccessRoute)
-            .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
   }
 
 }

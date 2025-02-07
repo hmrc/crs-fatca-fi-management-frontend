@@ -18,9 +18,6 @@ package controllers
 
 import controllers.actions._
 import forms.UserAccessFormProvider
-
-import javax.inject.Inject
-import models.Mode
 import navigation.Navigator
 import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
 import pages.UserAccessPage
@@ -28,11 +25,12 @@ import play.api.i18n.Lang.logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.SubscriptionService
+import services.{FinancialInstitutionsService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ContactHelper
 import views.html.UserAccessView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class UserAccessController @Inject() (
@@ -53,7 +51,7 @@ class UserAccessController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(fiid: String): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
       val fatcaId = request.fatcaId
       subscriptionService.getSubscription(fatcaId).flatMap {
@@ -81,16 +79,35 @@ class UserAccessController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(UserAccessPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(UserAccessPage, mode, updatedAnswers))
-        )
+      val fatcaId = request.fatcaId
+      subscriptionService.getSubscription(fatcaId).flatMap {
+        sub =>
+          financialInstitutionsService.getListOfFinancialInstitutions(fatcaId).flatMap {
+            institutions =>
+              financialInstitutionsService.getInstitutionById(institutions, fiid) match {
+                case Some(institutionToRemove) =>
+                  form
+                    .bindFromRequest()
+                    .fold(
+                      formWithErrors =>
+                        Future.successful(
+                          BadRequest(
+                            view(formWithErrors,
+                                 sub.isBusiness,
+                                 institutionToRemove.IsFIUser,
+                                 institutionToRemove.FIID,
+                                 institutionToRemove.FIName,
+                                 sub.businessName
+                            )
+                          )
+                        ),
+                      _ => Future.successful(Redirect(routes.IndexController.onPageLoad())) // todo change to /remove/other-access page when made
+                    )
+                case None =>
+                  Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+              }
+          }
+      }
   }
 
 }

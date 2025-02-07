@@ -22,12 +22,12 @@
     govukButton: GovukButton
 )
 
-@(isBusiness: Boolean, organisation: Boolean, fiName: String, businessName: String, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], isBusiness: Boolean, fiIsUser: Boolean, fiid: String, fiName: String, businessName: Option[String] = None)(implicit request: Request[_], messages: Messages)
 
 @if(registered) {
     @layout(pageTitle = title(form, messages("userAccess.title.registeredUser"))) {
 
-        @formHelper(action = routes.UserAccessController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+        @formHelper(action = routes.UserAccessController.onSubmit(fiid), Symbol("autoComplete") -> "off") {
 
             @if(form.errors.nonEmpty) {
                 @govukErrorSummary(ErrorSummaryViewModel(form))
@@ -50,7 +50,7 @@
 @if(isBusiness == false) {
     @layout(pageTitle = title(form, messages("userAccess.title.individual"))) {
 
-        @formHelper(action = routes.UserAccessController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+        @formHelper(action = routes.UserAccessController.onSubmit(fiid), Symbol("autoComplete") -> "off") {
 
             @if(form.errors.nonEmpty) {
                 @govukErrorSummary(ErrorSummaryViewModel(form))
