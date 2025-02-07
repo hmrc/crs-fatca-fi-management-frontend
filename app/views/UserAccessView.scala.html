@@ -24,10 +24,16 @@
 
 @(form: Form[_], isBusiness: Boolean, fiIsUser: Boolean, fiid: String, fiName: String, businessName: Option[String] = None)(implicit request: Request[_], messages: Messages)
 
-@if(fiIsUser) {
-    @layout(pageTitle = title(form, messages("userAccess.title.registeredUser"))) {
+@key = @{
+    (isBusiness, fiIsUser) match {
+    case (true, true) => "registeredUser"
+    case (true, false) => "organisation"
+    case (false, _) => "individual"
+    }
+}
+    @layout(pageTitle = title(form, messages(s"userAccess.title.$key"))) {
 
-        @formHelper(action = routes.UserAccessController.onSubmit(fiid), Symbol("autoComplete") -> "off") {
+        @formHelper(action = routes.UserAccessController.onSubmit(fiid)) {
 
             @if(form.errors.nonEmpty) {
                 @govukErrorSummary(ErrorSummaryViewModel(form))
@@ -36,7 +42,7 @@
             @govukRadios(
                 RadiosViewModel.yesNo(
                     field = form("value"),
-                    legend = LegendViewModel(messages("userAccess.heading.registeredUser", fiName)).asPageHeading()
+                    legend = LegendViewModel(messages(s"userAccess.heading.$key", fiName)).asPageHeading()
                 )
             )
 
@@ -45,51 +51,3 @@
             )
         }
     }
-}
-
-@if(isBusiness == false) {
-    @layout(pageTitle = title(form, messages("userAccess.title.individual"))) {
-
-        @formHelper(action = routes.UserAccessController.onSubmit(fiid), Symbol("autoComplete") -> "off") {
-
-            @if(form.errors.nonEmpty) {
-                @govukErrorSummary(ErrorSummaryViewModel(form))
-            }
-
-            @govukRadios(
-                RadiosViewModel.yesNo(
-                    field = form("value"),
-                    legend = LegendViewModel(messages("userAccess.heading.individual", fiName)).asPageHeading()
-                )
-            )
-
-            @govukButton(
-                ButtonViewModel(messages("site.continue"))
-            )
-        }
-    }
-}
-
-@if(isBusiness == true) {
-    @layout(pageTitle = title(form, messages("userAccess.title.organisation"))) {
-
-        @formHelper(action = routes.UserAccessController.onSubmit(fiid), Symbol("autoComplete") -> "off") {
-
-            @if(form.errors.nonEmpty) {
-                @govukErrorSummary(ErrorSummaryViewModel(form))
-            }
-
-            @govukRadios(
-                RadiosViewModel.yesNo(
-                    field = form("value"),
-                    legend = LegendViewModel(messages("userAccess.heading.organisation", fiName, businessName)).asPageHeading()
-                )
-            )
-
-            @govukButton(
-                ButtonViewModel(messages("site.continue"))
-            )
-        }
-    }
-}
-

@@ -110,7 +110,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
   val testFiDetails: Seq[FIDetail] =
     Seq(
       FIDetail(
-        s"$testFiid",
+        "683373339",
         "First FI",
         "[subscriptionId]",
         List(TINDetails(GIIN, "689355555", "GB")),
@@ -134,12 +134,12 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
     )
 
   val testViewFIDetailsBody =
-    s"""{
+    """{
     "ViewFIDetails": {
       "ResponseDetails": {
         "FIDetails": [
           {
-            "$testFiid",
+            "FIID": "683373339",
             "FIName": "First FI",
             "SubscriptionID": "[subscriptionId]",
             "TINDetails": [
