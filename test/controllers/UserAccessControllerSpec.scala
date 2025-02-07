@@ -17,10 +17,10 @@
 package controllers
 
 import base.SpecBase
-import forms.{RemoveAreYouSureFormProvider, UserAccessFormProvider}
+import connectors.SubscriptionConnector
+import forms.UserAccessFormProvider
 import models.subscription.request.{ContactInformation, IndividualDetails, OrganisationDetails}
 import models.subscription.response.UserSubscription
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -29,7 +29,6 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.SessionRepository
 import services.{FinancialInstitutionsService, SubscriptionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.UserAccessView
@@ -38,12 +37,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class UserAccessControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = Call("GET", "/foo")
+  val formProvider        = new UserAccessFormProvider()
+  val form: Form[Boolean] = formProvider()
 
-  val formProvider = new UserAccessFormProvider()
-  val form         = formProvider()
-
-  val fiid       = testFiid
   val fiIsUser   = true
   val isBusiness = true
 
@@ -53,10 +49,12 @@ class UserAccessControllerSpec extends SpecBase with MockitoSugar {
   val individualSubscription: UserSubscription =
     UserSubscription("FATCAID", None, gbUser = true, ContactInformation(IndividualDetails("firstname", "lastname"), "test@test.com", None), None)
 
-  lazy val userAccessRoute = routes.UserAccessController.onPageLoad(fiid).url
+  lazy val userAccessRoute: String       = routes.UserAccessController.onPageLoad(testFiid).url
+  lazy val userAccessSubmitRoute: String = routes.UserAccessController.onSubmit(testFiid).url
 
   val mockFinancialInstitutionsService: FinancialInstitutionsService = mock[FinancialInstitutionsService]
   val mockSubscriptionService: SubscriptionService                   = mock[SubscriptionService]
+  val mockSubConnector: SubscriptionConnector                        = mock[SubscriptionConnector]
 
   when(mockFinancialInstitutionsService.getListOfFinancialInstitutions(any())(any[HeaderCarrier](), any[ExecutionContext]()))
     .thenReturn(Future.successful(testFiDetails))
@@ -67,7 +65,6 @@ class UserAccessControllerSpec extends SpecBase with MockitoSugar {
     .thenReturn(Future.successful(organisationSubscription))
 
   "UserAccess Controller" - {
-
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder()
@@ -85,39 +82,41 @@ class UserAccessControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[UserAccessView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, isBusiness, fiIsUser, testFiid, fiName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, isBusiness, fiIsUser, testFiDetail.FIID, testFiDetail.FIName)(request, messages(application)).toString
       }
     }
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
           )
           .build()
 
       running(application) {
         val request =
-          FakeRequest(POST, userAccessRoute)
+          FakeRequest(POST, userAccessSubmitRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad().url
       }
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
 
       running(application) {
         val request =
@@ -135,9 +134,17 @@ class UserAccessControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
+    "must return a Recover Journey when no FI found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      when(mockFinancialInstitutionsService.getInstitutionById(Seq(any()), any())).thenReturn(None)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
 
       running(application) {
         val request = FakeRequest(GET, userAccessRoute)
@@ -145,7 +152,7 @@ class UserAccessControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 

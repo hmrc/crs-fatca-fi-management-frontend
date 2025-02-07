@@ -39,7 +39,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
 
   val userAnswersId: String = "FATCAID"
   val fiName                = "Financial Institution"
-  val testFiid              = "ABC00000122"
+  val testFiid              = "683373339"
   val validURN              = "ABCDEFG12345678"
 
   private val safeId    = "XE0000123456789"
@@ -96,7 +96,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
 
   val testFiDetail: FIDetail =
     FIDetail(
-      "683373339",
+      s"$testFiid",
       "First FI",
       "[subscriptionId]",
       List(TINDetails(GIIN, "689355555", "GB")),
@@ -110,7 +110,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
   val testFiDetails: Seq[FIDetail] =
     Seq(
       FIDetail(
-        "683373339",
+        s"$testFiid",
         "First FI",
         "[subscriptionId]",
         List(TINDetails(GIIN, "689355555", "GB")),
@@ -134,12 +134,12 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
     )
 
   val testViewFIDetailsBody =
-    """{
+    s"""{
     "ViewFIDetails": {
       "ResponseDetails": {
         "FIDetails": [
           {
-            "FIID": "683373339",
+            "$testFiid",
             "FIName": "First FI",
             "SubscriptionID": "[subscriptionId]",
             "TINDetails": [
