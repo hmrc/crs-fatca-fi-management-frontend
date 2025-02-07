@@ -18,10 +18,9 @@ package controllers
 
 import controllers.actions._
 import forms.UserAccessFormProvider
-import navigation.Navigator
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
 import services.{FinancialInstitutionsService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ContactHelper
@@ -45,7 +44,7 @@ class UserAccessController @Inject() (
     with I18nSupport
     with ContactHelper {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(fiid: String): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
