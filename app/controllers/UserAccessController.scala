@@ -66,7 +66,7 @@ class UserAccessController @Inject() (
       }
   }
 
-  def onSubmit(fiid: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(fiid: String): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
       val fatcaId = request.fatcaId
       subscriptionService.getSubscription(fatcaId).flatMap {
@@ -90,7 +90,7 @@ class UserAccessController @Inject() (
                             )
                           )
                         ),
-                      _ => Future.successful(Redirect(routes.IndexController.onPageLoad())) // todo change to /remove/other-access page when made
+                      _ => Future.successful(Redirect(controllers.routes.OtherAccessController.onPageLoad(fiid)))
                     )
                 case None =>
                   Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))

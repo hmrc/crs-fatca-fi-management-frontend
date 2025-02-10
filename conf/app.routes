@@ -165,5 +165,5 @@ POST        /change-identification-numbers                                contro
 GET         /remove/user-access                                           controllers.UserAccessController.onPageLoad(fiid: String)
 POST        /remove/user-access                                           controllers.UserAccessController.onSubmit(fiid: String)
 
-GET         /remove/other-access                                          controllers.OtherAccessController.onPageLoad()
-POST        /remove/other-access                                          controllers.OtherAccessController.onSubmit()
+GET         /remove/other-access                                          controllers.OtherAccessController.onPageLoad(fiid: String)
+POST        /remove/other-access                                          controllers.OtherAccessController.onSubmit(fiid: String)

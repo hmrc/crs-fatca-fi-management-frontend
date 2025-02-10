@@ -18,12 +18,9 @@ package controllers
 
 import controllers.actions._
 import forms.OtherAccessFormProvider
-import models.NormalMode
-import navigation.Navigator
-import pages.OtherAccessPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
+import services.FinancialInstitutionsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.OtherAccessView
 
@@ -32,13 +29,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class OtherAccessController @Inject() (
   override val messagesApi: MessagesApi,
-  sessionRepository: SessionRepository,
-  navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: OtherAccessFormProvider,
   val controllerComponents: MessagesControllerComponents,
+  financialInstitutionsService: FinancialInstitutionsService,
   view: OtherAccessView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -46,28 +42,43 @@ class OtherAccessController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(fiid: String): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(OtherAccessPage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
+      financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId).flatMap {
+        institutions =>
+          financialInstitutionsService.getInstitutionById(institutions, fiid) match {
+            case Some(institutionToRemove) =>
+              Future.successful(
+                Ok(view(form, institutionToRemove.IsFIUser, institutionToRemove.FIID, institutionToRemove.FIName))
+              )
+            case None =>
+              Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+          }
       }
 
-      Ok(view("placeholderFI", fiIsUser = false, preparedForm))
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(fiid: String): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => Future.successful(BadRequest(view("placeholderFI", fiIsUser = false, formWithErrors))),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(OtherAccessPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(OtherAccessPage, NormalMode, updatedAnswers))
-        )
+      financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId).flatMap {
+        institutions =>
+          financialInstitutionsService.getInstitutionById(institutions, fiid) match {
+            case Some(institutionToRemove) =>
+              form
+                .bindFromRequest()
+                .fold(
+                  formWithErrors =>
+                    Future.successful(
+                      BadRequest(
+                        view(formWithErrors, institutionToRemove.IsFIUser, institutionToRemove.FIID, institutionToRemove.FIName)
+                      )
+                    ),
+                  _ => Future.successful(Redirect(routes.IndexController.onPageLoad())) // todo change to /remove/remove-fi page when made
+                )
+            case None =>
+              Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+          }
+      }
   }
 
 }
