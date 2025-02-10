@@ -18,14 +18,17 @@ package controllers
 
 import base.SpecBase
 import connectors.SubscriptionConnector
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UserAccessFormProvider
 import models.subscription.request.{ContactInformation, IndividualDetails, OrganisationDetails}
 import models.subscription.response.UserSubscription
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.scalatest.PrivateMethodTester
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.bind
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FinancialInstitutionsService, SubscriptionService}
@@ -34,10 +37,10 @@ import views.html.UserAccessView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class UserAccessControllerSpec extends SpecBase with MockitoSugar {
+class UserAccessControllerSpec extends SpecBase with MockitoSugar with PrivateMethodTester {
 
   val formProvider        = new UserAccessFormProvider()
-  val form: Form[Boolean] = formProvider()
+  val form: Form[Boolean] = formProvider("registeredUser")
 
   val fiIsUser   = true
   val isBusiness = true
@@ -153,6 +156,38 @@ class UserAccessControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
+    }
+
+  }
+
+  val userAccessTestController = new UserAccessController(
+    messagesApi = stubMessagesApi(),
+    identify = mock[IdentifierAction],
+    getData = mock[DataRetrievalAction],
+    requireData = mock[DataRequiredAction],
+    formProvider = formProvider,
+    controllerComponents = stubMessagesControllerComponents(),
+    subscriptionService = mock[SubscriptionService],
+    financialInstitutionsService = mock[FinancialInstitutionsService],
+    view = mock[UserAccessView]
+  )(ExecutionContext.global)
+
+  val getAccessType: PrivateMethod[String] = PrivateMethod[String](Symbol("getAccessType"))
+
+  "getAccessType" - {
+    "return 'individual' when the user is not registered" in {
+      val result: String = userAccessTestController.invokePrivate(getAccessType(individualSubscription, testFiDetail))
+      result mustEqual "individual"
+    }
+
+    "return 'organisation' when the user is registered but not an organisation" in {
+      val result: String = userAccessTestController.invokePrivate(getAccessType(organisationSubscription, testFiDetail.copy(IsFIUser = false)))
+      result mustEqual "organisation"
+    }
+
+    "return 'registeredUser' when the user is both registered and an organisation" in {
+      val result: String = userAccessTestController.invokePrivate(getAccessType(organisationSubscription, testFiDetail))
+      result mustEqual "registeredUser"
     }
 
   }

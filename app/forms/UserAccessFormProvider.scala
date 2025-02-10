@@ -21,11 +21,11 @@ import javax.inject.Inject
 import forms.mappings.Mappings
 import play.api.data.Form
 
-class UserAccessFormProvider @Inject() extends Mappings {
+class UserAccessFormProvider extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(key: String): Form[Boolean] =
     Form(
-      "value" -> boolean("userAccess.error.required")
+      "value" -> boolean(s"userAccess.error.required.$key")
     )
 
 }
