@@ -74,15 +74,6 @@ class UserAccessController @Inject() (
       }
   }
 
-  private def getAccessType(sub: UserSubscription, institutionToRemove: FIDetail): String = {
-    val key = (sub.isBusiness, institutionToRemove.IsFIUser) match {
-      case (true, true)  => "registeredUser"
-      case (true, false) => "organisation"
-      case (false, _)    => "individual"
-    }
-    key
-  }
-
   def onSubmit(fiid: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       val fatcaId = request.fatcaId
@@ -115,6 +106,15 @@ class UserAccessController @Inject() (
               }
           }
       }
+  }
+
+  private def getAccessType(sub: UserSubscription, institutionToRemove: FIDetail): String = {
+    val key = (sub.isBusiness, institutionToRemove.IsFIUser) match {
+      case (true, true)  => "registeredUser"
+      case (true, false) => "organisation"
+      case (false, _)    => "individual"
+    }
+    key
   }
 
 }
