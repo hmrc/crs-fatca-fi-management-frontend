@@ -191,7 +191,7 @@ trait Formatters extends Transforms with RegexConstants {
                                      invalidFormatKey: String,
                                      regex: String,
                                      msgArg: String = "",
-                                     acceptedLengths: Seq[Int] = Seq(10, 13),
+                                     acceptedLengths: Seq[Int],
                                      isUtr: Boolean = false
   ): Formatter[String] =
     new Formatter[String] {
