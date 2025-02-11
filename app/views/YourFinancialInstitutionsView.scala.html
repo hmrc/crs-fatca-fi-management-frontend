@@ -52,7 +52,7 @@
         </div>
     }
 
-    @formHelper(action = controllers.routes.YourFinancialInstitutionsController.onSubmit(), Symbol("autoComplete") -> "off") {
+    @formHelper(action = controllers.routes.YourFinancialInstitutionsController.onSubmit(), Symbol("autoComplete") -> "on") {
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
