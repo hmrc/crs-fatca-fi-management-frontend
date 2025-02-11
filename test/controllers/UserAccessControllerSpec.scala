@@ -132,7 +132,7 @@ class UserAccessControllerSpec extends SpecBase with MockitoSugar with PrivateMe
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, isBusiness, fiIsUser, testFiid, fiName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, isBusiness, fiIsUser, testFiid, testFiDetail.FIName)(request, messages(application)).toString
       }
     }
 

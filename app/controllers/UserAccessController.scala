@@ -45,7 +45,7 @@ class UserAccessController @Inject() (
     with I18nSupport
     with ContactHelper {
 
-  def onPageLoad(fiid: String): Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(fiid: String): Action[AnyContent] = identify.async {
     implicit request =>
       val fatcaId = request.fatcaId
 
@@ -74,7 +74,7 @@ class UserAccessController @Inject() (
       }
   }
 
-  def onSubmit(fiid: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(fiid: String): Action[AnyContent] = identify.async {
     implicit request =>
       val fatcaId = request.fatcaId
       subscriptionService.getSubscription(fatcaId).flatMap {

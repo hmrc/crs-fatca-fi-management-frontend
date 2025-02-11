@@ -31,7 +31,7 @@
     case (false, _) => "individual"
     }
 }
-    @layout(pageTitle = title(form, messages(s"userAccess.title.$key"))) {
+    @layout(pageTitle = title(form, messages(s"userAccess.title.$key", businessName.getOrElse(""), fiName))) {
 
         @formHelper(action = routes.UserAccessController.onSubmit(fiid)) {
 
