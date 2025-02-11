@@ -18,7 +18,8 @@ package controllers
 
 import controllers.actions._
 import forms.UserAccessFormProvider
-import play.api.data.Form
+import models.FinancialInstitutions.FIDetail
+import models.subscription.response.UserSubscription
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{FinancialInstitutionsService, SubscriptionService}
@@ -44,8 +45,6 @@ class UserAccessController @Inject() (
     with I18nSupport
     with ContactHelper {
 
-  val form: Form[Boolean] = formProvider()
-
   def onPageLoad(fiid: String): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
       val fatcaId = request.fatcaId
@@ -56,8 +55,17 @@ class UserAccessController @Inject() (
             institutions =>
               financialInstitutionsService.getInstitutionById(institutions, fiid) match {
                 case Some(institutionToRemove) =>
+                  val key: String = getAccessType(sub, institutionToRemove)
                   Future.successful(
-                    Ok(view(form, sub.isBusiness, institutionToRemove.IsFIUser, institutionToRemove.FIID, institutionToRemove.FIName, sub.businessName))
+                    Ok(
+                      view(formProvider(key),
+                           sub.isBusiness,
+                           institutionToRemove.IsFIUser,
+                           institutionToRemove.FIID,
+                           institutionToRemove.FIName,
+                           sub.businessName
+                      )
+                    )
                   )
                 case None =>
                   Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
@@ -75,7 +83,8 @@ class UserAccessController @Inject() (
             institutions =>
               financialInstitutionsService.getInstitutionById(institutions, fiid) match {
                 case Some(institutionToRemove) =>
-                  form
+                  val key: String = getAccessType(sub, institutionToRemove)
+                  formProvider(key)
                     .bindFromRequest()
                     .fold(
                       formWithErrors =>
@@ -97,6 +106,15 @@ class UserAccessController @Inject() (
               }
           }
       }
+  }
+
+  private def getAccessType(sub: UserSubscription, institutionToRemove: FIDetail): String = {
+    val key = (sub.isBusiness, institutionToRemove.IsFIUser) match {
+      case (true, true)  => "registeredUser"
+      case (true, false) => "organisation"
+      case (false, _)    => "individual"
+    }
+    key
   }
 
 }
