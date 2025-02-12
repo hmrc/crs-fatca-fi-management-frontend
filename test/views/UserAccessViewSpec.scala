@@ -39,7 +39,7 @@ class UserAccessViewSpec extends SpecBase with GuiceOneAppPerSuite with Injectin
     "individual or sole trader" in {
       val key = "individual"
       val renderedHtml: HtmlFormat.Appendable =
-        view1(form(key), isBusiness = false, fiIsUser = false, testFiid, fiName)
+        view1(form(key), isBusiness = false, fiIsUser = false, testFiid, fiName, testBusinessName)
 
       val contentString: String = renderedHtml.toString
 
@@ -50,7 +50,7 @@ class UserAccessViewSpec extends SpecBase with GuiceOneAppPerSuite with Injectin
     "organisation where FI = USER" in {
       val key = "registeredUser"
       val renderedHtml: HtmlFormat.Appendable =
-        view1(form(key), isBusiness = true, fiIsUser = true, testFiid, fiName, Some(testBusinessName))
+        view1(form(key), isBusiness = true, fiIsUser = true, testFiid, fiName, testBusinessName)
 
       val contentString: String = renderedHtml.toString
 
@@ -61,7 +61,7 @@ class UserAccessViewSpec extends SpecBase with GuiceOneAppPerSuite with Injectin
     "organisation where FI = NOT USER" in {
       val key = "organisation"
       val renderedHtml: HtmlFormat.Appendable =
-        view1(form(key), isBusiness = true, fiIsUser = false, testFiid, fiName, Some(testBusinessName))
+        view1(form(key), isBusiness = true, fiIsUser = false, testFiid, fiName, testBusinessName)
 
       val contentString: String = renderedHtml.toString
 

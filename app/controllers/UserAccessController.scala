@@ -33,8 +33,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class UserAccessController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
   formProvider: UserAccessFormProvider,
   val controllerComponents: MessagesControllerComponents,
   subscriptionService: SubscriptionService,
@@ -58,12 +56,13 @@ class UserAccessController @Inject() (
                   val key: String = getAccessType(sub, institutionToRemove)
                   Future.successful(
                     Ok(
-                      view(formProvider(key),
-                           sub.isBusiness,
-                           institutionToRemove.IsFIUser,
-                           institutionToRemove.FIID,
-                           institutionToRemove.FIName,
-                           sub.businessName
+                      view(
+                        formProvider(key),
+                        sub.isBusiness,
+                        institutionToRemove.IsFIUser,
+                        institutionToRemove.FIID,
+                        institutionToRemove.FIName,
+                        sub.businessName.getOrElse("your business")
                       )
                     )
                   )
@@ -90,12 +89,13 @@ class UserAccessController @Inject() (
                       formWithErrors =>
                         Future.successful(
                           BadRequest(
-                            view(formWithErrors,
-                                 sub.isBusiness,
-                                 institutionToRemove.IsFIUser,
-                                 institutionToRemove.FIID,
-                                 institutionToRemove.FIName,
-                                 sub.businessName
+                            view(
+                              formWithErrors,
+                              sub.isBusiness,
+                              institutionToRemove.IsFIUser,
+                              institutionToRemove.FIID,
+                              institutionToRemove.FIName,
+                              sub.businessName.getOrElse("your business")
                             )
                           )
                         ),
