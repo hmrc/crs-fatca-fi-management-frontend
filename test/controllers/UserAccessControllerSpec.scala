@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import connectors.SubscriptionConnector
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.IdentifierAction
 import forms.UserAccessFormProvider
 import models.subscription.request.{ContactInformation, IndividualDetails, OrganisationDetails}
 import models.subscription.response.UserSubscription
@@ -28,7 +28,6 @@ import org.scalatest.PrivateMethodTester
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.bind
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FinancialInstitutionsService, SubscriptionService}
@@ -46,7 +45,7 @@ class UserAccessControllerSpec extends SpecBase with MockitoSugar with PrivateMe
   val isBusiness = true
 
   val organisationSubscription: UserSubscription =
-    UserSubscription("FATCAID", None, gbUser = true, ContactInformation(OrganisationDetails("testName"), "test@test.com", None), None)
+    UserSubscription("FATCAID", None, gbUser = true, ContactInformation(OrganisationDetails("User Business"), "test@test.com", None), None)
 
   val individualSubscription: UserSubscription =
     UserSubscription("FATCAID", None, gbUser = true, ContactInformation(IndividualDetails("firstname", "lastname"), "test@test.com", None), None)
@@ -84,7 +83,9 @@ class UserAccessControllerSpec extends SpecBase with MockitoSugar with PrivateMe
         val view = application.injector.instanceOf[UserAccessView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, isBusiness, fiIsUser, testFiDetail.FIID, testFiDetail.FIName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, isBusiness, fiIsUser, testFiDetail.FIID, testFiDetail.FIName, testBusinessName)(request,
+                                                                                                                                     messages(application)
+        ).toString
       }
     }
 
@@ -132,7 +133,9 @@ class UserAccessControllerSpec extends SpecBase with MockitoSugar with PrivateMe
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, isBusiness, fiIsUser, testFiid, fiName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, isBusiness, fiIsUser, testFiid, testFiDetail.FIName, testBusinessName)(request,
+                                                                                                                                 messages(application)
+        ).toString
       }
     }
 
@@ -163,8 +166,6 @@ class UserAccessControllerSpec extends SpecBase with MockitoSugar with PrivateMe
   val userAccessTestController = new UserAccessController(
     messagesApi = stubMessagesApi(),
     identify = mock[IdentifierAction],
-    getData = mock[DataRetrievalAction],
-    requireData = mock[DataRequiredAction],
     formProvider = formProvider,
     controllerComponents = stubMessagesControllerComponents(),
     subscriptionService = mock[SubscriptionService],

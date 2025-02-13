@@ -22,7 +22,7 @@
     govukButton: GovukButton
 )
 
-@(form: Form[_], isBusiness: Boolean, fiIsUser: Boolean, fiid: String, fiName: String, businessName: Option[String] = None)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], isBusiness: Boolean, fiIsUser: Boolean, fiid: String, fiName: String, businessName: String)(implicit request: Request[_], messages: Messages)
 
 @key = @{
     (isBusiness, fiIsUser) match {
@@ -31,8 +31,7 @@
     case (false, _) => "individual"
     }
 }
-    @layout(pageTitle = title(form, messages(s"userAccess.title.$key"))) {
-
+    @layout(pageTitle = title(form, messages(s"userAccess.title.$key", fiName))) {
         @formHelper(action = routes.UserAccessController.onSubmit(fiid)) {
 
             @if(form.errors.nonEmpty) {
@@ -42,7 +41,7 @@
             @govukRadios(
                 RadiosViewModel.yesNo(
                     field = form("value"),
-                    legend = LegendViewModel(messages(s"userAccess.heading.$key", fiName)).asPageHeading()
+                    legend = LegendViewModel(messages(s"userAccess.heading.$key", businessName, fiName)).asPageHeading()
                 )
             )
 
