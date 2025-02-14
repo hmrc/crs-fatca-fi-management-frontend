@@ -30,7 +30,7 @@
 
 @layout(pageTitle = title(form, messages("secondContactEmail.title"))) {
 
-    @formHelper(action = controllers.addFinancialInstitution.routes.SecondContactEmailController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = controllers.addFinancialInstitution.routes.SecondContactEmailController.onSubmit(mode), Symbol("autoComplete") -> "on") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

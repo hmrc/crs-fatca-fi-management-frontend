@@ -31,7 +31,7 @@
 
 @layout(pageTitle = title(form, messages("selectAddress.title"))) {
 
-    @formHelper(action = controllers.addFinancialInstitution.routes.SelectAddressController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.addFinancialInstitution.routes.SelectAddressController.onSubmit(mode), Symbol("autoComplete") -> "on") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

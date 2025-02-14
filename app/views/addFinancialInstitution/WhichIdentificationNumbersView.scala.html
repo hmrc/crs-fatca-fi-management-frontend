@@ -30,7 +30,7 @@
 
 @layout(pageTitle = title(form, messages("whichIdentificationNumbers.title"))) {
 
-    @formHelper(action = controllers.addFinancialInstitution.routes.WhichIdentificationNumbersController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = controllers.addFinancialInstitution.routes.WhichIdentificationNumbersController.onSubmit(mode), Symbol("autoComplete") -> "on") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
