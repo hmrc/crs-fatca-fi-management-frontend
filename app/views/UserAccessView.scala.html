@@ -31,6 +31,13 @@
     case (false, _) => "individual"
     }
 }
+
+@getHeading = @{
+  key match {
+      case "organisation" =>   messages(s"userAccess.heading.$key", businessName, fiName)
+      case _ => messages(s"userAccess.heading.$key", fiName)
+  }
+}
     @layout(pageTitle = title(form, messages(s"userAccess.title.$key", fiName))) {
         @formHelper(action = routes.UserAccessController.onSubmit(fiid)) {
 
@@ -41,7 +48,7 @@
             @govukRadios(
                 RadiosViewModel.yesNo(
                     field = form("value"),
-                    legend = LegendViewModel(messages(s"userAccess.heading.$key", businessName, fiName)).asPageHeading()
+                    legend = LegendViewModel(getHeading).asPageHeading()
                 )
             )
 
