@@ -28,10 +28,10 @@
     warning: Warning
 )
 
-@(form: Form[_], id: String, name: String, otherAccessBoolean: Boolean)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], id: String, name: String, warningUnderstood: Boolean)(implicit request: Request[_], messages: Messages)
 
 @key = @{
-    if (otherAccessBoolean) "yes" else "no"
+    if (warningUnderstood) "yes" else "no"
 }
 
 @layout(pageTitle = title(form, messages(s"removeAreYouSure.pageTitle.$key"))) {

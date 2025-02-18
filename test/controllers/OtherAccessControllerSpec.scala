@@ -37,12 +37,12 @@ class OtherAccessControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute: Call = Call("GET", "/foo")
 
-  val formProvider = new OtherAccessFormProvider()
+  val formProvider        = new OtherAccessFormProvider()
   val form: Form[Boolean] = formProvider()
 
   val fiIsUser = true
 
-  lazy val otherAccessRoute: String = routes.OtherAccessController.onPageLoad(testFiDetail.FIID).url
+  lazy val otherAccessRoute: String                                  = routes.OtherAccessController.onPageLoad(testFiDetail.FIID).url
   val mockFinancialInstitutionsService: FinancialInstitutionsService = mock[FinancialInstitutionsService]
 
   "OtherAccess Controller" - {

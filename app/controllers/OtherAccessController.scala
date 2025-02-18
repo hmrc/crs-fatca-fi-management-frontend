@@ -18,6 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.OtherAccessFormProvider
+import models.UserAnswers
 import pages.OtherAccessPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -79,7 +80,7 @@ class OtherAccessController @Inject() (
                     ),
                   value =>
                     for {
-                      updatedAnswers <- Future.fromTry(request.userAnswers.set(OtherAccessPage, value))
+                      updatedAnswers <- Future.fromTry(UserAnswers(id = request.userId).set(OtherAccessPage, value))
                       _              <- sessionRepository.set(updatedAnswers)
                     } yield Redirect(controllers.routes.RemoveAreYouSureController.onPageLoad(fiid))
                 )

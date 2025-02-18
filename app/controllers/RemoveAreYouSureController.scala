@@ -51,7 +51,7 @@ class RemoveAreYouSureController @Inject() (
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(fiid: String): Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(fiid: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId).flatMap {
         institutions =>
@@ -59,12 +59,11 @@ class RemoveAreYouSureController @Inject() (
             case None =>
               Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
             case Some(institutionToRemove) =>
-              // val otherAccessValue = request.userAnswers.get(OtherAccessPage).getOrElse(false)
-              val otherAccessBoolean = true
+              val warningUnderstood = request.userAnswers.get(OtherAccessPage).getOrElse(false)
               for {
                 updatedAnswers <- Future.fromTry(UserAnswers(id = request.userId).set(RemoveInstitutionDetail, institutionToRemove))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Ok(view(form, institutionToRemove.FIID, institutionToRemove.FIName, otherAccessBoolean))
+              } yield Ok(view(form, institutionToRemove.FIID, institutionToRemove.FIName, warningUnderstood))
           }
       }
 
