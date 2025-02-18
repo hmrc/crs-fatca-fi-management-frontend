@@ -459,7 +459,7 @@ otherAccess.heading.fiisuser = Could anyone who may act on behalf of {0} in the 
 otherAccess.error.required = Select yes if the financial institution or anyone who may act on their behalf may need to access or update any previously sent reports for them
 otherAccess.error.required.fiisuser = Select yes if anyone who may act on behalf of your business in the future may need to access or update any previously sent reports
 
-fIRemoved.title = Financial Institution removed
+fIRemoved.title = Financial institution removed
 fIRemoved.heading = {0} removed
 fIRemoved.p1 = You have permanently removed {0} with the FI ID {1}.
 fIRemoved.p2 = Back to manage your financial institutions

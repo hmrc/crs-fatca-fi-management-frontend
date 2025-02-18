@@ -58,7 +58,7 @@ trait ContactHelper {
     } else if (time == LocalTime.NOON) {
       s"midday"
     } else {
-      val timeFormatter = DateTimeFormatter.ofPattern("h:mm a")
+      val timeFormatter = DateTimeFormatter.ofPattern("h:mma")
       val formattedTime = time.format(timeFormatter).toLowerCase
       formattedTime
     }
