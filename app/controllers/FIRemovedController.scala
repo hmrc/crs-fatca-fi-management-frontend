@@ -24,7 +24,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ContactHelper
 import views.html.FIRemovedView
 
-import java.time.{Clock, LocalDate, LocalTime}
+import java.time.{Clock, LocalDate, LocalTime, ZoneId, ZonedDateTime}
 import javax.inject.Inject
 
 class FIRemovedController @Inject() (
@@ -42,10 +42,11 @@ class FIRemovedController @Inject() (
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val ua   = request.userAnswers
-      val fiId = "ABC00000122" // TODO: Replace placeholder FI ID with actual implementation as part of DAC6-3466
-      val date = LocalDate.now(clock)
-      val time = LocalTime.now(clock)
+      val ua       = request.userAnswers
+      val fiId     = "ABC00000122" // TODO: Replace placeholder FI ID with actual implementation as part of DAC6-3466
+      val datetime = ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Europe/London"))
+      val date     = datetime.toLocalDate
+      val time     = datetime.toLocalTime
 
       Ok(view(getFinancialInstitutionName(ua), fiId, formatDate(date), formatTime(time)))
   }
