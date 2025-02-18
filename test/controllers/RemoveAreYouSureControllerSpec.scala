@@ -46,6 +46,8 @@ class RemoveAreYouSureControllerSpec extends SpecBase with MockitoSugar {
   val mockSessionRepository: SessionRepository                       = mock[SessionRepository]
   lazy val removeAreYouSureRoute: String                             = routes.RemoveAreYouSureController.onPageLoad(testFiDetail.FIID).url
 
+  val otherAccessBoolean = true
+
   "RemoveAreYouSure Controller" - {
     when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
     when(mockFinancialInstitutionsService.getListOfFinancialInstitutions(any())(any[HeaderCarrier](), any[ExecutionContext]()))
@@ -68,7 +70,7 @@ class RemoveAreYouSureControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[RemoveAreYouSureView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, testFiDetail.FIID, testFiDetail.FIName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, testFiDetail.FIID, testFiDetail.FIName, otherAccessBoolean)(request, messages(application)).toString
       }
     }
 
@@ -122,7 +124,7 @@ class RemoveAreYouSureControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, testFiDetail.FIID, testFiDetail.FIName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, testFiDetail.FIID, testFiDetail.FIName, otherAccessBoolean)(request, messages(application)).toString
       }
     }
 

@@ -21,6 +21,7 @@ import forms.OtherAccessFormProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -34,14 +35,14 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class OtherAccessControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new OtherAccessFormProvider()
-  val form         = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   val fiIsUser = true
 
-  lazy val otherAccessRoute                                          = routes.OtherAccessController.onPageLoad(testFiDetail.FIID).url
+  lazy val otherAccessRoute: String = routes.OtherAccessController.onPageLoad(testFiDetail.FIID).url
   val mockFinancialInstitutionsService: FinancialInstitutionsService = mock[FinancialInstitutionsService]
 
   "OtherAccess Controller" - {
@@ -90,7 +91,7 @@ class OtherAccessControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.IndexController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.RemoveAreYouSureController.onPageLoad(testFiid).url
       }
     }
     "must return a Bad Request and errors when invalid data is submitted" in {

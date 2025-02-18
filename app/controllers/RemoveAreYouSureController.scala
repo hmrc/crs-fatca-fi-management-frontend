@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.RemoveAreYouSureFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.Navigator
-import pages.{RemoveAreYouSurePage, RemoveInstitutionDetail}
+import pages.{OtherAccessPage, RemoveAreYouSurePage, RemoveInstitutionDetail}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -59,10 +59,12 @@ class RemoveAreYouSureController @Inject() (
             case None =>
               Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
             case Some(institutionToRemove) =>
+              // val otherAccessValue = request.userAnswers.get(OtherAccessPage).getOrElse(false)
+              val otherAccessBoolean = true
               for {
                 updatedAnswers <- Future.fromTry(UserAnswers(id = request.userId).set(RemoveInstitutionDetail, institutionToRemove))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Ok(view(form, institutionToRemove.FIID, institutionToRemove.FIName))
+              } yield Ok(view(form, institutionToRemove.FIID, institutionToRemove.FIName, otherAccessBoolean))
           }
       }
 
@@ -76,10 +78,12 @@ class RemoveAreYouSureController @Inject() (
             case None =>
               Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
             case Some(institutionToRemove) =>
+              val otherAccessBoolean = true
               form
                 .bindFromRequest()
                 .fold(
-                  formWithErrors => Future.successful(BadRequest(view(formWithErrors, institutionToRemove.FIID, institutionToRemove.FIName))),
+                  formWithErrors =>
+                    Future.successful(BadRequest(view(formWithErrors, institutionToRemove.FIID, institutionToRemove.FIName, otherAccessBoolean))),
                   value =>
                     for {
                       _              <- if (value) financialInstitutionsService.removeFinancialInstitution(institutionToRemove) else Future.successful(())
