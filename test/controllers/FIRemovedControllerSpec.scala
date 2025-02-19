@@ -99,7 +99,7 @@ class FIRemovedControllerSpec extends SpecBase with Generators {
         val view = application.injector.instanceOf[FIRemovedView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(fiName, "ABC00000122", "15 February 2025", "12:14 pm")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(fiName, "ABC00000122", "15 February 2025", "12:14pm")(request, messages(application)).toString
       }
     }
   }

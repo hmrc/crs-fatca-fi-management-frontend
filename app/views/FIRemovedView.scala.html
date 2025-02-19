@@ -29,7 +29,7 @@
 
 @(fiName: String, fiId: String, date:String, time:String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("financialInstitutionAddedConfirmation.title")), showBackLink = false) {
+@layout(pageTitle = titleNoForm(messages("fIRemoved.title")), showBackLink = false) {
     @govukPanel(
         Panel(
             title = Text(messages("fIRemoved.heading", fiName)),
