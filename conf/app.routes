@@ -162,10 +162,10 @@ POST        /identification-numbers                                       contro
 GET         /change-identification-numbers                                controllers.addFinancialInstitution.WhichIdentificationNumbersController.onPageLoad(mode: Mode = CheckMode)
 POST        /change-identification-numbers                                controllers.addFinancialInstitution.WhichIdentificationNumbersController.onSubmit(mode: Mode = CheckMode)
 
-GET         /remove/user-access                                           controllers.UserAccessController.onPageLoad(fiid: String)
-POST        /remove/user-access                                           controllers.UserAccessController.onSubmit(fiid: String)
+GET         /remove/user-access/:fiid                                     controllers.UserAccessController.onPageLoad(fiid: String)
+POST        /remove/user-access/:fiid                                     controllers.UserAccessController.onSubmit(fiid: String)
 
-GET         /remove/other-access                                          controllers.OtherAccessController.onPageLoad(fiid: String)
-POST        /remove/other-access                                          controllers.OtherAccessController.onSubmit(fiid: String)
+GET         /remove/other-access/:fiid                                    controllers.OtherAccessController.onPageLoad(fiid: String)
+POST        /remove/other-access/:fiid                                    controllers.OtherAccessController.onSubmit(fiid: String)
 
 GET        /remove/fi-removed                                             controllers.FIRemovedController.onPageLoad()
