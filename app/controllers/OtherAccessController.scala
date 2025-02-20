@@ -18,6 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.OtherAccessFormProvider
+import models.FinancialInstitutions.FIDetail
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.FinancialInstitutionsService
@@ -31,7 +32,6 @@ class OtherAccessController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
   formProvider: OtherAccessFormProvider,
   val controllerComponents: MessagesControllerComponents,
   financialInstitutionsService: FinancialInstitutionsService,
@@ -40,8 +40,6 @@ class OtherAccessController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
-
   def onPageLoad(fiid: String): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
       financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId).flatMap {
@@ -49,7 +47,7 @@ class OtherAccessController @Inject() (
           financialInstitutionsService.getInstitutionById(institutions, fiid) match {
             case Some(institutionToRemove) =>
               Future.successful(
-                Ok(view(form, institutionToRemove.IsFIUser, institutionToRemove.FIID, institutionToRemove.FIName))
+                Ok(view(formProvider(getFormKey(institutionToRemove)), institutionToRemove.IsFIUser, institutionToRemove.FIID, institutionToRemove.FIName))
               )
             case None =>
               Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
@@ -64,7 +62,7 @@ class OtherAccessController @Inject() (
         institutions =>
           financialInstitutionsService.getInstitutionById(institutions, fiid) match {
             case Some(institutionToRemove) =>
-              form
+              formProvider(getFormKey(institutionToRemove))
                 .bindFromRequest()
                 .fold(
                   formWithErrors =>
@@ -80,5 +78,11 @@ class OtherAccessController @Inject() (
           }
       }
   }
+
+  private def getFormKey(institutionToRemove: FIDetail): String =
+    institutionToRemove.IsFIUser match {
+      case true => "fiisuser"
+      case _    => "regular"
+    }
 
 }
