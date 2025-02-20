@@ -23,9 +23,9 @@ import play.api.data.Form
 
 class OtherAccessFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(key: String): Form[Boolean] =
     Form(
-      "value" -> boolean("otherAccess.error.required")
+      "value" -> boolean(s"otherAccess.error.required.$key")
     )
 
 }
