@@ -19,6 +19,8 @@ package utils
 import models.UserAnswers
 import pages.addFinancialInstitution.{FirstContactNamePage, NameOfFinancialInstitutionPage, SecondContactNamePage}
 import play.api.i18n.Messages
+import java.time.{LocalDate, LocalTime}
+import java.time.format.DateTimeFormatter
 
 trait ContactHelper {
 
@@ -42,5 +44,23 @@ trait ContactHelper {
       .fold(messages("default.FI.name"))(
         fiName => fiName
       )
+
+  // Function to format date
+  def formatDate(date: LocalDate): String = {
+    val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+    date.format(dateFormatter)
+  }
+
+  // Function to format time
+  def formatTime(time: LocalTime): String =
+    if (time == LocalTime.MIDNIGHT) {
+      s"midnight"
+    } else if (time == LocalTime.NOON) {
+      s"midday"
+    } else {
+      val timeFormatter = DateTimeFormatter.ofPattern("h:mma")
+      val formattedTime = time.format(timeFormatter).toLowerCase
+      formattedTime
+    }
 
 }
