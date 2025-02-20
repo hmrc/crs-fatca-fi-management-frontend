@@ -21,10 +21,10 @@ import play.api.data.FormError
 
 class OtherAccessFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "otherAccess.error.required"
+  val requiredKey = "otherAccess.error.required.regular"
   val invalidKey  = "error.boolean"
 
-  val form = new OtherAccessFormProvider()()
+  val form = new OtherAccessFormProvider()("regular")
 
   ".value" - {
 

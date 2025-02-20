@@ -40,6 +40,7 @@
                 label = LabelViewModel(messages("secondContactPhoneNumber.heading", contactName)).asPageHeading()
             )
             .withHint(HintViewModel(messages("secondContactPhoneNumber.hint")))
+            .asTelephone()
             .withWidth(Fixed20)
         )
 
