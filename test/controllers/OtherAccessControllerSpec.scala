@@ -91,7 +91,6 @@ class OtherAccessControllerSpec extends SpecBase with MockitoSugar with PrivateM
         val request =
           FakeRequest(POST, otherAccessPostRoute)
             .withFormUrlEncodedBody(("value", "true"))
-        println(request)
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
