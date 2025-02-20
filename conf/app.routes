@@ -139,8 +139,8 @@ POST        /your-fis                                                     contro
 
 GET         /problem/some-information-is-missing                          controllers.SomeInformationMissingController.onPageLoad()
 
-GET         /remove/remove-fi/:fiid                                controllers.RemoveAreYouSureController.onPageLoad(fiid:String)
-POST        /remove/remove-fi/:fiid                                       controllers.RemoveAreYouSureController.onSubmit(fiid:String)
+GET         /remove/remove-fi                                             controllers.RemoveAreYouSureController.onPageLoad()
+POST        /remove/remove-fi                                             controllers.RemoveAreYouSureController.onSubmit()
 
 GET         /change-answers/:fiid                                         controllers.changeFinancialInstitution.ChangeFinancialInstitutionController.onPageLoad(fiid: String)
 POST        /change-answers                                               controllers.changeFinancialInstitution.ChangeFinancialInstitutionController.confirmAndAdd()
@@ -166,4 +166,4 @@ GET         /remove/user-access/:fiid                                     contro
 POST        /remove/user-access/:fiid                                     controllers.UserAccessController.onSubmit(fiid: String)
 
 GET         /remove/other-access/:fiid                                    controllers.OtherAccessController.onPageLoad(fiid: String)
-POST        /remove/other-access/:fiid                                    controllers.OtherAccessController.onSubmit(fiid: String)
+POST        /remove/other-access                                          controllers.OtherAccessController.onSubmit()

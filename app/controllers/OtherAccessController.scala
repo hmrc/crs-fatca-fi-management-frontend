@@ -18,9 +18,9 @@ package controllers
 
 import controllers.actions._
 import forms.OtherAccessFormProvider
-import models.UserAnswers
-import pages.OtherAccessPage
 import models.FinancialInstitutions.FIDetail
+import models.UserAnswers
+import pages.{OtherAccessPage, RemoveInstitutionDetail}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -51,9 +51,13 @@ class OtherAccessController @Inject() (
         institutions =>
           financialInstitutionsService.getInstitutionById(institutions, fiid) match {
             case Some(institutionToRemove) =>
-              Future.successful(
-                Ok(view(formProvider(getFormKey(institutionToRemove)), institutionToRemove.IsFIUser, institutionToRemove.FIID, institutionToRemove.FIName))
+              for {
+                updatedAnswers <- Future.fromTry(UserAnswers(request.userId).set(RemoveInstitutionDetail, institutionToRemove)) // id correct?
+                _              <- sessionRepository.set(updatedAnswers)
+              } yield Ok(
+                view(formProvider(getFormKey(institutionToRemove)), institutionToRemove.IsFIUser, institutionToRemove.FIName)
               )
+
             case None =>
               Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
           }
@@ -61,31 +65,28 @@ class OtherAccessController @Inject() (
 
   }
 
-  def onSubmit(fiid: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId).flatMap {
-        institutions =>
-          financialInstitutionsService.getInstitutionById(institutions, fiid) match {
-            case Some(institutionToRemove) =>
-              formProvider(getFormKey(institutionToRemove))
-                .bindFromRequest()
-                .fold(
-                  formWithErrors =>
-                    Future.successful(
-                      BadRequest(
-                        view(formWithErrors, institutionToRemove.IsFIUser, institutionToRemove.FIID, institutionToRemove.FIName)
-                      )
-                    ),
-                  value =>
-                    for {
-                      updatedAnswers <- Future.fromTry(UserAnswers(id = request.userId).set(OtherAccessPage, value))
-                      _              <- sessionRepository.set(updatedAnswers)
-                    } yield Redirect(controllers.routes.RemoveAreYouSureController.onPageLoad(fiid))
-                )
-            case None =>
-              Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-          }
-      }
+      val ua = request.userAnswers
+      (for {
+        institutionToRemove <- ua.get(RemoveInstitutionDetail)
+      } yield formProvider(getFormKey(institutionToRemove))
+        .bindFromRequest()
+        .fold(
+          formWithErrors =>
+            Future.successful(
+              BadRequest(
+                view(formWithErrors, institutionToRemove.IsFIUser, institutionToRemove.FIName)
+              )
+            ),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(ua.set(OtherAccessPage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(controllers.routes.RemoveAreYouSureController.onPageLoad())
+        )).getOrElse(
+        Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      )
   }
 
   private def getFormKey(institutionToRemove: FIDetail): String =

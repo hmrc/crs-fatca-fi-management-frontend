@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.RemoveAreYouSureFormProvider
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import navigation.Navigator
 import pages.{OtherAccessPage, RemoveAreYouSurePage, RemoveInstitutionDetail}
 import play.api.data.Form
@@ -51,47 +51,41 @@ class RemoveAreYouSureController @Inject() (
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(fiid: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId).flatMap {
-        institutions =>
-          financialInstitutionsService.getInstitutionById(institutions, fiid) match {
-            case None =>
-              Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-            case Some(institutionToRemove) =>
-              val warningUnderstood = request.userAnswers.get(OtherAccessPage).getOrElse(false)
-              for {
-                updatedAnswers <- Future.fromTry(UserAnswers(id = request.userId).set(RemoveInstitutionDetail, institutionToRemove))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Ok(view(form, institutionToRemove.FIID, institutionToRemove.FIName, warningUnderstood))
-          }
-      }
+      val ua = request.userAnswers
 
+      (for {
+        warningUnderstood   <- ua.get(OtherAccessPage)
+        institutionToRemove <- ua.get(RemoveInstitutionDetail)
+      } yield Ok(view(form, institutionToRemove.FIName, warningUnderstood))).getOrElse {
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 
-  def onSubmit(fiid: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId).flatMap {
-        institutions =>
-          financialInstitutionsService.getInstitutionById(institutions, fiid) match {
-            case None =>
-              Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-            case Some(institutionToRemove) =>
-              val otherAccessBoolean = true
-              form
-                .bindFromRequest()
-                .fold(
-                  formWithErrors =>
-                    Future.successful(BadRequest(view(formWithErrors, institutionToRemove.FIID, institutionToRemove.FIName, otherAccessBoolean))),
-                  value =>
-                    for {
-                      _              <- if (value) financialInstitutionsService.removeFinancialInstitution(institutionToRemove) else Future.successful(())
-                      updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveAreYouSurePage, value))
-                      _              <- sessionRepository.set(updatedAnswers)
-                    } yield Redirect(navigator.nextPage(RemoveAreYouSurePage, NormalMode, updatedAnswers))
-                )
-          }
-      }
+      val ua = request.userAnswers
+      (for {
+        warningUnderstood   <- ua.get(OtherAccessPage)
+        institutionToRemove <- ua.get(RemoveInstitutionDetail)
+      } yield form
+        .bindFromRequest()
+        .fold(
+          formWithErrors =>
+            Future.successful(
+              BadRequest(view(formWithErrors, institutionToRemove.FIName, warningUnderstood))
+            ),
+          value =>
+            for {
+              _              <- if (value) financialInstitutionsService.removeFinancialInstitution(institutionToRemove) else Future.successful(())
+              updatedAnswers <- Future.fromTry(ua.set(RemoveAreYouSurePage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(RemoveAreYouSurePage, NormalMode, updatedAnswers))
+              .flashing(("fiName", institutionToRemove.FIName), ("fiid", institutionToRemove.FIID)) // todo: DAC6-3465, use these on confimation page
+        )).getOrElse(
+        Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      )
   }
 
 }
