@@ -17,12 +17,13 @@
 package controllers
 
 import base.SpecBase
-import controllers.actions.{DataRetrievalAction, IdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.OtherAccessFormProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.PrivateMethodTester
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -36,13 +37,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class OtherAccessControllerSpec extends SpecBase with MockitoSugar with PrivateMethodTester {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
-  val formProvider = new OtherAccessFormProvider()
-  val form         = formProvider("fiisuser")
-  val fiIsUser     = true
+  val formProvider        = new OtherAccessFormProvider()
+  val form: Form[Boolean] = formProvider("fiisuser")
+  val fiIsUser            = true
 
-  lazy val otherAccessRoute                                          = routes.OtherAccessController.onPageLoad(testFiDetail.FIID).url
+  lazy val otherAccessRoute: String                                  = routes.OtherAccessController.onPageLoad(testFiDetail.FIID).url
   val mockFinancialInstitutionsService: FinancialInstitutionsService = mock[FinancialInstitutionsService]
 
   "OtherAccess Controller" - {
@@ -91,7 +92,7 @@ class OtherAccessControllerSpec extends SpecBase with MockitoSugar with PrivateM
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.IndexController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.RemoveAreYouSureController.onPageLoad(testFiid).url
       }
     }
     "must return a Bad Request and errors when invalid data is submitted" in {
@@ -127,7 +128,9 @@ class OtherAccessControllerSpec extends SpecBase with MockitoSugar with PrivateM
     controllerComponents = stubMessagesControllerComponents(),
     getData = mock[DataRetrievalAction],
     financialInstitutionsService = mock[FinancialInstitutionsService],
-    view = mock[OtherAccessView]
+    view = mock[OtherAccessView],
+    sessionRepository = mock[SessionRepository],
+    requireData = mock[DataRequiredAction]
   )(ExecutionContext.global)
 
   val getFormKey: PrivateMethod[String] = PrivateMethod[String](Symbol("getFormKey"))

@@ -23,7 +23,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.RemoveInstitutionDetail
+import pages.{OtherAccessPage, RemoveInstitutionDetail}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -52,9 +52,9 @@ class RemoveAreYouSureControllerSpec extends SpecBase with MockitoSugar {
       .thenReturn(Future.successful(testFiDetails))
     when(mockFinancialInstitutionsService.getInstitutionById(Seq(any()), any())).thenReturn(Some(testFiDetail))
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET after YES on previous page" in {
 
-      val application = applicationBuilder(userAnswers = Option(emptyUserAnswers))
+      val application = applicationBuilder(userAnswers = Option(emptyUserAnswers.withPage(OtherAccessPage, true)))
         .overrides(
           bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService),
           bind[SessionRepository].toInstance(mockSessionRepository)
@@ -68,7 +68,27 @@ class RemoveAreYouSureControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[RemoveAreYouSureView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, testFiDetail.FIID, testFiDetail.FIName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, testFiDetail.FIID, testFiDetail.FIName, warningUnderstood = true)(request, messages(application)).toString
+      }
+    }
+
+    "must return OK and the correct view for a GET after NO on previous page" in {
+
+      val application = applicationBuilder(userAnswers = Option(emptyUserAnswers.withPage(OtherAccessPage, false)))
+        .overrides(
+          bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService),
+          bind[SessionRepository].toInstance(mockSessionRepository)
+        )
+        .build()
+      running(application) {
+        val request = FakeRequest(GET, removeAreYouSureRoute)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[RemoveAreYouSureView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form, testFiDetail.FIID, testFiDetail.FIName, warningUnderstood = false)(request, messages(application)).toString
       }
     }
 
@@ -122,23 +142,9 @@ class RemoveAreYouSureControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, testFiDetail.FIID, testFiDetail.FIName)(request, messages(application)).toString
-      }
-    }
-
-    "must initiate userAnswers for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(
-          bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService)
-        )
-        .build()
-      running(application) {
-        val request = FakeRequest(GET, removeAreYouSureRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(boundForm, testFiDetail.FIID, testFiDetail.FIName, warningUnderstood = true)(request,
+                                                                                                                            messages(application)
+        ).toString
       }
     }
 

@@ -18,9 +18,12 @@ package controllers
 
 import controllers.actions._
 import forms.OtherAccessFormProvider
+import models.UserAnswers
+import pages.OtherAccessPage
 import models.FinancialInstitutions.FIDetail
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import services.FinancialInstitutionsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.OtherAccessView
@@ -32,10 +35,12 @@ class OtherAccessController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
   formProvider: OtherAccessFormProvider,
   val controllerComponents: MessagesControllerComponents,
   financialInstitutionsService: FinancialInstitutionsService,
-  view: OtherAccessView
+  view: OtherAccessView,
+  sessionRepository: SessionRepository
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
@@ -56,7 +61,7 @@ class OtherAccessController @Inject() (
 
   }
 
-  def onSubmit(fiid: String): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(fiid: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId).flatMap {
         institutions =>
@@ -71,7 +76,11 @@ class OtherAccessController @Inject() (
                         view(formWithErrors, institutionToRemove.IsFIUser, institutionToRemove.FIID, institutionToRemove.FIName)
                       )
                     ),
-                  _ => Future.successful(Redirect(routes.IndexController.onPageLoad())) // todo change to /remove/remove-fi page when made
+                  value =>
+                    for {
+                      updatedAnswers <- Future.fromTry(UserAnswers(id = request.userId).set(OtherAccessPage, value))
+                      _              <- sessionRepository.set(updatedAnswers)
+                    } yield Redirect(controllers.routes.RemoveAreYouSureController.onPageLoad(fiid))
                 )
             case None =>
               Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))

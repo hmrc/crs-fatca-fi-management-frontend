@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.RemoveAreYouSureFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.Navigator
-import pages.{RemoveAreYouSurePage, RemoveInstitutionDetail}
+import pages.{OtherAccessPage, RemoveAreYouSurePage, RemoveInstitutionDetail}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -51,7 +51,7 @@ class RemoveAreYouSureController @Inject() (
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(fiid: String): Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(fiid: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId).flatMap {
         institutions =>
@@ -59,10 +59,11 @@ class RemoveAreYouSureController @Inject() (
             case None =>
               Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
             case Some(institutionToRemove) =>
+              val warningUnderstood = request.userAnswers.get(OtherAccessPage).getOrElse(false)
               for {
                 updatedAnswers <- Future.fromTry(UserAnswers(id = request.userId).set(RemoveInstitutionDetail, institutionToRemove))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Ok(view(form, institutionToRemove.FIID, institutionToRemove.FIName))
+              } yield Ok(view(form, institutionToRemove.FIID, institutionToRemove.FIName, warningUnderstood))
           }
       }
 
@@ -76,10 +77,12 @@ class RemoveAreYouSureController @Inject() (
             case None =>
               Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
             case Some(institutionToRemove) =>
+              val otherAccessBoolean = true
               form
                 .bindFromRequest()
                 .fold(
-                  formWithErrors => Future.successful(BadRequest(view(formWithErrors, institutionToRemove.FIID, institutionToRemove.FIName))),
+                  formWithErrors =>
+                    Future.successful(BadRequest(view(formWithErrors, institutionToRemove.FIID, institutionToRemove.FIName, otherAccessBoolean))),
                   value =>
                     for {
                       _              <- if (value) financialInstitutionsService.removeFinancialInstitution(institutionToRemove) else Future.successful(())
