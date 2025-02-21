@@ -29,8 +29,7 @@ case object RemoveAreYouSurePage extends QuestionPage[Boolean] {
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
-      case Some(false) => userAnswers.remove(RemoveInstitutionDetail)
-      case _           => super.cleanup(value, userAnswers)
+      case _ => removePages(Seq(RemoveInstitutionDetail, OtherAccessPage), userAnswers)
     }
 
 }
