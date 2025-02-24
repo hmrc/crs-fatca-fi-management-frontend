@@ -28,27 +28,30 @@
     warning: Warning
 )
 
-@(form: Form[_], id: String, name: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], name: String, warningUnderstood: Boolean)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("removeAreYouSure.title"))) {
+@key = @{
+    if (warningUnderstood) "yes" else "no"
+}
 
-    @formHelper(action = routes.RemoveAreYouSureController.onSubmit(id), Symbol("autoComplete") -> "on") {
+@layout(pageTitle = title(form, messages(s"removeAreYouSure.pageTitle.$key"))) {
+
+    @formHelper(action = routes.RemoveAreYouSureController.onSubmit(), Symbol("autoComplete") -> "on") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @heading(messages("removeAreYouSure.title","m"))
-        @para(Html(messages("removeAreYouSure.para", id)))
-        @list(elements = Seq(
-            Html(messages("removeAreYouSure.para.list.1", id)),
-            Html(messages("removeAreYouSure.para.list.2", id))
-        ))
+        @heading(messages(s"removeAreYouSure.heading.$key", name))
+        @para(Html(messages("removeAreYouSure.para1", name)))
+        @para(Html(messages("removeAreYouSure.para2", name)))
+
+
         @warning(messages("removeAreYouSure.warning"))
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("removeAreYouSure.heading", name)).withCssClass("govuk-fieldset__legend govuk-fieldset__legend--m")
+                legend = LegendViewModel(messages("removeAreYouSure.subHeading", name)).withCssClass("govuk-fieldset__legend govuk-fieldset__legend--m")
             )
         )
 

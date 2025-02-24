@@ -359,13 +359,14 @@ yourFinancialInstitutions.remove.hidden = Remove {0} from the list
 yourFinancialInstitutions.manageReports.hidden = Manage reports for {0}
 yourFinancialInstitutions.notification = {0} removed.
 
-removeAreYouSure.title = Removing a financial institution
-removeAreYouSure.heading = Are you sure you want to remove {0}?
-removeAreYouSure.error.required = Select yes if you are sure you want to remove the financial institution
-removeAreYouSure.para = This will permanently remove this financial institution with the FI ID {0}. It will no longer be possible for anyone to:
-removeAreYouSure.para.list.1 = send, access, update or delete reports for the FI ID {0}
-removeAreYouSure.para.list.2 = access or change details for the FI ID {0}
+removeAreYouSure.pageTitle.yes =        If you remove the financial institution, it will not be possible for anyone to access or update any previously sent reports
+removeAreYouSure.pageTitle.no  =        If you remove the financial institution, it will not be possible to access or update any previously sent reports
+removeAreYouSure.heading.yes =      If you remove {0}, it will not be possible for anyone to access or update any previously sent reports
+removeAreYouSure.heading.no  =      If you remove {0}, it will not be possible to access or update any previously sent reports
+removeAreYouSure.para1 = You should make any changes to the reports before you remove {0}.
+removeAreYouSure.para2 = If someone adds {0} as a financial institution again in the future, then they will have a different FI ID.
 removeAreYouSure.warning = Removing a financial institution that has inaccurate or incomplete reports could result in a penalty for that financial institution.
+removeAreYouSure.subHeading = Are you sure you want to permanently remove {0}?
 
 changeYourAnswers.title = Change the details for the financial institution
 changeYourAnswers.heading = Change the details for {0}
