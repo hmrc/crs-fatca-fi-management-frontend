@@ -18,8 +18,12 @@ package controllers
 
 import controllers.actions._
 import forms.OtherAccessFormProvider
+import models.FinancialInstitutions.FIDetail
+import models.UserAnswers
+import pages.{OtherAccessPage, RemoveInstitutionDetail}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import services.FinancialInstitutionsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.OtherAccessView
@@ -35,12 +39,11 @@ class OtherAccessController @Inject() (
   formProvider: OtherAccessFormProvider,
   val controllerComponents: MessagesControllerComponents,
   financialInstitutionsService: FinancialInstitutionsService,
-  view: OtherAccessView
+  view: OtherAccessView,
+  sessionRepository: SessionRepository
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
-
-  val form = formProvider()
 
   def onPageLoad(fiid: String): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
@@ -48,9 +51,13 @@ class OtherAccessController @Inject() (
         institutions =>
           financialInstitutionsService.getInstitutionById(institutions, fiid) match {
             case Some(institutionToRemove) =>
-              Future.successful(
-                Ok(view(form, institutionToRemove.IsFIUser, institutionToRemove.FIID, institutionToRemove.FIName))
+              for {
+                updatedAnswers <- Future.fromTry(UserAnswers(request.userId).set(RemoveInstitutionDetail, institutionToRemove)) // id correct?
+                _              <- sessionRepository.set(updatedAnswers)
+              } yield Ok(
+                view(formProvider(getFormKey(institutionToRemove)), institutionToRemove.IsFIUser, institutionToRemove.FIName)
               )
+
             case None =>
               Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
           }
@@ -58,27 +65,34 @@ class OtherAccessController @Inject() (
 
   }
 
-  def onSubmit(fiid: String): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId).flatMap {
-        institutions =>
-          financialInstitutionsService.getInstitutionById(institutions, fiid) match {
-            case Some(institutionToRemove) =>
-              form
-                .bindFromRequest()
-                .fold(
-                  formWithErrors =>
-                    Future.successful(
-                      BadRequest(
-                        view(formWithErrors, institutionToRemove.IsFIUser, institutionToRemove.FIID, institutionToRemove.FIName)
-                      )
-                    ),
-                  _ => Future.successful(Redirect(routes.IndexController.onPageLoad())) // todo change to /remove/remove-fi page when made
-                )
-            case None =>
-              Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-          }
-      }
+      val ua = request.userAnswers
+      (for {
+        institutionToRemove <- ua.get(RemoveInstitutionDetail)
+      } yield formProvider(getFormKey(institutionToRemove))
+        .bindFromRequest()
+        .fold(
+          formWithErrors =>
+            Future.successful(
+              BadRequest(
+                view(formWithErrors, institutionToRemove.IsFIUser, institutionToRemove.FIName)
+              )
+            ),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(ua.set(OtherAccessPage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(controllers.routes.RemoveAreYouSureController.onPageLoad())
+        )).getOrElse(
+        Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      )
   }
+
+  private def getFormKey(institutionToRemove: FIDetail): String =
+    institutionToRemove.IsFIUser match {
+      case true => "fiisuser"
+      case _    => "regular"
+    }
 
 }

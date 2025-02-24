@@ -39,6 +39,7 @@
                 field = form("value"),
                 label = LabelViewModel(messages("firstContactName.heading", fiName)).asPageHeading()
             ).withHint(HintViewModel(Text(messages("firstContactName.hint"))))
+            .withAutocomplete("name")
             .withWidth(ThreeQuarters)
         )
 

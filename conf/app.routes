@@ -166,6 +166,6 @@ GET         /remove/user-access/:fiid                                     contro
 POST        /remove/user-access/:fiid                                     controllers.UserAccessController.onSubmit(fiid: String)
 
 GET         /remove/other-access/:fiid                                    controllers.OtherAccessController.onPageLoad(fiid: String)
-POST        /remove/other-access/:fiid                                    controllers.OtherAccessController.onSubmit(fiid: String)
+POST        /remove/other-access                                          controllers.OtherAccessController.onSubmit()
 
 GET        /remove/fi-removed                                             controllers.FIRemovedController.onPageLoad()

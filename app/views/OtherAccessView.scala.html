@@ -22,11 +22,11 @@
     govukButton: GovukButton
 )
 
-@( form: Form[_], fiIsUser: Boolean, fiid: String, fiName: String)(implicit request: Request[_], messages: Messages)
+@( form: Form[_], fiIsUser: Boolean, fiName: String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, if(fiIsUser) messages("otherAccess.title.fiisuser", fiName) else messages("otherAccess.title", fiName))) {
 
-    @formHelper(action = routes.OtherAccessController.onSubmit(fiid)) {
+    @formHelper(action = routes.OtherAccessController.onSubmit()) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
@@ -40,7 +40,7 @@
         )
 
         @govukButton(
-            ButtonViewModel(messages("site.continue"))
+            ButtonViewModel(messages("site.continue")).withAttribute("id" -> "submit")
         )
     }
 }
