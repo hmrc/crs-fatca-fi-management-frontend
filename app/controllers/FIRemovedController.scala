@@ -17,6 +17,7 @@
 package controllers
 
 import controllers.actions._
+import pages.RemoveInstitutionDetail
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.FinancialInstitutionsService
@@ -42,13 +43,14 @@ class FIRemovedController @Inject() (
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val ua       = request.userAnswers
-      val fiId     = "ABC00000122" // TODO: Replace placeholder FI ID with actual implementation as part of DAC6-3466
       val datetime = ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Europe/London"))
       val date     = datetime.toLocalDate
       val time     = datetime.toLocalTime
 
-      Ok(view(getFinancialInstitutionName(ua), fiId, formatDate(date), formatTime(time)))
+      request.userAnswers.get(RemoveInstitutionDetail).fold(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())) {
+        institutionToRemove =>
+          Ok(view(institutionToRemove.FIName, institutionToRemove.FIID, formatDate(date), formatTime(time)))
+      }
   }
 
 }
