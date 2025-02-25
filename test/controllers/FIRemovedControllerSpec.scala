@@ -18,6 +18,8 @@ package controllers
 
 import base.SpecBase
 import generators.Generators
+import models.UserAnswers
+import pages.RemoveInstitutionDetail
 import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -31,12 +33,13 @@ class FIRemovedControllerSpec extends SpecBase with Generators {
 
   "FIRemoved Controller" - {
 
+    val userAnswers: UserAnswers = emptyUserAnswers.withPage(RemoveInstitutionDetail, testFiDetail)
     "must return OK and the correct view for a GET when time is midnight" in {
 
       val midnight         = Instant.parse("2025-02-15T00:00:00Z")
       val stubClock: Clock = Clock.fixed(midnight, ZoneId.systemDefault)
 
-      val ua = emptyUserAnswers.set(NameOfFinancialInstitutionPage, fiName).get
+      val ua = userAnswers.set(NameOfFinancialInstitutionPage, fiName).get
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(
           bind[Clock].toInstance(stubClock)
@@ -51,7 +54,7 @@ class FIRemovedControllerSpec extends SpecBase with Generators {
         val view = application.injector.instanceOf[FIRemovedView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(fiName, "ABC00000122", "15 February 2025", "midnight")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(testFiDetail.FIName, testFiDetail.FIID, "15 February 2025", "midnight")(request, messages(application)).toString
       }
     }
 
@@ -60,7 +63,7 @@ class FIRemovedControllerSpec extends SpecBase with Generators {
       val midnight         = Instant.parse("2025-02-15T12:00:00Z")
       val stubClock: Clock = Clock.fixed(midnight, ZoneId.systemDefault)
 
-      val ua = emptyUserAnswers.set(NameOfFinancialInstitutionPage, fiName).get
+      val ua = userAnswers.set(NameOfFinancialInstitutionPage, fiName).get
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(
           bind[Clock].toInstance(stubClock)
@@ -75,7 +78,7 @@ class FIRemovedControllerSpec extends SpecBase with Generators {
         val view = application.injector.instanceOf[FIRemovedView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(fiName, "ABC00000122", "15 February 2025", "midday")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(testFiDetail.FIName, testFiDetail.FIID, "15 February 2025", "midday")(request, messages(application)).toString
       }
     }
 
@@ -84,7 +87,7 @@ class FIRemovedControllerSpec extends SpecBase with Generators {
       val midnight         = Instant.parse("2025-02-15T12:14:00Z")
       val stubClock: Clock = Clock.fixed(midnight, ZoneId.systemDefault)
 
-      val ua = emptyUserAnswers.set(NameOfFinancialInstitutionPage, fiName).get
+      val ua = userAnswers.set(NameOfFinancialInstitutionPage, fiName).get
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(
           bind[Clock].toInstance(stubClock)
@@ -99,7 +102,7 @@ class FIRemovedControllerSpec extends SpecBase with Generators {
         val view = application.injector.instanceOf[FIRemovedView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(fiName, "ABC00000122", "15 February 2025", "12:14pm")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(testFiDetail.FIName, testFiDetail.FIID, "15 February 2025", "12:14pm")(request, messages(application)).toString
       }
     }
   }
