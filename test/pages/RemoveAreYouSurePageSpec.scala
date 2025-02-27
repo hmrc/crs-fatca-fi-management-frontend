@@ -32,12 +32,12 @@ class RemoveAreYouSurePageSpec extends PageBehaviours {
   "cleanup" - {
     "must remove details of the removing FI and the OtherAccess boolean" in {
       val ua = emptyUserAnswers
-        .withPage(RemoveInstitutionDetail, testFiDetail)
+        .withPage(InstitutionDetail, testFiDetail)
         .withPage(OtherAccessPage, false)
 
       val result: UserAnswers = RemoveAreYouSurePage.cleanup(Some(true), ua).success.value
 
-      result.get(RemoveInstitutionDetail) mustBe empty
+      result.get(InstitutionDetail) mustBe empty
       result.get(OtherAccessPage) mustBe empty
     }
   }

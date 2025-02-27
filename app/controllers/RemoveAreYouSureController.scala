@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.RemoveAreYouSureFormProvider
 import models.NormalMode
 import navigation.Navigator
-import pages.{OtherAccessPage, RemoveAreYouSurePage, RemoveInstitutionDetail}
+import pages.{InstitutionDetail, OtherAccessPage, RemoveAreYouSurePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -57,7 +57,7 @@ class RemoveAreYouSureController @Inject() (
 
       (for {
         warningUnderstood   <- ua.get(OtherAccessPage)
-        institutionToRemove <- ua.get(RemoveInstitutionDetail)
+        institutionToRemove <- ua.get(InstitutionDetail)
       } yield Ok(view(form, institutionToRemove.FIName, warningUnderstood))).getOrElse {
         Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       }
@@ -68,7 +68,7 @@ class RemoveAreYouSureController @Inject() (
       val ua = request.userAnswers
       (for {
         warningUnderstood   <- ua.get(OtherAccessPage)
-        institutionToRemove <- ua.get(RemoveInstitutionDetail)
+        institutionToRemove <- ua.get(InstitutionDetail)
       } yield form
         .bindFromRequest()
         .fold(

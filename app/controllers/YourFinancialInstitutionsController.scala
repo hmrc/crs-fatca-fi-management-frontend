@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.addFinancialInstitution.YourFinancialInstitutionsFormProvider
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
-import pages.{RemoveAreYouSurePage, RemoveInstitutionDetail}
+import pages.{InstitutionDetail, RemoveAreYouSurePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -58,7 +58,7 @@ class YourFinancialInstitutionsController @Inject() (
         hasRemoved match {
           case Some(true) =>
             ua
-              .get(RemoveInstitutionDetail)
+              .get(InstitutionDetail)
               .fold[Option[String]](None) {
                 removedInstitution =>
                   Some(removedInstitution.FIName)
@@ -68,7 +68,7 @@ class YourFinancialInstitutionsController @Inject() (
       }
       for {
         institutions           <- financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId)
-        answersWithoutRemoveFI <- Future.fromTry(request.userAnswers.remove(RemoveInstitutionDetail))
+        answersWithoutRemoveFI <- Future.fromTry(request.userAnswers.remove(InstitutionDetail))
         answersWithoutChangeFI <- Future.fromTry(answersWithoutRemoveFI.remove(ChangeFiDetailsInProgressId))
         _                      <- sessionRepository.set(answersWithoutChangeFI)
       } yield Ok(view(form, SummaryListViewModel(getYourFinancialInstitutionsRows(institutions)), removedInstitutionName))
