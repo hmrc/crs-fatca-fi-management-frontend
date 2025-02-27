@@ -24,7 +24,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.PrivateMethodTester
 import org.scalatestplus.mockito.MockitoSugar
-import pages.RemoveInstitutionDetail
+import pages.InstitutionDetail
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -49,7 +49,7 @@ class OtherAccessControllerSpec extends SpecBase with MockitoSugar with PrivateM
   lazy val otherAccessPostRoute: String                              = routes.OtherAccessController.onSubmit().url
   val mockFinancialInstitutionsService: FinancialInstitutionsService = mock[FinancialInstitutionsService]
   val mockSessionRepository: SessionRepository                       = mock[SessionRepository]
-  val ua: UserAnswers                                                = emptyUserAnswers.withPage(RemoveInstitutionDetail, testFiDetail)
+  val ua: UserAnswers                                                = emptyUserAnswers.withPage(InstitutionDetail, testFiDetail)
 
   "OtherAccess Controller" - {
 

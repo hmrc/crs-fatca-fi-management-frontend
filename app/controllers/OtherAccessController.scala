@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.OtherAccessFormProvider
 import models.FinancialInstitutions.FIDetail
 import models.UserAnswers
-import pages.{OtherAccessPage, RemoveInstitutionDetail}
+import pages.{InstitutionDetail, OtherAccessPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -52,7 +52,7 @@ class OtherAccessController @Inject() (
           financialInstitutionsService.getInstitutionById(institutions, fiid) match {
             case Some(institutionToRemove) =>
               for {
-                updatedAnswers <- Future.fromTry(UserAnswers(request.userId).set(RemoveInstitutionDetail, institutionToRemove)) // id correct?
+                updatedAnswers <- Future.fromTry(UserAnswers(request.userId).set(InstitutionDetail, institutionToRemove)) // id correct?
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Ok(
                 view(formProvider(getFormKey(institutionToRemove)), institutionToRemove.IsFIUser, institutionToRemove.FIName)
@@ -69,7 +69,7 @@ class OtherAccessController @Inject() (
     implicit request =>
       val ua = request.userAnswers
       (for {
-        institutionToRemove <- ua.get(RemoveInstitutionDetail)
+        institutionToRemove <- ua.get(InstitutionDetail)
       } yield formProvider(getFormKey(institutionToRemove))
         .bindFromRequest()
         .fold(
