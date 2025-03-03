@@ -84,13 +84,11 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
   def addFinancialInstitution(subscriptionId: String, userAnswers: UserAnswers)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[Unit] = {
+  ): Future[SubmitFIDetailsResponse] = {
     val fiDetailsRequest = buildCreateFiDetailsRequest(subscriptionId, userAnswers)
     connector
       .addOrUpdateFI(fiDetailsRequest)
-      .map(
-        _ => ()
-      )
+      .map(res => Json.parse(res.body).as[SubmitFIDetailsResponse])
   }
 
   def removeFinancialInstitution(details: FIDetail)(implicit

@@ -17,7 +17,7 @@
 package controllers.addFinancialInstitution
 
 import controllers.actions._
-import pages.InstitutionDetail
+import pages.FiidPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -49,12 +49,12 @@ class FinancialInstitutionAddedConfirmationController @Inject() (
     implicit request =>
       val ua     = request.userAnswers
       val fiName = getFinancialInstitutionName(ua)
-      val fiId   = ua.get(InstitutionDetail)
+      val fiId   = ua.get(FiidPage)
 
       sessionRepository.set(ua.copy(data = Json.obj())).flatMap {
         case true =>
           fiId match {
-            case Some(fiIdValue) => Future.successful(Ok(view(fiName, fiIdValue.FIID)))
+            case Some(fiIdValue) => Future.successful(Ok(view(fiName, fiIdValue)))
             case None =>
               logger.error(s"FI ID not found for userId: [${request.userId}]")
               Future.successful(Ok(errorView()))
