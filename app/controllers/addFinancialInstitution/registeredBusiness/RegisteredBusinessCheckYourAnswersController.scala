@@ -20,9 +20,10 @@ import com.google.inject.Inject
 import controllers.actions._
 import controllers.routes
 import models.UserAnswers
-import pages.Page
+import pages.{FiidPage, Page}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import services.FinancialInstitutionsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{CheckYourAnswersValidator, ContactHelper}
@@ -30,7 +31,7 @@ import viewmodels.checkAnswers.CheckYourAnswersViewModel._
 import viewmodels.govuk.summarylist._
 import views.html.addFinancialInstitution.IsRegisteredBusiness.RegisteredBusinessCheckYourAnswersView
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class RegisteredBusinessCheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
@@ -40,6 +41,7 @@ class RegisteredBusinessCheckYourAnswersController @Inject() (
   checkForInformationSent: CheckForInformationSentAction,
   val controllerComponents: MessagesControllerComponents,
   val financialInstitutionsService: FinancialInstitutionsService,
+  sessionRepository: SessionRepository,
   view: RegisteredBusinessCheckYourAnswersView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -62,6 +64,10 @@ class RegisteredBusinessCheckYourAnswersController @Inject() (
     implicit request =>
       financialInstitutionsService
         .addFinancialInstitution(request.fatcaId, request.userAnswers)
+        .flatMap(
+          resp => Future.fromTry(request.userAnswers.set(FiidPage, resp.fiid.get))
+        )
+        .flatMap(sessionRepository.set)
         .map(
           _ => Redirect(controllers.addFinancialInstitution.routes.FinancialInstitutionAddedConfirmationController.onPageLoad)
         )

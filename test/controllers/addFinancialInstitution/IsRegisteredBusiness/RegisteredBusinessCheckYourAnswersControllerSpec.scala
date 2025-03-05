@@ -19,6 +19,7 @@ package controllers.addFinancialInstitution.IsRegisteredBusiness
 import base.SpecBase
 import controllers.routes
 import generators.{ModelGenerators, UserAnswersGenerator}
+import models.FinancialInstitutions.SubmitFIDetailsResponse
 import models.UserAnswers
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -106,7 +107,7 @@ class RegisteredBusinessCheckYourAnswersControllerSpec extends SpecBase with Sum
     "confirmAndAdd" - {
       "must redirect to financial-institution-added when create fi call is successful" in {
         when(mockFinancialInstitutionsService.addFinancialInstitution(any(), any())(any[HeaderCarrier](), any[ExecutionContext]()))
-          .thenReturn(Future.successful(()))
+          .thenReturn(Future.successful(SubmitFIDetailsResponse(Some(testFiid))))
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(data = Json.obj(("key", "value")))))
           .overrides(
             bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService)

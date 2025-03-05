@@ -88,7 +88,9 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
     val fiDetailsRequest = buildCreateFiDetailsRequest(subscriptionId, userAnswers)
     connector
       .addOrUpdateFI(fiDetailsRequest)
-      .map(res => Json.parse(res.body).as[SubmitFIDetailsResponse])
+      .map(
+        res => Json.parse(res.body).as[SubmitFIDetailsResponse]
+      )
   }
 
   def removeFinancialInstitution(details: FIDetail)(implicit

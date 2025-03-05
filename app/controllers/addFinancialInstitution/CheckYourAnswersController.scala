@@ -69,9 +69,7 @@ class CheckYourAnswersController @Inject() (
         .flatMap(
           resp => Future.fromTry(request.userAnswers.set(FiidPage, resp.fiid.get))
         )
-        .flatMap(
-          updatedAnswers => sessionRepository.set(updatedAnswers)
-        )
+        .flatMap(sessionRepository.set)
         .map {
           _ =>
             Redirect(controllers.addFinancialInstitution.routes.FinancialInstitutionAddedConfirmationController.onPageLoad)
