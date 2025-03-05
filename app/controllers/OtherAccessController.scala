@@ -52,7 +52,7 @@ class OtherAccessController @Inject() (
           financialInstitutionsService.getInstitutionById(institutions, fiid) match {
             case Some(institutionToRemove) =>
               for {
-                updatedAnswers <- Future.fromTry(UserAnswers(request.userId).set(InstitutionDetail, institutionToRemove)) // id correct?
+                updatedAnswers <- Future.fromTry(UserAnswers(request.userId).set(InstitutionDetail, institutionToRemove))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Ok(
                 view(formProvider(getFormKey(institutionToRemove)), institutionToRemove.IsFIUser, institutionToRemove.FIName)
