@@ -19,9 +19,9 @@ package pages
 import models.FinancialInstitutions.FIDetail
 import play.api.libs.json.JsPath
 
-case object RemoveInstitutionDetail extends QuestionPage[FIDetail] {
+case object InstitutionDetail extends QuestionPage[FIDetail] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "removeInstitutionDetail"
+  override def toString: String = "institutionDetail"
 }

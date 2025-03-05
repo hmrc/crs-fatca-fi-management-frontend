@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.actions._
-import pages.RemoveInstitutionDetail
+import pages.InstitutionDetail
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.FinancialInstitutionsService
@@ -47,7 +47,7 @@ class FIRemovedController @Inject() (
       val date     = datetime.toLocalDate
       val time     = datetime.toLocalTime
 
-      request.userAnswers.get(RemoveInstitutionDetail).fold(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())) {
+      request.userAnswers.get(InstitutionDetail).fold(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())) {
         institutionToRemove =>
           Ok(view(institutionToRemove.FIName, institutionToRemove.FIID, formatDate(date), formatTime(time)))
       }

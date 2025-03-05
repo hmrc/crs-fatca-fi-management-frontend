@@ -22,7 +22,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{OtherAccessPage, RemoveInstitutionDetail}
+import pages.{InstitutionDetail, OtherAccessPage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -46,7 +46,7 @@ class RemoveAreYouSureControllerSpec extends SpecBase with MockitoSugar {
   lazy val removeAreYouSureRoute: String                             = routes.RemoveAreYouSureController.onPageLoad().url
 
   val ua = emptyUserAnswers
-    .withPage(RemoveInstitutionDetail, testFiDetail)
+    .withPage(InstitutionDetail, testFiDetail)
     .withPage(OtherAccessPage, true)
 
   "RemoveAreYouSure Controller" - {

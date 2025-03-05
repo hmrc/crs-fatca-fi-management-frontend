@@ -19,6 +19,7 @@ package controllers.addFinancialInstitution
 import base.SpecBase
 import controllers.routes
 import generators.{ModelGenerators, UserAnswersGenerator}
+import models.FinancialInstitutions.SubmitFIDetailsResponse
 import models.UserAnswers
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -149,7 +150,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
       "must redirect to confirmation page when submitting answers" in {
         when(mockService.addFinancialInstitution(any[String](), any[UserAnswers]())(any[HeaderCarrier](), any[ExecutionContext]()))
-          .thenReturn(Future.successful())
+          .thenReturn(Future.successful(SubmitFIDetailsResponse(Some(testFiid))))
 
         val application = applicationBuilder(userAnswers = Some(someUserAnswers))
           .overrides(

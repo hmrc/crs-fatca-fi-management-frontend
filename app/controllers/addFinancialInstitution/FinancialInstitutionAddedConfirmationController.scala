@@ -17,6 +17,7 @@
 package controllers.addFinancialInstitution
 
 import controllers.actions._
+import pages.FiidPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -44,12 +45,20 @@ class FinancialInstitutionAddedConfirmationController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) async {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val fiId   = "ABC00000122" // TODO: Replace placeholder FI ID with actual implementation when determined
-      val fiName = getFinancialInstitutionName(request.userAnswers)
-      sessionRepository.set(request.userAnswers.copy(data = Json.obj())).flatMap {
-        case true => Future.successful(Ok(view(fiName, fiId)))
+      val ua     = request.userAnswers
+      val fiName = getFinancialInstitutionName(ua)
+      val fiId   = ua.get(FiidPage)
+
+      sessionRepository.set(ua.copy(data = Json.obj())).flatMap {
+        case true =>
+          fiId match {
+            case Some(fiIdValue) => Future.successful(Ok(view(fiName, fiIdValue)))
+            case None =>
+              logger.error(s"FI ID not found for userId: [${request.userId}]")
+              Future.successful(Ok(errorView()))
+          }
         case false =>
           logger.error(s"Failed to clear user answers after adding an FI for userId: [${request.userId}]")
           Future.successful(Ok(errorView()))

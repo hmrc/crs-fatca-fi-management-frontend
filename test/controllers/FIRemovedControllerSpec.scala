@@ -19,21 +19,20 @@ package controllers
 import base.SpecBase
 import generators.Generators
 import models.UserAnswers
-import pages.RemoveInstitutionDetail
+import pages.InstitutionDetail
 import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.FIRemovedView
 
-import java.time.temporal.ChronoUnit
 import java.time._
 
 class FIRemovedControllerSpec extends SpecBase with Generators {
 
   "FIRemoved Controller" - {
 
-    val userAnswers: UserAnswers = emptyUserAnswers.withPage(RemoveInstitutionDetail, testFiDetail)
+    val userAnswers: UserAnswers = emptyUserAnswers.withPage(InstitutionDetail, testFiDetail)
     "must return OK and the correct view for a GET when time is midnight" in {
 
       val midnight         = Instant.parse("2025-02-15T00:00:00Z")

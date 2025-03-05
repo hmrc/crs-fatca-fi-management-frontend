@@ -17,7 +17,7 @@
 package models.FinancialInstitutions
 
 import models.Address
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json._
 import utils.CountryListFactory
 
 sealed trait BaseFIDetail {
@@ -110,4 +110,15 @@ final case class CreateFIDetails(
 
 object CreateFIDetails {
   implicit val format: OFormat[CreateFIDetails] = Json.format[CreateFIDetails]
+}
+
+case class SubmitFIDetailsResponse(fiid: Option[String])
+
+object SubmitFIDetailsResponse {
+
+  implicit val reads: Reads[SubmitFIDetailsResponse] = (json: JsValue) => {
+    val fiid = (json \ "ResponseDetails" \ "ReturnParameters" \ "Value").asOpt[String]
+    JsSuccess(SubmitFIDetailsResponse(fiid))
+  }
+
 }

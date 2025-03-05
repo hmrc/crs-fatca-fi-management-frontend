@@ -16,20 +16,11 @@
 
 package pages
 
-import models.UserAnswers
 import play.api.libs.json.JsPath
 
-import scala.util.Try
-
-case object RemoveAreYouSurePage extends QuestionPage[Boolean] {
+case object FiidPage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "removeAreYouSure"
-
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    value match {
-      case _ => removePages(Seq(InstitutionDetail, OtherAccessPage), userAnswers)
-    }
-
+  override def toString: String = "fiid"
 }
