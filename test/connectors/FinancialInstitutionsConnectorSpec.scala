@@ -20,6 +20,7 @@ import base.SpecBase
 import generators.Generators
 import helpers.WireMockServerHandler
 import models.FinancialInstitutions.{AddressDetails, ContactDetails, CreateFIDetails, RemoveFIDetail}
+import org.apache.pekko.http.scaladsl.model.HttpResponse
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.Application
 import play.api.http.Status.{OK, SERVICE_UNAVAILABLE}
@@ -100,10 +101,10 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
         result.status mustBe OK
       }
 
-      "must return Left(ErrorDetails) when the response status is not OK" in {
+      "must return ErrorDetails and correct status code when the response status is not OK" in {
         val errorResponseJson =
           """{
-            |"ErrorDetails": {
+            |"errorDetails": {
             |    "timestamp": "2016-08-16T18:15:41Z",
             |    "correlationId": "",
             |    "errorCode": "503"
@@ -114,9 +115,9 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
           SERVICE_UNAVAILABLE,
           errorResponseJson
         )
-        val result = connector.addOrUpdateFI(createFIDetails).failed.futureValue
+        val result = connector.addOrUpdateFI(createFIDetails).futureValue
 
-        result mustBe a[UpstreamErrorResponse]
+        result.status mustBe SERVICE_UNAVAILABLE
       }
     }
     "must return status as OK for removeFi" in {
