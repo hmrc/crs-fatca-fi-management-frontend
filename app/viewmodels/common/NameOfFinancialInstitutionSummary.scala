@@ -19,7 +19,7 @@ package viewmodels.common
 import models.{AnswersReviewPageType, CheckMode, UserAnswers}
 import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
@@ -31,7 +31,7 @@ object NameOfFinancialInstitutionSummary {
       answer =>
         SummaryListRowViewModel(
           key = s"nameOfFinancialInstitution.${pageType.labelPrefix}YourAnswersLabel",
-          value = ValueViewModel(HtmlFormat.escape(answer).toString),
+          value = ValueViewModel(Text(answer)),
           actions = Seq(
             accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("nameOfFinancialInstitution.change.hidden"))

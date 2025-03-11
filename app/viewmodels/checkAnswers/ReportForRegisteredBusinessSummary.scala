@@ -19,6 +19,7 @@ package viewmodels.checkAnswers
 import models.{AnswersReviewPageType, CheckMode, UserAnswers}
 import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
 import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.common.accessibleActionItem
 import viewmodels.govuk.summarylist._
@@ -33,7 +34,7 @@ object ReportForRegisteredBusinessSummary {
 
         SummaryListRowViewModel(
           key = s"reportForRegisteredBusiness.${pageType.labelPrefix}YourAnswersLabel",
-          value = ValueViewModel(value),
+          value = ValueViewModel(Text(value)),
           actions = Seq(
             accessibleActionItem("site.change",
                                  controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(CheckMode).url
