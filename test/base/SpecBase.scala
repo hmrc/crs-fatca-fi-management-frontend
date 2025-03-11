@@ -209,6 +209,15 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
   }
 """
 
+  val testViewFIDetailsErrorBody =
+    """{
+      |  "errorDetail": {
+      |    "errorCode": "001",
+      |    "errorMessage": "No matching records found"
+      |  }
+      |}
+      |""".stripMargin
+
   val testAddress: Address                 = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"), Country.GB)
   val testAddressResponse: AddressResponse = AddressResponse("value 1", Some("value 2"), Some("value 3"), Some("value 4"), Some("XX9 9XX"), Country.GB.code)
 
