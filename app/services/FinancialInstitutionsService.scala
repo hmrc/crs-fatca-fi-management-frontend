@@ -26,6 +26,7 @@ import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import pages.{CompanyRegistrationNumberPage, TrustURNPage}
 import play.api.libs.json.{JsResult, JsResultException, JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.HttpErrorFunctions.is2xx
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,9 +39,11 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
   ): Future[Seq[FIDetail]] =
     connector
       .viewFis(subscriptionId)
-      .map(
-        res => extractList(res.body)
-      )
+      .map {
+        case res if is2xx(res.status)                                                                             => extractList(res.body)
+        case res if res.status == 422 && (Json.parse(res.body) \ "errorDetail" \ "errorCode").as[String] == "001" => Seq.empty
+        case res                                                                                                  => throw new RuntimeException(res.body)
+      }
 
   def getFinancialInstitution(subscriptionId: String, fiId: String)(implicit
     hc: HeaderCarrier,
