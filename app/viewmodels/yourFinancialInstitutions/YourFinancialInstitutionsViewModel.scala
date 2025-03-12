@@ -18,19 +18,32 @@ package viewmodels.yourFinancialInstitutions
 
 import models.FinancialInstitutions.FIDetail
 import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.Aliases.Value
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{Content, HtmlContent}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow}
 import viewmodels.common.accessibleActionItem
-import viewmodels.govuk.all.{FluentActionItem, SummaryListRowViewModel, ValueViewModel}
+import viewmodels.govuk.all.{FluentActionItem, SummaryListRowViewModel}
 import viewmodels.implicits._
 
 object YourFinancialInstitutionsViewModel {
+
+  def getValueContent(name: String, fiIsRegisteredBusiness: Boolean = false): Content =
+    if (fiIsRegisteredBusiness)
+      HtmlContent(s"""
+         |<span class="govuk-!-margin-right-2" style="max-width: 180px">$name</span>
+         |<strong class="govuk-tag">
+         |  Registered business
+         |</strong>""".stripMargin)
+    else {
+      HtmlContent(s"""<span class="govuk-!-margin-right-2">$name</span>""".stripMargin)
+    }
 
   def getYourFinancialInstitutionsRows(institutions: Seq[FIDetail])(implicit messages: Messages): Seq[SummaryListRow] =
     institutions.map {
       institution =>
         SummaryListRowViewModel(
           key = Key("", "govuk-!-display-none"),
-          value = ValueViewModel(institution.FIName),
+          value = Value(getValueContent(institution.FIName, institution.IsFIUser)),
           actions = Seq(
             accessibleActionItem(
               "site.change",
