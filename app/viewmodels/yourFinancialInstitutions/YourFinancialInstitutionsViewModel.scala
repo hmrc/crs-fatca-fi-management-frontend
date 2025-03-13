@@ -27,16 +27,17 @@ import viewmodels.implicits._
 
 object YourFinancialInstitutionsViewModel {
 
-  def getValueContent(name: String, fiIsRegisteredBusiness: Boolean = false): Content =
-    if (fiIsRegisteredBusiness)
-      HtmlContent(s"""
-         |<span class="govuk-!-margin-right-2" style="max-width: 180px">$name</span>
-         |<strong class="govuk-tag">
-         |  Registered business
-         |</strong>""".stripMargin)
-    else {
-      HtmlContent(s"""<span class="govuk-!-margin-right-2">$name</span>""".stripMargin)
-    }
+  def getValueContent(name: String, fiIsRegisteredBusiness: Boolean = false): Content = {
+    val registeredBusinessTag =
+      if (fiIsRegisteredBusiness)
+        """<strong class="govuk-tag" style="max-width: 180px !important;">Registered business</strong>"""
+      else ""
+
+    HtmlContent(s"""
+                   |<span class="govuk-!-margin-right-2" style="max-width: 180px">$name</span>
+                   |$registeredBusinessTag
+  """.stripMargin.trim)
+  }
 
   def getYourFinancialInstitutionsRows(institutions: Seq[FIDetail])(implicit messages: Messages): Seq[SummaryListRow] = {
     val orderedInstitutions = institutions.sortBy(
