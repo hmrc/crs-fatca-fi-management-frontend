@@ -38,8 +38,11 @@ object YourFinancialInstitutionsViewModel {
       HtmlContent(s"""<span class="govuk-!-margin-right-2">$name</span>""".stripMargin)
     }
 
-  def getYourFinancialInstitutionsRows(institutions: Seq[FIDetail])(implicit messages: Messages): Seq[SummaryListRow] =
-    institutions.map {
+  def getYourFinancialInstitutionsRows(institutions: Seq[FIDetail])(implicit messages: Messages): Seq[SummaryListRow] = {
+    val orderedInstitutions = institutions.sortBy(
+      fi => (!fi.IsFIUser, fi.FIName)
+    )
+    orderedInstitutions.map {
       institution =>
         SummaryListRowViewModel(
           key = Key("", "govuk-!-display-none"),
@@ -61,5 +64,6 @@ object YourFinancialInstitutionsViewModel {
           )
         )
     }
+  }
 
 }
