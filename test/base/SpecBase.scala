@@ -23,7 +23,7 @@ import models.{Address, AddressLookup, AddressResponse, Country, GIINumber, Uniq
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import org.scalatest.{OptionValues, TryValues}
+import org.scalatest.{OptionValues, PrivateMethodTester, TryValues}
 import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage}
 import pages.addFinancialInstitution._
 import play.api.Application
@@ -35,7 +35,7 @@ import play.api.test.FakeRequest
 import queries.Settable
 import uk.gov.hmrc.http.HeaderCarrier
 
-trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValues with ScalaFutures with IntegrationPatience {
+trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValues with ScalaFutures with IntegrationPatience with PrivateMethodTester {
 
   val userAnswersId: String = "FATCAID"
   val fiName                = "Financial Institution"
@@ -126,7 +126,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
         "Second FI",
         "[subscriptionId]",
         List(TINDetails(GIIN, "689344444", "GB")),
-        IsFIUser = true,
+        IsFIUser = false,
         IsFATCAReporting = true,
         AddressDetails("22", Some("High Street"), "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
         Some(ContactDetails("Foo Bar", "fbar@example.com", Some("0223458888"))),
@@ -182,7 +182,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
                 "IssuedBy": "GB"
               }
             ],
-            "IsFIUser": true,
+            "IsFIUser": false,
             "IsFATCAReporting": true,
             "AddressDetails": {
               "AddressLine1": "22",

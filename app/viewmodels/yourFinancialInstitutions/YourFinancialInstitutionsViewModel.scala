@@ -18,19 +18,22 @@ package viewmodels.yourFinancialInstitutions
 
 import models.FinancialInstitutions.FIDetail
 import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.Aliases.Value
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow}
 import viewmodels.common.accessibleActionItem
-import viewmodels.govuk.all.{FluentActionItem, SummaryListRowViewModel, ValueViewModel}
+import viewmodels.govuk.all.{FluentActionItem, SummaryListRowViewModel}
 import viewmodels.implicits._
 
 object YourFinancialInstitutionsViewModel {
 
-  def getYourFinancialInstitutionsRows(institutions: Seq[FIDetail])(implicit messages: Messages): Seq[SummaryListRow] =
-    institutions.map {
+  def getYourFinancialInstitutionsRows(institutions: Seq[FIDetail])(implicit messages: Messages): Seq[SummaryListRow] = {
+    val orderedInstitutions = orderInstitutions(institutions)
+    orderedInstitutions.map {
       institution =>
         SummaryListRowViewModel(
           key = Key("", "govuk-!-display-none"),
-          value = ValueViewModel(institution.FIName),
+          value = Value(getValueContent(institution.FIName, institution.IsFIUser)),
           actions = Seq(
             accessibleActionItem(
               "site.change",
@@ -48,5 +51,23 @@ object YourFinancialInstitutionsViewModel {
           )
         )
     }
+  }
+
+  private def getValueContent(name: String, fiIsRegisteredBusiness: Boolean): HtmlContent = {
+    val registeredBusinessTag =
+      if (fiIsRegisteredBusiness)
+        """<strong class="govuk-tag" style="max-width: 180px !important;">Registered business</strong>"""
+      else ""
+
+    HtmlContent(s"""
+         |<span class="govuk-!-margin-right-2" style="max-width: 180px">$name</span>
+         |$registeredBusinessTag
+  """.stripMargin.trim)
+  }
+
+  private def orderInstitutions(institutions: Seq[FIDetail]): Seq[FIDetail] =
+    institutions.sortBy(
+      fi => (!fi.IsFIUser, fi.FIName.toUpperCase)
+    )
 
 }
