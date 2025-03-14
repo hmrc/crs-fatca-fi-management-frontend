@@ -55,6 +55,20 @@ class YourFinancialInstitutionsViewModelSpec extends SpecBase {
       val result = viewModelSut.invokePrivate(privateOrderInstitutions(listOfInstitutions))
       result mustBe expectedOrderedDetails
     }
+    "must be case agnostic to alphabetical ordering" in {
+      val listOfInstitutions: Seq[FIDetail] = Seq(
+        testFiDetail.copy(FIName = "Beta", IsFIUser = false),
+        testFiDetail.copy(FIName = "Theta", IsFIUser = false),
+        testFiDetail.copy(FIName = "alpha", IsFIUser = false)
+      )
+      val expectedOrderedDetails = Seq(
+        testFiDetail.copy(FIName = "alpha", IsFIUser = false),
+        testFiDetail.copy(FIName = "Beta", IsFIUser = false),
+        testFiDetail.copy(FIName = "Theta", IsFIUser = false)
+      )
+      val result = viewModelSut.invokePrivate(privateOrderInstitutions(listOfInstitutions))
+      result mustBe expectedOrderedDetails
+    }
   }
 
   "getValueContent" - {

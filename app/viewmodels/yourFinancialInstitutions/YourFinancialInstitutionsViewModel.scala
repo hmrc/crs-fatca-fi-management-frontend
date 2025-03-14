@@ -53,7 +53,7 @@ object YourFinancialInstitutionsViewModel {
     }
   }
 
-  private def getValueContent(name: String, fiIsRegisteredBusiness: Boolean = false): HtmlContent = {
+  private def getValueContent(name: String, fiIsRegisteredBusiness: Boolean): HtmlContent = {
     val registeredBusinessTag =
       if (fiIsRegisteredBusiness)
         """<strong class="govuk-tag" style="max-width: 180px !important;">Registered business</strong>"""
@@ -67,7 +67,7 @@ object YourFinancialInstitutionsViewModel {
 
   private def orderInstitutions(institutions: Seq[FIDetail]): Seq[FIDetail] =
     institutions.sortBy(
-      fi => (!fi.IsFIUser, fi.FIName)
+      fi => (!fi.IsFIUser, fi.FIName.toUpperCase)
     )
 
 }
