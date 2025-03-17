@@ -9,6 +9,11 @@
     word-break: break-word;
 }
 
+.govuk-summary-list__value span {
+    line-height: 1.4;
+}
+
+
 // Raise index of dropdown arrow on accessible autocomplete
 // This prevents it from being hidden behind the other address inputs
 .autocomplete__dropdown-arrow-down {
