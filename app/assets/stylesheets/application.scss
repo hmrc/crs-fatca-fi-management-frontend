@@ -9,8 +9,25 @@
     word-break: break-word;
 }
 
-.govuk-summary-list__value span {
-    line-height: 1.4;
+// These are for the specific behavior of the table on /your-fis
+.user-financial-institutions-summary .govuk-summary-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.user-financial-institutions-summary .govuk-summary-list__row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.user-financial-institutions-summary .govuk-summary-list__actions {
+    flex: 0.5;
+}
+
+.user-financial-institutions-summary .govuk-summary-list__value {
+    flex: 1;
 }
 
 
