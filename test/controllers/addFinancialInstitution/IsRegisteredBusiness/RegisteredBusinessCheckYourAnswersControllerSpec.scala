@@ -22,6 +22,7 @@ import generators.{ModelGenerators, UserAnswersGenerator}
 import models.FinancialInstitutions.SubmitFIDetailsResponse
 import models.UserAnswers
 import navigation.{FakeNavigator, Navigator}
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar.mock
@@ -63,6 +64,8 @@ class RegisteredBusinessCheckYourAnswersControllerSpec extends SpecBase with Sum
             val result = route(application, request).value
 
             status(result) mustEqual OK
+            val summaryList = Jsoup.parse(contentAsString(result)).select(".govuk-summary-list__value")
+            summaryList.get(0).text() must fullyMatch regex "^(?:Yes|No)$"
           }
       }
     }
