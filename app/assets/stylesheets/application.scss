@@ -26,7 +26,8 @@
     flex: 0.5;
 }
 
-.user-financial-institutions-summary .govuk-summary-list__value {
+.user-financial-institutions-summary .govuk-summary-list__value span {
+    line-height: 1.4;
     flex: 1;
 }
 
