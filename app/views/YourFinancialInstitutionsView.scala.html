@@ -29,7 +29,7 @@
 
 @(form: Form[_], institutions: SummaryList, removedInstitutionName: Option[String] = None)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("yourFinancialInstitutions.title"))) {
+@layout(pageTitle = title(form, messages("yourFinancialInstitutions.title")), fullWidth = true) {
 
     @if(form.errors.nonEmpty) {
         @govukErrorSummary(ErrorSummaryViewModel(form))
