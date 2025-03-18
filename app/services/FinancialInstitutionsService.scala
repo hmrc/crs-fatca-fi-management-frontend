@@ -114,7 +114,6 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
       SubscriptionID = subscriptionId,
       TINDetails = extractTinDetails(userAnswers),
       IsFIUser = userAnswers.get(ReportForRegisteredBusinessPage).contains(true),
-      IsFATCAReporting = true,
       AddressDetails = address,
       PrimaryContactDetails = extractPrimaryContactDetails(userAnswers),
       SecondaryContactDetails = extractSecondaryContactDetails(userAnswers)
@@ -131,7 +130,6 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
       SubscriptionID = subscriptionId,
       TINDetails = extractTinDetails(userAnswers),
       IsFIUser = userAnswers.get(ReportForRegisteredBusinessPage).contains(true),
-      IsFATCAReporting = true,
       AddressDetails = address,
       PrimaryContactDetails = extractPrimaryContactDetails(userAnswers),
       SecondaryContactDetails = extractSecondaryContactDetails(userAnswers)
