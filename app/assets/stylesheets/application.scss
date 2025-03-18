@@ -29,7 +29,10 @@
 .user-financial-institutions-summary .govuk-summary-list__value {
     line-height: 1.3157894737;
     flex: 1;
+    overflow-wrap: break-word;
+    min-width: 0;
 }
+
 
 
 // Raise index of dropdown arrow on accessible autocomplete
