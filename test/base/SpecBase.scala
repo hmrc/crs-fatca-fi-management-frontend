@@ -39,6 +39,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
 
   val userAnswersId: String = "FATCAID"
   val fiName                = "Financial Institution"
+  val fiDetailName          = "First FI"
   val testFiid              = "683373339"
   val validURN              = "ABCDEFG12345678"
   val testBusinessName      = "User Business"

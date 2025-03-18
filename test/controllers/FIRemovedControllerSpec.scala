@@ -19,7 +19,6 @@ package controllers
 import base.SpecBase
 import generators.Generators
 import models.UserAnswers
-import pages.InstitutionDetail
 import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -32,7 +31,7 @@ class FIRemovedControllerSpec extends SpecBase with Generators {
 
   "FIRemoved Controller" - {
 
-    val userAnswers: UserAnswers = emptyUserAnswers.withPage(InstitutionDetail, testFiDetail)
+    val userAnswers: UserAnswers = emptyUserAnswers
     "must return OK and the correct view for a GET when time is midnight" in {
 
       val midnight         = Instant.parse("2025-02-15T00:00:00Z")
@@ -46,7 +45,7 @@ class FIRemovedControllerSpec extends SpecBase with Generators {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.FIRemovedController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.FIRemovedController.onPageLoad().url).withFlash("fiName" -> fiDetailName, "fiid" -> testFiid)
 
         val result = route(application, request).value
 
@@ -70,7 +69,7 @@ class FIRemovedControllerSpec extends SpecBase with Generators {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.FIRemovedController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.FIRemovedController.onPageLoad().url).withFlash("fiName" -> fiDetailName, "fiid" -> testFiid)
 
         val result = route(application, request).value
 
@@ -94,7 +93,7 @@ class FIRemovedControllerSpec extends SpecBase with Generators {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.FIRemovedController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.FIRemovedController.onPageLoad().url).withFlash("fiName" -> fiDetailName, "fiid" -> testFiid)
 
         val result = route(application, request).value
 
