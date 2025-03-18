@@ -102,7 +102,6 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
       "[subscriptionId]",
       List(TINDetails(GIIN, "689355555", "GB")),
       IsFIUser = true,
-      IsFATCAReporting = true,
       AddressDetails("22", Some("High Street"), "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
       Some(ContactDetails("Jane Doe", "janedoe@example.com", Some("0444458888"))),
       Some(ContactDetails("John Doe", "johndoe@example.com", Some("0333458888")))
@@ -116,7 +115,6 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
         "[subscriptionId]",
         List(TINDetails(GIIN, "689355555", "GB")),
         IsFIUser = true,
-        IsFATCAReporting = true,
         AddressDetails("22", Some("High Street"), "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
         Some(ContactDetails("Jane Doe", "janedoe@example.com", Some("0444458888"))),
         Some(ContactDetails("John Doe", "johndoe@example.com", Some("0333458888")))
@@ -127,7 +125,6 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
         "[subscriptionId]",
         List(TINDetails(GIIN, "689344444", "GB")),
         IsFIUser = false,
-        IsFATCAReporting = true,
         AddressDetails("22", Some("High Street"), "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
         Some(ContactDetails("Foo Bar", "fbar@example.com", Some("0223458888"))),
         Some(ContactDetails("Foobar Baz", "fbaz@example.com", Some("0123456789")))
@@ -151,7 +148,6 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
               }
             ],
             "IsFIUser": true,
-            "IsFATCAReporting": true,
             "AddressDetails": {
               "AddressLine1": "22",
               "AddressLine2": "High Street",
@@ -183,7 +179,6 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
               }
             ],
             "IsFIUser": false,
-            "IsFATCAReporting": true,
             "AddressDetails": {
               "AddressLine1": "22",
               "AddressLine2": "High Street",
