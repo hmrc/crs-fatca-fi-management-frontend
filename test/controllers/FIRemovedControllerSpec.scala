@@ -103,6 +103,50 @@ class FIRemovedControllerSpec extends SpecBase with Generators {
         contentAsString(result) mustEqual view(testFiDetail.FIName, testFiDetail.FIID, "15 February 2025", "12:14pm")(request, messages(application)).toString
       }
     }
+
+    "must return Journey Recovery Controller with no ID" in {
+
+      val midnight         = Instant.parse("2025-02-15T12:14:00Z")
+      val stubClock: Clock = Clock.fixed(midnight, ZoneId.systemDefault)
+
+      val ua = userAnswers.set(NameOfFinancialInstitutionPage, fiName).get
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(
+          bind[Clock].toInstance(stubClock)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.FIRemovedController.onPageLoad().url).withFlash("fiName" -> fiDetailName)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must return Journey Recovery Controller with no name" in {
+
+      val midnight         = Instant.parse("2025-02-15T12:14:00Z")
+      val stubClock: Clock = Clock.fixed(midnight, ZoneId.systemDefault)
+
+      val ua = userAnswers.set(NameOfFinancialInstitutionPage, fiName).get
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(
+          bind[Clock].toInstance(stubClock)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.FIRemovedController.onPageLoad().url).withFlash("fiid" -> testFiid)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
   }
 
 }
