@@ -160,7 +160,7 @@ class Navigator @Inject() () {
       userAnswers =>
         yesNoPage(
           userAnswers,
-          IsTheAddressCorrectPage,
+          RemoveAreYouSurePage,
           controllers.routes.FIRemovedController.onPageLoad(),
           controllers.routes.YourFinancialInstitutionsController.onPageLoad()
         )
