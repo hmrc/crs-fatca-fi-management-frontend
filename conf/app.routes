@@ -170,4 +170,4 @@ POST        /remove/other-access                                          contro
 
 GET        /remove/fi-removed                                             controllers.FIRemovedController.onPageLoad()
 
-GET        /fIAlreadyRemoved                       controllers.FIAlreadyRemovedController.onPageLoad()
+GET        /problem/fi-already-removed                                    controllers.FIAlreadyRemovedController.onPageLoad()
