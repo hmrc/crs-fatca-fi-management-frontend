@@ -9,6 +9,32 @@
     word-break: break-word;
 }
 
+// These are for the specific behavior of the table on /your-fis
+.user-financial-institutions-summary .govuk-summary-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.user-financial-institutions-summary .govuk-summary-list__row {
+    display: flex;
+    align-items: top;
+    width: 100%;
+}
+
+.user-financial-institutions-summary .govuk-summary-list__actions {
+    flex: 0.5;
+}
+
+.user-financial-institutions-summary .govuk-summary-list__value {
+    line-height: 1.3157894737;
+    flex: 1;
+    overflow-wrap: break-word;
+    min-width: 0;
+}
+
+
+
 // Raise index of dropdown arrow on accessible autocomplete
 // This prevents it from being hidden behind the other address inputs
 .autocomplete__dropdown-arrow-down {

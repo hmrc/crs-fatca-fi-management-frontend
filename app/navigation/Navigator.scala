@@ -156,7 +156,14 @@ class Navigator @Inject() () {
           controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
           routes.FirstContactNameController.onPageLoad(NormalMode)
         )
-    case RemoveAreYouSurePage => _ => controllers.routes.YourFinancialInstitutionsController.onPageLoad()
+    case RemoveAreYouSurePage =>
+      userAnswers =>
+        yesNoPage(
+          userAnswers,
+          RemoveAreYouSurePage,
+          controllers.routes.FIRemovedController.onPageLoad(),
+          controllers.routes.YourFinancialInstitutionsController.onPageLoad()
+        )
     case _ =>
       _ => controllers.routes.IndexController.onPageLoad()
   }

@@ -82,7 +82,7 @@ class RemoveAreYouSureController @Inject() (
               updatedAnswers <- Future.fromTry(ua.set(RemoveAreYouSurePage, value))
               _              <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(RemoveAreYouSurePage, NormalMode, updatedAnswers))
-              .flashing(("fiName", institutionToRemove.FIName), ("fiid", institutionToRemove.FIID)) // todo: DAC6-3465, use these on confimation page
+              .flashing(("fiName", institutionToRemove.FIName), ("fiid", institutionToRemove.FIID))
         )).getOrElse(
         Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       )

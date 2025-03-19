@@ -47,9 +47,11 @@ class FIRemovedController @Inject() (
       val date     = datetime.toLocalDate
       val time     = datetime.toLocalTime
 
-      request.userAnswers.get(InstitutionDetail).fold(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())) {
-        institutionToRemove =>
-          Ok(view(institutionToRemove.FIName, institutionToRemove.FIID, formatDate(date), formatTime(time)))
+      (request.flash.get("fiName"), request.flash.get("fiid")) match {
+        case (Some(fiName), Some(fiid)) =>
+          Ok(view(fiName, fiid, formatDate(date), formatTime(time)))
+        case _ =>
+          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       }
   }
 
