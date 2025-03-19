@@ -467,3 +467,6 @@ fIRemoved.p1 = You have permanently removed {0} with the FI ID {1}.
 fIRemoved.p2 = Back to manage your financial institutions
 fIRemoved.p3 = Back to manage your CRS and FATCA reports
 
+fIAlreadyRemoved.title = You have already removed this financial institution
+fIAlreadyRemoved.heading = You have already removed this financial institution
+fIAlreadyRemoved.p1 = Back to manage your financial institutions

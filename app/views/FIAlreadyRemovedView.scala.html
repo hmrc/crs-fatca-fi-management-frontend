@@ -1,0 +1,17 @@
+@import components_
+
+@this(
+        layout: templates.Layout,
+        govukButton: GovukButton
+        link: Link
+)
+
+@()(implicit request: Request[_], messages: Messages)
+
+@layout(pageTitle = titleNoForm(messages("fIAlreadyRemoved.title"))) {
+
+    <h1 class="govuk-heading-xl">@messages("fIAlreadyRemoved.heading")</h1>
+
+    <p class="govuk-body govuk-!-margin-bottom-2">@link(controllers.routes.YourFinancialInstitutionsController.onPageLoad().url, "fIAlreadyRemoved.p1")</p>
+
+}
