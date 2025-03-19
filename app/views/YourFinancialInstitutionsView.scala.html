@@ -35,9 +35,6 @@
         @govukErrorSummary(ErrorSummaryViewModel(form))
     }
 
-    @if(removedInstitutionName.isDefined) {
-        @notification(messages("yourFinancialInstitutions.notification",removedInstitutionName.get))}
-
     @if(institutions.rows.isEmpty) {
         @heading(messages("yourFinancialInstitutions.heading.noFinancialInstitutions"))
     } else if (institutions.rows.size == 1) {

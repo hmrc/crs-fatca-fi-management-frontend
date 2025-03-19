@@ -325,7 +325,7 @@ class NavigatorSpec extends SpecBase {
         navigator.nextPage(RemoveAreYouSurePage,
                            NormalMode,
                            UserAnswers("id").withPage(RemoveAreYouSurePage, true)
-        ) mustBe controllers.routes.YourFinancialInstitutionsController.onPageLoad()
+        ) mustBe controllers.routes.FIRemovedController.onPageLoad()
         navigator.nextPage(RemoveAreYouSurePage,
                            NormalMode,
                            UserAnswers("id").withPage(RemoveAreYouSurePage, false)
