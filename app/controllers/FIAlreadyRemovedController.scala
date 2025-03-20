@@ -26,14 +26,12 @@ import views.html.FIAlreadyRemovedView
 class FIAlreadyRemovedController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   view: FIAlreadyRemovedView
 ) extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad: Action[AnyContent] = identify {
     implicit request =>
       Ok(view())
   }
