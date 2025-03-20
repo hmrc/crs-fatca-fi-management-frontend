@@ -49,6 +49,8 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
 
   private val SubscriptionId                        = "subscriptionId"
   private val SendButtonText                        = "Confirm and send"
+  private val pTagContent                           = " is the business you registered as."
+  private val changeRegisteredBusiness              = "Is this financial institution the business you registered as?"
   private val mockFinancialInstitutionsService      = mock[FinancialInstitutionsService]
   private val mockFinancialInstitutionUpdateService = mock[FinancialInstitutionUpdateService]
 
@@ -81,6 +83,8 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
                 status(result) mustEqual OK
                 val document = Jsoup.parse(contentAsString(result))
                 document.getElementsContainingText(SendButtonText).isEmpty mustBe true
+                document.getElementsContainingText(pTagContent).isEmpty mustBe true
+                document.getElementsContainingText(changeRegisteredBusiness).isEmpty mustBe false
               }
           }
         }
