@@ -25,7 +25,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ContactHelper
 import views.html.FIRemovedView
 
-import java.time.{Clock, LocalDate, LocalTime, ZoneId, ZonedDateTime}
+import java.time.{Clock, ZoneId, ZonedDateTime}
 import javax.inject.Inject
 
 class FIRemovedController @Inject() (
