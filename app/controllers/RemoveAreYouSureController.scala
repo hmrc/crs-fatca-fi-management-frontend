@@ -55,11 +55,15 @@ class RemoveAreYouSureController @Inject() (
     implicit request =>
       val ua = request.userAnswers
 
-      (for {
-        warningUnderstood   <- ua.get(OtherAccessPage)
-        institutionToRemove <- ua.get(InstitutionDetail)
-      } yield Ok(view(form, institutionToRemove.FIName, warningUnderstood))).getOrElse {
-        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      ua.get(InstitutionDetail) match {
+        case None => Redirect(controllers.routes.FIAlreadyRemovedController.onPageLoad())
+        case Some(_) =>
+          (for {
+            warningUnderstood   <- ua.get(OtherAccessPage)
+            institutionToRemove <- ua.get(InstitutionDetail)
+          } yield Ok(view(form, institutionToRemove.FIName, warningUnderstood))).getOrElse {
+            Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+          }
       }
   }
 
