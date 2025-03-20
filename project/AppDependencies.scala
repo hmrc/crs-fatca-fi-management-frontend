@@ -11,7 +11,6 @@ object AppDependencies {
     "uk.gov.hmrc"       %% "play-conditional-form-mapping-play-30" % "3.2.0",
     "uk.gov.hmrc"       %% "bootstrap-frontend-play-30"            % bootstrapVersion,
     "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-30"                    % hmrcMongoVersion,
-    "uk.gov.hmrc"       %% "emailaddress"                          % "3.8.0",
     "com.beachape"      %% "enumeratum-play"                       % "1.8.1",
     "uk.gov.hmrc"      %% "crypto-json-play-30"    % "8.2.0"
   )

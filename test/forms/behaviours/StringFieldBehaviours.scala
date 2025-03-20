@@ -17,7 +17,7 @@
 package forms.behaviours
 
 import play.api.data.{Form, FormError}
-import uk.gov.hmrc.emailaddress.EmailAddress
+import utils.EmailAddressValidation
 
 trait StringFieldBehaviours extends FieldBehaviours {
 
@@ -55,9 +55,10 @@ trait StringFieldBehaviours extends FieldBehaviours {
 
   def emailAddressField(form: Form[_], fieldName: String, maxLength: Int, invalidError: FormError): Unit =
     s"not bind invalid email address" in {
+      val emailValidator = new EmailAddressValidation
       forAll(stringsWithMaxLength(maxLength)) {
         email =>
-          whenever(!EmailAddress.isValid(email)) {
+          whenever(!emailValidator.isValid(email)) {
             val result = form.bind(Map(fieldName -> email)).apply(fieldName)
             result.errors mustEqual Seq(invalidError)
           }
