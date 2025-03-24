@@ -61,6 +61,7 @@ class FinancialInstitutionUpdateService @Inject() (
   def fiDetailsHasChanged(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean =
     userAnswers.get(NameOfFinancialInstitutionPage).exists(_ != fiDetails.FIName) ||
       checkTINTypeForChanges(userAnswers, fiDetails.TINDetails) ||
+      checkGIINForChanges(userAnswers, fiDetails) ||
       checkAddressForChanges(userAnswers, fiDetails.AddressDetails) ||
       checkPrimaryContactForChanges(userAnswers, fiDetails) ||
       checkSecondaryContactForChanges(userAnswers, fiDetails)
@@ -68,6 +69,7 @@ class FinancialInstitutionUpdateService @Inject() (
   def registeredFiDetailsHasChanged(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean =
     userAnswers.get(NameOfFinancialInstitutionPage).exists(_ != fiDetails.FIName) ||
       checkTINTypeForChanges(userAnswers, fiDetails.TINDetails) ||
+      checkGIINForChanges(userAnswers, fiDetails) ||
       checkAddressForChanges(userAnswers, fiDetails.AddressDetails)
 
   def clearUserAnswers(userAnswers: UserAnswers): Future[Boolean] =
@@ -80,7 +82,7 @@ class FinancialInstitutionUpdateService @Inject() (
     for {
       a <- Future.fromTry(userAnswers.set(NameOfFinancialInstitutionPage, fiDetails.FIName, cleanup = false))
       b <- setTaxIdentifier(a, fiDetails.TINDetails)
-      c <- setGIIN(b, fiDetails.TINDetails)
+      c <- setGIIN(b, fiDetails.GIIN)
       d <- setAddress(c, fiDetails.AddressDetails)
       e <- setPrimaryContactDetails(d, fiDetails)
       f <- setSecondaryContactDetails(e, fiDetails)
@@ -94,7 +96,7 @@ class FinancialInstitutionUpdateService @Inject() (
       a <- Future.fromTry(userAnswers.set(ReportForRegisteredBusinessPage, fiDetails.IsFIUser, cleanup = false))
       b <- Future.fromTry(a.set(NameOfFinancialInstitutionPage, fiDetails.FIName, cleanup = false))
       c <- setTaxIdentifier(b, fiDetails.TINDetails)
-      d <- setGIIN(c, fiDetails.TINDetails)
+      d <- setGIIN(c, fiDetails.GIIN)
       e <- setAddress(d, fiDetails.AddressDetails)
       f <- setFiUserDetails(e)
     } yield f
@@ -133,12 +135,12 @@ class FinancialInstitutionUpdateService @Inject() (
         }
     }
 
-  private def setGIIN(userAnswers: UserAnswers, tinDetails: Seq[TINDetails])(implicit ec: ExecutionContext): Future[UserAnswers] =
-    tinDetails.find(_.TINType == GIIN) match {
+  private def setGIIN(userAnswers: UserAnswers, giin: Option[String]): Future[UserAnswers] =
+    giin match {
       case Some(details) =>
         for {
           a <- Future.fromTry(userAnswers.set(HaveGIINPage, true, cleanup = false))
-          b <- Future.fromTry(a.set(WhatIsGIINPage, GIINumber(details.TIN), cleanup = false))
+          b <- Future.fromTry(a.set(WhatIsGIINPage, GIINumber(details), cleanup = false))
         } yield b
       case None =>
         for {
@@ -220,15 +222,12 @@ class FinancialInstitutionUpdateService @Inject() (
 
   private def checkGIINForChanges(
     userAnswers: UserAnswers,
-    tinDetails: Seq[TINDetails]
-  ): Boolean =
-    tinDetails.find(_.TINType == GIIN) match {
-      case Some(id) =>
-        userAnswers.get(HaveGIINPage).contains(false) ||
-        userAnswers.get(WhatIsGIINPage).exists(_.value.toLowerCase != id.TIN.toLowerCase)
-      case None =>
-        userAnswers.get(HaveGIINPage).contains(true)
-    }
+    fiDetails: FIDetail
+  ): Boolean = {
+    val uaValue: Option[String]     = userAnswers.get(WhatIsGIINPage).map(_.value)
+    val detailValue: Option[String] = fiDetails.GIIN
+    uaValue != detailValue
+  }
 
   def checkUTRforChange(userAnswers: UserAnswers, tinDetails: Seq[TINDetails]): Boolean = {
     val uaValue: Option[String]     = userAnswers.get(WhatIsUniqueTaxpayerReferencePage).map(_.value)
@@ -256,8 +255,7 @@ class FinancialInstitutionUpdateService @Inject() (
     val uaTinTypes: Set[TINType] =
       userAnswers
         .get(WhichIdentificationNumbersPage)
-        .getOrElse(Set.empty) ++
-        (if (userAnswers.get(HaveGIINPage).contains(true)) Set(GIIN) else Set.empty)
+        .getOrElse(Set.empty)
 
     val detailTinTypes: Set[TINType]    = tinDetails.map(_.TINType).toSet
     val identifiersHaveChanged: Boolean = uaTinTypes != detailTinTypes
@@ -265,11 +263,10 @@ class FinancialInstitutionUpdateService @Inject() (
       detailTinTypes.toSeq.exists {
         tinType =>
           tinType match {
-            case TINType.UTR  => checkUTRforChange(userAnswers, tinDetails)
-            case TINType.CRN  => checkCRNforChange(userAnswers, tinDetails)
-            case TINType.TRN  => checkTRNforChange(userAnswers, tinDetails)
-            case TINType.GIIN => checkGIINForChanges(userAnswers, tinDetails)
-            case _            => false
+            case TINType.UTR => checkUTRforChange(userAnswers, tinDetails)
+            case TINType.CRN => checkCRNforChange(userAnswers, tinDetails)
+            case TINType.TRN => checkTRNforChange(userAnswers, tinDetails)
+            case _           => false
           }
       }
     } else {
