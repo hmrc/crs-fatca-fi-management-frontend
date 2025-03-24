@@ -50,7 +50,10 @@ class FIRemovedController @Inject() (
         case (Some(fiName), Some(fiid)) =>
           Ok(view(fiName, fiid, formatDate(date), formatTime(time)))
         case _ =>
-          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+          request.userAnswers.get(InstitutionDetail) match {
+            case Some(_) => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+            case None    => Redirect(controllers.routes.FIAlreadyRemovedController.onPageLoad())
+          }
       }
   }
 
