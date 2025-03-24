@@ -27,11 +27,10 @@ sealed trait TINType
 object TINType extends Enumerable.Implicits {
 
   case object UTR extends TINType
-  case object GIIN extends TINType
   case object CRN extends TINType
   case object TRN extends TINType
 
-  val allValues: IndexedSeq[TINType]     = IndexedSeq(UTR, CRN, TRN, GIIN)
+  val allValues: IndexedSeq[TINType]     = IndexedSeq(UTR, CRN, TRN)
   val whichIdValues: IndexedSeq[TINType] = IndexedSeq(UTR, CRN, TRN)
 
   def checkboxItems(implicit messages: Messages): Seq[CheckboxItem] = {
