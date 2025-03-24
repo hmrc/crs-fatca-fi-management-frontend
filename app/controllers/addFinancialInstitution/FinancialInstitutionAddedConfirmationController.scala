@@ -47,21 +47,17 @@ class FinancialInstitutionAddedConfirmationController @Inject() (
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val ua     = request.userAnswers
-      val fiName = getFinancialInstitutionName(ua)
-      val fiId   = ua.get(FiidPage)
-
-      sessionRepository.set(ua.copy(data = Json.obj())).flatMap {
-        case true =>
-          fiId match {
-            case Some(fiIdValue) => Future.successful(Ok(view(fiName, fiIdValue)))
-            case None =>
-              logger.error(s"FI ID not found for userId: [${request.userId}]")
-              Future.successful(Ok(errorView()))
+      val ua = request.userAnswers
+      ua.get(FiidPage) match {
+        case None => Future.successful(Redirect(controllers.routes.InformationSentController.onPageLoad))
+        case Some(fiIdValue) =>
+          val fiName = getFinancialInstitutionName(ua)
+          sessionRepository.set(ua.copy(data = Json.obj())).map {
+            case true  => Ok(view(fiName, fiIdValue))
+            case false =>
+              logger.error(s"Failed to clear user answers after adding an FI for userId: [${request.userId}]")
+              Ok(errorView())
           }
-        case false =>
-          logger.error(s"Failed to clear user answers after adding an FI for userId: [${request.userId}]")
-          Future.successful(Ok(errorView()))
       }
   }
 
