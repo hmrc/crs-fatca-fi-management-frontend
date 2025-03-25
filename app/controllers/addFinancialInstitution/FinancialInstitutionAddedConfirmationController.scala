@@ -53,7 +53,7 @@ class FinancialInstitutionAddedConfirmationController @Inject() (
         case Some(fiIdValue) =>
           val fiName = getFinancialInstitutionName(ua)
           sessionRepository.set(ua.copy(data = Json.obj())).map {
-            case true  => Ok(view(fiName, fiIdValue))
+            case true => Ok(view(fiName, fiIdValue))
             case false =>
               logger.error(s"Failed to clear user answers after adding an FI for userId: [${request.userId}]")
               Ok(errorView())
