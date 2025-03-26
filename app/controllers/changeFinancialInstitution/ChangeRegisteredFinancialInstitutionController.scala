@@ -18,9 +18,9 @@ package controllers.changeFinancialInstitution
 
 import com.google.inject.Inject
 import controllers.actions._
-import controllers.routes
-import models.UserAnswers
 import models.requests.DataRequest
+import models.{CheckMode, UserAnswers}
+import navigation.Navigator
 import pages.Page
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.Logging
@@ -47,7 +47,8 @@ class ChangeRegisteredFinancialInstitutionController @Inject() (
   financialInstitutionUpdateService: FinancialInstitutionUpdateService,
   val controllerComponents: MessagesControllerComponents,
   view: ChangeRegisteredFinancialInstitutionView,
-  errorView: ThereIsAProblemView
+  errorView: ThereIsAProblemView,
+  navigator: Navigator
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with ContactHelper
@@ -67,8 +68,9 @@ class ChangeRegisteredFinancialInstitutionController @Inject() (
                   case Nil =>
                     val hasChanges = financialInstitutionUpdateService.registeredFiDetailsHasChanged(userAnswers, fiDetails)
                     Future.successful(createPage(fiid, userAnswers, hasChanges))
-                  case _ =>
-                    Future.successful(Redirect(routes.SomeInformationMissingController.onPageLoad()))
+                  case listOfMissingPages =>
+                    val firstMissingPage = listOfMissingPages.head
+                    Future.successful(Redirect(navigator.nextPage(firstMissingPage, CheckMode, userAnswers)))
                 }
               case _ =>
                 financialInstitutionUpdateService

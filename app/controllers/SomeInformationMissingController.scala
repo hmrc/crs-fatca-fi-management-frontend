@@ -20,13 +20,13 @@ import controllers.actions._
 import models.NormalMode
 import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
-
-import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.CheckYourAnswersValidator
 import views.html.SomeInformationMissingView
+
+import javax.inject.Inject
 
 class SomeInformationMissingController @Inject() (
   override val messagesApi: MessagesApi,
