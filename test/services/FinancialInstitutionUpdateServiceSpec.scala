@@ -532,8 +532,8 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
       id => CompanyRegistrationNumber(id.TIN)
     )
 
-    val maybeTRN: Option[TINDetails] = fiDetails.TINDetails.find(_.TINType == TRN)
-    populatedUserAnswers.get(WhichIdentificationNumbersPage) contains TRN
+    val maybeTRN: Option[TINDetails] = fiDetails.TINDetails.find(_.TINType == TURN)
+    populatedUserAnswers.get(WhichIdentificationNumbersPage) contains TURN
     populatedUserAnswers.get(TrustURNPage) mustBe maybeTRN.map(
       id => TrustUniqueReferenceNumber(id.TIN)
     )

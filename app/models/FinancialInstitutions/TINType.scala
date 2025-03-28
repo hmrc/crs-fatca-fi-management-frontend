@@ -28,19 +28,19 @@ object TINType extends Enumerable.Implicits {
 
   case object UTR extends TINType
   case object CRN extends TINType
-  case object TRN extends TINType
+  case object TURN extends TINType
 
-  val allValues: IndexedSeq[TINType]     = IndexedSeq(UTR, CRN, TRN)
-  val whichIdValues: IndexedSeq[TINType] = IndexedSeq(UTR, CRN, TRN)
+  val allValues: IndexedSeq[TINType]     = IndexedSeq(UTR, CRN, TURN)
+  val whichIdValues: IndexedSeq[TINType] = IndexedSeq(UTR, CRN, TURN)
 
   def checkboxItems(implicit messages: Messages): Seq[CheckboxItem] = {
     val items = whichIdValues.zipWithIndex.map {
-      case (TRN, index) =>
+      case (TURN, index) =>
         CheckboxItemViewModel(
-          content = Text(messages(s"whichIdentificationNumbers.${TRN.toString}")),
+          content = Text(messages(s"whichIdentificationNumbers.${TURN.toString}")),
           fieldId = "value",
           index = index,
-          value = TRN.toString
+          value = TURN.toString
         ).withAttribute(("data-behaviour", "exclusive"))
       case (value, index) =>
         CheckboxItemViewModel(
