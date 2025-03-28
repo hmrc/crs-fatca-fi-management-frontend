@@ -127,7 +127,7 @@ trait ModelGenerators extends RegexConstants with Generators {
       fiId                    <- stringOfLength(15)
       fiName                  <- stringOfLength(105)
       subscriptionId          <- validSubscriptionID
-      tinType                 <- Gen.oneOf(TINType.UTR, TINType.CRN, TINType.TRN)
+      tinType                 <- Gen.oneOf(TINType.UTR, TINType.CRN, TINType.TURN)
       tin                     <- stringOfLength(10)
       tinDetails              <- Gen.const(List(TINDetails(tinType, tin, "GB")))
       giin                    <- Gen.option(stringOfLength(10))

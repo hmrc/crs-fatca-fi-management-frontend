@@ -290,10 +290,10 @@ class Navigator @Inject() () {
 
   private def whichIdPage(ua: UserAnswers): Call =
     ua.get(WhichIdentificationNumbersPage).fold(controllers.routes.JourneyRecoveryController.onPageLoad()) {
-      case set if set.contains(UTR) => routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(NormalMode)
-      case set if set.contains(CRN) => routes.WhatIsCompanyRegistrationNumberController.onPageLoad(NormalMode)
-      case set if set.contains(TRN) => routes.TrustURNController.onPageLoad(NormalMode)
-      case _                        => controllers.routes.JourneyRecoveryController.onPageLoad()
+      case set if set.contains(UTR)  => routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(NormalMode)
+      case set if set.contains(CRN)  => routes.WhatIsCompanyRegistrationNumberController.onPageLoad(NormalMode)
+      case set if set.contains(TURN) => routes.TrustURNController.onPageLoad(NormalMode)
+      case _                         => controllers.routes.JourneyRecoveryController.onPageLoad()
     }
 
   private def changeWhichIdPage(ua: UserAnswers): Call = {
@@ -314,7 +314,7 @@ class Navigator @Inject() () {
           routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(CheckMode)
         case CRN if isMissing(CompanyRegistrationNumberPage) =>
           routes.WhatIsCompanyRegistrationNumberController.onPageLoad(CheckMode)
-        case TRN if isMissing(TrustURNPage) =>
+        case TURN if isMissing(TrustURNPage) =>
           routes.TrustURNController.onPageLoad(CheckMode)
       }
 

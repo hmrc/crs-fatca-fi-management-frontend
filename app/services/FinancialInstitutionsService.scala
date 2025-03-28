@@ -17,7 +17,7 @@
 package services
 
 import connectors.FinancialInstitutionsConnector
-import models.FinancialInstitutions.TINType.{CRN, TRN, UTR}
+import models.FinancialInstitutions.TINType.{CRN, TURN, UTR}
 import models.FinancialInstitutions._
 import models.UserAnswers
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, ReportForRegisteredBusinessPage}
@@ -147,7 +147,7 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
       case _         => Seq.empty
     }
     val trn = userAnswers.get(TrustURNPage) match {
-      case Some(trn) => Seq(TINDetails(TRN, trn.value, "GB"))
+      case Some(trn) => Seq(TINDetails(TURN, trn.value, "GB"))
       case _         => Seq.empty
     }
     utr ++ crn ++ trn

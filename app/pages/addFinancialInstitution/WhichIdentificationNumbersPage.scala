@@ -31,9 +31,9 @@ case object WhichIdentificationNumbersPage extends QuestionPage[Set[TINType]] {
 
   def cleanUpUnselectedTINPages(selectedTINs: Set[TINType], userAnswers: UserAnswers): Try[UserAnswers] = {
     val tinPages = Seq(
-      TINType.UTR -> WhatIsUniqueTaxpayerReferencePage,
-      TINType.CRN -> CompanyRegistrationNumberPage,
-      TINType.TRN -> TrustURNPage
+      TINType.UTR  -> WhatIsUniqueTaxpayerReferencePage,
+      TINType.CRN  -> CompanyRegistrationNumberPage,
+      TINType.TURN -> TrustURNPage
     ).collect {
       case (tin, page) if !selectedTINs.contains(tin) => page
     }

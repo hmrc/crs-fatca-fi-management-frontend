@@ -141,7 +141,7 @@ class NavigatorSpec extends SpecBase {
             routes.WhatIsCompanyRegistrationNumberController.onPageLoad(NormalMode)
         }
         "to TrustURN page when TRN selected" in {
-          val userAnswers = emptyUserAnswers.withPage(WhichIdentificationNumbersPage, Set(TRN: TINType))
+          val userAnswers = emptyUserAnswers.withPage(WhichIdentificationNumbersPage, Set(TURN: TINType))
           navigator.nextPage(WhichIdentificationNumbersPage, NormalMode, userAnswers) mustBe
             routes.TrustURNController.onPageLoad(NormalMode)
         }

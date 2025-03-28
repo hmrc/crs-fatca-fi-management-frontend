@@ -115,7 +115,7 @@ sealed trait AddFIValidator {
             checkPage(CompanyRegistrationNumberPage).map(
               _ => CompanyRegistrationNumberPage
             )
-          case TINType.TRN =>
+          case TINType.TURN =>
             checkPage(TrustURNPage).map(
               _ => TrustURNPage
             )

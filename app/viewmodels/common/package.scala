@@ -78,8 +78,8 @@ package object common {
       case Seq(TINType.CRN) => Seq(WhichIdentificationNumbersSummary.row(ua), CompanyRegistrationNumberSummary.row(ua)).flatten
       case Seq(TINType.UTR, TINType.CRN) =>
         Seq(WhichIdentificationNumbersSummary.row(ua), WhatIsUniqueTaxpayerReferenceSummary.row(ua, pageType), CompanyRegistrationNumberSummary.row(ua)).flatten
-      case Seq(TINType.TRN) => Seq(WhichIdentificationNumbersSummary.row(ua), TrustURNSummary.row(ua)).flatten
-      case _                => Seq.empty[SummaryListRow]
+      case Seq(TINType.TURN) => Seq(WhichIdentificationNumbersSummary.row(ua), TrustURNSummary.row(ua)).flatten
+      case _                 => Seq.empty[SummaryListRow]
     }
   }
 

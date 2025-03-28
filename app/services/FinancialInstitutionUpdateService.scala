@@ -119,10 +119,10 @@ class FinancialInstitutionUpdateService @Inject() (
                     .set(WhichIdentificationNumbersPage, answers.get(WhichIdentificationNumbersPage).getOrElse(Set.empty) + TINType.CRN, cleanup = false)
                     .flatMap(_.set(CompanyRegistrationNumberPage, CompanyRegistrationNumber(details.TIN), cleanup = false))
                 )
-              case TRN =>
+              case TURN =>
                 Future.fromTry(
                   answers
-                    .set(WhichIdentificationNumbersPage, answers.get(WhichIdentificationNumbersPage).getOrElse(Set.empty) + TINType.TRN, cleanup = false)
+                    .set(WhichIdentificationNumbersPage, answers.get(WhichIdentificationNumbersPage).getOrElse(Set.empty) + TINType.TURN, cleanup = false)
                     .flatMap(_.set(TrustURNPage, TrustUniqueReferenceNumber(details.TIN), cleanup = false))
                 )
               case _ =>
@@ -243,7 +243,7 @@ class FinancialInstitutionUpdateService @Inject() (
 
   def checkTRNforChange(userAnswers: UserAnswers, tinDetails: Seq[TINDetails]): Boolean = {
     val uaValue: Option[String]     = userAnswers.get(TrustURNPage).map(_.value)
-    val detailValue: Option[String] = tinDetails.find(_.TINType == TRN).map(_.TIN)
+    val detailValue: Option[String] = tinDetails.find(_.TINType == TURN).map(_.TIN)
     uaValue != detailValue
   }
 
@@ -263,10 +263,10 @@ class FinancialInstitutionUpdateService @Inject() (
       detailTinTypes.toSeq.exists {
         tinType =>
           tinType match {
-            case TINType.UTR => checkUTRforChange(userAnswers, tinDetails)
-            case TINType.CRN => checkCRNforChange(userAnswers, tinDetails)
-            case TINType.TRN => checkTRNforChange(userAnswers, tinDetails)
-            case _           => false
+            case TINType.UTR  => checkUTRforChange(userAnswers, tinDetails)
+            case TINType.CRN  => checkCRNforChange(userAnswers, tinDetails)
+            case TINType.TURN => checkTRNforChange(userAnswers, tinDetails)
+            case _            => false
           }
       }
     } else {

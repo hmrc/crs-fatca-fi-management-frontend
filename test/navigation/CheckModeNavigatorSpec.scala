@@ -19,8 +19,8 @@ package navigation
 import base.SpecBase
 import controllers.addFinancialInstitution.routes
 import models.FinancialInstitutions.TINType
-import models.FinancialInstitutions.TINType.{CRN, TRN, UTR}
-import models.{CheckMode, _}
+import models.FinancialInstitutions.TINType.{CRN, TURN, UTR}
+import models._
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import pages._
@@ -85,14 +85,14 @@ class CheckModeNavigatorSpec extends SpecBase {
         "with TRN selected" - {
           "to CheckAnswers if TrustURNPage is populated" in {
             val userAnswers = emptyUserAnswers
-              .withPage(WhichIdentificationNumbersPage, Set(TRN: TINType))
+              .withPage(WhichIdentificationNumbersPage, Set(TURN: TINType))
               .withPage(TrustURNPage, TrustUniqueReferenceNumber("someTRN"))
             navigator.nextPage(WhichIdentificationNumbersPage, CheckMode, userAnswers) mustBe
               controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad()
           }
           "to TrustURN if TrustURNPage is not populated" in {
             val userAnswers = emptyUserAnswers
-              .withPage(WhichIdentificationNumbersPage, Set(TRN: TINType))
+              .withPage(WhichIdentificationNumbersPage, Set(TURN: TINType))
             navigator.nextPage(WhichIdentificationNumbersPage, CheckMode, userAnswers) mustBe
               controllers.addFinancialInstitution.routes.TrustURNController.onPageLoad(CheckMode)
           }
