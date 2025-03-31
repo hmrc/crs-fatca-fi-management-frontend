@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.routes
 import generators.{ModelGenerators, UserAnswersGenerator}
 import models.FinancialInstitutions.FIDetail
-import models.UserAnswers
+import models.{Address, Country, UserAnswers}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => mockitoEq}
 import org.mockito.Mockito.when
@@ -28,6 +28,8 @@ import org.mockito.MockitoSugar.{reset, times, verify}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import pages.addFinancialInstitution.{HaveGIINPage, UkAddressPage}
+import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.inject.bind
@@ -53,6 +55,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
   private val changeRegisteredBusiness              = "Is this financial institution the business you registered as?"
   private val mockFinancialInstitutionsService      = mock[FinancialInstitutionsService]
   private val mockFinancialInstitutionUpdateService = mock[FinancialInstitutionUpdateService]
+  private val address: Address                      = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"), Country.GB)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -249,8 +252,17 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
     }
 
     "confirmAndAdd" - {
+
+      val userAnswers = emptyUserAnswers
+      val updatedAnswers = userAnswers
+        .withPage(ChangeFiDetailsInProgressId, "12345678")
+        .withPage(ReportForRegisteredBusinessPage, true)
+        .withPage(HaveGIINPage, false)
+        .withPage(UkAddressPage, address)
+        .withPage(IsTheAddressCorrectPage, true)
+        .withPage(IsThisYourBusinessNamePage, true)
+
       "must clear user answers data and redirect to details submitted for a POST" in {
-        val userAnswers = emptyUserAnswers
 
         when(mockFinancialInstitutionUpdateService.clearUserAnswers(any[UserAnswers])).thenReturn(Future.successful(true))
         when(
@@ -258,7 +270,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
         )
           .thenReturn(Future.successful())
 
-        val application = createAppWithAnswers(Option(userAnswers))
+        val application = createAppWithAnswers(Option(updatedAnswers))
         running(application) {
           val request = FakeRequest(POST, controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.confirmAndAdd().url)
 
@@ -267,7 +279,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual routes.DetailsUpdatedController.onPageLoad().url
 
-          verify(mockFinancialInstitutionUpdateService, times(1)).clearUserAnswers(userAnswers)
+          verify(mockFinancialInstitutionUpdateService, times(1)).clearUserAnswers(updatedAnswers)
         }
       }
 
@@ -279,7 +291,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
         when(mockFinancialInstitutionUpdateService.clearUserAnswers(any[UserAnswers]))
           .thenReturn(Future.failed(new Exception("failed to clear user answers data")))
 
-        val application = createAppWithAnswers(Option(emptyUserAnswers))
+        val application = createAppWithAnswers(Option(updatedAnswers))
         running(application) {
           val request = FakeRequest(POST, controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.confirmAndAdd().url)
 

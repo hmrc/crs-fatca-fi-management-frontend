@@ -146,14 +146,14 @@ class Navigator @Inject() () {
         yesNoPage(
           userAnswers,
           IsTheAddressCorrectPage,
-          controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
+          getRegisteredFIRoute(userAnswers),
           controllers.addFinancialInstitution.routes.PostcodeController.onPageLoad(NormalMode)
         )
     case UkAddressPage =>
       userAnswers =>
         isFiUser(
           userAnswers,
-          controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
+          getRegisteredFIRoute(userAnswers),
           routes.FirstContactNameController.onPageLoad(NormalMode)
         )
     case RemoveAreYouSurePage =>
@@ -174,17 +174,11 @@ class Navigator @Inject() () {
         def resolveRoute(userAnswers: UserAnswers, registeredBusinessRoute: Boolean) = {
           val validator        = CheckYourAnswersValidator(userAnswers)
           val validationResult = if (registeredBusinessRoute) validator.validateRegisteredBusiness else validator.validate
-          val isChangeFIInProgress = userAnswers.get(ChangeFiDetailsInProgressId) match {
-            case Some(_) => true
-            case None    => false
-          }
 
           validationResult match {
             case Nil => redirectToCheckYourAnswers(userAnswers)
             case _ if registeredBusinessRoute =>
               controllers.addFinancialInstitution.registeredBusiness.routes.IsThisYourBusinessNameController.onPageLoad(NormalMode)
-            case _ if isChangeFIInProgress =>
-              controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(CheckMode)
             case _ =>
               controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode)
           }
@@ -271,13 +265,6 @@ class Navigator @Inject() () {
               ) routes.WhatIsCompanyRegistrationNumberController.onPageLoad(CheckMode)
               else redirectToCheckYourAnswers(userAnswers)
           }
-    case NameOfFinancialInstitutionPage =>
-      userAnswers =>
-        isFiUser(
-          userAnswers,
-          routes.HaveGIINController.onPageLoad(CheckMode),
-          routes.WhichIdentificationNumbersController.onPageLoad(NormalMode)
-        )
 
     case _ => redirectToCheckYourAnswers
   }
@@ -368,6 +355,12 @@ class Navigator @Inject() () {
     userAnswers.get(ChangeFiDetailsInProgressId) match {
       case Some(id) => controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(id)
       case _        => checkAnswersOnwardRoute
+    }
+
+  private def getRegisteredFIRoute(userAnswers: UserAnswers): Call =
+    userAnswers.get(ChangeFiDetailsInProgressId) match {
+      case Some(id) => controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.onPageLoad(id)
+      case None     => controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad()
     }
 
 }
