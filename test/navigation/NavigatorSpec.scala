@@ -24,6 +24,7 @@ import models._
 import pages._
 import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
+import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 
 class NavigatorSpec extends SpecBase {
 
@@ -67,10 +68,17 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(SecondContactExistsPage, NormalMode, userAnswers) mustBe
             routes.SecondContactNameController.onPageLoad(NormalMode)
         }
-        " to CheckYourAnswers if No" in {
+        " to CheckYourAnswers if No with No ChangeFIInProgress" in {
           val userAnswers = emptyUserAnswers.set(SecondContactExistsPage, false).get
           navigator.nextPage(SecondContactExistsPage, NormalMode, userAnswers) mustBe
             routes.CheckYourAnswersController.onPageLoad
+        }
+        " to ChangeYourAnswerPage if No with ChangeFIInProgress" in {
+          val userAnswers    = emptyUserAnswers.set(SecondContactExistsPage, false).get
+          val id             = "1234556"
+          val updatedAnswers = userAnswers.set(ChangeFiDetailsInProgressId, id).get
+          navigator.nextPage(SecondContactExistsPage, NormalMode, updatedAnswers) mustBe
+            controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(id)
         }
       }
       "must go from SecondContactName to SecondContactEmail" in {
@@ -89,15 +97,30 @@ class NavigatorSpec extends SpecBase {
             routes.SecondContactPhoneNumberController.onPageLoad(NormalMode)
         }
 
-        "to CheckYourAnswersPage when No" in {
+        "to CheckYourAnswersPage when No With No ChangeFIIdInProgress" in {
           val userAnswers = emptyUserAnswers.set(SecondContactCanWePhonePage, false).get
           navigator.nextPage(SecondContactCanWePhonePage, NormalMode, userAnswers) mustBe
             routes.CheckYourAnswersController.onPageLoad
         }
+
+        "to ChangeYourAnswerPage when No With ChangeFIIdInProgress" in {
+          val userAnswers    = emptyUserAnswers.set(SecondContactCanWePhonePage, false).get
+          val id             = "1234556"
+          val updatedAnswers = userAnswers.set(ChangeFiDetailsInProgressId, id).get
+          navigator.nextPage(SecondContactCanWePhonePage, NormalMode, updatedAnswers) mustBe
+            controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(id)
+        }
       }
-      "must go from SecondContactPhoneNumber to CheckYourAnswers" in {
+      "must go from SecondContactPhoneNumber to CheckYourAnswers When No ChangeFIInProgress" in {
         navigator.nextPage(SecondContactPhoneNumberPage, NormalMode, UserAnswers("id")) mustBe
           routes.CheckYourAnswersController.onPageLoad
+      }
+
+      "must go from SecondContactPhoneNumber to ChangeYourAnswer When ChangeFIInprogress" in {
+        val id             = "1234556"
+        val updatedAnswers = UserAnswers("id").set(ChangeFiDetailsInProgressId, id).get
+        navigator.nextPage(SecondContactPhoneNumberPage, NormalMode, updatedAnswers) mustBe
+          controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(id)
       }
 
       "must go from SecondContactCanWePhonePage to SecondContactPhoneNumberPage when user answers yes" in {
@@ -110,6 +133,14 @@ class NavigatorSpec extends SpecBase {
         val userAnswers = emptyUserAnswers.withPage(SecondContactCanWePhonePage, false)
         navigator.nextPage(SecondContactCanWePhonePage, NormalMode, userAnswers) mustBe
           routes.CheckYourAnswersController.onPageLoad
+      }
+
+      "must go from SecondContactCanWePhonePage to ChangeYourAnswersPage when user answers no And ChangeFIInProgress" in {
+        val userAnswers   = emptyUserAnswers.withPage(SecondContactCanWePhonePage, false)
+        val id            = "12345678"
+        val updatedAnswer = userAnswers.set(ChangeFiDetailsInProgressId, id).get
+        navigator.nextPage(SecondContactCanWePhonePage, NormalMode, updatedAnswer) mustBe
+          controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(id)
       }
 
       "must go from NameOfFinancialInstitutionPage to HaveGIIN when user is FI" in {
@@ -289,10 +320,17 @@ class NavigatorSpec extends SpecBase {
       }
 
       "must go from IsTheAddressCorrect" - {
-        " to RegisteredBusinessCheckYourAnswers if Yes" in {
+        " to RegisteredBusinessCheckYourAnswers if Yes with No ChangeFIInProgress" in {
           val userAnswers = emptyUserAnswers.set(IsTheAddressCorrectPage, true).get
           navigator.nextPage(IsTheAddressCorrectPage, NormalMode, userAnswers) mustBe
             controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad()
+        }
+        " to RegisteredBusinessCheckYourAnswers if Yes with ChangeFIInProgress" in {
+          val userAnswers    = emptyUserAnswers.set(IsTheAddressCorrectPage, true).get
+          val id             = "12345678"
+          val updatedAnswers = userAnswers.set(ChangeFiDetailsInProgressId, id).get
+          navigator.nextPage(IsTheAddressCorrectPage, NormalMode, updatedAnswers) mustBe
+            controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.onPageLoad(id)
         }
         " to WhereIsFiBased if No" in {
           val userAnswers = emptyUserAnswers.set(IsTheAddressCorrectPage, false).get
@@ -308,6 +346,17 @@ class NavigatorSpec extends SpecBase {
 
           navigator.nextPage(SelectAddressPage, NormalMode, userAnswers) mustBe
             controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad()
+        }
+
+        "to RegisteredBusinessCheckYourAnswers when FI is the User And ChangeInProgress" in {
+          val id = "12345678"
+          val userAnswers = emptyUserAnswers
+            .withPage(SelectAddressPage, "someSelectedAddress")
+            .withPage(ReportForRegisteredBusinessPage, true)
+            .withPage(ChangeFiDetailsInProgressId, id)
+
+          navigator.nextPage(SelectAddressPage, NormalMode, userAnswers) mustBe
+            controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.onPageLoad(id)
         }
         "to FirstContactName when FI is not the User" in {
           val userAnswers = emptyUserAnswers

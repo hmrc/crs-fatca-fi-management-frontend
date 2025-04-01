@@ -18,9 +18,9 @@ package controllers.changeFinancialInstitution
 
 import com.google.inject.Inject
 import controllers.actions._
+import controllers.routes
+import models.UserAnswers
 import models.requests.DataRequest
-import models.{CheckMode, UserAnswers}
-import navigation.Navigator
 import pages.Page
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.Logging
@@ -47,8 +47,7 @@ class ChangeRegisteredFinancialInstitutionController @Inject() (
   financialInstitutionUpdateService: FinancialInstitutionUpdateService,
   val controllerComponents: MessagesControllerComponents,
   view: ChangeRegisteredFinancialInstitutionView,
-  errorView: ThereIsAProblemView,
-  navigator: Navigator
+  errorView: ThereIsAProblemView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with ContactHelper
@@ -69,7 +68,7 @@ class ChangeRegisteredFinancialInstitutionController @Inject() (
                     val hasChanges = financialInstitutionUpdateService.registeredFiDetailsHasChanged(userAnswers, fiDetails)
                     Future.successful(createPage(fiid, userAnswers, hasChanges))
                   case _ =>
-                    Future.successful(Redirect(controllers.routes.SomeInformationMissingController.onPageLoad()))
+                    Future.successful(Redirect(routes.SomeInformationMissingController.onPageLoad()))
                 }
               case _ =>
                 financialInstitutionUpdateService
@@ -99,9 +98,8 @@ class ChangeRegisteredFinancialInstitutionController @Inject() (
   def confirmAndAdd(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       val userAnswers = request.userAnswers
-      getMissingAnswers(userAnswers).nonEmpty match {
-        case true => Future.successful(Redirect(controllers.routes.SomeInformationMissingController.onPageLoad()))
-        case false =>
+      getMissingAnswers(userAnswers) match {
+        case Nil =>
           val fiName = getFinancialInstitutionName(userAnswers)
           financialInstitutionsService
             .updateFinancialInstitution(request.fatcaId, userAnswers)
@@ -112,13 +110,14 @@ class ChangeRegisteredFinancialInstitutionController @Inject() (
               _ => changeUserAnswersRepository.clear(request.fatcaId, userAnswers.get(ChangeFiDetailsInProgressId))
             )
             .map(
-              _ => Redirect(controllers.routes.DetailsUpdatedController.onPageLoad()).flashing("fiName" -> fiName)
+              _ => Redirect(routes.DetailsUpdatedController.onPageLoad()).flashing("fiName" -> fiName)
             )
             .recoverWith {
               exception =>
                 logger.error(s"Failed to clear user answers for subscription Id: [${request.fatcaId}]", exception)
                 Future.successful(InternalServerError(errorView()))
             }
+        case _ => Future.successful(Redirect(routes.SomeInformationMissingController.onPageLoad()))
       }
   }
 

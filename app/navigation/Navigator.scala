@@ -98,7 +98,7 @@ class Navigator @Inject() () {
       userAnswers =>
         isFiUser(
           userAnswers,
-          controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
+          getRegisteredFIRoute(userAnswers),
           routes.FirstContactNameController.onPageLoad(NormalMode)
         )
     case IsThisAddressPage =>
