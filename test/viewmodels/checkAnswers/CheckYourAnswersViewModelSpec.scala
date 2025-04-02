@@ -56,7 +56,7 @@ class CheckYourAnswersViewModelSpec extends SpecBase {
           .withPage(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference("test"))
           .withPage(CompanyRegistrationNumberPage, CompanyRegistrationNumber("test"))
         val ua3 = ua
-          .withPage(WhichIdentificationNumbersPage, Set(TRN: TINType))
+          .withPage(WhichIdentificationNumbersPage, Set(TURN: TINType))
           .withPage(TrustURNPage, TrustUniqueReferenceNumber("test"))
 
         sut.getFinancialInstitutionSummaries(ua1).length mustBe 2

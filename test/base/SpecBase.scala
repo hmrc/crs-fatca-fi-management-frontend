@@ -17,7 +17,6 @@
 package base
 
 import controllers.actions._
-import models.FinancialInstitutions.TINType.GIIN
 import models.FinancialInstitutions._
 import models.{Address, AddressLookup, AddressResponse, Country, GIINumber, UniqueTaxpayerReference, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -101,7 +100,8 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
       s"$testFiid",
       "First FI",
       "[subscriptionId]",
-      List(TINDetails(GIIN, "689355555", "GB")),
+      List(),
+      Some("689355555"),
       IsFIUser = true,
       AddressDetails("22", Some("High Street"), "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
       Some(ContactDetails("Jane Doe", "janedoe@example.com", Some("0444458888"))),
@@ -114,7 +114,8 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
         "683373339",
         "First FI",
         "[subscriptionId]",
-        List(TINDetails(GIIN, "689355555", "GB")),
+        List(),
+        Some("689355555"),
         IsFIUser = true,
         AddressDetails("22", Some("High Street"), "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
         Some(ContactDetails("Jane Doe", "janedoe@example.com", Some("0444458888"))),
@@ -124,7 +125,8 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
         "683373300",
         "Second FI",
         "[subscriptionId]",
-        List(TINDetails(GIIN, "689344444", "GB")),
+        List(),
+        Some("689344444"),
         IsFIUser = false,
         AddressDetails("22", Some("High Street"), "Dawley", Some("Dawley"), Some("GB"), Some("TF22 2RE")),
         Some(ContactDetails("Foo Bar", "fbar@example.com", Some("0223458888"))),
@@ -141,13 +143,8 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
             "FIID": "683373339",
             "FIName": "First FI",
             "SubscriptionID": "[subscriptionId]",
-            "TINDetails": [
-              {
-                "TINType": "GIIN",
-                "TIN": "689355555",
-                "IssuedBy": "GB"
-              }
-            ],
+            "TINDetails": [],
+            "GIIN": "689355555",
             "IsFIUser": true,
             "AddressDetails": {
               "AddressLine1": "22",
@@ -172,13 +169,8 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
             "FIID": "683373300",
             "FIName": "Second FI",
             "SubscriptionID": "[subscriptionId]",
-            "TINDetails": [
-              {
-                "TINType": "GIIN",
-                "TIN": "689344444",
-                "IssuedBy": "GB"
-              }
-            ],
+            "TINDetails": [],
+            "GIIN": "689344444",
             "IsFIUser": false,
             "AddressDetails": {
               "AddressLine1": "22",

@@ -435,11 +435,11 @@ whichIdentificationNumbers.heading = Which identification numbers can you provid
 whichIdentificationNumbers.hint = Select at least one option.
 whichIdentificationNumbers.UTR = Unique Taxpayer Reference (UTR)
 whichIdentificationNumbers.CRN = Company Registration Number (CRN)
-whichIdentificationNumbers.TRN = Trust Unique Reference Number (URN)
+whichIdentificationNumbers.TURN = Trust Unique Reference Number (URN)
 
 whichIdentificationNumbersSummary.UTR = Unique Taxpayer Reference
 whichIdentificationNumbersSummary.CRN = Company Registration Number
-whichIdentificationNumbersSummary.TRN = Trust Unique Reference Number
+whichIdentificationNumbersSummary.TURN = Trust Unique Reference Number
 
 whichIdentificationNumbers.or = or
 whichIdentificationNumbers.checkYourAnswersLabel = Which identification numbers can you provide for them?
@@ -470,3 +470,6 @@ fIRemoved.p1 = You have permanently removed {0} with the FI ID {1}.
 fIRemoved.p2 = Back to manage your financial institutions
 fIRemoved.p3 = Back to manage your CRS and FATCA reports
 
+fIAlreadyRemoved.title = You have already removed this financial institution
+fIAlreadyRemoved.heading = You have already removed this financial institution
+fIAlreadyRemoved.p1 = Manage your financial institutions

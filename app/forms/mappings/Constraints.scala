@@ -17,7 +17,7 @@
 package forms.mappings
 
 import models.FinancialInstitutions.TINType
-import models.FinancialInstitutions.TINType.TRN
+import models.FinancialInstitutions.TINType.TURN
 import play.api.data.validation.{Constraint, Invalid, Valid}
 
 import java.time.LocalDate
@@ -111,8 +111,8 @@ trait Constraints {
 
   protected def noMixedTrn(errorKey: String): Constraint[Set[TINType]] =
     Constraint {
-      case set if !(set.contains(TRN) && set.size > 1) => Valid
-      case _                                           => Invalid(errorKey)
+      case set if !(set.contains(TURN) && set.size > 1) => Valid
+      case _                                            => Invalid(errorKey)
     }
 
 }

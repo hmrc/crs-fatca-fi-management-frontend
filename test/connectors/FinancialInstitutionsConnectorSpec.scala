@@ -20,11 +20,9 @@ import base.SpecBase
 import generators.Generators
 import helpers.WireMockServerHandler
 import models.FinancialInstitutions.{AddressDetails, ContactDetails, CreateFIDetails, RemoveFIDetail}
-import org.apache.pekko.http.scaladsl.model.HttpResponse
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.Application
 import play.api.http.Status.{OK, SERVICE_UNAVAILABLE}
-import uk.gov.hmrc.http.UpstreamErrorResponse
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -45,6 +43,7 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
     FIName = "financial-institution",
     SubscriptionID = "XE512345678",
     TINDetails = Seq.empty,
+    GIIN = None,
     IsFIUser = true,
     AddressDetails = AddressDetails(
       AddressLine1 = "line 1",
