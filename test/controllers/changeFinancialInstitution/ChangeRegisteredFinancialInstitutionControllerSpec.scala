@@ -114,6 +114,36 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
           }
         }
 
+        "must navigate To Standard FI When ReportForRegistered Business is set to false" in {
+          val fiDetail    = testFiDetail
+          val userAnswers = emptyUserAnswers
+          val updatedAnswers = userAnswers
+            .withPage(ChangeFiDetailsInProgressId, "12345678")
+            .withPage(ReportForRegisteredBusinessPage, false)
+            .withPage(UkAddressPage, address)
+            .withPage(IsTheAddressCorrectPage, true)
+            .withPage(IsThisYourBusinessNamePage, true)
+
+          mockSuccessfulFiRetrieval(fiDetail)
+          when(
+            mockFinancialInstitutionUpdateService.populateAndSaveRegisteredFiDetails(any(), any())
+          ).thenReturn(Future.successful((userAnswers, true)))
+
+          val application = createAppWithAnswers(Option(userAnswers))
+          running(application) {
+            val request =
+              FakeRequest(GET, controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.onPageLoad(fiDetail.FIID).url)
+
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result).value mustEqual controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController
+              .onPageLoad(fiDetail.FIID)
+              .url
+          }
+
+        }
+
         "must return INTERNAL_SERVER_ERROR when an error occurs during persistence of FI details" in {
           forAll {
             fiDetail: FIDetail =>

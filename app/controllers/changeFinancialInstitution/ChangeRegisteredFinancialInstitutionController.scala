@@ -19,9 +19,11 @@ package controllers.changeFinancialInstitution
 import com.google.inject.Inject
 import controllers.actions._
 import controllers.routes
+import models.FinancialInstitutions.FIDetail
 import models.UserAnswers
 import models.requests.DataRequest
 import pages.Page
+import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -62,19 +64,15 @@ class ChangeRegisteredFinancialInstitutionController @Inject() (
         .flatMap {
           case Some(fiDetails) =>
             userAnswers.get(ChangeFiDetailsInProgressId) match {
-              case Some(id) if id.equalsIgnoreCase(fiid) =>
-                getMissingAnswers(userAnswers) match {
-                  case Nil =>
-                    val hasChanges = financialInstitutionUpdateService.registeredFiDetailsHasChanged(userAnswers, fiDetails)
-                    Future.successful(createPage(fiid, userAnswers, hasChanges))
-                  case _ =>
-                    Future.successful(Redirect(routes.SomeInformationMissingController.onPageLoad()))
-                }
+              case Some(id) if id.equalsIgnoreCase(fiid) => handleChangeInProgressFlow(fiid, userAnswers, fiDetails)(request)
               case _ =>
                 financialInstitutionUpdateService
                   .populateAndSaveRegisteredFiDetails(userAnswers, fiDetails)
                   .map {
-                    case (ua, fromChangedAnswers) => createPage(fiid, ua, hasChanges = fromChangedAnswers)
+                    case (ua, fromChangedAnswers) if fromChangedAnswers =>
+                      handleChangesInCacheFlow(fiid, ua, fromChangedAnswers)(request)
+                    case (ua, fromChangedAnswers) =>
+                      createPage(fiid, ua, hasChanges = fromChangedAnswers)
                   }
                   .recoverWith {
                     exception =>
@@ -94,6 +92,25 @@ class ChangeRegisteredFinancialInstitutionController @Inject() (
             Future.successful(InternalServerError(errorView()))
         }
   }
+
+  private def handleChangeInProgressFlow(fiid: String, userAnswers: UserAnswers, fiDetails: FIDetail)(implicit request: DataRequest[AnyContent]) =
+    getMissingAnswers(userAnswers) match {
+      case Nil =>
+        val hasChanges = financialInstitutionUpdateService.registeredFiDetailsHasChanged(userAnswers, fiDetails)
+        Future.successful(createPage(fiid, userAnswers, hasChanges))
+      case _ =>
+        Future.successful(Redirect(routes.SomeInformationMissingController.onPageLoad()))
+    }
+
+  private def handleChangesInCacheFlow(fiid: String, ua: UserAnswers, fromChangedAnswers: Boolean)(implicit request: DataRequest[AnyContent]) =
+    ua.get(ReportForRegisteredBusinessPage) match {
+      case Some(isFIUser) if isFIUser =>
+        getMissingAnswers(ua) match {
+          case Nil => createPage(fiid, ua, hasChanges = fromChangedAnswers)
+          case _   => Redirect(routes.SomeInformationMissingController.onPageLoad())
+        }
+      case _ => Redirect(controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(fiid))
+    }
 
   def confirmAndAdd(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
