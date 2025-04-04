@@ -20,13 +20,13 @@ import controllers.actions._
 import models.NormalMode
 import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
-
-import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.CheckYourAnswersValidator
 import views.html.SomeInformationMissingView
+
+import javax.inject.Inject
 
 class SomeInformationMissingController @Inject() (
   override val messagesApi: MessagesApi,
@@ -40,17 +40,29 @@ class SomeInformationMissingController @Inject() (
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      (request.userAnswers.get(ChangeFiDetailsInProgressId), request.userAnswers.get(ReportForRegisteredBusinessPage).isEmpty) match {
-        case (Some(_), true) =>
-          val redirect = CheckYourAnswersValidator(request.userAnswers).changeAnswersRedirectUrl
-          Ok(view(redirect))
-        case (Some(_), false) =>
-          val redirect = CheckYourAnswersValidator(request.userAnswers).changeAnswersRedirectUrlForRegisteredBusiness
-          Ok(view(redirect))
-        case (None, true) =>
-          Ok(view(controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url))
-        case (None, false) =>
-          Ok(view(controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(NormalMode).url))
+      def getStandardFICheckAnswers = {
+        val redirect = CheckYourAnswersValidator(request.userAnswers).changeAnswersRedirectUrl
+        Ok(view(redirect))
+      }
+
+      request.userAnswers.get(ChangeFiDetailsInProgressId) match {
+        case None =>
+          if (request.userAnswers.get(ReportForRegisteredBusinessPage).isEmpty) {
+            Ok(view(controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url))
+          } else {
+            Ok(view(controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(NormalMode).url))
+          }
+        case Some(_) =>
+          request.userAnswers.get(ReportForRegisteredBusinessPage) match {
+            case Some(value) =>
+              if (value) {
+                val redirect = CheckYourAnswersValidator(request.userAnswers).changeAnswersRedirectUrlForRegisteredBusiness
+                Ok(view(redirect))
+              } else {
+                getStandardFICheckAnswers
+              }
+            case None => getStandardFICheckAnswers
+          }
       }
   }
 

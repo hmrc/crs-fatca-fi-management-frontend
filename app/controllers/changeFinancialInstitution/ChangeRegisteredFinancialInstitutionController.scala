@@ -19,9 +19,11 @@ package controllers.changeFinancialInstitution
 import com.google.inject.Inject
 import controllers.actions._
 import controllers.routes
+import models.FinancialInstitutions.FIDetail
 import models.UserAnswers
 import models.requests.DataRequest
 import pages.Page
+import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -62,19 +64,15 @@ class ChangeRegisteredFinancialInstitutionController @Inject() (
         .flatMap {
           case Some(fiDetails) =>
             userAnswers.get(ChangeFiDetailsInProgressId) match {
-              case Some(id) if id.equalsIgnoreCase(fiid) =>
-                getMissingAnswers(userAnswers) match {
-                  case Nil =>
-                    val hasChanges = financialInstitutionUpdateService.registeredFiDetailsHasChanged(userAnswers, fiDetails)
-                    Future.successful(createPage(fiid, userAnswers, hasChanges))
-                  case _ =>
-                    Future.successful(Redirect(routes.SomeInformationMissingController.onPageLoad()))
-                }
+              case Some(id) if id.equalsIgnoreCase(fiid) => handleChangeInProgressFlow(fiid, userAnswers, fiDetails)(request)
               case _ =>
                 financialInstitutionUpdateService
                   .populateAndSaveRegisteredFiDetails(userAnswers, fiDetails)
                   .map {
-                    case (ua, fromChangedAnswers) => createPage(fiid, ua, hasChanges = fromChangedAnswers)
+                    case (ua, fromChangedAnswers) if fromChangedAnswers =>
+                      handleChangesInCacheFlow(fiid, ua, fromChangedAnswers)(request)
+                    case (ua, fromChangedAnswers) =>
+                      createPage(fiid, ua, hasChanges = fromChangedAnswers)
                   }
                   .recoverWith {
                     exception =>
@@ -95,25 +93,49 @@ class ChangeRegisteredFinancialInstitutionController @Inject() (
         }
   }
 
+  private def handleChangeInProgressFlow(fiid: String, userAnswers: UserAnswers, fiDetails: FIDetail)(implicit request: DataRequest[AnyContent]) =
+    getMissingAnswers(userAnswers) match {
+      case Nil =>
+        val hasChanges = financialInstitutionUpdateService.registeredFiDetailsHasChanged(userAnswers, fiDetails)
+        Future.successful(createPage(fiid, userAnswers, hasChanges))
+      case _ =>
+        Future.successful(Redirect(routes.SomeInformationMissingController.onPageLoad()))
+    }
+
+  private def handleChangesInCacheFlow(fiid: String, ua: UserAnswers, fromChangedAnswers: Boolean)(implicit request: DataRequest[AnyContent]) =
+    ua.get(ReportForRegisteredBusinessPage) match {
+      case Some(isFIUser) if isFIUser =>
+        getMissingAnswers(ua) match {
+          case Nil => createPage(fiid, ua, hasChanges = fromChangedAnswers)
+          case _   => Redirect(routes.SomeInformationMissingController.onPageLoad())
+        }
+      case _ => Redirect(controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(fiid))
+    }
+
   def confirmAndAdd(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val fiName = getFinancialInstitutionName(request.userAnswers)
-      financialInstitutionsService
-        .updateFinancialInstitution(request.fatcaId, request.userAnswers)
-        .flatMap(
-          _ => financialInstitutionUpdateService.clearUserAnswers(request.userAnswers)
-        )
-        .flatMap(
-          _ => changeUserAnswersRepository.clear(request.fatcaId, request.userAnswers.get(ChangeFiDetailsInProgressId))
-        )
-        .map(
-          _ => Redirect(controllers.routes.DetailsUpdatedController.onPageLoad()).flashing("fiName" -> fiName)
-        )
-        .recoverWith {
-          exception =>
-            logger.error(s"Failed to clear user answers for subscription Id: [${request.fatcaId}]", exception)
-            Future.successful(InternalServerError(errorView()))
-        }
+      val userAnswers = request.userAnswers
+      getMissingAnswers(userAnswers) match {
+        case Nil =>
+          val fiName = getFinancialInstitutionName(userAnswers)
+          financialInstitutionsService
+            .updateFinancialInstitution(request.fatcaId, userAnswers)
+            .flatMap(
+              _ => financialInstitutionUpdateService.clearUserAnswers(userAnswers)
+            )
+            .flatMap(
+              _ => changeUserAnswersRepository.clear(request.fatcaId, userAnswers.get(ChangeFiDetailsInProgressId))
+            )
+            .map(
+              _ => Redirect(routes.DetailsUpdatedController.onPageLoad()).flashing("fiName" -> fiName)
+            )
+            .recoverWith {
+              exception =>
+                logger.error(s"Failed to clear user answers for subscription Id: [${request.fatcaId}]", exception)
+                Future.successful(InternalServerError(errorView()))
+            }
+        case _ => Future.successful(Redirect(routes.SomeInformationMissingController.onPageLoad()))
+      }
   }
 
   private def createPage(fiId: String, updatedUserAnswers: UserAnswers, hasChanges: Boolean)(implicit request: DataRequest[AnyContent]): Result = {

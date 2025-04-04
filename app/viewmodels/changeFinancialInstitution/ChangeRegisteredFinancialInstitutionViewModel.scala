@@ -19,6 +19,7 @@ package viewmodels.changeFinancialInstitution
 import models.{ChangeAnswers, UserAnswers}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.ReportForRegisteredBusinessSummary
 import viewmodels.common._
 
 object ChangeRegisteredFinancialInstitutionViewModel {
@@ -26,6 +27,7 @@ object ChangeRegisteredFinancialInstitutionViewModel {
   def getChangeRegisteredFinancialInstitutionSummaries(fiId: String, userAnswers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] =
     Seq(
       Option(FinancialInstitutionIdSummary.row(fiId)),
+      ReportForRegisteredBusinessSummary.row(userAnswers, ChangeAnswers),
       IsThisYourBusinessNameSummary.row(userAnswers, ChangeAnswers),
       getGIINRows(userAnswers, ChangeAnswers),
       getAddressRow(userAnswers, ChangeAnswers)

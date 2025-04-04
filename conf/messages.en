@@ -277,6 +277,9 @@ reportForRegisteredBusiness.p1 = If you need to report for the business you regi
 reportForRegisteredBusiness.checkYourAnswersLabel = Do you need to report for the business you registered as?
 reportForRegisteredBusiness.error.required = Select yes if you would like to add your business as a financial institution
 reportForRegisteredBusiness.change.hidden = Change if you need to report for the business you registered as
+reportForRegisteredBusiness.changeInProgress.title = Is this financial institution the business you registered as?
+reportForRegisteredBusiness.changeInProgress.heading = Is this financial institution the business you registered as?
+
 
 nonUkAddress.title = What is the financial institution’s registered address?
 nonUkAddress.heading = What is the registered address for {0}?
