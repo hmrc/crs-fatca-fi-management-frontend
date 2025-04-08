@@ -27,6 +27,7 @@ import play.api.inject.bind
 import play.api.mvc.{Call, MessagesControllerComponents}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.SessionRepository
 import services.FinancialInstitutionsService
 import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -87,9 +88,10 @@ class AddFIControllerSpec extends SpecBase with PrivateMethodTester {
       val identify                                           = mock[IdentifierAction]
       val mockCtUtrRetrievalAction                           = mock[CtUtrRetrievalAction]
       val mockFinancialInstitutionsService                   = mock[FinancialInstitutionsService]
+      val mockSessionRepository                              = mock[SessionRepository]
       implicit val ec: ExecutionContext                      = scala.concurrent.ExecutionContext.global
 
-      val sut                = new AddFIController(controllerComponents, identify, mockCtUtrRetrievalAction, mockFinancialInstitutionsService)(ec)
+      val sut = new AddFIController(controllerComponents, identify, mockCtUtrRetrievalAction, mockFinancialInstitutionsService, mockSessionRepository)(ec)
       val privateRedirectUrl = PrivateMethod[Call](Symbol("redirectUrl"))
 
       "when user has already added fis" - {

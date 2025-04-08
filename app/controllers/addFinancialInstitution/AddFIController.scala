@@ -17,28 +17,39 @@
 package controllers.addFinancialInstitution
 
 import controllers.actions.{CtUtrRetrievalAction, IdentifierAction}
-import models.NormalMode
+import models.{NormalMode, UserAnswers}
+import pages.JourneyStartedPage
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import repositories.SessionRepository
 import services.FinancialInstitutionsService
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class AddFIController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify: IdentifierAction,
   retrieveCtUTR: CtUtrRetrievalAction,
-  financialInstitutionsService: FinancialInstitutionsService
+  financialInstitutionsService: FinancialInstitutionsService,
+  sessionRepository: SessionRepository
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController {
 
   def onPageLoad: Action[AnyContent] = (identify andThen retrieveCtUTR()).async {
     implicit request =>
-      for (institutions <- financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId))
-        yield Redirect(redirectUrl(request.autoMatched, request.userType, institutions.nonEmpty))
+      UserAnswers(id = request.userId)
+        .set(JourneyStartedPage, true)
+        .fold(
+          _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())),
+          updatedAnswers =>
+            for {
+              institutions <- financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId)
+              _            <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(redirectUrl(request.autoMatched, request.userType, institutions.nonEmpty))
+        )
   }
 
   private def redirectUrl(autoMatched: Boolean, affinityGroup: AffinityGroup, hasSomeFIs: Boolean): Call =

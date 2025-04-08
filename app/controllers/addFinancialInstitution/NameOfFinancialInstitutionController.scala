@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.addFinancialInstitution.NameOfFinancialInstitutionFormProvider
 import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
+import pages.addFinancialInstitution.{FirstContactEmailPage, NameOfFinancialInstitutionPage}
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -39,6 +39,8 @@ class NameOfFinancialInstitutionController @Inject() (
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  checkForInformationSent: CheckForInformationSentAction,
   formProvider: NameOfFinancialInstitutionFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: NameOfFinancialInstitutionView
@@ -48,24 +50,17 @@ class NameOfFinancialInstitutionController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkForInformationSent) {
     implicit request =>
-      val preparedForm: Form[_] =
-        request.userAnswers
-          .getOrElse(
-            UserAnswers(
-              id = request.userId
-            )
-          )
-          .get(NameOfFinancialInstitutionPage) match {
-          case None        => form
-          case Some(value) => form.fill(value)
-        }
+      val preparedForm = request.userAnswers.get(NameOfFinancialInstitutionPage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
+      }
 
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
@@ -73,17 +68,9 @@ class NameOfFinancialInstitutionController @Inject() (
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
           value =>
             for {
-              updatedAnswers: UserAnswers <- Future.fromTry(
-                request.userAnswers
-                  .getOrElse(
-                    UserAnswers(
-                      id = request.userId
-                    )
-                  )
-                  .set(NameOfFinancialInstitutionPage, value)
-              )
-              _ <- sessionRepository.set(updatedAnswers)
-              _ <- changeUserAnswersRepository.set(request.fatcaId, updatedAnswers.get(ChangeFiDetailsInProgressId), updatedAnswers)
+              updatedAnswers: UserAnswers <- Future.fromTry(request.userAnswers.set(NameOfFinancialInstitutionPage, value))
+              _                           <- sessionRepository.set(updatedAnswers)
+              _                           <- changeUserAnswersRepository.set(request.fatcaId, updatedAnswers.get(ChangeFiDetailsInProgressId), updatedAnswers)
             } yield Redirect(navigator.nextPage(NameOfFinancialInstitutionPage, mode, updatedAnswers))
         )
   }
