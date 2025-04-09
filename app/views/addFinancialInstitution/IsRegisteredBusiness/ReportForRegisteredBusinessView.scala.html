@@ -42,9 +42,9 @@
             RadiosViewModel.yesNo(
                 field = form("value"),
                 legend = if (isChangeFIInProgress) {
-                        LegendViewModel(messages("reportForRegisteredBusiness.changeInProgress.heading")).withCssClass("govuk-visually-hidden")
+                        LegendViewModel(messages("reportForRegisteredBusiness.changeInProgress.heading")).withCssClass("govuk-visually-hidden govuk-!-display-block")
                     } else {
-                        LegendViewModel(messages("reportForRegisteredBusiness.heading")).withCssClass("govuk-visually-hidden")
+                        LegendViewModel(messages("reportForRegisteredBusiness.heading")).withCssClass("govuk-visually-hidden govuk-!-display-block")
                 }
             )
         )
