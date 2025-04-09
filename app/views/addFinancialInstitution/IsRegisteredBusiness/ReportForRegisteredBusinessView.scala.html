@@ -31,23 +31,26 @@
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        @if(isChangeFIInProgress){
-            <h1 class="govuk-heading-l">@messages("reportForRegisteredBusiness.changeInProgress.heading")</h1>
-        }else{
+        @if(!isChangeFIInProgress){
             <h1 class="govuk-heading-l">@messages("reportForRegisteredBusiness.heading")</h1>
             <p class="govuk-body">@Html(messages("reportForRegisteredBusiness.p1"))</p>
         }
 
-        @govukRadios(
-            RadiosViewModel.yesNo(
-                field = form("value"),
-                legend = if (isChangeFIInProgress) {
-                        LegendViewModel(messages("reportForRegisteredBusiness.changeInProgress.heading")).withCssClass("govuk-visually-hidden govuk-!-display-block")
-                    } else {
-                        LegendViewModel(messages("reportForRegisteredBusiness.heading")).withCssClass("govuk-visually-hidden govuk-!-display-block")
-                }
+        @if(isChangeFIInProgress) {
+            govukRadios(
+                RadiosViewModel.yesNo(
+                    field = form("value"),
+                    legend = LegendViewModel(messages("reportForRegisteredBusiness.changeInProgress.heading")).asPageHeading()
+                )
             )
-        )
+        } else {
+            @govukRadios(
+                RadiosViewModel.yesNo(
+                    field = form("value"),
+                    legend = LegendViewModel(messages("reportForRegisteredBusiness.heading")).withCssClass("govuk-visually-hidden govuk-!-display-block")
+                )
+            )
+        }
 
         @govukButton(
             ButtonViewModel(messages("site.continue")).withAttribute("id" -> "submit")
