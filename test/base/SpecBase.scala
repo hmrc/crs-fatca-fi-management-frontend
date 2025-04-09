@@ -23,6 +23,7 @@ import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{OptionValues, PrivateMethodTester, TryValues}
+import pages.JourneyStartedPage
 import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage}
 import pages.addFinancialInstitution._
 import play.api.Application
@@ -239,7 +240,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
     .withPage(IsTheAddressCorrectPage, true)
 
   implicit val hc: HeaderCarrier    = HeaderCarrier()
-  def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
+  def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId).withPage(JourneyStartedPage, true)
 
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 

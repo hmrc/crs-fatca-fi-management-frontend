@@ -124,6 +124,21 @@ class AddFIControllerSpec extends SpecBase with PrivateMethodTester {
         }
       }
     }
+
+//    "must initiate userAnswers" in { //rewrite for AddFIController
+//
+//      val application = applicationBuilder(userAnswers = None).build()
+//
+//      running(application) {
+//        val request = FakeRequest(GET, nameOfFinancialInstitutionRoute)
+//
+//        val result = route(application, request).value
+//
+//        status(result) mustEqual OK
+//      }
+//    }
+//
+//
   }
 
 }
