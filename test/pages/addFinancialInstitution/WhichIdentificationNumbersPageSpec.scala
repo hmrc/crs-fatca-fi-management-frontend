@@ -72,7 +72,7 @@ class WhichIdentificationNumbersPageSpec extends PageBehaviours {
         .withPage(CompanyRegistrationNumberPage, CompanyRegistrationNumber("test"))
         .withPage(TrustURNPage, TrustUniqueReferenceNumber("someTRN"))
 
-      val selectedTINs: Set[TINType] = Set(TINType.TRN)
+      val selectedTINs: Set[TINType] = Set(TINType.TURN)
       val result                     = WhichIdentificationNumbersPage.cleanUpUnselectedTINPages(selectedTINs, userAnswers).success.value
 
       result.get(WhatIsUniqueTaxpayerReferencePage) mustBe empty

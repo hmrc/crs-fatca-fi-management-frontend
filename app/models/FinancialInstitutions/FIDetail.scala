@@ -24,6 +24,7 @@ sealed trait BaseFIDetail {
   val FIName: String
   val SubscriptionID: String
   val TINDetails: Seq[TINDetails]
+  val GIIN: Option[String]
   val IsFIUser: Boolean
   val AddressDetails: AddressDetails
   val PrimaryContactDetails: Option[ContactDetails]
@@ -39,6 +40,7 @@ final case class FIDetail(
   FIName: String,
   SubscriptionID: String,
   TINDetails: Seq[TINDetails],
+  GIIN: Option[String],
   IsFIUser: Boolean,
   AddressDetails: AddressDetails,
   PrimaryContactDetails: Option[ContactDetails],
@@ -99,6 +101,7 @@ final case class CreateFIDetails(
   FIName: String,
   SubscriptionID: String,
   TINDetails: Seq[TINDetails],
+  GIIN: Option[String],
   IsFIUser: Boolean,
   AddressDetails: AddressDetails,
   PrimaryContactDetails: Option[ContactDetails],

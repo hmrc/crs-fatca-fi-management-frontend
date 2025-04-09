@@ -42,7 +42,8 @@ case object ReportForRegisteredBusinessPage extends QuestionPage[Boolean] {
           SecondContactNamePage,
           SecondContactEmailPage,
           SecondContactCanWePhonePage,
-          SecondContactPhoneNumberPage
+          SecondContactPhoneNumberPage,
+          WhichIdentificationNumbersPage
         )
         removePages(pagesToRemove, userAnswers)
 

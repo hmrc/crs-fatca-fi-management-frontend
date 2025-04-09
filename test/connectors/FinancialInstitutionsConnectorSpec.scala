@@ -43,6 +43,7 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
     FIName = "financial-institution",
     SubscriptionID = "XE512345678",
     TINDetails = Seq.empty,
+    GIIN = None,
     IsFIUser = true,
     AddressDetails = AddressDetails(
       AddressLine1 = "line 1",

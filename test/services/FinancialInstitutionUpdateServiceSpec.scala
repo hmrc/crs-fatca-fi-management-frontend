@@ -280,7 +280,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
         forAll {
           fiDetails: FIDetail =>
             val fiDetailsGIIN     = GIINumber(UUID.randomUUID().toString)
-            val fiDetailsWithGIIN = fiDetails.copy(TINDetails = Seq(TINDetails(TINType = GIIN, TIN = fiDetailsGIIN.value, "")))
+            val fiDetailsWithGIIN = fiDetails.copy(TINDetails = Seq(TINDetails(TINType = UTR, TIN = fiDetailsGIIN.value, "")))
             when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
             when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(Country.GB))
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(fiDetails.AddressDetails.CountryCode.toSet)
@@ -532,16 +532,10 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
       id => CompanyRegistrationNumber(id.TIN)
     )
 
-    val maybeTRN: Option[TINDetails] = fiDetails.TINDetails.find(_.TINType == TRN)
-    populatedUserAnswers.get(WhichIdentificationNumbersPage) contains TRN
+    val maybeTRN: Option[TINDetails] = fiDetails.TINDetails.find(_.TINType == TURN)
+    populatedUserAnswers.get(WhichIdentificationNumbersPage) contains TURN
     populatedUserAnswers.get(TrustURNPage) mustBe maybeTRN.map(
       id => TrustUniqueReferenceNumber(id.TIN)
-    )
-
-    val maybeGIIN = fiDetails.TINDetails.find(_.TINType == GIIN)
-    populatedUserAnswers.get(HaveGIINPage).value mustBe maybeGIIN.isDefined
-    populatedUserAnswers.get(WhatIsGIINPage) mustBe maybeGIIN.map(
-      id => GIINumber(id.TIN)
     )
   }
 

@@ -114,6 +114,36 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
           }
         }
 
+        "must navigate To Standard FI When ReportForRegistered Business is set to false" in {
+          val fiDetail    = testFiDetail
+          val userAnswers = emptyUserAnswers
+          val updatedAnswers = userAnswers
+            .withPage(ChangeFiDetailsInProgressId, "12345678")
+            .withPage(ReportForRegisteredBusinessPage, false)
+            .withPage(UkAddressPage, address)
+            .withPage(IsTheAddressCorrectPage, true)
+            .withPage(IsThisYourBusinessNamePage, true)
+
+          mockSuccessfulFiRetrieval(fiDetail)
+          when(
+            mockFinancialInstitutionUpdateService.populateAndSaveRegisteredFiDetails(any(), any())
+          ).thenReturn(Future.successful((userAnswers, true)))
+
+          val application = createAppWithAnswers(Option(userAnswers))
+          running(application) {
+            val request =
+              FakeRequest(GET, controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.onPageLoad(fiDetail.FIID).url)
+
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result).value mustEqual controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController
+              .onPageLoad(fiDetail.FIID)
+              .url
+          }
+
+        }
+
         "must return INTERNAL_SERVER_ERROR when an error occurs during persistence of FI details" in {
           forAll {
             fiDetail: FIDetail =>
@@ -253,16 +283,44 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
 
     "confirmAndAdd" - {
 
-      val userAnswers = emptyUserAnswers
-      val updatedAnswers = userAnswers
-        .withPage(ChangeFiDetailsInProgressId, "12345678")
-        .withPage(ReportForRegisteredBusinessPage, true)
-        .withPage(HaveGIINPage, false)
-        .withPage(UkAddressPage, address)
-        .withPage(IsTheAddressCorrectPage, true)
-        .withPage(IsThisYourBusinessNamePage, true)
+      "must redirect to SomeInformationMissing Page when There is missing values(HaveGIINPage) for request" in {
+        val userAnswers = emptyUserAnswers
+        val updatedAnswers = userAnswers
+          .withPage(ChangeFiDetailsInProgressId, "12345678")
+          .withPage(ReportForRegisteredBusinessPage, true)
+          .withPage(UkAddressPage, address)
+          .withPage(IsTheAddressCorrectPage, true)
+          .withPage(IsThisYourBusinessNamePage, true)
+
+        when(mockFinancialInstitutionUpdateService.clearUserAnswers(any[UserAnswers])).thenReturn(Future.successful(true))
+        when(
+          mockFinancialInstitutionsService.updateFinancialInstitution(any[String], any[UserAnswers])(any[HeaderCarrier], any[ExecutionContext])
+        )
+          .thenReturn(Future.successful())
+
+        val application = createAppWithAnswers(Option(updatedAnswers))
+        running(application) {
+          val request = FakeRequest(POST, controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.confirmAndAdd().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.SomeInformationMissingController.onPageLoad().url
+
+          verify(mockFinancialInstitutionUpdateService, times(0)).clearUserAnswers(any())
+          verify(mockFinancialInstitutionsService, times(0)).updateFinancialInstitution(any(), any())(any(), any())
+        }
+      }
 
       "must clear user answers data and redirect to details submitted for a POST" in {
+        val userAnswers = emptyUserAnswers
+        val updatedAnswers = userAnswers
+          .withPage(ChangeFiDetailsInProgressId, "12345678")
+          .withPage(ReportForRegisteredBusinessPage, true)
+          .withPage(HaveGIINPage, false)
+          .withPage(UkAddressPage, address)
+          .withPage(IsTheAddressCorrectPage, true)
+          .withPage(IsThisYourBusinessNamePage, true)
 
         when(mockFinancialInstitutionUpdateService.clearUserAnswers(any[UserAnswers])).thenReturn(Future.successful(true))
         when(
@@ -284,6 +342,14 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
       }
 
       "must return INTERNAL_SERVER_ERROR for a POST when an error occurs when clearing user answers" in {
+        val userAnswers = emptyUserAnswers
+        val updatedAnswers = userAnswers
+          .withPage(ChangeFiDetailsInProgressId, "12345678")
+          .withPage(ReportForRegisteredBusinessPage, true)
+          .withPage(HaveGIINPage, false)
+          .withPage(UkAddressPage, address)
+          .withPage(IsTheAddressCorrectPage, true)
+          .withPage(IsThisYourBusinessNamePage, true)
         when(
           mockFinancialInstitutionsService.updateFinancialInstitution(any[String], any[UserAnswers])(any[HeaderCarrier], any[ExecutionContext])
         )
