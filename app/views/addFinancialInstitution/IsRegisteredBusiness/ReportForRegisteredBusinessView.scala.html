@@ -41,9 +41,14 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("reportForRegisteredBusiness.heading")).withCssClass("govuk-visually-hidden")
+                legend = if (isChangeFIInProgress) {
+                        LegendViewModel(messages("reportForRegisteredBusiness.changeInProgress.heading")).withCssClass("govuk-visually-hidden")
+                    } else {
+                        LegendViewModel(messages("reportForRegisteredBusiness.heading")).withCssClass("govuk-visually-hidden")
+                }
             )
         )
+    )
 
         @govukButton(
             ButtonViewModel(messages("site.continue")).withAttribute("id" -> "submit")

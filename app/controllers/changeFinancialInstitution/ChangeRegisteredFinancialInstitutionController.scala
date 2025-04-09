@@ -18,8 +18,8 @@ package controllers.changeFinancialInstitution
 
 import com.google.inject.Inject
 import controllers.actions._
+import models.UserAnswers
 import models.requests.DataRequest
-import models.{CheckMode, UserAnswers}
 import navigation.Navigator
 import pages.Page
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId

@@ -17,7 +17,6 @@
 package controllers
 
 import controllers.actions._
-import pages.InstitutionDetail
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.FinancialInstitutionsService
@@ -25,7 +24,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ContactHelper
 import views.html.FIRemovedView
 
-import java.time.{Clock, LocalDate, LocalTime, ZoneId, ZonedDateTime}
+import java.time.{Clock, ZoneId, ZonedDateTime}
 import javax.inject.Inject
 
 class FIRemovedController @Inject() (

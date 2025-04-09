@@ -276,7 +276,9 @@ reportForRegisteredBusiness.heading = Would you like to add your business as a f
 reportForRegisteredBusiness.p1 = If you need to report for the business you registered as, then you can add them as a financial institution now. If you would prefer to add another financial institution first, then you can still add the registered business later.
 reportForRegisteredBusiness.checkYourAnswersLabel = Do you need to report for the business you registered as?
 reportForRegisteredBusiness.error.required = Select yes if you would like to add your business as a financial institution
-reportForRegisteredBusiness.change.hidden = Change if you need to report for the business you registered as
+reportForRegisteredBusiness.error.required.change = Select yes if this financial institution is the business you registered as
+reportForRegisteredBusiness.check.hidden = Change if you need to report for the business you registered as
+reportForRegisteredBusiness.change.hidden = Change if this financial institution is the business you registered as
 reportForRegisteredBusiness.changeInProgress.title = Is this financial institution the business you registered as?
 reportForRegisteredBusiness.changeInProgress.heading = Is this financial institution the business you registered as?
 

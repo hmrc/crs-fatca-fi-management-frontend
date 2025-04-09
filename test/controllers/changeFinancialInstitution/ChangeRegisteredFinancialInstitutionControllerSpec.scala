@@ -28,8 +28,8 @@ import org.mockito.MockitoSugar.{reset, times, verify}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
-import pages.addFinancialInstitution.{HaveGIINPage, UkAddressPage}
 import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
+import pages.addFinancialInstitution.{HaveGIINPage, UkAddressPage}
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.inject.bind

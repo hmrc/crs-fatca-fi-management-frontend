@@ -17,15 +17,11 @@
 package viewmodels.changeFinancialInstitution
 
 import base.SpecBase
-import models.FinancialInstitutions.TINType
-import models.FinancialInstitutions.TINType._
-import models.{AddressResponse, CheckAnswers, CheckMode, CompanyRegistrationNumber, GIINumber, TrustUniqueReferenceNumber, UniqueTaxpayerReference, UserAnswers}
+import models.{AddressResponse, GIINumber, UserAnswers}
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
-import pages.{CompanyRegistrationNumberPage, TrustURNPage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
-import viewmodels.common.{getAddressChangeRoute, getFirstContactSummaries, getSecondContactSummaries}
 
 class ChangeRegisteredFinancialInstitutionViewModelSpec extends SpecBase {
 
