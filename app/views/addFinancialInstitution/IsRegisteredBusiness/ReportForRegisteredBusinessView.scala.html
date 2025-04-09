@@ -37,7 +37,7 @@
         }
 
         @if(isChangeFIInProgress) {
-            govukRadios(
+            @govukRadios(
                 RadiosViewModel.yesNo(
                     field = form("value"),
                     legend = LegendViewModel(messages("reportForRegisteredBusiness.changeInProgress.heading")).asPageHeading()
