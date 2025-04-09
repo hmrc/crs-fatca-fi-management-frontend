@@ -40,6 +40,7 @@ class WhichIdentificationNumbersController @Inject() (
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
+  checkForInformationSent: CheckForInformationSentAction,
   formProvider: WhichIdentificationNumbersFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: WhichIdentificationNumbersView
@@ -50,7 +51,7 @@ class WhichIdentificationNumbersController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen checkForInformationSent) {
     implicit request =>
       val fiName = getFinancialInstitutionName(request.userAnswers)
       val preparedForm = request.userAnswers.get(WhichIdentificationNumbersPage) match {

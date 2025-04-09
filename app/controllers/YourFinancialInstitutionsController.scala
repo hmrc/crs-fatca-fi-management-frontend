@@ -18,6 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.addFinancialInstitution.YourFinancialInstitutionsFormProvider
+import models.UserAnswers
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import pages.{InstitutionDetail, RemoveAreYouSurePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -53,25 +54,29 @@ class YourFinancialInstitutionsController @Inject() (
     implicit request =>
       val ua = request.userAnswers
 
-      val removedInstitutionName: Option[String] = {
-        val hasRemoved = ua.get(RemoveAreYouSurePage).fold[Option[Boolean]](None)(Some(_))
-        hasRemoved match {
-          case Some(true) =>
-            ua
-              .get(InstitutionDetail)
-              .fold[Option[String]](None) {
-                removedInstitution =>
-                  Some(removedInstitution.FIName)
-              }
-          case _ => None
-        }
-      }
       for {
         institutions           <- financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId)
         answersWithoutRemoveFI <- Future.fromTry(request.userAnswers.remove(InstitutionDetail))
         answersWithoutChangeFI <- Future.fromTry(answersWithoutRemoveFI.remove(ChangeFiDetailsInProgressId))
         _                      <- sessionRepository.set(answersWithoutChangeFI)
-      } yield Ok(view(form, SummaryListViewModel(getYourFinancialInstitutionsRows(institutions)), removedInstitutionName))
+      } yield Ok(view(form, SummaryListViewModel(getYourFinancialInstitutionsRows(institutions)), getRemovedFIName(ua)))
+  }
+
+  private def getRemovedFIName(ua: UserAnswers) = {
+    val removedInstitutionName: Option[String] = {
+      val hasRemoved = ua.get(RemoveAreYouSurePage).fold[Option[Boolean]](None)(Some(_))
+      hasRemoved match {
+        case Some(true) =>
+          ua
+            .get(InstitutionDetail)
+            .fold[Option[String]](None) {
+              removedInstitution =>
+                Some(removedInstitution.FIName)
+            }
+        case _ => None
+      }
+    }
+    removedInstitutionName
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -86,7 +91,7 @@ class YourFinancialInstitutionsController @Inject() (
           {
             case true =>
               financialInstitutionUpdateService
-                .clearUserAnswers(request.userAnswers)
+                .clearUserAnswers(request.userAnswers) // not actually dropping, just clearing answers, keeping the object
                 .map(
                   _ => Redirect(controllers.addFinancialInstitution.routes.AddFIController.onPageLoad)
                 )

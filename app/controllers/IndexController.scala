@@ -58,20 +58,8 @@ class IndexController @Inject() (
               .flatMap {
                 hasFis =>
                   val changeContactDetailsUrl = if (sub.isBusiness) conf.changeOrganisationDetailsUrl else conf.changeIndividualDetailsUrl
-                  val indexPageDetails =
-                    IndexViewModel(sub.isBusiness, fatcaId, changeContactDetailsUrl, sub.businessName, hasFis)
+                  Future.successful(Ok(view(IndexViewModel(sub.isBusiness, fatcaId, changeContactDetailsUrl, sub.businessName, hasFis))))
 
-                  sessionRepository.get(fatcaId) flatMap {
-                    case Some(_) =>
-                      Future.successful(Ok(view(indexPageDetails)))
-                    case None =>
-                      sessionRepository.set(UserAnswers(fatcaId)) map {
-                        case true => Ok(view(indexPageDetails))
-                        case false =>
-                          logger.error(s"Failed to initialize user answers for userId: [$fatcaId]")
-                          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-                      }
-                  }
               }
           }
 

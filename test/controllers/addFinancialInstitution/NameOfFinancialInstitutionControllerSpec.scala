@@ -126,40 +126,6 @@ class NameOfFinancialInstitutionControllerSpec extends SpecBase with MockitoSuga
       }
     }
 
-    "must initiate userAnswers for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(GET, nameOfFinancialInstitutionRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-      }
-    }
-
-    "must initiate userAnswers for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(
-          bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-          bind[SessionRepository].toInstance(mockSessionRepository)
-        )
-        .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, nameOfFinancialInstitutionRoute)
-            .withFormUrlEncodedBody(("value", "answer"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
-      }
-    }
-
   }
 
 }
