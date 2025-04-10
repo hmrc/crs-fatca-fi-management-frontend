@@ -115,7 +115,7 @@ class ReportForRegisteredBusinessControllerSpec extends SpecBase with MockitoSug
         status(result) mustEqual OK
         val htmlVal = contentAsString(result)
         htmlVal mustEqual view(form.fill(true), CheckMode, changeInProgress)(request, messages(application)).toString
-        val heading = Jsoup.parse(htmlVal).select(".govuk-heading-l")
+        val heading = Jsoup.parse(htmlVal).select(".govuk-fieldset__heading")
         heading.size() mustEqual 1
         heading.get(0).text() mustEqual changeFIDetailHeader
       }
