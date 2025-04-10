@@ -38,7 +38,7 @@ object ReportForRegisteredBusinessSummary {
             accessibleActionItem("site.change",
                                  controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(CheckMode).url
             )
-              .withVisuallyHiddenText(messages("reportForRegisteredBusiness.change.hidden"))
+              .withVisuallyHiddenText(messages(s"reportForRegisteredBusiness.${pageType.labelPrefix}.hidden"))
           )
         )
     }
