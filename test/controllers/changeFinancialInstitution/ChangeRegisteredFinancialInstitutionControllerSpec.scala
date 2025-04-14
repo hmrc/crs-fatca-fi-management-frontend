@@ -115,9 +115,8 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
         }
 
         "must navigate To Standard FI When ReportForRegistered Business is set to false" in {
-          val fiDetail    = testFiDetail
+          val fiDetail = testFiDetail
           val userAnswers = emptyUserAnswers
-          val updatedAnswers = userAnswers
             .withPage(ChangeFiDetailsInProgressId, "12345678")
             .withPage(ReportForRegisteredBusinessPage, false)
             .withPage(UkAddressPage, address)
