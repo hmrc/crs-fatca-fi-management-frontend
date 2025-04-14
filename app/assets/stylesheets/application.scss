@@ -9,6 +9,12 @@
     word-break: break-word;
 }
 
+// // solves long heading problem
+// govuk-label
+// .govuk-fieldset__heading {
+//     word-break: break-word;
+//     }
+
 // These are for the specific behavior of the table on /your-fis
 .user-financial-institutions-summary .govuk-summary-list {
     display: flex;
