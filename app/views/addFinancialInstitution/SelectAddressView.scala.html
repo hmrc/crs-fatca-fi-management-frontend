@@ -44,7 +44,7 @@
         @govukRadios(
             RadiosViewModel.apply(
                 field = form("value"),
-                legend = LegendViewModel(messages("selectAddress.heading")).withCssClass("govuk-visually-hidden"),
+                legend = LegendViewModel(messages("selectAddress.heading")).withCssClass("govuk-visually-hidden govuk-!-display-block"),
                 items = addressOptions
             )
         )
