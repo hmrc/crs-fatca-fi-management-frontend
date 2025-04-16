@@ -280,10 +280,10 @@ class FinancialInstitutionUpdateService @Inject() (
     val fetchedAddress = addressDetails.toAddress(countryListFactory)
     val enteredAddress = if (isUkAddress) {
       (userAnswers.get(UkAddressPage), userAnswers.get(SelectedAddressLookupPage), userAnswers.get(FetchedRegisteredAddressPage)) match {
-        case (Some(ukAddress), None, _)             => Option(ukAddress)
-        case (None, Some(selectedLookupAddress), _) => Option(selectedLookupAddress.toAddress)
-        case (None, None, Some(fetchedAddress))     => Option(fetchedAddress.toAddress)
-        case _                                      => None
+        case (Some(ukAddress), None, _)                 => Option(ukAddress)
+        case (None, Some(selectedLookupAddress), _)     => Option(selectedLookupAddress.toAddress)
+        case (None, None, Some(fetchedAddressResponse)) => Option(fetchedAddressResponse.toAddress)
+        case _                                          => None
       }
     } else {
       userAnswers.get(NonUkAddressPage)

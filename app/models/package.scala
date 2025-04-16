@@ -116,39 +116,73 @@ package object models {
     }
 
     def remove(path: JsPath): JsResult[JsValue] =
-      (path.path, jsValue) match {
-        case (Nil, _)                                                                 => JsError("path cannot be empty")
-        case ((n: KeyPathNode) :: Nil, value: JsObject) if value.keys.contains(n.key) => JsSuccess(value - n.key)
-        case ((n: KeyPathNode) :: Nil, value: JsObject) if !value.keys.contains(n.key) =>
-          JsError("cannot find value at path")
-        case ((n: IdxPathNode) :: Nil, value: JsArray) => removeIndexNode(n, value)
-        case ((_: KeyPathNode) :: Nil, _)              => JsError(s"cannot remove a key on $jsValue")
-        case (first :: second :: rest, oldValue) =>
-          Reads
-            .optionNoError(Reads.at[JsValue](JsPath(first :: Nil)))
-            .reads(oldValue)
-            .flatMap {
-              opt: Option[JsValue] =>
-                opt
-                  .map(JsSuccess(_))
-                  .getOrElse {
-                    second match {
-                      case _: KeyPathNode =>
-                        JsSuccess(Json.obj())
-                      case _: IdxPathNode =>
-                        JsSuccess(Json.arr())
-                      case _: RecursiveSearch =>
-                        JsError("recursive search is not supported")
-                    }
-                  }
-                  .flatMap {
-                    _.remove(JsPath(second :: rest)).flatMap {
-                      newValue =>
-                        oldValue.set(JsPath(first :: Nil), newValue)
-                    }
-                  }
+      if (path.path.exists(_.isInstanceOf[RecursiveSearch])) {
+        JsError("recursive search is not supported")
+      } else {
+        path.path match {
+          case Nil =>
+            JsError("path cannot be empty")
+
+          case List(key: KeyPathNode) =>
+            jsValue match {
+              case obj: JsObject =>
+                if (obj.keys.contains(key.key)) JsSuccess(obj - key.key)
+                else JsError("cannot find value at path")
+              case _ =>
+                JsError(s"cannot remove a key on $jsValue")
             }
+
+          case List(idx: IdxPathNode) =>
+            jsValue match {
+              case arr: JsArray =>
+                removeIndexNode(idx, arr)
+              case _ =>
+                JsError(s"cannot remove an index on $jsValue")
+            }
+
+          case first :: second :: rest =>
+            handleRecursiveRemove(jsValue, first, second, rest)
+
+          case _ =>
+            JsError(s"unsupported path structure: ${path.path}")
+        }
       }
+
+    private def handleRecursiveRemove(
+      oldValue: JsValue,
+      first: PathNode,
+      second: PathNode,
+      rest: List[PathNode]
+    ): JsResult[JsValue] = {
+      val subPath        = JsPath(first :: Nil)
+      val subValueResult = Reads.optionNoError(Reads.at[JsValue](subPath)).reads(oldValue)
+
+      subValueResult.flatMap {
+        case Some(subValue) =>
+          subValue.remove(JsPath(second :: rest)).flatMap {
+            newValue =>
+              oldValue.set(subPath, newValue)
+          }
+
+        case None =>
+          val maybeDefault = second match {
+            case _: KeyPathNode => Some(Json.obj())
+            case _: IdxPathNode => Some(Json.arr())
+            case _              => None
+          }
+
+          maybeDefault match {
+            case Some(defaultValue) =>
+              defaultValue.remove(JsPath(second :: rest)).flatMap {
+                newValue =>
+                  oldValue.set(subPath, newValue)
+              }
+
+            case None =>
+              JsError("unsupported path node in recursive removal")
+          }
+      }
+    }
 
   }
 
