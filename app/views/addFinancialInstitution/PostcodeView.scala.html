@@ -42,7 +42,7 @@
         @govukInput(
             InputViewModel(
                 field = form("postCode"),
-                label = LabelViewModel(messages("postcode.heading, fiName")).visuallyHidden()
+                label = LabelViewModel(messages("postcode.heading", fiName)).visuallyHidden()
             )
             .withWidth(Fixed10)
             .withAutocomplete("postal-code")
