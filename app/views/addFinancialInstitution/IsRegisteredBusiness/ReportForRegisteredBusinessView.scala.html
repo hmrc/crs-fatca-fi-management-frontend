@@ -40,7 +40,7 @@
             @govukRadios(
                 RadiosViewModel.yesNo(
                     field = form("value"),
-                    legend = LegendViewModel(messages("reportForRegisteredBusiness.changeInProgress.heading")).asPageHeading()
+                    legend = LegendViewModel(messages("reportForRegisteredBusiness.changeInProgress.heading")).asPageHeading().withCssClass("govuk-!-display-block")
                 )
             )
         } else {

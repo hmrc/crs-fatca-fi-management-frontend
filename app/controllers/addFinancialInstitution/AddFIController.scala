@@ -46,7 +46,7 @@ class AddFIController @Inject() (
       case (true, Organisation, false) =>
         controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(NormalMode)
       case _ =>
-        routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode)
+        controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(NormalMode)
     }
 
 }
