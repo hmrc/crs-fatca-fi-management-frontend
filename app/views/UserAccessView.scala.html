@@ -48,7 +48,7 @@
             @govukRadios(
                 RadiosViewModel.yesNo(
                     field = form("value"),
-                    legend = LegendViewModel(getHeading).asPageHeading()
+                    legend = LegendViewModel(getHeading).asPageHeading().withCssClass("govuk-!-display-block")
                 )
             )
 

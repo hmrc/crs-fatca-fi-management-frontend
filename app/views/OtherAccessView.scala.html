@@ -35,7 +35,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(if(fiIsUser) messages("otherAccess.heading.fiisuser", fiName) else messages("otherAccess.heading", fiName)).asPageHeading()
+                legend = LegendViewModel(if(fiIsUser) messages("otherAccess.heading.fiisuser", fiName) else messages("otherAccess.heading", fiName)).asPageHeading().withCssClass("govuk-!-display-block")
             )
         )
 
