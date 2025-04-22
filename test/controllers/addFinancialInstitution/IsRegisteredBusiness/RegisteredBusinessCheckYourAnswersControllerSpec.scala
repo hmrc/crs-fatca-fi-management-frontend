@@ -70,7 +70,7 @@ class RegisteredBusinessCheckYourAnswersControllerSpec extends SpecBase with Sum
       }
     }
 
-    "must redirect to information-sent page for a GET when the user answers data is empty" in {
+    "must redirect to pageUnavailable page for a GET when the user answers data is empty" in {
       val application = applicationBuilder(userAnswers = Option(emptyUserAnswers)).build()
 
       running(application) {
@@ -80,7 +80,7 @@ class RegisteredBusinessCheckYourAnswersControllerSpec extends SpecBase with Sum
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.InformationSentController.onPageLoad.url
+        redirectLocation(result).value mustEqual routes.PageUnavailableController.onPageLoad.url
       }
     }
 
@@ -129,7 +129,7 @@ class RegisteredBusinessCheckYourAnswersControllerSpec extends SpecBase with Sum
         }
       }
 
-      "must redirect to information-sent page for a GET when the user answers data is empty" in {
+      "must redirect to pageUnavailable page for a GET when the user answers data is empty" in {
         val application = applicationBuilder(userAnswers = Option(emptyUserAnswers)).build()
 
         running(application) {
@@ -139,7 +139,7 @@ class RegisteredBusinessCheckYourAnswersControllerSpec extends SpecBase with Sum
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.InformationSentController.onPageLoad.url
+          redirectLocation(result).value mustEqual routes.PageUnavailableController.onPageLoad.url
         }
       }
     }

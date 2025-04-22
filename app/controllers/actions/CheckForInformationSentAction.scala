@@ -28,7 +28,7 @@ class CheckForInformationSentActionImpl @Inject() (implicit val executionContext
 
   override protected def refine[A](request: DataRequest[A]): Future[Either[Result, DataRequest[A]]] =
     if (request.userAnswers.data.keys.isEmpty) {
-      Future.successful(Left(Redirect(routes.InformationSentController.onPageLoad)))
+      Future.successful(Left(Redirect(routes.PageUnavailableController.onPageLoad)))
     } else {
       Future.successful(Right(request))
     }

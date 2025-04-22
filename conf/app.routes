@@ -11,7 +11,7 @@ GET         /language/:lang                                               contro
 GET         /refresh-session                                              controllers.KeepAliveController.keepAlive
 
 GET         /problem/there-is-a-problem                                   controllers.JourneyRecoveryController.onPageLoad()
-GET         /problem/information-sent                                     controllers.InformationSentController.onPageLoad
+GET         /problem/page-unavailable                                     controllers.PageUnavailableController.onPageLoad
 
 GET         /account/sign-out-survey                                      controllers.auth.AuthController.signOut
 GET         /account/sign-out                                             controllers.auth.AuthController.signOutNoSurvey
