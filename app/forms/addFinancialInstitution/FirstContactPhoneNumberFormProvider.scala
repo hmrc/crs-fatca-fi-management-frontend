@@ -31,7 +31,7 @@ class FirstContactPhoneNumberFormProvider @Inject() extends Mappings with RegexC
         "firstContactPhoneNumber.error.required",
         "firstContactPhoneNumber.error.invalid",
         "firstContactPhoneNumber.error.length",
-        phoneRegex,
+        digitsAndWhiteSpaceOnly,
         maxLength
       )
     )
