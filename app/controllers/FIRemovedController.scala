@@ -53,7 +53,7 @@ class FIRemovedController @Inject() (
         case _ =>
           request.userAnswers.get(InstitutionDetail) match {
             case Some(_) => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-            case None    => Redirect(controllers.routes.FIAlreadyRemovedController.onPageLoad())
+            case None    => Redirect(controllers.routes.PageUnavailableController.onPageLoad)
           }
       }
   }
