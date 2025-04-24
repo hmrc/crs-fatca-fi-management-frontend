@@ -10,7 +10,7 @@ GET         /language/:lang                                               contro
 
 GET         /refresh-session                                              controllers.KeepAliveController.keepAlive
 
-GET         /problem/there-is-a-problem                                   controllers.JourneyRecoveryController.onPageLoad()
+GET         /problem/page-unavailable                                   controllers.JourneyRecoveryController.onPageLoad()
 GET         /problem/page-unavailable                                     controllers.PageUnavailableController.onPageLoad
 
 GET         /account/sign-out-survey                                      controllers.auth.AuthController.signOut
