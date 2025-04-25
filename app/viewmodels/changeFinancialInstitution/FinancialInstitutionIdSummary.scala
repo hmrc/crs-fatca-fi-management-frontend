@@ -19,7 +19,6 @@ package viewmodels.changeFinancialInstitution
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.common.accessibleActionItem
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
@@ -28,10 +27,7 @@ object FinancialInstitutionIdSummary {
   def row(fiId: String)(implicit messages: Messages): SummaryListRow =
     SummaryListRowViewModel(
       key = "financialInstitutionId.changeYourAnswersLabel",
-      value = ValueViewModel(HtmlFormat.escape(fiId).toString),
-      actions = Seq(
-        accessibleActionItem("", "")
-      )
+      value = ValueViewModel(HtmlFormat.escape(fiId).toString)
     )
 
 }
