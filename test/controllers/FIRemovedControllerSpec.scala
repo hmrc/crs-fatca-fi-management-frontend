@@ -123,7 +123,7 @@ class FIRemovedControllerSpec extends SpecBase with Generators {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.FIAlreadyRemovedController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.PageUnavailableController.onPageLoad.url
       }
     }
 
@@ -145,7 +145,7 @@ class FIRemovedControllerSpec extends SpecBase with Generators {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.FIAlreadyRemovedController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.PageUnavailableController.onPageLoad.url
       }
     }
 

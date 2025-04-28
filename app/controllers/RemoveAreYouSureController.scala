@@ -56,7 +56,7 @@ class RemoveAreYouSureController @Inject() (
       val ua = request.userAnswers
 
       ua.get(InstitutionDetail) match {
-        case None => Redirect(controllers.routes.FIAlreadyRemovedController.onPageLoad())
+        case None => Redirect(controllers.routes.PageUnavailableController.onPageLoad)
         case Some(_) =>
           (for {
             warningUnderstood   <- ua.get(OtherAccessPage)

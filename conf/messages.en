@@ -230,10 +230,9 @@ whereIsFIBased.no = No
 whereIsFIBased.checkYourAnswersLabel = Is the financial institution based in the UK, Jersey, Guernsey or the Isle of Man?
 whereIsFIBased.error.required = Select yes if the financial institution is based in the UK, Jersey, Guernsey or the Isle of Man
 
-informationSent.title = You have already sent this information
-informationSent.heading = You have already sent this information
-informationSent.p1 = We will contact you if we have any questions about the details you have provided.
-informationSent.link = Manage your CRS or FATCA reports
+pageUnavailable.title = This page is no longer available
+pageUnavailable.heading = This page is no longer available
+pageUnavailable.link.text = Back to manage your CRS and FATCA reports
 
 ukAddress.title = What is the financial institution’s address?
 ukAddress.heading = What is the registered address for {0}?

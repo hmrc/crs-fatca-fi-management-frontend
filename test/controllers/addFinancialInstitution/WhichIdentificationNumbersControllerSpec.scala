@@ -25,7 +25,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.addFinancialInstitution.WhichIdentificationNumbersPage
+import pages.addFinancialInstitution.{NameOfFinancialInstitutionPage, WhichIdentificationNumbersPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -43,12 +43,13 @@ class WhichIdentificationNumbersControllerSpec extends SpecBase with MockitoSuga
 
   val formProvider = new WhichIdentificationNumbersFormProvider()
   val form         = formProvider()
+  private val ua   = emptyUserAnswers.set(NameOfFinancialInstitutionPage, fiName).get
 
   "WhichIdentificationNumbers Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, whichIdentificationNumbersRoute)

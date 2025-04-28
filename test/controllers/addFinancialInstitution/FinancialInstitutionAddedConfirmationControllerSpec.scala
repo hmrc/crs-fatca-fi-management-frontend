@@ -30,7 +30,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import views.html.{FinancialInstitutionAddedConfirmationView, ThereIsAProblemView}
+import views.html.{FinancialInstitutionAddedConfirmationView, PageUnavailableView, ThereIsAProblemView}
 
 import scala.concurrent.Future
 
@@ -84,10 +84,10 @@ class FinancialInstitutionAddedConfirmationControllerSpec extends SpecBase with 
 
             val result = route(application, request).value
 
-            val view = application.injector.instanceOf[ThereIsAProblemView]
+            val view = application.injector.instanceOf[PageUnavailableView]
 
             status(result) mustEqual OK
-            contentAsString(result) mustEqual view()(request, messages(application)).toString
+            contentAsString(result) mustEqual view(controllers.routes.IndexController.onPageLoad().url)(request, messages(application)).toString
           }
       }
     }
