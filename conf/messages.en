@@ -312,7 +312,7 @@ selectAddress.p1.part2 = enter your address manually
 selectAddress.checkYourAnswersLabel = Main business address
 selectAddress.change.hidden = Change main business address
 
-isThisAddress.title = Is this the address?
+isThisAddress.title = Is this the financial institution’s address?
 isThisAddress.heading = Is this the address for {0}?
 isThisAddress.checkYourAnswersLabel = Is this the address
 isThisAddress.error.required = Select yes if this is the financial institution’s address
@@ -408,7 +408,7 @@ isFIRegistered.changeYourAnswersLabel = Is this financial institution the busine
 isThisYourBusinessName.changeYourAnswersLabel = What is the name of the financial institution?
 reportForRegisteredBusiness.changeYourAnswersLabel = Is this financial institution the business you registered as?
 
-detailsUpdated.title = Details updated
+detailsUpdated.title = Financial institution updated
 detailsUpdated.heading = Details updated for {0}
 detailsUpdated.p1 = Back to manage your financial institutions
 detailsUpdated.p2 = Back to manage your CRS and FATCA reports
