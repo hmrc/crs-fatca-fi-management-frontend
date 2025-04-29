@@ -193,7 +193,7 @@ secondContactEmail.error.invalid = Enter an email address in the right format, l
 
 secondContactName.title = What is the name of the person or team we should contact?
 secondContactName.heading = What is the name of the person or team we should contact at {0}?
-secondContactName.p1 = For example, '‘Ashley Smith’' or '‘Tax team’'.
+secondContactName.hint = For example, '‘Ashley Smith’' or '‘Tax team’'.
 secondContactName.checkYourAnswersLabel = Second contact name
 secondContactName.change.hidden = Change second contact name
 secondContactName.error.required = Enter a name for the second contact
