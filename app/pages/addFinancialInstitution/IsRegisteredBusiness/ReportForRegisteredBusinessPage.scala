@@ -17,7 +17,7 @@
 package pages.addFinancialInstitution.IsRegisteredBusiness
 
 import models.UserAnswers
-import pages.QuestionPage
+import pages.{CompanyRegistrationNumberPage, QuestionPage, TrustURNPage}
 import pages.addFinancialInstitution._
 import play.api.libs.json.JsPath
 
@@ -34,6 +34,8 @@ case object ReportForRegisteredBusinessPage extends QuestionPage[Boolean] {
       case Some(true) =>
         val pagesToRemove = Seq(
           WhatIsUniqueTaxpayerReferencePage,
+          CompanyRegistrationNumberPage,
+          TrustURNPage,
           FirstContactNamePage,
           FirstContactEmailPage,
           FirstContactHavePhonePage,
@@ -43,14 +45,25 @@ case object ReportForRegisteredBusinessPage extends QuestionPage[Boolean] {
           SecondContactEmailPage,
           SecondContactCanWePhonePage,
           SecondContactPhoneNumberPage,
-          WhichIdentificationNumbersPage
+          WhichIdentificationNumbersPage,
+          IsThisAddressPage,
+          PostcodePage,
+          UkAddressPage,
+          SelectedAddressLookupPage,
+          AddressLookupPage
         )
         removePages(pagesToRemove, userAnswers)
 
       case Some(false) =>
         val pagesToRemove = Seq(
           IsThisYourBusinessNamePage,
-          IsTheAddressCorrectPage
+          IsTheAddressCorrectPage,
+          FetchedRegisteredAddressPage,
+          SelectedAddressLookupPage,
+          PostcodePage,
+          IsThisAddressPage,
+          AddressLookupPage,
+          UkAddressPage
         )
         removePages(pagesToRemove, userAnswers)
 
