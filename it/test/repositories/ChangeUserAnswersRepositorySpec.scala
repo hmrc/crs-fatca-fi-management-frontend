@@ -134,6 +134,16 @@ class ChangeUserAnswersRepositorySpec
       repository.get(userAnswers.id).futureValue must not be defined
     }
 
+    "must remove a record with fatcaid " in {
+
+      insert(userAnswers.copy(id = "fatcaid")).futureValue
+
+      val result = repository.clear("fatcaid").futureValue
+
+      result mustEqual true
+      repository.get(userAnswers.id).futureValue must not be defined
+    }
+
     "must return true when there is no record to remove" in {
       val result = repository.clear("unknown", None).futureValue
 

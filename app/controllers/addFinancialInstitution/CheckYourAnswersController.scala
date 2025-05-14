@@ -22,7 +22,7 @@ import models.{CheckAnswers, UserAnswers}
 import pages.{FiidPage, Page}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
+import repositories.{ChangeUserAnswersRepository, SessionRepository}
 import services.FinancialInstitutionsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{CheckYourAnswersValidator, ContactHelper}
@@ -42,6 +42,7 @@ class CheckYourAnswersController @Inject() (
   service: FinancialInstitutionsService,
   val controllerComponents: MessagesControllerComponents,
   sessionRepository: SessionRepository,
+  changeUserAnswersRepository: ChangeUserAnswersRepository,
   view: CheckYourAnswersView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -70,6 +71,9 @@ class CheckYourAnswersController @Inject() (
           resp => Future.fromTry(request.userAnswers.set(FiidPage, resp.fiid.get))
         )
         .flatMap(sessionRepository.set)
+        .flatMap(
+          _ => changeUserAnswersRepository.clear(request.fatcaId)
+        )
         .map {
           _ =>
             Redirect(controllers.addFinancialInstitution.routes.FinancialInstitutionAddedConfirmationController.onPageLoad)
