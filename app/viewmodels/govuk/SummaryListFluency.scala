@@ -26,6 +26,13 @@ trait SummaryListFluency {
   object SummaryListViewModel {
 
     def apply(rows: Seq[SummaryListRow]): SummaryList =
+      SummaryList(rows = rows, None, "govuk-!-margin-bottom-9")
+
+  }
+
+  object SummaryListViewModelNoMargin {
+
+    def apply(rows: Seq[SummaryListRow]): SummaryList =
       SummaryList(rows = rows)
 
   }

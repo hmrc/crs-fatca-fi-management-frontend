@@ -25,7 +25,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{FinancialInstitutionUpdateService, FinancialInstitutionsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.govuk.all.SummaryListViewModel
+import viewmodels.govuk.all.{SummaryListViewModel, SummaryListViewModelNoMargin}
 import viewmodels.yourFinancialInstitutions.YourFinancialInstitutionsViewModel.getYourFinancialInstitutionsRows
 import views.html.YourFinancialInstitutionsView
 
@@ -71,7 +71,7 @@ class YourFinancialInstitutionsController @Inject() (
         answersWithoutRemoveFI <- Future.fromTry(request.userAnswers.remove(InstitutionDetail))
         answersWithoutChangeFI <- Future.fromTry(answersWithoutRemoveFI.remove(ChangeFiDetailsInProgressId))
         _                      <- sessionRepository.set(answersWithoutChangeFI)
-      } yield Ok(view(form, SummaryListViewModel(getYourFinancialInstitutionsRows(institutions)), removedInstitutionName))
+      } yield Ok(view(form, SummaryListViewModelNoMargin(getYourFinancialInstitutionsRows(institutions)), removedInstitutionName))
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
