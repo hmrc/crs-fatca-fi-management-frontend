@@ -30,6 +30,13 @@ trait SummaryListFluency {
 
   }
 
+  object SummaryListViewModelNoMargin {
+
+    def apply(rows: Seq[SummaryListRow]): SummaryList =
+      SummaryList(rows = rows)
+
+  }
+
   implicit class FluentSummaryList(list: SummaryList) {
 
     def withoutBorders(): SummaryList =
