@@ -31,7 +31,6 @@
 @secondExists = @{secondContactList.rows.nonEmpty}
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
-
     @heading(messages("checkYourAnswers.heading", fiName))
 
     @govukSummaryList(financialInstitutionList)
@@ -50,5 +49,4 @@
             ButtonViewModel(messages("checkYourAnswers.submit.button")).withAttribute("id" -> "submit").preventingDoubleClick()
         )
     }
-
 }
