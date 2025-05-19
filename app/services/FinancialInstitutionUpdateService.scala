@@ -20,12 +20,7 @@ import com.google.inject.Inject
 import models.FinancialInstitutions.TINType._
 import models.FinancialInstitutions._
 import models.{CompanyRegistrationNumber, GIINumber, TrustUniqueReferenceNumber, UniqueTaxpayerReference, UserAnswers}
-import pages.addFinancialInstitution.IsRegisteredBusiness.{
-  FetchedRegisteredAddressPage,
-  IsTheAddressCorrectPage,
-  IsThisYourBusinessNamePage,
-  ReportForRegisteredBusinessPage
-}
+import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import pages.{CompanyRegistrationNumberPage, QuestionPage, TrustURNPage}
@@ -158,7 +153,11 @@ class FinancialInstitutionUpdateService @Inject() (
         case None =>
           Future.failed(new RuntimeException(s"Failed to find country with code ${addressDetails.CountryCode}"))
       }
-    } yield a
+      b <- addressDetails.PostalCode match {
+        case Some(postCode) => Future.fromTry(a.set(PostcodePage, postCode, cleanup = false))
+        case None           => Future.successful(a)
+      }
+    } yield b
   }
 
   private def setPrimaryContactDetails(userAnswers: UserAnswers, fiDetails: FIDetail)(implicit ec: ExecutionContext): Future[UserAnswers] = {
@@ -196,8 +195,7 @@ class FinancialInstitutionUpdateService @Inject() (
     for {
       a <- Future.fromTry(userAnswers.set(ReportForRegisteredBusinessPage, true, cleanup = false))
       b <- Future.fromTry(a.set(IsThisYourBusinessNamePage, true, cleanup = false))
-      c <- Future.fromTry(b.set(IsTheAddressCorrectPage, true, cleanup = false))
-    } yield c
+    } yield b
 
   private def setSecondaryContactDetails(userAnswers: UserAnswers, fiDetails: FIDetail)(implicit ec: ExecutionContext): Future[UserAnswers] =
     for {
