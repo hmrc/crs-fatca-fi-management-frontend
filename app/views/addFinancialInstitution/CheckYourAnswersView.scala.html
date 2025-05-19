@@ -31,7 +31,6 @@
 @secondExists = @{secondContactList.rows.nonEmpty}
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
-
     @heading(messages("checkYourAnswers.heading", fiName))
 
     @govukSummaryList(financialInstitutionList)
@@ -47,8 +46,7 @@
 
     @formHelper(action =  controllers.addFinancialInstitution.routes.CheckYourAnswersController.confirmAndAdd()) {
         @govukButton(
-            ButtonViewModel(messages("checkYourAnswers.submit.button")).withAttribute("id" -> "submit").preventingDoubleClick()
+            ButtonViewModel(messages("checkYourAnswers.submit.button")).withAttribute("id" -> "submit").withCssClass("govuk-!-display-none-print").preventingDoubleClick()
         )
     }
-
 }
