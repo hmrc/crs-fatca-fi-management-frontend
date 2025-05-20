@@ -18,7 +18,7 @@ package pages.addFinancialInstitution.IsRegisteredBusiness
 
 import models.{AddressResponse, UserAnswers}
 import pages.QuestionPage
-import pages.addFinancialInstitution.{SelectedAddressLookupPage, UkAddressPage}
+import pages.addFinancialInstitution.{AddressLookupPage, SelectedAddressLookupPage, UkAddressPage}
 import play.api.libs.json.JsPath
 
 import scala.util.Try
@@ -32,7 +32,8 @@ case object FetchedRegisteredAddressPage extends QuestionPage[AddressResponse] {
       _ =>
         List(
           SelectedAddressLookupPage,
-          UkAddressPage
+          UkAddressPage,
+          AddressLookupPage
         ).foldLeft(Try(userAnswers))(
           (ua: Try[UserAnswers], page: QuestionPage[_]) => ua.flatMap(_.remove(page))
         )

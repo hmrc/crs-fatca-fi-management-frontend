@@ -34,7 +34,8 @@ case object UkAddressPage extends QuestionPage[Address] {
       _ =>
         List(
           SelectedAddressLookupPage,
-          FetchedRegisteredAddressPage
+          FetchedRegisteredAddressPage,
+          AddressLookupPage
         ).foldLeft(Try(userAnswers))(
           (ua: Try[UserAnswers], page: QuestionPage[_]) => ua.flatMap(_.remove(page))
         )
