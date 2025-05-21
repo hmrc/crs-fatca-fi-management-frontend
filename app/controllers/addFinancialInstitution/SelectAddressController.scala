@@ -69,7 +69,8 @@ class SelectAddressController @Inject() (
 
           Ok(view(preparedForm, addressOptions, getFinancialInstitutionName(request.userAnswers), mode))
 
-        case None => Redirect(routes.UkAddressController.onPageLoad(mode))
+        case None =>
+          Redirect(routes.UkAddressController.onPageLoad(mode))
       }
   }
 
@@ -90,7 +91,7 @@ class SelectAddressController @Inject() (
 
                 for {
                   updatedAnswersWithSelectedAddress <- Future.fromTry(
-                    request.userAnswers.set(SelectedAddressLookupPage, addressToStore).flatMap(_.remove(AddressLookupPage))
+                    request.userAnswers.set(SelectedAddressLookupPage, addressToStore)
                   )
                   _ <- sessionRepository.set(updatedAnswersWithSelectedAddress)
                   _ <- changeUserAnswersRepository

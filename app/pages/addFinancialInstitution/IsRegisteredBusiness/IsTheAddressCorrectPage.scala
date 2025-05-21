@@ -43,7 +43,8 @@ case object IsTheAddressCorrectPage extends QuestionPage[Boolean] {
           PostcodePage,
           SelectedAddressLookupPage,
           IsThisAddressPage,
-          UkAddressPage
+          UkAddressPage,
+          AddressLookupPage
         )
         removePages(pagesToRemove, userAnswers)
 
