@@ -28,7 +28,12 @@ import org.mockito.MockitoSugar.{reset, times, verify}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
-import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
+import pages.addFinancialInstitution.IsRegisteredBusiness.{
+  FetchedRegisteredAddressPage,
+  IsTheAddressCorrectPage,
+  IsThisYourBusinessNamePage,
+  ReportForRegisteredBusinessPage
+}
 import pages.addFinancialInstitution.{HaveGIINPage, UkAddressPage}
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.http.Status.INTERNAL_SERVER_ERROR
@@ -235,6 +240,29 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
               }
           }
         }
+
+        "must redirect to information missing page when when UserAnswers is having Non UK Address with IsThisAddressCorrect as True" in {
+
+          val fiDetail = testFiDetail
+          val userAnswers = userAnswersForAddUserAsFI
+            .withPage(ChangeFiDetailsInProgressId, fiDetail.FIID)
+            .withPage(FetchedRegisteredAddressPage, testNonUKAddressResponse)
+
+          mockSuccessfulFiRetrieval(fiDetail)
+          when(mockFinancialInstitutionUpdateService.registeredFiDetailsHasChanged(mockitoEq(userAnswers), mockitoEq(fiDetail)))
+            .thenReturn(false)
+
+          val application = createAppWithAnswers(Option(userAnswers))
+          running(application) {
+            val request =
+              FakeRequest(GET, controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.onPageLoad(fiDetail.FIID).url)
+
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result).value mustEqual routes.SomeInformationMissingController.onPageLoad().url
+          }
+        }
       }
 
       "must return INTERNAL_SERVER_ERROR when unable to find FI details" in {
@@ -320,6 +348,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
           .withPage(UkAddressPage, address)
           .withPage(IsTheAddressCorrectPage, true)
           .withPage(IsThisYourBusinessNamePage, true)
+          .withPage(FetchedRegisteredAddressPage, testAddressResponse)
 
         when(mockFinancialInstitutionUpdateService.clearUserAnswers(any[UserAnswers])).thenReturn(Future.successful(true))
         when(
@@ -349,6 +378,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
           .withPage(UkAddressPage, address)
           .withPage(IsTheAddressCorrectPage, true)
           .withPage(IsThisYourBusinessNamePage, true)
+          .withPage(FetchedRegisteredAddressPage, testAddressResponse)
         when(
           mockFinancialInstitutionsService.updateFinancialInstitution(any[String], any[UserAnswers])(any[HeaderCarrier], any[ExecutionContext])
         )
