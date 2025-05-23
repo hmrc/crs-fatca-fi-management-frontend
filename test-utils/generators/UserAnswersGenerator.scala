@@ -17,13 +17,18 @@
 package generators
 
 import models.FinancialInstitutions.TINType
-import models.{RichJsObject, UserAnswers}
+import models.{AddressResponse, RichJsObject, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.TryValues
 import pages._
-import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
-import pages.addFinancialInstitution._
+import pages.addFinancialInstitution.IsRegisteredBusiness.{
+  FetchedRegisteredAddressPage,
+  IsTheAddressCorrectPage,
+  IsThisYourBusinessNamePage,
+  ReportForRegisteredBusinessPage
+}
+import pages.addFinancialInstitution.{IsRegisteredBusiness, _}
 import play.api.libs.json.{JsObject, JsPath, JsValue, Json}
 
 trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
@@ -51,6 +56,7 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
       arbitrary[(UkAddressPage.type, JsValue)] ::
       arbitrary[(WhatIsGIINPage.type, JsValue)] ::
       arbitrary[(WhatIsUniqueTaxpayerReferencePage.type, JsValue)] ::
+      arbitrary[(FetchedRegisteredAddressPage.type, JsValue)] ::
       Nil
 
   private def genJsObj(gens: Gen[(QuestionPage[_], JsValue)]*): Gen[JsObject] =
@@ -175,6 +181,7 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
       haveGIIN                    <- arbitrary[Boolean]
       isAddressCorrect            <- arbitrary[Boolean]
       address                     <- ukAddress.arbitrary
+      fetchedAddress              <- arbitraryUKAddressResponse.arbitrary
       fiName <-
         pageArbitrary(NameOfFinancialInstitutionPage).arbitrary
       report <-
@@ -197,10 +204,11 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
         }
       obj = setFields(
         Json.obj(),
-        ReportForRegisteredBusinessPage.path              -> Json.toJson(reportForRegisteredBusiness),
-        IsThisYourBusinessNamePage.path                   -> Json.toJson(isThisBusinessName),
-        IsRegisteredBusiness.IsTheAddressCorrectPage.path -> Json.toJson(isAddressCorrect),
-        HaveGIINPage.path                                 -> Json.toJson(haveGIIN)
+        ReportForRegisteredBusinessPage.path                   -> Json.toJson(reportForRegisteredBusiness),
+        IsThisYourBusinessNamePage.path                        -> Json.toJson(isThisBusinessName),
+        IsRegisteredBusiness.IsTheAddressCorrectPage.path      -> Json.toJson(isAddressCorrect),
+        HaveGIINPage.path                                      -> Json.toJson(haveGIIN),
+        IsRegisteredBusiness.FetchedRegisteredAddressPage.path -> Json.toJson(fetchedAddress)
       ) ++ fiName ++ report ++ businessName ++ whatIsGIIN ++ address
     } yield obj
   }
@@ -296,6 +304,21 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
           obj.setObject(path.path, value).get
       }
     )
+  }
+
+  implicit val arbitraryUKAddressResponse: Arbitrary[AddressResponse] = Arbitrary {
+    val postCode = for {
+      size     <- Gen.chooseNum(5, 7)
+      postCode <- Gen.option(Gen.listOfN(size, Gen.alphaNumChar).map(_.mkString))
+    } yield postCode
+    for {
+      addressline  <- nonEmptyString
+      addressline2 <- Gen.option(nonEmptyString)
+      addressline3 <- Gen.option(nonEmptyString)
+      addressline4 <- Gen.option(nonEmptyString)
+      postcode     <- postCode
+      countrycode  <- Gen.const("GB")
+    } yield AddressResponse(addressline, addressline2, addressline3, addressline4, postcode, countrycode)
   }
 
 }

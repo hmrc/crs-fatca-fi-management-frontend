@@ -27,6 +27,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
+import pages.addFinancialInstitution.IsRegisteredBusiness.FetchedRegisteredAddressPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -106,6 +107,27 @@ class RegisteredBusinessCheckYourAnswersControllerSpec extends SpecBase with Sum
             status(result) mustEqual SEE_OTHER
             redirectLocation(result).value mustBe routes.SomeInformationMissingController.onPageLoad().url
           }
+      }
+    }
+
+    "redirect to Missing Information when UserAnswers is having Non UK Address with IsThisAddressCorrect as True" in {
+      def onwardRoute: Call = Call("GET", "/foo")
+
+      val userAnswers = userAnswersForAddUserAsFI.withPage(FetchedRegisteredAddressPage, testNonUKAddressResponse)
+      val application = applicationBuilder(userAnswers = Option(userAnswers))
+        .overrides(
+          bind[Navigator].toInstance(new FakeNavigator(onwardRoute))
+        )
+        .build()
+
+      running(application) {
+        val request =
+          FakeRequest(GET, controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad().url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustBe routes.SomeInformationMissingController.onPageLoad().url
       }
     }
 

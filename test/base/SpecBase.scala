@@ -23,7 +23,7 @@ import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{OptionValues, PrivateMethodTester, TryValues}
-import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage}
+import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, IsTheAddressCorrectPage, IsThisYourBusinessNamePage}
 import pages.addFinancialInstitution._
 import play.api.Application
 import play.api.i18n.{Messages, MessagesApi}
@@ -237,6 +237,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
     .withPage(HaveGIINPage, true)
     .withPage(WhatIsGIINPage, GIINumber("98096B.00000.LE.350"))
     .withPage(IsTheAddressCorrectPage, true)
+    .withPage(FetchedRegisteredAddressPage, testAddressResponse)
 
   implicit val hc: HeaderCarrier    = HeaderCarrier()
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
