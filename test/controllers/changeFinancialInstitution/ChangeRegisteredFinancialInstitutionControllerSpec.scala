@@ -17,9 +17,11 @@
 package controllers.changeFinancialInstitution
 
 import base.SpecBase
+import controllers.actions.{CtUtrRetrievalAction, FakeCtUtrRetrievalAction}
 import controllers.routes
 import generators.{ModelGenerators, UserAnswersGenerator}
 import models.FinancialInstitutions.FIDetail
+import models.requests.DataRequest
 import models.{Address, Country, UserAnswers}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => mockitoEq}
@@ -38,9 +40,10 @@ import pages.addFinancialInstitution.{HaveGIINPage, UkAddressPage}
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.inject.bind
+import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.{FinancialInstitutionUpdateService, FinancialInstitutionsService}
+import services.{FinancialInstitutionUpdateService, FinancialInstitutionsService, RegistrationWithUtrService}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.ThereIsAProblemView
 
@@ -54,13 +57,16 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
     with BeforeAndAfterEach
     with ScalaCheckDrivenPropertyChecks {
 
-  private val SubscriptionId                        = "subscriptionId"
-  private val SendButtonText                        = "Confirm and send"
-  private val pTagContent                           = " is the business you registered as."
-  private val changeRegisteredBusiness              = "Is this financial institution the business you registered as?"
-  private val mockFinancialInstitutionsService      = mock[FinancialInstitutionsService]
-  private val mockFinancialInstitutionUpdateService = mock[FinancialInstitutionUpdateService]
-  private val address: Address                      = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"), Country.GB)
+  private val SubscriptionId                         = "subscriptionId"
+  private val SendButtonText                         = "Confirm and send"
+  private val pTagContent                            = " is the business you registered as."
+  private val changeRegisteredBusiness               = "Is this financial institution the business you registered as?"
+  val mockCtUtrRetrievalAction: CtUtrRetrievalAction = mock[CtUtrRetrievalAction]
+  private val mockFinancialInstitutionsService       = mock[FinancialInstitutionsService]
+  private val mockFinancialInstitutionUpdateService  = mock[FinancialInstitutionUpdateService]
+  private val address: Address                       = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"), Country.GB)
+
+  when(mockCtUtrRetrievalAction.apply()).thenReturn(new FakeCtUtrRetrievalAction())
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -130,7 +136,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
 
           mockSuccessfulFiRetrieval(fiDetail)
           when(
-            mockFinancialInstitutionUpdateService.populateAndSaveRegisteredFiDetails(any(), any())
+            mockFinancialInstitutionUpdateService.populateAndSaveRegisteredFiDetails(any(), any())(any[DataRequest[AnyContent]], any[HeaderCarrier])
           ).thenReturn(Future.successful((userAnswers, true)))
 
           val application = createAppWithAnswers(Option(userAnswers))
@@ -417,7 +423,9 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
 
   private def mockSuccessfulUserAnswersPersistence(userAnswers: UserAnswers, fiDetail: FIDetail) =
     when(
-      mockFinancialInstitutionUpdateService.populateAndSaveRegisteredFiDetails(mockitoEq(userAnswers), mockitoEq(fiDetail))
+      mockFinancialInstitutionUpdateService.populateAndSaveRegisteredFiDetails(mockitoEq(userAnswers), mockitoEq(fiDetail))(any[DataRequest[AnyContent]],
+                                                                                                                            any[HeaderCarrier]
+      )
     ).thenReturn(Future.successful((userAnswers, false)))
 
 }

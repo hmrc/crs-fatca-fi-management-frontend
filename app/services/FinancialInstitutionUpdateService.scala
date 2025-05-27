@@ -17,23 +17,35 @@
 package services
 
 import com.google.inject.Inject
+import models.Country.GB
 import models.FinancialInstitutions.TINType._
 import models.FinancialInstitutions._
-import models.{CompanyRegistrationNumber, GIINumber, TrustUniqueReferenceNumber, UniqueTaxpayerReference, UserAnswers}
-import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
+import models.requests.DataRequest
+import models.{AddressResponse, CompanyRegistrationNumber, GIINumber, TrustUniqueReferenceNumber, UniqueTaxpayerReference, UserAnswers}
+import pages.addFinancialInstitution.IsRegisteredBusiness.{
+  FetchedRegisteredAddressPage,
+  IsTheAddressCorrectPage,
+  IsThisYourBusinessNamePage,
+  ReportForRegisteredBusinessPage
+}
 import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import pages.{CompanyRegistrationNumberPage, QuestionPage, TrustURNPage}
+import play.api.i18n.Lang.logger
 import play.api.libs.json.Json
+import play.api.mvc.AnyContent
 import repositories.{ChangeUserAnswersRepository, SessionRepository}
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.CountryListFactory
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success, Try}
 
 class FinancialInstitutionUpdateService @Inject() (
   countryListFactory: CountryListFactory,
   sessionRepository: SessionRepository,
-  changeUserAnswersRepository: ChangeUserAnswersRepository
+  changeUserAnswersRepository: ChangeUserAnswersRepository,
+  regService: RegistrationWithUtrService
 )(implicit ec: ExecutionContext) {
 
   def populateAndSaveFiDetails(userAnswers: UserAnswers, fiDetails: FIDetail): Future[(UserAnswers, Boolean)] = for {
@@ -44,7 +56,10 @@ class FinancialInstitutionUpdateService @Inject() (
     _                  <- sessionRepository.set(updatedUserAnswers)
   } yield (updatedUserAnswers, changeAnswers.isDefined)
 
-  def populateAndSaveRegisteredFiDetails(userAnswers: UserAnswers, fiDetails: FIDetail): Future[(UserAnswers, Boolean)] =
+  def populateAndSaveRegisteredFiDetails(userAnswers: UserAnswers, fiDetails: FIDetail)(implicit
+    request: DataRequest[AnyContent],
+    headerCarrier: HeaderCarrier
+  ): Future[(UserAnswers, Boolean)] =
     for {
       userAnswersWithProgressFlag <- Future.fromTry(userAnswers.set(ChangeFiDetailsInProgressId, fiDetails.FIID, cleanup = false))
       changeId = s"${fiDetails.SubscriptionID}-${fiDetails.FIID}"
@@ -86,7 +101,7 @@ class FinancialInstitutionUpdateService @Inject() (
   private def populateUserAnswersWithRegisteredFiDetail(
     fiDetails: FIDetail,
     userAnswers: UserAnswers
-  )(implicit ec: ExecutionContext): Future[UserAnswers] =
+  )(implicit request: DataRequest[AnyContent], headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers] =
     for {
       a <- Future.fromTry(userAnswers.set(ReportForRegisteredBusinessPage, fiDetails.IsFIUser, cleanup = false))
       b <- Future.fromTry(a.set(NameOfFinancialInstitutionPage, fiDetails.FIName, cleanup = false))
@@ -153,11 +168,7 @@ class FinancialInstitutionUpdateService @Inject() (
         case None =>
           Future.failed(new RuntimeException(s"Failed to find country with code ${addressDetails.CountryCode}"))
       }
-      b <- addressDetails.PostalCode match {
-        case Some(postCode) => Future.fromTry(a.set(PostcodePage, postCode, cleanup = false))
-        case None           => Future.successful(a)
-      }
-    } yield b
+    } yield a
   }
 
   private def setPrimaryContactDetails(userAnswers: UserAnswers, fiDetails: FIDetail)(implicit ec: ExecutionContext): Future[UserAnswers] = {
@@ -191,11 +202,53 @@ class FinancialInstitutionUpdateService @Inject() (
         } yield b
     }
 
-  private def setFiUserDetails(userAnswers: UserAnswers): Future[UserAnswers] =
+  private def setFiUserDetails(userAnswers: UserAnswers)(implicit request: DataRequest[AnyContent], headerCarrier: HeaderCarrier): Future[UserAnswers] =
     for {
       a <- Future.fromTry(userAnswers.set(ReportForRegisteredBusinessPage, true, cleanup = false))
       b <- Future.fromTry(a.set(IsThisYourBusinessNamePage, true, cleanup = false))
-    } yield b
+      c <- setIsThisAddressCorrect(b)
+    } yield c
+
+  private def setIsThisAddressCorrect(userAnswers: UserAnswers)(implicit request: DataRequest[AnyContent], headerCarrier: HeaderCarrier) =
+    request.ctutr match {
+      case Some(utr) =>
+        regService
+          .fetchAddress(utr)
+          .flatMap {
+            address =>
+              for {
+                addressWithCountry <- Future.fromTry(addCountryToAddress(address))
+                updatedUserAnswer <- Future.fromTry(
+                  userAnswers.set(
+                    IsTheAddressCorrectPage,
+                    addressWithCountry.countryCode.equalsIgnoreCase(GB.code) && addressWithCountry.toAddress.equals(userAnswers.get(UkAddressPage).get),
+                    cleanup = false
+                  )
+                )
+              } yield updatedUserAnswer
+          }
+          .recoverWith {
+            case _ =>
+              logger.error(s"Unable to fetch Registered address")
+              Future.failed(new RuntimeException("Unable to fetch Registered address"))
+          }
+      case None =>
+        logger.error(s"Unable to find CT-UTR in the request")
+        Future.failed(new RuntimeException("Unable to fetch Registered address"))
+    }
+
+  private def addCountryToAddress(addressResponse: AddressResponse): Try[AddressResponse] =
+    if (addressResponse.country.isDefined) {
+      Success(addressResponse)
+    } else {
+      countryListFactory.findCountryWithCode(addressResponse.countryCode) match {
+        case Some(country) =>
+          Success(addressResponse.copy(country = Some(country)))
+        case None =>
+          logger.error(s"Country with code ${addressResponse.countryCode} not found in list of countries")
+          Failure(new RuntimeException("Country not found"))
+      }
+    }
 
   private def setSecondaryContactDetails(userAnswers: UserAnswers, fiDetails: FIDetail)(implicit ec: ExecutionContext): Future[UserAnswers] =
     for {

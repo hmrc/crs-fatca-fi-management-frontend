@@ -17,6 +17,7 @@
 package services
 
 import base.SpecBase
+import controllers.actions.CtUtrRetrievalAction
 import generators.UserAnswersGenerator
 import models.FinancialInstitutions.TINType._
 import models.FinancialInstitutions._
@@ -37,16 +38,17 @@ import scala.concurrent.Future
 
 class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar with UserAnswersGenerator with BeforeAndAfterEach {
 
-  private val mockCountryListFactory          = mock[CountryListFactory]
-  private val mockSessionRepository           = mock[SessionRepository]
-  private val mockChangeUserAnswersRepository = mock[ChangeUserAnswersRepository]
+  private val mockRegService: RegistrationWithUtrService = mock[RegistrationWithUtrService]
+  private val mockCountryListFactory                     = mock[CountryListFactory]
+  private val mockSessionRepository                      = mock[SessionRepository]
+  private val mockChangeUserAnswersRepository            = mock[ChangeUserAnswersRepository]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockCountryListFactory, mockSessionRepository)
   }
 
-  private val service = new FinancialInstitutionUpdateService(mockCountryListFactory, mockSessionRepository, mockChangeUserAnswersRepository)
+  private val service = new FinancialInstitutionUpdateService(mockCountryListFactory, mockSessionRepository, mockChangeUserAnswersRepository, mockRegService)
 
   private val nonUkCountry = Country("valid", "AX", "Aland Islands")
 
@@ -508,9 +510,6 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
     val addressPage = if (isUkAddress) UkAddressPage else NonUkAddressPage
     populatedUserAnswers.get(addressPage).value mustBe fiDetails.AddressDetails.toAddress(mockCountryListFactory).value
 
-    if (fiDetails.AddressDetails.PostalCode.isDefined) {
-      populatedUserAnswers.get(PostcodePage).value mustBe fiDetails.AddressDetails.PostalCode.get
-    }
     populatedUserAnswers.get(FirstContactNamePage).value mustBe fiDetails.PrimaryContactDetails.map(_.ContactName).get
     populatedUserAnswers.get(FirstContactEmailPage).value mustBe fiDetails.PrimaryContactDetails.map(_.EmailAddress).get
     populatedUserAnswers.get(FirstContactHavePhonePage).value mustBe fiDetails.PrimaryContactDetails.map(_.PhoneNumber).isDefined

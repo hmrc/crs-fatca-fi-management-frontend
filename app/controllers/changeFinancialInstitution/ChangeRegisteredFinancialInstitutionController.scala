@@ -44,6 +44,7 @@ class ChangeRegisteredFinancialInstitutionController @Inject() (
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
+  retrieveCtUTR: CtUtrRetrievalAction,
   changeUserAnswersRepository: ChangeUserAnswersRepository,
   financialInstitutionsService: FinancialInstitutionsService,
   financialInstitutionUpdateService: FinancialInstitutionUpdateService,
@@ -56,7 +57,7 @@ class ChangeRegisteredFinancialInstitutionController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad(fiid: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(fiid: String): Action[AnyContent] = (identify andThen retrieveCtUTR() andThen getData andThen requireData).async {
     implicit request =>
       val userAnswers = request.userAnswers
       financialInstitutionsService
