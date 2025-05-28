@@ -19,10 +19,9 @@ package controllers.addFinancialInstitution.registeredBusiness
 import controllers.actions._
 import controllers.routes
 import forms.addFinancialInstitution.IsRegisteredBusiness.IsTheAddressCorrectFormProvider
-import models.{AddressResponse, Country, Mode, UserAnswers}
+import models.{AddressResponse, Country, Mode}
 import navigation.Navigator
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, IsTheAddressCorrectPage}
-import pages.addFinancialInstitution.UkAddressPage
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -75,12 +74,8 @@ class IsTheAddressCorrectController @Inject() (
                     result <- sessionRepository.set(updatedAnswers).map {
                       _ =>
                         val preparedForm = request.userAnswers.get(IsTheAddressCorrectPage) match {
+                          case None        => form
                           case Some(value) => form.fill(value)
-                          case None =>
-                            updatedAnswers.get(ChangeFiDetailsInProgressId) match {
-                              case None    => form
-                              case Some(_) => getFormForChangeInProgress(updatedAnswers)
-                            }
                         }
                         Ok(view(preparedForm, mode, getFinancialInstitutionName(request.userAnswers), addressWithCountry))
                     }
@@ -97,16 +92,6 @@ class IsTheAddressCorrectController @Inject() (
         }
 
     }
-
-  private def getFormForChangeInProgress(updatedAnswers: UserAnswers) = updatedAnswers.get(UkAddressPage) match {
-    case Some(address) =>
-      if (address != updatedAnswers.get(FetchedRegisteredAddressPage).get.toAddress) {
-        form.fill(false)
-      } else {
-        form.fill(true)
-      }
-    case None => form
-  }
 
   private def addCountryToAddress(addressResponse: AddressResponse): Try[AddressResponse] =
     if (addressResponse.country.isDefined) {

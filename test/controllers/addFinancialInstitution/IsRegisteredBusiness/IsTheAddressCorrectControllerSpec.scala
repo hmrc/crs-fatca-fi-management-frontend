@@ -124,69 +124,6 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar with 
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered In ChangeFIFlow with Same UK Address" in {
-      lazy val isTheAddressCorrectRoute: String =
-        controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(CheckMode).url
-      val userAnswers = userAnswersWithName
-        .withPage(ChangeFiDetailsInProgressId, "1234566755")
-        .withPage(UkAddressPage, testAddress)
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[CtUtrRetrievalAction].toInstance(mockCtUtrRetrievalAction))
-        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-        .overrides(bind[RegistrationWithUtrService].toInstance(mockRegService))
-        .build()
-
-      val addressResponseWithCountryName = testAddressResponse.copy(countryCode = Country.GB.code, country = Some(Country.GB))
-
-      when(mockRegService.fetchAddress(any())(any[HeaderCarrier](), any[ExecutionContext]()))
-        .thenReturn(Future.successful(testAddressResponse))
-
-      running(application) {
-        val request = FakeRequest(GET, isTheAddressCorrectRoute)
-
-        val view = application.injector.instanceOf[IsTheAddressCorrectView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), CheckMode, fiName, addressResponseWithCountryName)(request, messages(application)).toString
-      }
-    }
-
-    "must populate the view correctly on a GET when the question has previously been answered In ChangeFIFlow with Different UK Address" in {
-      forAll {
-        addressResponse: AddressResponse =>
-          lazy val isTheAddressCorrectRoute: String =
-            controllers.addFinancialInstitution.registeredBusiness.routes.IsTheAddressCorrectController.onPageLoad(CheckMode).url
-          val userAnswers = userAnswersWithName
-            .withPage(ChangeFiDetailsInProgressId, "1234566755")
-            .withPage(UkAddressPage, testAddress)
-
-          val application = applicationBuilder(userAnswers = Some(userAnswers))
-            .overrides(bind[CtUtrRetrievalAction].toInstance(mockCtUtrRetrievalAction))
-            .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-            .overrides(bind[RegistrationWithUtrService].toInstance(mockRegService))
-            .build()
-
-          val addressResponseWithCountryName = addressResponse.copy(countryCode = Country.GB.code, country = Some(Country.GB))
-
-          when(mockRegService.fetchAddress(any())(any[HeaderCarrier](), any[ExecutionContext]()))
-            .thenReturn(Future.successful(addressResponseWithCountryName))
-
-          running(application) {
-            val request = FakeRequest(GET, isTheAddressCorrectRoute)
-
-            val view = application.injector.instanceOf[IsTheAddressCorrectView]
-
-            val result = route(application, request).value
-
-            status(result) mustEqual OK
-            contentAsString(result) mustEqual view(form.fill(false), CheckMode, fiName, addressResponseWithCountryName)(request, messages(application)).toString
-          }
-      }
-    }
-
     "must redirect to the next page when valid data is submitted" in {
       val userAnswers = userAnswersWithName
         .withPage(FetchedRegisteredAddressPage, testAddressResponse)
