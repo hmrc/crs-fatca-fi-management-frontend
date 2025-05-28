@@ -218,14 +218,19 @@ class FinancialInstitutionUpdateService @Inject() (
             address =>
               for {
                 addressWithCountry <- Future.fromTry(addCountryToAddress(address))
-                updatedUserAnswer <- Future.fromTry(
+                updatedUserAnswerWithIsTheAddressCorrect <- Future.fromTry(
                   userAnswers.set(
                     IsTheAddressCorrectPage,
                     addressWithCountry.countryCode.equalsIgnoreCase(GB.code) && addressWithCountry.toAddress.equals(userAnswers.get(UkAddressPage).get),
                     cleanup = false
                   )
                 )
-              } yield updatedUserAnswer
+                updatedUserAnswser <- Future.fromTry(
+                  if (updatedUserAnswerWithIsTheAddressCorrect.get(IsTheAddressCorrectPage).get)
+                    updatedUserAnswerWithIsTheAddressCorrect.set(FetchedRegisteredAddressPage, addressWithCountry, cleanup = false)
+                  else Try(updatedUserAnswerWithIsTheAddressCorrect)
+                )
+              } yield updatedUserAnswser
           }
           .recoverWith {
             case _ =>
