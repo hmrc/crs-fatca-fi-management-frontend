@@ -225,11 +225,10 @@ class FinancialInstitutionUpdateService @Inject() (
                     cleanup = false
                   )
                 )
-                updatedUserAnswser <- Future.fromTry(
-                  if (updatedUserAnswerWithIsTheAddressCorrect.get(IsTheAddressCorrectPage).get)
-                    updatedUserAnswerWithIsTheAddressCorrect.set(FetchedRegisteredAddressPage, addressWithCountry, cleanup = false)
-                  else Try(updatedUserAnswerWithIsTheAddressCorrect)
-                )
+                updatedUserAnswser <- updatedUserAnswerWithIsTheAddressCorrect.get(IsTheAddressCorrectPage).get match {
+                  case true  => Future.fromTry(updatedUserAnswerWithIsTheAddressCorrect.set(FetchedRegisteredAddressPage, addressWithCountry, cleanup = false))
+                  case false => Future.successful(updatedUserAnswerWithIsTheAddressCorrect)
+                }
               } yield updatedUserAnswser
           }
           .recoverWith {
