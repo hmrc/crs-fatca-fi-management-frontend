@@ -62,6 +62,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
   "FinancialInstitutionUpdateService" - {
 
     val persistenceError = new Exception("Failed to save user answers")
+    when(mockChangeUserAnswersRepository.get(any)).thenReturn(Future.successful(None))
 
     "populateAndSaveFiDetails" - {
 
@@ -70,7 +71,6 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
           (fiDetails: FIDetail, isUkAddress: Boolean) =>
             val country        = if (isUkAddress) Country.GB else nonUkCountry
             val ukCountryCodes = if (isUkAddress) Set(country.code, fiDetails.AddressDetails.CountryCode.value) else Set.empty[String]
-            when(mockChangeUserAnswersRepository.get(any)).thenReturn(Future.successful(None))
             when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
             when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(country))
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(ukCountryCodes)
@@ -85,7 +85,6 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
       "must return error when there is a failure while persisting the user answers" in {
         forAll {
           fiDetails: FIDetail =>
-            when(mockChangeUserAnswersRepository.get(any)).thenReturn(Future.successful(None))
             when(mockSessionRepository.set(any())).thenReturn(Future.failed(persistenceError))
             when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(Country.GB))
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(fiDetails.AddressDetails.CountryCode.toSet)
@@ -102,7 +101,6 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
         val testAddressResp = AddressResponse("22", Some("High Street"), Some("Dawley"), Some("Dawley"), Some("TF22 2RE"), "GB")
         val country         = Country.GB
         val ukCountryCodes  = Set(country.code, fiDetails.AddressDetails.CountryCode.value)
-        when(mockChangeUserAnswersRepository.get(any)).thenReturn(Future.successful(None))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(country))
         when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(ukCountryCodes)
@@ -123,7 +121,6 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
         val fiDetails      = testFiDetail
         val country        = Country.GB
         val ukCountryCodes = Set(country.code, fiDetails.AddressDetails.CountryCode.value)
-        when(mockChangeUserAnswersRepository.get(any)).thenReturn(Future.successful(None))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(country))
         when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(ukCountryCodes)
@@ -139,7 +136,6 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
         val fiDetails      = testFiDetail
         val country        = Country.GB
         val ukCountryCodes = Set(country.code, fiDetails.AddressDetails.CountryCode.value)
-        when(mockChangeUserAnswersRepository.get(any)).thenReturn(Future.successful(None))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(country))
         when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(ukCountryCodes)
@@ -152,7 +148,6 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
       "must return error when there is a failure while persisting the user answers" in {
         forAll {
           fiDetails: FIDetail =>
-            when(mockChangeUserAnswersRepository.get(any)).thenReturn(Future.successful(None))
             when(mockSessionRepository.set(any())).thenReturn(Future.failed(persistenceError))
             when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(Country.GB))
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(fiDetails.AddressDetails.CountryCode.toSet)
