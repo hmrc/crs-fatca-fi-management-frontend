@@ -17,24 +17,28 @@
 package services
 
 import base.SpecBase
-import controllers.actions.CtUtrRetrievalAction
 import generators.UserAnswersGenerator
 import models.FinancialInstitutions.TINType._
 import models.FinancialInstitutions._
-import models.{AddressLookup, CompanyRegistrationNumber, Country, GIINumber, TrustUniqueReferenceNumber, UniqueTaxpayerReference, UserAnswers}
+import models.requests.DataRequest
+import models.{AddressLookup, AddressResponse, CompanyRegistrationNumber, Country, GIINumber, TrustUniqueReferenceNumber, UniqueTaxpayerReference, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
+import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 import pages.{CompanyRegistrationNumberPage, TrustURNPage}
 import play.api.libs.json.Json
+import play.api.mvc.AnyContent
+import play.api.test.FakeRequest
 import repositories.{ChangeUserAnswersRepository, SessionRepository}
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.CountryListFactory
 
 import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar with UserAnswersGenerator with BeforeAndAfterEach {
 
@@ -42,6 +46,9 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
   private val mockCountryListFactory                     = mock[CountryListFactory]
   private val mockSessionRepository                      = mock[SessionRepository]
   private val mockChangeUserAnswersRepository            = mock[ChangeUserAnswersRepository]
+
+  val utr                                       = Option(UniqueTaxpayerReference("1112223330"))
+  implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "testUser", "testFatca", emptyUserAnswers, utr)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -84,6 +91,73 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
             when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(fiDetails.AddressDetails.CountryCode.toSet)
 
             an[Exception] must be thrownBy service.populateAndSaveFiDetails(emptyUserAnswers, fiDetails).futureValue
+        }
+      }
+    }
+
+    "populateAndSaveRegisteredFiDetails" - {
+
+      "must populate and persist user answers with Reg FI details with different Reg Address" in {
+        val fiDetails       = testFiDetail
+        val testAddressResp = AddressResponse("22", Some("High Street"), Some("Dawley"), Some("Dawley"), Some("TF22 2RE"), "GB")
+        val country         = Country.GB
+        val ukCountryCodes  = Set(country.code, fiDetails.AddressDetails.CountryCode.value)
+        when(mockChangeUserAnswersRepository.get(any)).thenReturn(Future.successful(None))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(country))
+        when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(ukCountryCodes)
+        when(mockRegService.fetchAddress(any())(any[HeaderCarrier](), any[ExecutionContext]()))
+          .thenReturn(Future.successful(testAddressResp))
+
+        val (populatedUserAnswers, _) = service.populateAndSaveRegisteredFiDetails(emptyUserAnswers, fiDetails)(request, hc).futureValue
+
+        populatedUserAnswers.get(ReportForRegisteredBusinessPage) mustBe Some(true)
+        populatedUserAnswers.get(IsTheAddressCorrectPage) mustBe Some(true)
+        populatedUserAnswers.get(IsThisYourBusinessNamePage) mustBe Some(true)
+
+        verify(mockSessionRepository, times(1)).set(populatedUserAnswers)
+        verify(mockRegService, times(1)).fetchAddress(utr.get)
+      }
+
+      "must populate and persist user answers with Reg FI details with different address" in {
+        val fiDetails      = testFiDetail
+        val country        = Country.GB
+        val ukCountryCodes = Set(country.code, fiDetails.AddressDetails.CountryCode.value)
+        when(mockChangeUserAnswersRepository.get(any)).thenReturn(Future.successful(None))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(country))
+        when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(ukCountryCodes)
+        when(mockRegService.fetchAddress(any())(any[HeaderCarrier](), any[ExecutionContext]()))
+          .thenReturn(Future.successful(testAddressResponse))
+
+        val (populatedUserAnswers, _) = service.populateAndSaveRegisteredFiDetails(emptyUserAnswers, fiDetails)(request, hc).futureValue
+
+        populatedUserAnswers.get(IsTheAddressCorrectPage) mustBe Some(false)
+      }
+
+      "must return error when there is a failure while retrieving the registered address" in {
+        val fiDetails      = testFiDetail
+        val country        = Country.GB
+        val ukCountryCodes = Set(country.code, fiDetails.AddressDetails.CountryCode.value)
+        when(mockChangeUserAnswersRepository.get(any)).thenReturn(Future.successful(None))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(country))
+        when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(ukCountryCodes)
+        when(mockRegService.fetchAddress(any())(any[HeaderCarrier](), any[ExecutionContext]()))
+          .thenReturn(Future.failed(new RuntimeException("Failed to get")))
+
+        an[RuntimeException] must be thrownBy service.populateAndSaveRegisteredFiDetails(emptyUserAnswers, fiDetails).futureValue
+      }
+
+      "must return error when there is a failure while persisting the user answers" in {
+        forAll {
+          fiDetails: FIDetail =>
+            when(mockChangeUserAnswersRepository.get(any)).thenReturn(Future.successful(None))
+            when(mockSessionRepository.set(any())).thenReturn(Future.failed(persistenceError))
+            when(mockCountryListFactory.findCountryWithCode(any())).thenReturn(Option(Country.GB))
+            when(mockCountryListFactory.countryCodesForUkCountries).thenReturn(fiDetails.AddressDetails.CountryCode.toSet)
+
+            an[Exception] must be thrownBy service.populateAndSaveRegisteredFiDetails(emptyUserAnswers, fiDetails).futureValue
         }
       }
     }
