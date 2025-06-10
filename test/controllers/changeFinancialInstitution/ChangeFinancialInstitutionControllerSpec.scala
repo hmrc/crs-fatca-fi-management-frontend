@@ -106,6 +106,78 @@ class ChangeFinancialInstitutionControllerSpec
           }
         }
 
+        "must return OK and the correct view without the 'Confirm and send' button for a GET when change user is not defined" in {
+          val fiDetail          = testFiDetail
+          val userAnswers       = emptyUserAnswers
+          val updatedUserAnswer = userAnswersForAddFI
+
+          mockSuccessfulFiRetrieval(fiDetail)
+          when(
+            mockFinancialInstitutionUpdateService.populateAndSaveFiDetails(mockitoEq(userAnswers), mockitoEq(fiDetail))
+          ).thenReturn(Future.successful((updatedUserAnswer, false)))
+
+          val application = createAppWithAnswers(Option(userAnswers))
+          running(application) {
+            val request = FakeRequest(GET, controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(fiDetail.FIID).url)
+
+            val result = route(application, request).value
+
+            status(result) mustEqual OK
+            val document = Jsoup.parse(contentAsString(result))
+            document.getElementsContainingText(SendButtonText).isEmpty mustBe true
+          }
+        }
+
+        "must return OK and the correct view without the 'Confirm and send' button for a GET when change user is defined and has changes" in {
+          val fiDetail          = testFiDetail
+          val userAnswers       = emptyUserAnswers
+          val updatedUserAnswer = userAnswersForAddFI
+
+          mockSuccessfulFiRetrieval(fiDetail)
+          when(
+            mockFinancialInstitutionUpdateService.populateAndSaveFiDetails(mockitoEq(userAnswers), mockitoEq(fiDetail))
+          ).thenReturn(Future.successful((updatedUserAnswer, true)))
+          when(
+            mockFinancialInstitutionUpdateService.fiDetailsHasChanged(any[UserAnswers](), any[FIDetail]())
+          ).thenReturn(true)
+
+          val application = createAppWithAnswers(Option(userAnswers))
+          running(application) {
+            val request = FakeRequest(GET, controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(fiDetail.FIID).url)
+
+            val result = route(application, request).value
+
+            status(result) mustEqual OK
+            val document = Jsoup.parse(contentAsString(result))
+            document.getElementsContainingText(SendButtonText).isEmpty mustBe false
+          }
+        }
+
+        "must return OK and the correct view without the 'Confirm and send' button for a GET when change user is defined and no changes" in {
+          val fiDetail          = testFiDetail
+          val userAnswers       = emptyUserAnswers
+          val updatedUserAnswer = userAnswersForAddFI
+
+          mockSuccessfulFiRetrieval(fiDetail)
+          when(
+            mockFinancialInstitutionUpdateService.populateAndSaveFiDetails(mockitoEq(userAnswers), mockitoEq(fiDetail))
+          ).thenReturn(Future.successful((updatedUserAnswer, true)))
+          when(
+            mockFinancialInstitutionUpdateService.fiDetailsHasChanged(any[UserAnswers](), any[FIDetail]())
+          ).thenReturn(false)
+
+          val application = createAppWithAnswers(Option(userAnswers))
+          running(application) {
+            val request = FakeRequest(GET, controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(fiDetail.FIID).url)
+
+            val result = route(application, request).value
+
+            status(result) mustEqual OK
+            val document = Jsoup.parse(contentAsString(result))
+            document.getElementsContainingText(SendButtonText).isEmpty mustBe true
+          }
+        }
+
         "must return INTERNAL_SERVER_ERROR when an error occurs during persistence of FI details" in {
           forAll {
             fiDetail: FIDetail =>
