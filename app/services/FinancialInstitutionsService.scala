@@ -174,7 +174,6 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
   private def extractAddress(userAnswers: UserAnswers): Option[AddressDetails] =
     userAnswers
       .get(UkAddressPage)
-      .orElse(userAnswers.get(NonUkAddressPage))
       .orElse(userAnswers.get(SelectedAddressLookupPage).map(_.toAddress))
       .orElse(userAnswers.get(FetchedRegisteredAddressPage).map(_.toAddress))
       .map(
