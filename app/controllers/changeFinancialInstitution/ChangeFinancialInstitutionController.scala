@@ -75,7 +75,7 @@ class ChangeFinancialInstitutionController @Inject() (
                 financialInstitutionUpdateService
                   .populateAndSaveFiDetails(userAnswers, fiDetails)
                   .map {
-                    case (ua, fromChangedAnswers) => createPage(fiid, ua, if (fromChangedAnswers) hasChanges(userAnswers, fiDetails) else fromChangedAnswers)
+                    case (ua, fromChangedAnswers) => createPage(fiid, ua, if (fromChangedAnswers) hasChanges(ua, fiDetails) else fromChangedAnswers)
                   }
                   .recoverWith {
                     exception =>

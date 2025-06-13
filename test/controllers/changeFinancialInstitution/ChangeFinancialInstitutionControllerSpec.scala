@@ -24,7 +24,7 @@ import models.UserAnswers
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => mockitoEq}
 import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.reset
+import org.mockito.MockitoSugar.{reset, times, verify}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
@@ -125,6 +125,8 @@ class ChangeFinancialInstitutionControllerSpec
             status(result) mustEqual OK
             val document = Jsoup.parse(contentAsString(result))
             document.getElementsContainingText(SendButtonText).isEmpty mustBe true
+
+            verify(mockFinancialInstitutionUpdateService, times(0)).fiDetailsHasChanged(any[UserAnswers](), any[FIDetail]())
           }
         }
 
@@ -150,6 +152,8 @@ class ChangeFinancialInstitutionControllerSpec
             status(result) mustEqual OK
             val document = Jsoup.parse(contentAsString(result))
             document.getElementsContainingText(SendButtonText).isEmpty mustBe false
+
+            verify(mockFinancialInstitutionUpdateService, times(1)).fiDetailsHasChanged(mockitoEq(updatedUserAnswer), any[FIDetail]())
           }
         }
 
@@ -163,7 +167,7 @@ class ChangeFinancialInstitutionControllerSpec
             mockFinancialInstitutionUpdateService.populateAndSaveFiDetails(mockitoEq(userAnswers), mockitoEq(fiDetail))
           ).thenReturn(Future.successful((updatedUserAnswer, true)))
           when(
-            mockFinancialInstitutionUpdateService.fiDetailsHasChanged(any[UserAnswers](), any[FIDetail]())
+            mockFinancialInstitutionUpdateService.fiDetailsHasChanged(mockitoEq(updatedUserAnswer), any[FIDetail]())
           ).thenReturn(false)
 
           val application = createAppWithAnswers(Option(userAnswers))
@@ -175,6 +179,8 @@ class ChangeFinancialInstitutionControllerSpec
             status(result) mustEqual OK
             val document = Jsoup.parse(contentAsString(result))
             document.getElementsContainingText(SendButtonText).isEmpty mustBe true
+
+            verify(mockFinancialInstitutionUpdateService, times(1)).fiDetailsHasChanged(mockitoEq(updatedUserAnswer), any[FIDetail]())
           }
         }
 
