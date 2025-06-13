@@ -71,7 +71,7 @@ class ChangeRegisteredFinancialInstitutionController @Inject() (
                   .populateAndSaveRegisteredFiDetails(userAnswers, fiDetails)
                   .map {
                     case (ua, fromChangedAnswers) if fromChangedAnswers =>
-                      handleChangesInCacheFlow(fiid, ua, fromChangedAnswers)(request)
+                      handleChangesInCacheFlow(fiDetails, ua)(request)
                     case (ua, fromChangedAnswers) =>
                       createPage(fiid, ua, hasChanges = fromChangedAnswers)
                   }
@@ -103,14 +103,14 @@ class ChangeRegisteredFinancialInstitutionController @Inject() (
         Future.successful(Redirect(routes.SomeInformationMissingController.onPageLoad()))
     }
 
-  private def handleChangesInCacheFlow(fiid: String, ua: UserAnswers, fromChangedAnswers: Boolean)(implicit request: DataRequest[AnyContent]) =
+  private def handleChangesInCacheFlow(fiDetail: FIDetail, ua: UserAnswers)(implicit request: DataRequest[AnyContent]) =
     ua.get(ReportForRegisteredBusinessPage) match {
       case Some(isFIUser) if isFIUser =>
         getMissingAnswers(ua) match {
-          case Nil => createPage(fiid, ua, hasChanges = fromChangedAnswers)
+          case Nil => createPage(fiDetail.FIID, ua, financialInstitutionUpdateService.registeredFiDetailsHasChanged(ua, fiDetail))
           case _   => Redirect(routes.SomeInformationMissingController.onPageLoad())
         }
-      case _ => Redirect(controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(fiid))
+      case _ => Redirect(controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(fiDetail.FIID))
     }
 
   def confirmAndAdd(): Action[AnyContent] = (identify andThen getData andThen requireData).async {

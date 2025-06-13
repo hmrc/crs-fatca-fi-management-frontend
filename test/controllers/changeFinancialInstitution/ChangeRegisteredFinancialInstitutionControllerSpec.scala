@@ -43,7 +43,7 @@ import play.api.inject.bind
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.{FinancialInstitutionUpdateService, FinancialInstitutionsService, RegistrationWithUtrService}
+import services.{FinancialInstitutionUpdateService, FinancialInstitutionsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.ThereIsAProblemView
 
@@ -122,6 +122,60 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
                 val document = Jsoup.parse(contentAsString(result))
                 document.getElementsContainingText(SendButtonText).isEmpty mustBe true
               }
+          }
+        }
+
+        "must return OK and the correct view with the 'Confirm and send' button for a GET when change answers have changes" in {
+          val fiDetail           = testFiDetail
+          val userAnswers        = emptyUserAnswers
+          val updatedUserAnswers = userAnswersForAddUserAsFI.withPage(ReportForRegisteredBusinessPage, true)
+
+          mockSuccessfulFiRetrieval(fiDetail)
+          when(
+            mockFinancialInstitutionUpdateService.populateAndSaveRegisteredFiDetails(mockitoEq(userAnswers), mockitoEq(fiDetail))(any[DataRequest[AnyContent]],
+                                                                                                                                  any[HeaderCarrier]
+            )
+          ).thenReturn(Future.successful((updatedUserAnswers, true)))
+          when(mockFinancialInstitutionUpdateService.registeredFiDetailsHasChanged(mockitoEq(updatedUserAnswers), mockitoEq(fiDetail)))
+            .thenReturn(true)
+
+          val application = createAppWithAnswers(Option(userAnswers))
+          running(application) {
+            val request =
+              FakeRequest(GET, controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.onPageLoad(fiDetail.FIID).url)
+
+            val result = route(application, request).value
+
+            status(result) mustEqual OK
+            val document = Jsoup.parse(contentAsString(result))
+            document.getElementsContainingText(SendButtonText).isEmpty mustBe false
+          }
+        }
+
+        "must return OK and the correct view with the 'Confirm and send' button for a GET when change answers have no changes" in {
+          val fiDetail           = testFiDetail
+          val userAnswers        = emptyUserAnswers
+          val updatedUserAnswers = userAnswersForAddUserAsFI.withPage(ReportForRegisteredBusinessPage, true)
+
+          mockSuccessfulFiRetrieval(fiDetail)
+          when(
+            mockFinancialInstitutionUpdateService.populateAndSaveRegisteredFiDetails(mockitoEq(userAnswers), mockitoEq(fiDetail))(any[DataRequest[AnyContent]],
+                                                                                                                                  any[HeaderCarrier]
+            )
+          ).thenReturn(Future.successful((updatedUserAnswers, true)))
+          when(mockFinancialInstitutionUpdateService.registeredFiDetailsHasChanged(mockitoEq(updatedUserAnswers), mockitoEq(fiDetail)))
+            .thenReturn(false)
+
+          val application = createAppWithAnswers(Option(userAnswers))
+          running(application) {
+            val request =
+              FakeRequest(GET, controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.onPageLoad(fiDetail.FIID).url)
+
+            val result = route(application, request).value
+
+            status(result) mustEqual OK
+            val document = Jsoup.parse(contentAsString(result))
+            document.getElementsContainingText(SendButtonText).isEmpty mustBe true
           }
         }
 
