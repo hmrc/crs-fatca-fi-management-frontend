@@ -18,9 +18,11 @@ package controllers
 
 import base.SpecBase
 import models.NormalMode
+import org.scalatest.TestData
 import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import utils.SnapshotUtils.assertMatchesSnapshot
 import views.html.SomeInformationMissingView
 
 class SomeInformationMissingControllerSpec extends SpecBase {
@@ -39,10 +41,13 @@ class SomeInformationMissingControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SomeInformationMissingView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url)(
+        val resultAsString = contentAsString(result)
+        resultAsString mustEqual view(controllers.addFinancialInstitution.routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url)(
           request,
           messages(application)
         ).toString
+
+        assertMatchesSnapshot("SampleTest", resultAsString)
       }
     }
 
