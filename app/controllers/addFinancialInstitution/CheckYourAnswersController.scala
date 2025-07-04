@@ -53,7 +53,7 @@ class CheckYourAnswersController @Inject() (
     implicit request =>
       val ua: UserAnswers          = request.userAnswers
       val fiName                   = getFinancialInstitutionName(ua)
-      val financialInstitutionList = SummaryListViewModel(getFinancialInstitutionSummaries(ua)).withCssClass("govuk-summary-list--no-border")
+      val financialInstitutionList = SummaryListViewModel(getFinancialInstitutionSummaries(ua))
       val firstContactList         = SummaryListViewModel(getFirstContactSummaries(ua, CheckAnswers))
       val secondContactList        = SummaryListViewModel(getSecondContactSummaries(ua, CheckAnswers))
 
