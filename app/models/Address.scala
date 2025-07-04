@@ -21,7 +21,7 @@ import play.api.libs.json._
 case class Address(
   addressLine1: String,
   addressLine2: Option[String],
-  addressLine3: String,
+  addressLine3: Option[String],
   addressLine4: Option[String],
   postCode: Option[String],
   country: Country
@@ -30,7 +30,7 @@ case class Address(
   def lines: Seq[String] = Seq(
     Some(addressLine1),
     addressLine2,
-    Some(addressLine3),
+    addressLine3,
     addressLine4,
     postCode,
     Some(country.description)
@@ -39,7 +39,7 @@ case class Address(
   def linesWithoutCountry: Seq[String] = Seq(
     Some(addressLine1),
     addressLine2,
-    Some(addressLine3),
+    addressLine3,
     addressLine4,
     postCode
   ).flatten

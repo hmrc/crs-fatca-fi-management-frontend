@@ -48,7 +48,7 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
     AddressDetails = AddressDetails(
       AddressLine1 = "line 1",
       AddressLine2 = None,
-      AddressLine3 = "line 3",
+      AddressLine3 = Some("line 3"),
       AddressLine4 = None,
       CountryCode = Some("GB"),
       PostalCode = Some("AA1 1AA")

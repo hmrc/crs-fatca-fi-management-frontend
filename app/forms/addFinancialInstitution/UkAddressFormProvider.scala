@@ -40,8 +40,7 @@ class UkAddressFormProvider extends Mappings with RegexConstants {
                                               apiAddressRegex,
                                               addressLineLength
       ),
-      "addressLine3" -> validatedText(
-        "ukAddress.error.addressLine3.required",
+      "addressLine3" -> validatedOptionalText(
         "ukAddress.error.addressLine3.invalid",
         "ukAddress.error.addressLine3.length",
         apiAddressRegex,
