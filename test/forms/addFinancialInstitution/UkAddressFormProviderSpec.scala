@@ -97,9 +97,9 @@ class UkAddressFormProviderSpec extends StringFieldBehaviours {
 
   ".addressLine3" - {
 
-    val fieldName   = "addressLine3"
-    val invalidKey  = "ukAddress.error.addressLine3.invalid"
-    val lengthKey   = "ukAddress.error.addressLine3.length"
+    val fieldName  = "addressLine3"
+    val invalidKey = "ukAddress.error.addressLine3.invalid"
+    val lengthKey  = "ukAddress.error.addressLine3.length"
 
     behave like fieldThatBindsValidDataWithoutInvalidError(
       form,
