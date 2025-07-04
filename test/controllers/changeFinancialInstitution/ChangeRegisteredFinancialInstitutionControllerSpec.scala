@@ -64,7 +64,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
   val mockCtUtrRetrievalAction: CtUtrRetrievalAction = mock[CtUtrRetrievalAction]
   private val mockFinancialInstitutionsService       = mock[FinancialInstitutionsService]
   private val mockFinancialInstitutionUpdateService  = mock[FinancialInstitutionUpdateService]
-  private val address: Address                       = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"), Country.GB)
+  private val address: Address                       = Address("value 1", Some("value 2"), Some("value 3"), Some("value 4"), Some("XX9 9XX"), Country.GB)
 
   when(mockCtUtrRetrievalAction.apply()).thenReturn(new FakeCtUtrRetrievalAction())
 

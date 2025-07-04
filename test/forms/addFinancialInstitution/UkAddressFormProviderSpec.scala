@@ -97,10 +97,9 @@ class UkAddressFormProviderSpec extends StringFieldBehaviours {
 
   ".addressLine3" - {
 
-    val fieldName   = "addressLine3"
-    val requiredKey = "ukAddress.error.addressLine3.required"
-    val invalidKey  = "ukAddress.error.addressLine3.invalid"
-    val lengthKey   = "ukAddress.error.addressLine3.length"
+    val fieldName  = "addressLine3"
+    val invalidKey = "ukAddress.error.addressLine3.invalid"
+    val lengthKey  = "ukAddress.error.addressLine3.length"
 
     behave like fieldThatBindsValidDataWithoutInvalidError(
       form,
@@ -114,18 +113,6 @@ class UkAddressFormProviderSpec extends StringFieldBehaviours {
       fieldName,
       maxLength = addressLineMaxLength,
       lengthError = FormError(fieldName, lengthKey)
-    )
-
-    behave like fieldWithNonEmptyWhitespace(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
-
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
     )
 
     behave like fieldWithInvalidData(

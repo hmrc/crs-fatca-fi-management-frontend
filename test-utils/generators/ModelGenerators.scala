@@ -50,7 +50,7 @@ trait ModelGenerators extends RegexConstants with Generators {
       for {
         addressLine1 <- nonEmptyString
         addressLine2 <- Gen.option(nonEmptyString)
-        addressLine3 <- nonEmptyString
+        addressLine3 <- Gen.option(nonEmptyString)
         addressLine4 <- Gen.option(nonEmptyString)
         postCode     <- Gen.option(nonEmptyString)
         country      <- arbitrary[Country]
@@ -90,7 +90,7 @@ trait ModelGenerators extends RegexConstants with Generators {
     for {
       addressLine1 <- stringOfLength(35)
       addressLine2 <- Gen.option(stringOfLength(35))
-      addressLine3 <- stringOfLength(35)
+      addressLine3 <- Gen.option(stringOfLength(35))
       addressLine4 <- Gen.option(stringOfLength(35))
       postalCode   <- Gen.option(validPostCodes)
       countryCode  <- stringOfLength(2)
