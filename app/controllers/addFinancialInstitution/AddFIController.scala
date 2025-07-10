@@ -22,7 +22,6 @@ import models.{NormalMode, UserAnswers}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.FinancialInstitutionsService
-import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
@@ -42,12 +41,12 @@ class AddFIController @Inject() (
     implicit request =>
       for {
         institutions <- financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId)
-        redirectCall <- redirectUrl(request.autoMatched, request.userType, institutions.nonEmpty)
+        redirectCall <- redirectUrl(institutions.nonEmpty)
       } yield Redirect(redirectCall)
   }
 
-  private def redirectUrl(autoMatched: Boolean, affinityGroup: AffinityGroup, hasSomeFIs: Boolean)(implicit request: IdentifierRequest[_]): Future[Call] =
-    (autoMatched, affinityGroup, hasSomeFIs) match {
+  private def redirectUrl(hasSomeFIs: Boolean)(implicit request: IdentifierRequest[_]): Future[Call] =
+    (request.autoMatched, request.userType, hasSomeFIs) match {
       case (true, Organisation, false) =>
         for {
           _ <- ensureSession(request.userId)

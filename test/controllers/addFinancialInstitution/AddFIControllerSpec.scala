@@ -106,7 +106,7 @@ class AddFIControllerSpec extends SpecBase with PrivateMethodTester with ScalaFu
 
       "when user has already added fis" - {
         "returns /report-for-registered-business when Org is autoMatched" in {
-          val result = sut.invokePrivate(privateRedirectUrl(true, Organisation, true, request))
+          val result = sut.invokePrivate(privateRedirectUrl(true, request))
 
           whenReady(result) {
             call =>
@@ -116,7 +116,7 @@ class AddFIControllerSpec extends SpecBase with PrivateMethodTester with ScalaFu
       }
       "when user does not already have fis added" - {
         "returns /report-for-registered-business when Org is autoMatched" in {
-          val result = sut.invokePrivate(privateRedirectUrl(true, Organisation, false, request))
+          val result = sut.invokePrivate(privateRedirectUrl(false, request.copy(autoMatched = true, userType = Organisation)))
 
           whenReady(result) {
             call =>
@@ -124,7 +124,7 @@ class AddFIControllerSpec extends SpecBase with PrivateMethodTester with ScalaFu
           }
         }
         "returns /name when Individual is autoMatched" in {
-          val result = sut.invokePrivate(privateRedirectUrl(true, Individual, false, request))
+          val result = sut.invokePrivate(privateRedirectUrl(false, request.copy(autoMatched = true, userType = Individual)))
 
           whenReady(result) {
             call =>
@@ -132,7 +132,7 @@ class AddFIControllerSpec extends SpecBase with PrivateMethodTester with ScalaFu
           }
         }
         "returns /name when not autoMatched and Org" in {
-          val orgResult = sut.invokePrivate(privateRedirectUrl(false, Organisation, false, request))
+          val orgResult = sut.invokePrivate(privateRedirectUrl(false, request.copy(autoMatched = false, userType = Organisation)))
 
           whenReady(orgResult) {
             call =>
@@ -140,7 +140,7 @@ class AddFIControllerSpec extends SpecBase with PrivateMethodTester with ScalaFu
           }
         }
         "returns /name when not autoMatched and Ind" in {
-          val indResult = sut.invokePrivate(privateRedirectUrl(false, Individual, false, request))
+          val indResult = sut.invokePrivate(privateRedirectUrl(false, request.copy(autoMatched = false, userType = Individual)))
 
           whenReady(indResult) {
             call =>
