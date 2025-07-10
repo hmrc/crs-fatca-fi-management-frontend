@@ -19,24 +19,30 @@ package controllers.addFinancialInstitution
 import base.SpecBase
 import controllers.actions.{CtUtrRetrievalAction, FakeCtUtrRetrievalAction, IdentifierAction}
 import models.NormalMode
+import models.requests.IdentifierRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.PrivateMethodTester
+import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.inject.bind
 import play.api.mvc.{Call, MessagesControllerComponents}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.SessionRepository
 import services.FinancialInstitutionsService
 import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AddFIControllerSpec extends SpecBase with PrivateMethodTester {
+class AddFIControllerSpec extends SpecBase with PrivateMethodTester with ScalaFutures {
 
   "Add FI Controller" - {
     val mockCtUtrRetrievalAction: CtUtrRetrievalAction = mock[CtUtrRetrievalAction]
+    val mockSessionRepository                          = mock[SessionRepository]
+
+    when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
     when(mockCtUtrRetrievalAction.apply()).thenReturn(new FakeCtUtrRetrievalAction())
     val mockFinancialInstitutionsService = mock[FinancialInstitutionsService]
     when(mockFinancialInstitutionsService.getListOfFinancialInstitutions(any())(any[HeaderCarrier](), any[ExecutionContext]()))
@@ -47,7 +53,8 @@ class AddFIControllerSpec extends SpecBase with PrivateMethodTester {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[CtUtrRetrievalAction].toInstance(mockCtUtrRetrievalAction),
-            bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService)
+            bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
 
@@ -87,38 +94,58 @@ class AddFIControllerSpec extends SpecBase with PrivateMethodTester {
       val identify                                           = mock[IdentifierAction]
       val mockCtUtrRetrievalAction                           = mock[CtUtrRetrievalAction]
       val mockFinancialInstitutionsService                   = mock[FinancialInstitutionsService]
+      val request: IdentifierRequest[_]                      = IdentifierRequest(FakeRequest(), "userId", "fatcaId", Individual, autoMatched = true)
       implicit val ec: ExecutionContext                      = scala.concurrent.ExecutionContext.global
 
-      val sut                = new AddFIController(controllerComponents, identify, mockCtUtrRetrievalAction, mockFinancialInstitutionsService)(ec)
-      val privateRedirectUrl = PrivateMethod[Call](Symbol("redirectUrl"))
+      when(mockCtUtrRetrievalAction.apply()).thenReturn(new FakeCtUtrRetrievalAction())
+      when(mockFinancialInstitutionsService.getListOfFinancialInstitutions(any())(any[HeaderCarrier](), any[ExecutionContext]()))
+        .thenReturn(Future.successful(Seq.empty))
+
+      val sut = new AddFIController(controllerComponents, identify, mockCtUtrRetrievalAction, mockFinancialInstitutionsService, mockSessionRepository)(ec)
+      val privateRedirectUrl = PrivateMethod[Future[Call]](Symbol("redirectUrl"))
 
       "when user has already added fis" - {
         "returns /report-for-registered-business when Org is autoMatched" in {
-          val result = sut.invokePrivate(privateRedirectUrl(true, Organisation, true))
+          val result = sut.invokePrivate(privateRedirectUrl(true, Organisation, true, request))
 
-          result.url mustBe routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url
+          whenReady(result) {
+            call =>
+              call.url mustBe routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url
+          }
         }
       }
       "when user does not already have fis added" - {
         "returns /report-for-registered-business when Org is autoMatched" in {
-          val result = sut.invokePrivate(privateRedirectUrl(true, Organisation, false))
+          val result = sut.invokePrivate(privateRedirectUrl(true, Organisation, false, request))
 
-          result.url mustBe controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(NormalMode).url
+          whenReady(result) {
+            call =>
+              call.url mustBe controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(NormalMode).url
+          }
         }
         "returns /name when Individual is autoMatched" in {
-          val result = sut.invokePrivate(privateRedirectUrl(true, Individual, false))
+          val result = sut.invokePrivate(privateRedirectUrl(true, Individual, false, request))
 
-          result.url mustBe routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url
+          whenReady(result) {
+            call =>
+              call.url mustBe routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url
+          }
         }
         "returns /name when not autoMatched and Org" in {
-          val orgResult = sut.invokePrivate(privateRedirectUrl(false, Organisation, false))
+          val orgResult = sut.invokePrivate(privateRedirectUrl(false, Organisation, false, request))
 
-          orgResult.url mustBe routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url
+          whenReady(orgResult) {
+            call =>
+              call.url mustBe routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url
+          }
         }
         "returns /name when not autoMatched and Ind" in {
-          val indResult = sut.invokePrivate(privateRedirectUrl(false, Individual, false))
+          val indResult = sut.invokePrivate(privateRedirectUrl(false, Individual, false, request))
 
-          indResult.url mustBe routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url
+          whenReady(indResult) {
+            call =>
+              call.url mustBe routes.NameOfFinancialInstitutionController.onPageLoad(NormalMode).url
+          }
         }
       }
     }
