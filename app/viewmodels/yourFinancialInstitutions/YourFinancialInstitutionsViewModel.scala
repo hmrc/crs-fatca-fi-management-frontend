@@ -19,11 +19,10 @@ package viewmodels.yourFinancialInstitutions
 import models.FinancialInstitutions.FIDetail
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Value
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{Empty, HtmlContent}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow}
 import viewmodels.common.accessibleActionItem
 import viewmodels.govuk.all.{FluentActionItem, SummaryListRowViewModel}
-import viewmodels.implicits._
 
 object YourFinancialInstitutionsViewModel {
 
@@ -32,8 +31,8 @@ object YourFinancialInstitutionsViewModel {
     orderedInstitutions.map {
       institution =>
         SummaryListRowViewModel(
-          key = Key("", "govuk-!-display-none"),
-          value = Value(getValueContent(institution.FIName, institution.IsFIUser)),
+          key = Key(getValueContent(institution.FIName, institution.IsFIUser), "govuk-!-font-weight-regular"),
+          value = Value(Empty, "govuk-!-display-none"),
           actions = Seq(
             accessibleActionItem(
               "site.change",
@@ -55,9 +54,11 @@ object YourFinancialInstitutionsViewModel {
 
   private def getValueContent(name: String, fiIsRegisteredBusiness: Boolean): HtmlContent = {
     val registeredBusinessTag =
-      if (fiIsRegisteredBusiness)
+      if (fiIsRegisteredBusiness) {
         """<strong class="govuk-tag" style="max-width: 180px !important;">Registered business</strong>"""
-      else ""
+      } else {
+        ""
+      }
 
     HtmlContent(s"""
          |<span class="govuk-!-margin-right-2" style="max-width: 180px">$name</span>
