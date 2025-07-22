@@ -25,7 +25,6 @@ import play.api.i18n.{Lang, Messages}
 import play.api.mvc.{AnyContent, MessagesControllerComponents}
 import play.api.test.{FakeRequest, Injecting}
 import utils.ViewHelper
-import viewmodels.govuk.all.SummaryListViewModelNoMargin
 import viewmodels.yourFinancialInstitutions.YourFinancialInstitutionsViewModel
 import views.html.YourFinancialInstitutionsView
 
@@ -42,7 +41,7 @@ class YourFinancialInstitutionsViewSpec extends SpecBase with GuiceOneAppPerSuit
   "YourFinancialInstitutionsView" - {
     "should render page components" in {
 
-      val summaryListViewModel = SummaryListViewModelNoMargin(
+      val summaryListViewModel =
         YourFinancialInstitutionsViewModel.getYourFinancialInstitutionsRows(
           Seq(
             FIDetail(
@@ -65,7 +64,6 @@ class YourFinancialInstitutionsViewSpec extends SpecBase with GuiceOneAppPerSuit
             )
           )
         )
-      )
 
       val renderedHtml = view(form, summaryListViewModel)
 
