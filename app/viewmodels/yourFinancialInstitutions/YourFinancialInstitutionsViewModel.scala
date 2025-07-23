@@ -18,23 +18,21 @@ package viewmodels.yourFinancialInstitutions
 
 import models.FinancialInstitutions.FIDetail
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.Value
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{Empty, HtmlContent}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow}
-import viewmodels.common.accessibleActionItem
-import viewmodels.govuk.all.{FluentActionItem, SummaryListRowViewModel}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import uk.gov.hmrc.hmrcfrontend.views.viewmodels.listwithactions.{ListWithActions, ListWithActionsItem}
+import viewmodels.common.accessibleListActionItem
+import viewmodels.govuk.all.FluentListActionItem
 
 object YourFinancialInstitutionsViewModel {
 
-  def getYourFinancialInstitutionsRows(institutions: Seq[FIDetail])(implicit messages: Messages): Seq[SummaryListRow] = {
+  def getYourFinancialInstitutionsRows(institutions: Seq[FIDetail])(implicit messages: Messages): ListWithActions = {
     val orderedInstitutions = orderInstitutions(institutions)
-    orderedInstitutions.map {
+    val items = orderedInstitutions.map {
       institution =>
-        SummaryListRowViewModel(
-          key = Key(getValueContent(institution.FIName, institution.IsFIUser), "govuk-!-font-weight-regular"),
-          value = Value(Empty, "govuk-!-display-none"),
+        ListWithActionsItem(
+          name = getValueContent(institution.FIName, institution.IsFIUser),
           actions = Seq(
-            accessibleActionItem(
+            accessibleListActionItem(
               "site.change",
               if (institution.IsFIUser) {
                 controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.onPageLoad(institution.FIID).url
@@ -43,13 +41,14 @@ object YourFinancialInstitutionsViewModel {
               }
             )
               .withVisuallyHiddenText(messages("yourFinancialInstitutions.change.hidden", institution.FIName)),
-            accessibleActionItem("site.remove", controllers.routes.UserAccessController.onPageLoad(institution.FIID).url)
+            accessibleListActionItem("site.remove", controllers.routes.UserAccessController.onPageLoad(institution.FIID).url)
               .withVisuallyHiddenText(messages("yourFinancialInstitutions.remove.hidden", institution.FIName)),
-            accessibleActionItem("yourFinancialInstitutions.link.manageReports", controllers.routes.YourFinancialInstitutionsController.onPageLoad().url)
+            accessibleListActionItem("yourFinancialInstitutions.link.manageReports", controllers.routes.YourFinancialInstitutionsController.onPageLoad().url)
               .withVisuallyHiddenText(messages("yourFinancialInstitutions.manageReports.hidden", institution.FIName))
           )
         )
     }
+    ListWithActions(items = items)
   }
 
   private def getValueContent(name: String, fiIsRegisteredBusiness: Boolean): HtmlContent = {

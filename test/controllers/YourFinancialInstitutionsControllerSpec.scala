@@ -26,8 +26,8 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FinancialInstitutionUpdateService, FinancialInstitutionsService}
+import uk.gov.hmrc.hmrcfrontend.views.viewmodels.listwithactions.ListWithActions
 import uk.gov.hmrc.http.HeaderCarrier
-import viewmodels.govuk.all.SummaryListViewModel
 import views.html.YourFinancialInstitutionsView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -59,7 +59,7 @@ class YourFinancialInstitutionsControllerSpec extends SpecBase with MockitoSugar
         val view = application.injector.instanceOf[YourFinancialInstitutionsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, SummaryListViewModel(Seq.empty))(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, ListWithActions(Seq.empty))(request, messages(application)).toString
       }
     }
 

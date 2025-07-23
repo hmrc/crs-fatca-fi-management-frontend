@@ -18,6 +18,7 @@ package viewmodels.govuk
 
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Content
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
+import uk.gov.hmrc.hmrcfrontend.views.viewmodels.listwithactions.ListWithActionsAction
 
 object summarylist extends SummaryListFluency
 
@@ -91,6 +92,13 @@ trait SummaryListFluency {
         content = content,
         href = href
       )
+
+  }
+
+  implicit class FluentListActionItem(item: ListWithActionsAction) {
+
+    def withVisuallyHiddenText(text: String): ListWithActionsAction =
+      item.copy(visuallyHiddenText = Some(text))
 
   }
 
