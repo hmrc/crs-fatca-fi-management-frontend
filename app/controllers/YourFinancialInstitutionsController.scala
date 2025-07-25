@@ -36,6 +36,7 @@ class YourFinancialInstitutionsController @Inject() (
   sessionRepository: SessionRepository,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
+  retrieveCtUTR: CtUtrRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: YourFinancialInstitutionsFormProvider,
   val controllerComponents: MessagesControllerComponents,
@@ -48,7 +49,7 @@ class YourFinancialInstitutionsController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(): Action[AnyContent] = (identify andThen retrieveCtUTR() andThen getData andThen requireData).async {
     implicit request =>
       val ua = request.userAnswers
 
@@ -66,11 +67,14 @@ class YourFinancialInstitutionsController @Inject() (
         }
       }
       for {
-        institutions           <- financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId)
+        institutions <- financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId)
+        updatedInstitutions = institutions.map(
+          i => i.copy(IsFIUser = i.IsFIUser && request.ctutr.isDefined)
+        )
         answersWithoutRemoveFI <- Future.fromTry(request.userAnswers.remove(InstitutionDetail))
         answersWithoutChangeFI <- Future.fromTry(answersWithoutRemoveFI.remove(ChangeFiDetailsInProgressId))
         _                      <- sessionRepository.set(answersWithoutChangeFI)
-      } yield Ok(view(form, getYourFinancialInstitutionsRows(institutions), removedInstitutionName))
+      } yield Ok(view(form, getYourFinancialInstitutionsRows(updatedInstitutions), removedInstitutionName))
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
