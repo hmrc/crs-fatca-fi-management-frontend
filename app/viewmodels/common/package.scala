@@ -24,6 +24,7 @@ import pages.addFinancialInstitution.{HaveGIINPage, WhichIdentificationNumbersPa
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, SummaryListRow}
+import uk.gov.hmrc.hmrcfrontend.views.viewmodels.listwithactions.ListWithActionsAction
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 
@@ -38,6 +39,16 @@ package object common {
 
   def accessibleActionItem(messageKey: String, href: String)(implicit messages: Messages): ActionItem =
     ActionItemViewModel(
+      content = HtmlContent(
+        s"""
+           |<span aria-hidden="true">${messages(messageKey)}</span>
+           |""".stripMargin
+      ),
+      href = href
+    )
+
+  def accessibleListActionItem(messageKey: String, href: String)(implicit messages: Messages): ListWithActionsAction =
+    ListWithActionsAction(
       content = HtmlContent(
         s"""
            |<span aria-hidden="true">${messages(messageKey)}</span>
@@ -78,8 +89,8 @@ package object common {
       case Seq(TINType.CRN) => Seq(WhichIdentificationNumbersSummary.row(ua), CompanyRegistrationNumberSummary.row(ua)).flatten
       case Seq(TINType.UTR, TINType.CRN) =>
         Seq(WhichIdentificationNumbersSummary.row(ua), WhatIsUniqueTaxpayerReferenceSummary.row(ua, pageType), CompanyRegistrationNumberSummary.row(ua)).flatten
-      case Seq(TINType.TRN) => Seq(WhichIdentificationNumbersSummary.row(ua), TrustURNSummary.row(ua)).flatten
-      case _                => Seq.empty[SummaryListRow]
+      case Seq(TINType.TURN) => Seq(WhichIdentificationNumbersSummary.row(ua), TrustURNSummary.row(ua)).flatten
+      case _                 => Seq.empty[SummaryListRow]
     }
   }
 

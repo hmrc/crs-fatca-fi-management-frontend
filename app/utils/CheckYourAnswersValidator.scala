@@ -17,9 +17,14 @@
 package utils
 
 import models.FinancialInstitutions.TINType
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{CheckMode, Country, NormalMode, UserAnswers}
 import pages._
-import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
+import pages.addFinancialInstitution.IsRegisteredBusiness.{
+  FetchedRegisteredAddressPage,
+  IsTheAddressCorrectPage,
+  IsThisYourBusinessNamePage,
+  ReportForRegisteredBusinessPage
+}
 import pages.addFinancialInstitution._
 import play.api.libs.json.Reads
 
@@ -88,7 +93,11 @@ sealed trait AddFIValidator {
   }).toSeq
 
   private def checkRegisteredBusinessAddress: Seq[Page] = (userAnswers.get(IsTheAddressCorrectPage) match {
-    case Some(true) => None
+    case Some(true) =>
+      userAnswers.get(FetchedRegisteredAddressPage) match {
+        case None          => Some(IsTheAddressCorrectPage)
+        case Some(address) => if (address.countryCode != Country.GB.code) Some(IsTheAddressCorrectPage) else None
+      }
     case Some(false) =>
       any(
         checkPage(SelectedAddressLookupPage),
@@ -115,7 +124,7 @@ sealed trait AddFIValidator {
             checkPage(CompanyRegistrationNumberPage).map(
               _ => CompanyRegistrationNumberPage
             )
-          case TINType.TRN =>
+          case TINType.TURN =>
             checkPage(TrustURNPage).map(
               _ => TrustURNPage
             )

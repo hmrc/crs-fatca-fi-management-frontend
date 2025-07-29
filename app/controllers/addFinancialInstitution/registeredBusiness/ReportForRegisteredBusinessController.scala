@@ -46,24 +46,33 @@ class ReportForRegisteredBusinessController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
+      val isChangeFIInProgress = request.userAnswers.get(ChangeFiDetailsInProgressId) match {
+        case Some(_) => true
+        case None    => false
+      }
+
+      val form = formProvider(isChangeFIInProgress)
+
       val preparedForm = request.userAnswers.get(ReportForRegisteredBusinessPage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode))
+      Ok(view(preparedForm, mode, isChangeFIInProgress))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      form
+      val isChangeFIInProgress = request.userAnswers.get(ChangeFiDetailsInProgressId) match {
+        case Some(_) => true
+        case _       => false
+      }
+      formProvider(isChangeFIInProgress)
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, isChangeFIInProgress))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(ReportForRegisteredBusinessPage, value))

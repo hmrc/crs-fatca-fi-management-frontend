@@ -21,7 +21,12 @@ import models.{CheckMode, NormalMode, UserAnswers}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.addFinancialInstitution.IsRegisteredBusiness.{IsTheAddressCorrectPage, IsThisYourBusinessNamePage, ReportForRegisteredBusinessPage}
+import pages.addFinancialInstitution.IsRegisteredBusiness.{
+  FetchedRegisteredAddressPage,
+  IsTheAddressCorrectPage,
+  IsThisYourBusinessNamePage,
+  ReportForRegisteredBusinessPage
+}
 import pages.addFinancialInstitution._
 
 class CheckYourAnswersValidatorSpec extends AnyFreeSpec with Matchers with ModelGenerators with UserAnswersGenerator with ScalaCheckPropertyChecks {
@@ -107,7 +112,8 @@ class CheckYourAnswersValidatorSpec extends AnyFreeSpec with Matchers with Model
               WhatIsGIINPage,
               ReportForRegisteredBusinessPage,
               IsThisYourBusinessNamePage,
-              IsTheAddressCorrectPage
+              IsTheAddressCorrectPage,
+              FetchedRegisteredAddressPage
             ) must contain allElementsOf result
         }
       }

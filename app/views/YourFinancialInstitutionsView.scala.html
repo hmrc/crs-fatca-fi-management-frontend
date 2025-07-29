@@ -22,12 +22,12 @@
         govukErrorSummary: GovukErrorSummary,
         govukRadios: GovukRadios,
         govukButton: GovukButton,
-        govukSummaryList: GovukSummaryList,
+        hmrcListWithActions: HmrcListWithActions,
         heading: Heading,
         notification: Notification
 )
 
-@(form: Form[_], institutions: SummaryList, removedInstitutionName: Option[String] = None)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], institutions: ListWithActions, removedInstitutionName: Option[String] = None)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("yourFinancialInstitutions.title")), fullWidth = true) {
 
@@ -35,17 +35,17 @@
         @govukErrorSummary(ErrorSummaryViewModel(form))
     }
 
-    @if(institutions.rows.isEmpty) {
+    @if(institutions.items.isEmpty) {
         @heading(messages("yourFinancialInstitutions.heading.noFinancialInstitutions"))
-    } else if (institutions.rows.size == 1) {
+    } else if (institutions.items.size == 1) {
         @heading(messages("yourFinancialInstitutions.heading.singleFinancialInstitution"))
     } else {
-        @heading(messages("yourFinancialInstitutions.heading.multipleFinancialInstitutions", institutions.rows.size))
+        @heading(messages("yourFinancialInstitutions.heading.multipleFinancialInstitutions", institutions.items.size))
     }
 
-    @if(institutions.rows.nonEmpty) {
-        <div class="user-financial-institutions-summary">
-            @govukSummaryList(institutions)
+    @if(institutions.items.nonEmpty) {
+        <div class="govuk-form-group">
+            @hmrcListWithActions(institutions)
         </div>
     }
 
@@ -53,11 +53,11 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(if (institutions.rows.isEmpty) {
+                legend = LegendViewModel(if (institutions.items.isEmpty) {
                     messages("yourFinancialInstitutions.addFinancialInstitution")
                 } else {
                     messages("yourFinancialInstitutions.addAnotherFinancialInstitution")
-                }).withCssClass("govuk-fieldset__legend--m")
+                }).withCssClass("govuk-fieldset__legend--m govuk-!-display-block")
             )
         )
 

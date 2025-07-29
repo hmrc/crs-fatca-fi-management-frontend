@@ -17,10 +17,12 @@
 package controllers.changeFinancialInstitution
 
 import base.SpecBase
+import controllers.actions.{CtUtrRetrievalAction, FakeCtUtrRetrievalAction}
 import controllers.routes
 import generators.{ModelGenerators, UserAnswersGenerator}
 import models.FinancialInstitutions.FIDetail
-import models.UserAnswers
+import models.requests.DataRequest
+import models.{Address, Country, UserAnswers}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => mockitoEq}
 import org.mockito.Mockito.when
@@ -28,9 +30,17 @@ import org.mockito.MockitoSugar.{reset, times, verify}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import pages.addFinancialInstitution.IsRegisteredBusiness.{
+  FetchedRegisteredAddressPage,
+  IsTheAddressCorrectPage,
+  IsThisYourBusinessNamePage,
+  ReportForRegisteredBusinessPage
+}
+import pages.addFinancialInstitution.{HaveGIINPage, UkAddressPage}
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.inject.bind
+import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FinancialInstitutionUpdateService, FinancialInstitutionsService}
@@ -47,10 +57,16 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
     with BeforeAndAfterEach
     with ScalaCheckDrivenPropertyChecks {
 
-  private val SubscriptionId                        = "subscriptionId"
-  private val SendButtonText                        = "Confirm and send"
-  private val mockFinancialInstitutionsService      = mock[FinancialInstitutionsService]
-  private val mockFinancialInstitutionUpdateService = mock[FinancialInstitutionUpdateService]
+  private val SubscriptionId                         = "subscriptionId"
+  private val SendButtonText                         = "Confirm and send"
+  private val pTagContent                            = " is the business you registered as."
+  private val changeRegisteredBusiness               = "Is this financial institution the business you registered as?"
+  val mockCtUtrRetrievalAction: CtUtrRetrievalAction = mock[CtUtrRetrievalAction]
+  private val mockFinancialInstitutionsService       = mock[FinancialInstitutionsService]
+  private val mockFinancialInstitutionUpdateService  = mock[FinancialInstitutionUpdateService]
+  private val address: Address                       = Address("value 1", Some("value 2"), Some("value 3"), Some("value 4"), Some("XX9 9XX"), Country.GB)
+
+  when(mockCtUtrRetrievalAction.apply()).thenReturn(new FakeCtUtrRetrievalAction())
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -81,6 +97,8 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
                 status(result) mustEqual OK
                 val document = Jsoup.parse(contentAsString(result))
                 document.getElementsContainingText(SendButtonText).isEmpty mustBe true
+                document.getElementsContainingText(pTagContent).isEmpty mustBe true
+                document.getElementsContainingText(changeRegisteredBusiness).isEmpty mustBe false
               }
           }
         }
@@ -105,6 +123,89 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
                 document.getElementsContainingText(SendButtonText).isEmpty mustBe true
               }
           }
+        }
+
+        "must return OK and the correct view with the 'Confirm and send' button for a GET when change answers have changes" in {
+          val fiDetail           = testFiDetail
+          val userAnswers        = emptyUserAnswers
+          val updatedUserAnswers = userAnswersForAddUserAsFI.withPage(ReportForRegisteredBusinessPage, true)
+
+          mockSuccessfulFiRetrieval(fiDetail)
+          when(
+            mockFinancialInstitutionUpdateService.populateAndSaveRegisteredFiDetails(mockitoEq(userAnswers), mockitoEq(fiDetail))(any[DataRequest[AnyContent]],
+                                                                                                                                  any[HeaderCarrier]
+            )
+          ).thenReturn(Future.successful((updatedUserAnswers, true)))
+          when(mockFinancialInstitutionUpdateService.registeredFiDetailsHasChanged(mockitoEq(updatedUserAnswers), mockitoEq(fiDetail)))
+            .thenReturn(true)
+
+          val application = createAppWithAnswers(Option(userAnswers))
+          running(application) {
+            val request =
+              FakeRequest(GET, controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.onPageLoad(fiDetail.FIID).url)
+
+            val result = route(application, request).value
+
+            status(result) mustEqual OK
+            val document = Jsoup.parse(contentAsString(result))
+            document.getElementsContainingText(SendButtonText).isEmpty mustBe false
+          }
+        }
+
+        "must return OK and the correct view with the 'Confirm and send' button for a GET when change answers have no changes" in {
+          val fiDetail           = testFiDetail
+          val userAnswers        = emptyUserAnswers
+          val updatedUserAnswers = userAnswersForAddUserAsFI.withPage(ReportForRegisteredBusinessPage, true)
+
+          mockSuccessfulFiRetrieval(fiDetail)
+          when(
+            mockFinancialInstitutionUpdateService.populateAndSaveRegisteredFiDetails(mockitoEq(userAnswers), mockitoEq(fiDetail))(any[DataRequest[AnyContent]],
+                                                                                                                                  any[HeaderCarrier]
+            )
+          ).thenReturn(Future.successful((updatedUserAnswers, true)))
+          when(mockFinancialInstitutionUpdateService.registeredFiDetailsHasChanged(mockitoEq(updatedUserAnswers), mockitoEq(fiDetail)))
+            .thenReturn(false)
+
+          val application = createAppWithAnswers(Option(userAnswers))
+          running(application) {
+            val request =
+              FakeRequest(GET, controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.onPageLoad(fiDetail.FIID).url)
+
+            val result = route(application, request).value
+
+            status(result) mustEqual OK
+            val document = Jsoup.parse(contentAsString(result))
+            document.getElementsContainingText(SendButtonText).isEmpty mustBe true
+          }
+        }
+
+        "must navigate To Standard FI When ReportForRegistered Business is set to false" in {
+          val fiDetail = testFiDetail
+          val userAnswers = emptyUserAnswers
+            .withPage(ChangeFiDetailsInProgressId, "12345678")
+            .withPage(ReportForRegisteredBusinessPage, false)
+            .withPage(UkAddressPage, address)
+            .withPage(IsTheAddressCorrectPage, true)
+            .withPage(IsThisYourBusinessNamePage, true)
+
+          mockSuccessfulFiRetrieval(fiDetail)
+          when(
+            mockFinancialInstitutionUpdateService.populateAndSaveRegisteredFiDetails(any(), any())(any[DataRequest[AnyContent]], any[HeaderCarrier])
+          ).thenReturn(Future.successful((userAnswers, true)))
+
+          val application = createAppWithAnswers(Option(userAnswers))
+          running(application) {
+            val request =
+              FakeRequest(GET, controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.onPageLoad(fiDetail.FIID).url)
+
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result).value mustEqual controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController
+              .onPageLoad(fiDetail.FIID)
+              .url
+          }
+
         }
 
         "must return INTERNAL_SERVER_ERROR when an error occurs during persistence of FI details" in {
@@ -199,6 +300,29 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
               }
           }
         }
+
+        "must redirect to information missing page when when UserAnswers is having Non UK Address with IsThisAddressCorrect as True" in {
+
+          val fiDetail = testFiDetail
+          val userAnswers = userAnswersForAddUserAsFI
+            .withPage(ChangeFiDetailsInProgressId, fiDetail.FIID)
+            .withPage(FetchedRegisteredAddressPage, testNonUKAddressResponse)
+
+          mockSuccessfulFiRetrieval(fiDetail)
+          when(mockFinancialInstitutionUpdateService.registeredFiDetailsHasChanged(mockitoEq(userAnswers), mockitoEq(fiDetail)))
+            .thenReturn(false)
+
+          val application = createAppWithAnswers(Option(userAnswers))
+          running(application) {
+            val request =
+              FakeRequest(GET, controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.onPageLoad(fiDetail.FIID).url)
+
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result).value mustEqual routes.SomeInformationMissingController.onPageLoad().url
+          }
+        }
       }
 
       "must return INTERNAL_SERVER_ERROR when unable to find FI details" in {
@@ -245,8 +369,15 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
     }
 
     "confirmAndAdd" - {
-      "must clear user answers data and redirect to details submitted for a POST" in {
+
+      "must redirect to SomeInformationMissing Page when There is missing values(HaveGIINPage) for request" in {
         val userAnswers = emptyUserAnswers
+        val updatedAnswers = userAnswers
+          .withPage(ChangeFiDetailsInProgressId, "12345678")
+          .withPage(ReportForRegisteredBusinessPage, true)
+          .withPage(UkAddressPage, address)
+          .withPage(IsTheAddressCorrectPage, true)
+          .withPage(IsThisYourBusinessNamePage, true)
 
         when(mockFinancialInstitutionUpdateService.clearUserAnswers(any[UserAnswers])).thenReturn(Future.successful(true))
         when(
@@ -254,7 +385,38 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
         )
           .thenReturn(Future.successful())
 
-        val application = createAppWithAnswers(Option(userAnswers))
+        val application = createAppWithAnswers(Option(updatedAnswers))
+        running(application) {
+          val request = FakeRequest(POST, controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.confirmAndAdd().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.SomeInformationMissingController.onPageLoad().url
+
+          verify(mockFinancialInstitutionUpdateService, times(0)).clearUserAnswers(any())
+          verify(mockFinancialInstitutionsService, times(0)).updateFinancialInstitution(any(), any())(any(), any())
+        }
+      }
+
+      "must clear user answers data and redirect to details submitted for a POST" in {
+        val userAnswers = emptyUserAnswers
+        val updatedAnswers = userAnswers
+          .withPage(ChangeFiDetailsInProgressId, "12345678")
+          .withPage(ReportForRegisteredBusinessPage, true)
+          .withPage(HaveGIINPage, false)
+          .withPage(UkAddressPage, address)
+          .withPage(IsTheAddressCorrectPage, true)
+          .withPage(IsThisYourBusinessNamePage, true)
+          .withPage(FetchedRegisteredAddressPage, testAddressResponse)
+
+        when(mockFinancialInstitutionUpdateService.clearUserAnswers(any[UserAnswers])).thenReturn(Future.successful(true))
+        when(
+          mockFinancialInstitutionsService.updateFinancialInstitution(any[String], any[UserAnswers])(any[HeaderCarrier], any[ExecutionContext])
+        )
+          .thenReturn(Future.successful())
+
+        val application = createAppWithAnswers(Option(updatedAnswers))
         running(application) {
           val request = FakeRequest(POST, controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.confirmAndAdd().url)
 
@@ -263,11 +425,20 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual routes.DetailsUpdatedController.onPageLoad().url
 
-          verify(mockFinancialInstitutionUpdateService, times(1)).clearUserAnswers(userAnswers)
+          verify(mockFinancialInstitutionUpdateService, times(1)).clearUserAnswers(updatedAnswers)
         }
       }
 
       "must return INTERNAL_SERVER_ERROR for a POST when an error occurs when clearing user answers" in {
+        val userAnswers = emptyUserAnswers
+        val updatedAnswers = userAnswers
+          .withPage(ChangeFiDetailsInProgressId, "12345678")
+          .withPage(ReportForRegisteredBusinessPage, true)
+          .withPage(HaveGIINPage, false)
+          .withPage(UkAddressPage, address)
+          .withPage(IsTheAddressCorrectPage, true)
+          .withPage(IsThisYourBusinessNamePage, true)
+          .withPage(FetchedRegisteredAddressPage, testAddressResponse)
         when(
           mockFinancialInstitutionsService.updateFinancialInstitution(any[String], any[UserAnswers])(any[HeaderCarrier], any[ExecutionContext])
         )
@@ -275,7 +446,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
         when(mockFinancialInstitutionUpdateService.clearUserAnswers(any[UserAnswers]))
           .thenReturn(Future.failed(new Exception("failed to clear user answers data")))
 
-        val application = createAppWithAnswers(Option(emptyUserAnswers))
+        val application = createAppWithAnswers(Option(updatedAnswers))
         running(application) {
           val request = FakeRequest(POST, controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.confirmAndAdd().url)
 
@@ -306,7 +477,9 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
 
   private def mockSuccessfulUserAnswersPersistence(userAnswers: UserAnswers, fiDetail: FIDetail) =
     when(
-      mockFinancialInstitutionUpdateService.populateAndSaveRegisteredFiDetails(mockitoEq(userAnswers), mockitoEq(fiDetail))
+      mockFinancialInstitutionUpdateService.populateAndSaveRegisteredFiDetails(mockitoEq(userAnswers), mockitoEq(fiDetail))(any[DataRequest[AnyContent]],
+                                                                                                                            any[HeaderCarrier]
+      )
     ).thenReturn(Future.successful((userAnswers, false)))
 
 }

@@ -25,7 +25,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ContactHelper
 import views.html.FIRemovedView
 
-import java.time.{Clock, LocalDate, LocalTime, ZoneId, ZonedDateTime}
+import java.time.{Clock, ZoneId, ZonedDateTime}
 import javax.inject.Inject
 
 class FIRemovedController @Inject() (
@@ -51,7 +51,10 @@ class FIRemovedController @Inject() (
         case (Some(fiName), Some(fiid)) =>
           Ok(view(fiName, fiid, formatDate(date), formatTime(time)))
         case _ =>
-          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+          request.userAnswers.get(InstitutionDetail) match {
+            case Some(_) => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+            case None    => Redirect(controllers.routes.PageUnavailableController.onPageLoad)
+          }
       }
   }
 

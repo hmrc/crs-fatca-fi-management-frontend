@@ -15,11 +15,12 @@
  *@
 
 @import components._
-@this(link: Link)
+@import config.FrontendAppConfig
+@this(link: Link, appConfig: FrontendAppConfig)
 
 @()(implicit messages: Messages)
 
-@uploadLink = {@link(controllers.routes.IndexController.onPageLoad().url, messages("index.uploadFile.link"))}
+@uploadLink = {@link(appConfig.reportingUrl, messages("index.uploadFile.link"))}
 <div class="govuk-!-padding-top-5">
     <h2 class="govuk-heading-m">@messages("index.yourReports.h2")</h2>
     <p class="govuk-body">@uploadLink</p>

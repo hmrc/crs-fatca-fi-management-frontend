@@ -105,4 +105,12 @@ class ChangeUserAnswersRepository @Inject() (
       )
   }
 
+  def clear(fatcaId: String): Future[Boolean] =
+    collection
+      .deleteOne(byId(fatcaId))
+      .toFuture()
+      .map(
+        _ => true
+      )
+
 }

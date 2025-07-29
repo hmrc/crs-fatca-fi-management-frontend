@@ -16,6 +16,7 @@
 
 package pages.addFinancialInstitution.IsRegisteredBusiness
 
+import pages.{CompanyRegistrationNumberPage, TrustURNPage}
 import pages.addFinancialInstitution._
 import pages.addFinancialInstitution.behaviours.PageBehaviours
 
@@ -47,7 +48,9 @@ class ReportForRegisteredBusinessPageSpec extends PageBehaviours {
         SecondContactNamePage.toString,
         SecondContactEmailPage.toString,
         SecondContactCanWePhonePage.toString,
-        SecondContactPhoneNumberPage.toString
+        SecondContactPhoneNumberPage.toString,
+        CompanyRegistrationNumberPage,
+        TrustURNPage
       )
     }
     "when false" in {

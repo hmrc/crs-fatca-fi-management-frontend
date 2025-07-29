@@ -42,8 +42,7 @@ class NonUkAddressFormProvider @Inject() extends Mappings with RegexConstants {
         apiAddressRegex,
         addressLineLength
       ),
-      "addressLine3" -> validatedText(
-        "nonUkAddress.error.addressLine3.required",
+      "addressLine3" -> validatedOptionalText(
         "nonUkAddress.error.addressLine3.invalid",
         "nonUkAddress.error.addressLine3.length",
         apiAddressRegex,

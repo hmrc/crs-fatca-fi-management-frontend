@@ -22,25 +22,35 @@
     govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, isChangeFIInProgress: Boolean)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("reportForRegisteredBusiness.title"))) {
+@layout(pageTitle = title(form, if(isChangeFIInProgress) messages("reportForRegisteredBusiness.changeInProgress.title") else messages("reportForRegisteredBusiness.title"))) {
 
     @formHelper(action = controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onSubmit(mode), Symbol("autoComplete") -> "on") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
+        @if(!isChangeFIInProgress){
+            <h1 class="govuk-heading-l">@messages("reportForRegisteredBusiness.heading")</h1>
+            <p class="govuk-body">@Html(messages("reportForRegisteredBusiness.p1"))</p>
+        }
 
-        <h1 class="govuk-heading-l">@messages("reportForRegisteredBusiness.heading")</h1>
-        <p class="govuk-body">@Html(messages("reportForRegisteredBusiness.p1"))</p>
-
-        @govukRadios(
-            RadiosViewModel.yesNo(
-                field = form("value"),
-                legend = LegendViewModel(messages("reportForRegisteredBusiness.heading")).withCssClass("govuk-visually-hidden")
+        @if(isChangeFIInProgress) {
+            @govukRadios(
+                RadiosViewModel.yesNo(
+                    field = form("value"),
+                    legend = LegendViewModel(messages("reportForRegisteredBusiness.changeInProgress.heading")).asPageHeading().withCssClass("govuk-!-display-block")
+                )
             )
-        )
+        } else {
+            @govukRadios(
+                RadiosViewModel.yesNo(
+                    field = form("value"),
+                    legend = LegendViewModel(messages("reportForRegisteredBusiness.heading")).withCssClass("govuk-visually-hidden govuk-!-display-block")
+                )
+            )
+        }
 
         @govukButton(
             ButtonViewModel(messages("site.continue")).withAttribute("id" -> "submit")

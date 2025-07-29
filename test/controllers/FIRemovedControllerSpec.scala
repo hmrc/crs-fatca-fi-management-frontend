@@ -19,6 +19,7 @@ package controllers
 import base.SpecBase
 import generators.Generators
 import models.UserAnswers
+import pages.InstitutionDetail
 import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -104,7 +105,7 @@ class FIRemovedControllerSpec extends SpecBase with Generators {
       }
     }
 
-    "must return Journey Recovery Controller with no ID" in {
+    "must return FIRemovedController with no ID" in {
 
       val midnight         = Instant.parse("2025-02-15T12:14:00Z")
       val stubClock: Clock = Clock.fixed(midnight, ZoneId.systemDefault)
@@ -122,11 +123,11 @@ class FIRemovedControllerSpec extends SpecBase with Generators {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.PageUnavailableController.onPageLoad.url
       }
     }
 
-    "must return Journey Recovery Controller with no name" in {
+    "must return FI Removed with no name" in {
 
       val midnight         = Instant.parse("2025-02-15T12:14:00Z")
       val stubClock: Clock = Clock.fixed(midnight, ZoneId.systemDefault)
@@ -140,6 +141,28 @@ class FIRemovedControllerSpec extends SpecBase with Generators {
 
       running(application) {
         val request = FakeRequest(GET, routes.FIRemovedController.onPageLoad().url).withFlash("fiid" -> testFiid)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.PageUnavailableController.onPageLoad.url
+      }
+    }
+
+    "must return Journey Recovery Controller if InstitutionDetail is present" in {
+
+      val midnight         = Instant.parse("2025-02-15T12:14:00Z")
+      val stubClock: Clock = Clock.fixed(midnight, ZoneId.systemDefault)
+
+      val ua = userAnswers.set(NameOfFinancialInstitutionPage, fiName).get.set(InstitutionDetail, testFiDetail).success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(
+          bind[Clock].toInstance(stubClock)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.FIRemovedController.onPageLoad().url)
 
         val result = route(application, request).value
 

@@ -18,12 +18,20 @@ package viewmodels.govuk
 
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Content
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
+import uk.gov.hmrc.hmrcfrontend.views.viewmodels.listwithactions.ListWithActionsAction
 
 object summarylist extends SummaryListFluency
 
 trait SummaryListFluency {
 
   object SummaryListViewModel {
+
+    def apply(rows: Seq[SummaryListRow]): SummaryList =
+      SummaryList(rows = rows, None, "govuk-!-margin-bottom-9")
+
+  }
+
+  object SummaryListViewModelNoMargin {
 
     def apply(rows: Seq[SummaryListRow]): SummaryList =
       SummaryList(rows = rows)
@@ -84,6 +92,13 @@ trait SummaryListFluency {
         content = content,
         href = href
       )
+
+  }
+
+  implicit class FluentListActionItem(item: ListWithActionsAction) {
+
+    def withVisuallyHiddenText(text: String): ListWithActionsAction =
+      item.copy(visuallyHiddenText = Some(text))
 
   }
 

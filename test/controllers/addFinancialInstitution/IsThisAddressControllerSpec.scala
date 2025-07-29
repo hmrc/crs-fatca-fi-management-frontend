@@ -44,7 +44,7 @@ class IsThisAddressControllerSpec extends SpecBase with MockitoSugar {
   val address: Address = Address(
     "1 address street",
     addressLine2 = None,
-    addressLine3 = "Address town",
+    addressLine3 = Some("Address town"),
     addressLine4 = Some("Wessex"),
     postCode = Some("postcode"),
     country = Country.GB
@@ -83,7 +83,7 @@ class IsThisAddressControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to information-sent page for a GET when the user answers is empty" in {
+    "must redirect to pageUnavailable page for a GET when the user answers is empty" in {
       val application = applicationBuilder(userAnswers = Option(emptyUserAnswers)).build()
 
       running(application) {
@@ -92,7 +92,7 @@ class IsThisAddressControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.InformationSentController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.PageUnavailableController.onPageLoad.url
       }
     }
 

@@ -16,12 +16,21 @@
 
 package pages.addFinancialInstitution
 
+import models.UserAnswers
 import pages.QuestionPage
 import play.api.libs.json.JsPath
+
+import scala.util.Try
 
 case object PostcodePage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "postcode"
+
+  override def cleanup(value: Option[String], userAnswers: UserAnswers): Try[UserAnswers] =
+    value.fold(Try(userAnswers))(
+      _ => userAnswers.remove(IsThisAddressPage)
+    )
+
 }

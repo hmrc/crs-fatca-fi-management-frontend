@@ -78,7 +78,7 @@ class Navigator @Inject() () {
           userAnswers,
           SecondContactExistsPage,
           routes.SecondContactNameController.onPageLoad(NormalMode),
-          routes.CheckYourAnswersController.onPageLoad()
+          resolveNextRouteForChangeFIJourney(userAnswers, routes.CheckYourAnswersController.onPageLoad())
         )
     case SecondContactNamePage =>
       _ => routes.SecondContactEmailController.onPageLoad(NormalMode)
@@ -90,15 +90,15 @@ class Navigator @Inject() () {
           userAnswers,
           SecondContactCanWePhonePage,
           routes.SecondContactPhoneNumberController.onPageLoad(NormalMode),
-          routes.CheckYourAnswersController.onPageLoad()
+          resolveNextRouteForChangeFIJourney(userAnswers, routes.CheckYourAnswersController.onPageLoad())
         )
-    case SecondContactPhoneNumberPage => _ => routes.CheckYourAnswersController.onPageLoad()
+    case SecondContactPhoneNumberPage => userAnswers => resolveNextRouteForChangeFIJourney(userAnswers, routes.CheckYourAnswersController.onPageLoad())
     case PostcodePage                 => addressLookupNavigation(NormalMode)
     case SelectAddressPage =>
       userAnswers =>
         isFiUser(
           userAnswers,
-          controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
+          getRegisteredFIRoute(userAnswers),
           routes.FirstContactNameController.onPageLoad(NormalMode)
         )
     case IsThisAddressPage =>
@@ -146,14 +146,14 @@ class Navigator @Inject() () {
         yesNoPage(
           userAnswers,
           IsTheAddressCorrectPage,
-          controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
+          getRegisteredFIRoute(userAnswers),
           controllers.addFinancialInstitution.routes.PostcodeController.onPageLoad(NormalMode)
         )
     case UkAddressPage =>
       userAnswers =>
         isFiUser(
           userAnswers,
-          controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad(),
+          getRegisteredFIRoute(userAnswers),
           routes.FirstContactNameController.onPageLoad(NormalMode)
         )
     case RemoveAreYouSurePage =>
@@ -290,10 +290,10 @@ class Navigator @Inject() () {
 
   private def whichIdPage(ua: UserAnswers): Call =
     ua.get(WhichIdentificationNumbersPage).fold(controllers.routes.JourneyRecoveryController.onPageLoad()) {
-      case set if set.contains(UTR) => routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(NormalMode)
-      case set if set.contains(CRN) => routes.WhatIsCompanyRegistrationNumberController.onPageLoad(NormalMode)
-      case set if set.contains(TRN) => routes.TrustURNController.onPageLoad(NormalMode)
-      case _                        => controllers.routes.JourneyRecoveryController.onPageLoad()
+      case set if set.contains(UTR)  => routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(NormalMode)
+      case set if set.contains(CRN)  => routes.WhatIsCompanyRegistrationNumberController.onPageLoad(NormalMode)
+      case set if set.contains(TURN) => routes.TrustURNController.onPageLoad(NormalMode)
+      case _                         => controllers.routes.JourneyRecoveryController.onPageLoad()
     }
 
   private def changeWhichIdPage(ua: UserAnswers): Call = {
@@ -314,7 +314,7 @@ class Navigator @Inject() () {
           routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(CheckMode)
         case CRN if isMissing(CompanyRegistrationNumberPage) =>
           routes.WhatIsCompanyRegistrationNumberController.onPageLoad(CheckMode)
-        case TRN if isMissing(TrustURNPage) =>
+        case TURN if isMissing(TrustURNPage) =>
           routes.TrustURNController.onPageLoad(CheckMode)
       }
 
@@ -349,6 +349,18 @@ class Navigator @Inject() () {
       case (Some(id), _) =>
         controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(id)
       case _ => checkAnswersOnwardRoute
+    }
+
+  private def resolveNextRouteForChangeFIJourney(userAnswers: UserAnswers, checkAnswersOnwardRoute: Call): Call =
+    userAnswers.get(ChangeFiDetailsInProgressId) match {
+      case Some(id) => controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(id)
+      case _        => checkAnswersOnwardRoute
+    }
+
+  private def getRegisteredFIRoute(userAnswers: UserAnswers): Call =
+    userAnswers.get(ChangeFiDetailsInProgressId) match {
+      case Some(id) => controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.onPageLoad(id)
+      case None     => controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad()
     }
 
 }

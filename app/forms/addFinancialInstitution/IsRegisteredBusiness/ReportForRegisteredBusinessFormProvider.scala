@@ -23,9 +23,15 @@ import javax.inject.Inject
 
 class ReportForRegisteredBusinessFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(isChangeInProgress: Boolean = false): Form[Boolean] =
     Form(
-      "value" -> boolean("reportForRegisteredBusiness.error.required")
+      "value" -> boolean(
+        if (isChangeInProgress) {
+          "reportForRegisteredBusiness.error.required.change"
+        } else {
+          "reportForRegisteredBusiness.error.required"
+        }
+      )
     )
 
 }

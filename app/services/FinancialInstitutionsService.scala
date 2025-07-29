@@ -17,7 +17,7 @@
 package services
 
 import connectors.FinancialInstitutionsConnector
-import models.FinancialInstitutions.TINType.{CRN, GIIN, TRN, UTR}
+import models.FinancialInstitutions.TINType.{CRN, TURN, UTR}
 import models.FinancialInstitutions._
 import models.UserAnswers
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, ReportForRegisteredBusinessPage}
@@ -113,6 +113,7 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
       FIName = fiName,
       SubscriptionID = subscriptionId,
       TINDetails = extractTinDetails(userAnswers),
+      GIIN = userAnswers.get(WhatIsGIINPage).map(_.value),
       IsFIUser = userAnswers.get(ReportForRegisteredBusinessPage).contains(true),
       AddressDetails = address,
       PrimaryContactDetails = extractPrimaryContactDetails(userAnswers),
@@ -129,6 +130,7 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
       FIName = fiName,
       SubscriptionID = subscriptionId,
       TINDetails = extractTinDetails(userAnswers),
+      GIIN = userAnswers.get(WhatIsGIINPage).map(_.value),
       IsFIUser = userAnswers.get(ReportForRegisteredBusinessPage).contains(true),
       AddressDetails = address,
       PrimaryContactDetails = extractPrimaryContactDetails(userAnswers),
@@ -145,15 +147,10 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
       case _         => Seq.empty
     }
     val trn = userAnswers.get(TrustURNPage) match {
-      case Some(trn) => Seq(TINDetails(TRN, trn.value, "GB"))
+      case Some(trn) => Seq(TINDetails(TURN, trn.value, "GB"))
       case _         => Seq.empty
     }
-
-    val giin = userAnswers.get(WhatIsGIINPage) match {
-      case Some(giin) => Seq(TINDetails(GIIN, giin.value, "US"))
-      case _          => Seq.empty
-    }
-    utr ++ crn ++ trn ++ giin
+    utr ++ crn ++ trn
   }
 
   private def extractPrimaryContactDetails(userAnswers: UserAnswers): Option[ContactDetails] = for {
@@ -176,11 +173,9 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
 
   private def extractAddress(userAnswers: UserAnswers): Option[AddressDetails] =
     userAnswers
-      .get(FetchedRegisteredAddressPage)
-      .map(_.toAddress)
-      .orElse(userAnswers.get(UkAddressPage))
-      .orElse(userAnswers.get(NonUkAddressPage))
+      .get(UkAddressPage)
       .orElse(userAnswers.get(SelectedAddressLookupPage).map(_.toAddress))
+      .orElse(userAnswers.get(FetchedRegisteredAddressPage).map(_.toAddress))
       .map(
         address =>
           AddressDetails(

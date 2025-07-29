@@ -37,16 +37,26 @@ class IsTheAddressCorrectPageSpec extends PageBehaviours {
       result.get.data.value must not contain key(FetchedRegisteredAddressPage.toString)
     }
 
-    "when true" in {
-      val result = IsTheAddressCorrectPage.cleanup(Some(true), userAnswersForAddFI.withPage(FetchedRegisteredAddressPage, testAddressResponse))
+    "when true" - {
+      val pagesToClear = Table(
+        ("page", "setupUserAnswers"),
+        (PostcodePage, emptyUserAnswers.withPage(PostcodePage, "postcode")),
+        (SelectedAddressLookupPage, emptyUserAnswers.withPage(SelectedAddressLookupPage, testAddressLookup)),
+        (IsThisAddressPage, emptyUserAnswers.withPage(IsThisAddressPage, true)),
+        (UkAddressPage, emptyUserAnswers.withPage(UkAddressPage, testAddress)),
+        (AddressLookupPage, emptyUserAnswers.withPage(AddressLookupPage, Seq(testAddressLookup)))
+      )
 
-      result.get.data.value must contain key (FetchedRegisteredAddressPage.toString)
-      result.get.data.value must not contain key(NonUkAddressPage.toString)
-      result.get.data.value must not contain key(PostcodePage.toString)
-      result.get.data.value must not contain key(SelectedAddressLookupPage.toString)
-      result.get.data.value must not contain key(IsThisAddressPage.toString)
-      result.get.data.value must not contain key(UkAddressPage.toString)
+      forAll(pagesToClear) {
+        (page, userAnswers) =>
+          s"clears ${page.getClass.getSimpleName.replace("$", "")} when set" in {
+            val result = IsTheAddressCorrectPage.cleanup(Some(true), userAnswers)
+
+            result.get.data.value must not contain key(page.toString)
+          }
+      }
     }
+
   }
 
 }

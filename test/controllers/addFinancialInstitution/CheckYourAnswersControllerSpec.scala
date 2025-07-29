@@ -23,7 +23,7 @@ import models.FinancialInstitutions.SubmitFIDetailsResponse
 import models.UserAnswers
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import pages.addFinancialInstitution._
@@ -32,6 +32,7 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.ChangeUserAnswersRepository
 import services.FinancialInstitutionsService
 import uk.gov.hmrc.http.HeaderCarrier
 import viewmodels.govuk.SummaryListFluency
@@ -67,7 +68,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       }
     }
 
-    "must redirect to information-sent page for a GET when the user answers is empty" in {
+    "must redirect to pageUnavailable page for a GET when the user answers is empty" in {
       val application = applicationBuilder(userAnswers = Option(emptyUserAnswers)).build()
 
       running(application) {
@@ -76,7 +77,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.InformationSentController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.PageUnavailableController.onPageLoad.url
       }
     }
 
@@ -117,7 +118,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
     }
 
     "confirmAndAdd" - {
-      val mockService = mock[FinancialInstitutionsService]
+      val mockService                                                  = mock[FinancialInstitutionsService]
+      val mockChangeUserAnswersRepository: ChangeUserAnswersRepository = mock[ChangeUserAnswersRepository]
 
       val someUserAnswers = emptyUserAnswers
         .withPage(NameOfFinancialInstitutionPage, "test")
@@ -149,12 +151,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         }
       }
       "must redirect to confirmation page when submitting answers" in {
+        when(mockChangeUserAnswersRepository.clear(any())) thenReturn Future.successful(true)
         when(mockService.addFinancialInstitution(any[String](), any[UserAnswers]())(any[HeaderCarrier](), any[ExecutionContext]()))
           .thenReturn(Future.successful(SubmitFIDetailsResponse(Some(testFiid))))
 
         val application = applicationBuilder(userAnswers = Some(someUserAnswers))
           .overrides(
-            bind[FinancialInstitutionsService].toInstance(mockService)
+            bind[FinancialInstitutionsService].toInstance(mockService),
+            bind[ChangeUserAnswersRepository].toInstance(mockChangeUserAnswersRepository)
           )
           .build()
 
@@ -165,10 +169,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.addFinancialInstitution.routes.FinancialInstitutionAddedConfirmationController.onPageLoad.url
+          verify(mockChangeUserAnswersRepository, times(1)).clear(any())
         }
       }
 
-      "must redirect to information-sent page for a POST when the user answers is empty" in {
+      "must redirect to pageUnavailable page for a POST when the user answers is empty" in {
         val application = applicationBuilder(userAnswers = Option(emptyUserAnswers)).build()
 
         running(application) {
@@ -177,7 +182,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.InformationSentController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.routes.PageUnavailableController.onPageLoad.url
         }
       }
     }

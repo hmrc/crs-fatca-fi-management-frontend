@@ -19,12 +19,14 @@ package controllers.addFinancialInstitution.IsRegisteredBusiness
 import base.SpecBase
 import controllers.routes
 import forms.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessFormProvider
-import models.{NormalMode, UserAnswers}
+import models.{CheckMode, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
+import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -38,11 +40,17 @@ class ReportForRegisteredBusinessControllerSpec extends SpecBase with MockitoSug
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new ReportForRegisteredBusinessFormProvider()
-  val form         = formProvider()
+  val formProvider         = new ReportForRegisteredBusinessFormProvider()
+  val form                 = formProvider()
+  val isChangeFIInProgress = false
+  val changeFIDetailHeader = "Is this financial institution the business you registered as?"
+  val normalHeader         = "Would you like to add your business as a financial institution?"
 
   lazy val reportForRegisteredBusinessRoute =
     controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(NormalMode).url
+
+  lazy val reportForRegisteredBusinessRouteCheckMode =
+    controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(CheckMode).url
 
   "ReportForRegisteredBusiness Controller" - {
 
@@ -58,11 +66,15 @@ class ReportForRegisteredBusinessControllerSpec extends SpecBase with MockitoSug
         val view = application.injector.instanceOf[ReportForRegisteredBusinessView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        val htmlVal = contentAsString(result)
+        htmlVal mustEqual view(form, NormalMode, isChangeFIInProgress)(request, messages(application)).toString
+        val heading = Jsoup.parse(htmlVal).select(".govuk-heading-l")
+        heading.size() mustEqual 1
+        heading.get(0).text() mustEqual normalHeader
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "must populate the view correctly on a GET when the question has previously been answered And ChangeInProgress as False" in {
 
       val userAnswers = UserAnswers(userAnswersId).set(ReportForRegisteredBusinessPage, true).success.value
 
@@ -76,7 +88,36 @@ class ReportForRegisteredBusinessControllerSpec extends SpecBase with MockitoSug
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, isChangeFIInProgress)(request, messages(application)).toString
+      }
+    }
+
+    "must populate the view correctly on a GET when the question has previously been answered And ChangeInProgress as True" in {
+
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(ChangeFiDetailsInProgressId, "67867812")
+        .success
+        .value
+        .set(ReportForRegisteredBusinessPage, true)
+        .success
+        .value
+
+      val application      = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val changeInProgress = true
+
+      running(application) {
+        val request = FakeRequest(GET, reportForRegisteredBusinessRouteCheckMode)
+
+        val view = application.injector.instanceOf[ReportForRegisteredBusinessView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val htmlVal = contentAsString(result)
+        htmlVal mustEqual view(form.fill(true), CheckMode, changeInProgress)(request, messages(application)).toString
+        val heading = Jsoup.parse(htmlVal).select(".govuk-fieldset__heading")
+        heading.size() mustEqual 1
+        heading.get(0).text() mustEqual changeFIDetailHeader
       }
     }
 
@@ -122,7 +163,7 @@ class ReportForRegisteredBusinessControllerSpec extends SpecBase with MockitoSug
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, isChangeFIInProgress)(request, messages(application)).toString
       }
     }
 

@@ -17,6 +17,7 @@
 package models.FinancialInstitutions
 
 import models.Address
+import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import utils.CountryListFactory
 
@@ -24,6 +25,7 @@ sealed trait BaseFIDetail {
   val FIName: String
   val SubscriptionID: String
   val TINDetails: Seq[TINDetails]
+  val GIIN: Option[String]
   val IsFIUser: Boolean
   val AddressDetails: AddressDetails
   val PrimaryContactDetails: Option[ContactDetails]
@@ -39,6 +41,7 @@ final case class FIDetail(
   FIName: String,
   SubscriptionID: String,
   TINDetails: Seq[TINDetails],
+  GIIN: Option[String],
   IsFIUser: Boolean,
   AddressDetails: AddressDetails,
   PrimaryContactDetails: Option[ContactDetails],
@@ -46,7 +49,21 @@ final case class FIDetail(
 ) extends BaseFIDetail
 
 object FIDetail {
-  implicit val format: OFormat[FIDetail] = Json.format[FIDetail]
+
+  implicit val reads: Reads[FIDetail] = (
+    (JsPath \ "FIID").read[String] and
+      (JsPath \ "FIName").read[String] and
+      (JsPath \ "SubscriptionID").read[String] and
+      (JsPath \ "TINDetails").readNullable[Seq[TINDetails]].map(_.getOrElse(Seq.empty)) and
+      (JsPath \ "GIIN").readNullable[String] and
+      (JsPath \ "IsFIUser").read[Boolean] and
+      (JsPath \ "AddressDetails").read[AddressDetails] and
+      (JsPath \ "PrimaryContactDetails").readNullable[ContactDetails] and
+      (JsPath \ "SecondaryContactDetails").readNullable[ContactDetails]
+  )(FIDetail.apply _)
+
+  implicit val writes: OWrites[FIDetail] = Json.writes[FIDetail]
+  implicit val format: OFormat[FIDetail] = OFormat(reads, writes)
 }
 
 final case class RemoveFIDetail(
@@ -83,7 +100,7 @@ object AddressDetails {
 final case class AddressDetails(
   AddressLine1: String,
   AddressLine2: Option[String],
-  AddressLine3: String,
+  AddressLine3: Option[String],
   AddressLine4: Option[String],
   CountryCode: Option[String],
   PostalCode: Option[String]
@@ -99,6 +116,7 @@ final case class CreateFIDetails(
   FIName: String,
   SubscriptionID: String,
   TINDetails: Seq[TINDetails],
+  GIIN: Option[String],
   IsFIUser: Boolean,
   AddressDetails: AddressDetails,
   PrimaryContactDetails: Option[ContactDetails],

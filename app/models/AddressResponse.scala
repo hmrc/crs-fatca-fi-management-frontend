@@ -32,7 +32,7 @@ case class AddressResponse(
 
     val line1        = addressLine1
     val line2        = addressLine2
-    val line3        = addressLine3.getOrElse("")
+    val line3        = addressLine3
     val line4        = addressLine4
     val safePostcode = postalCode
 

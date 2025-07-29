@@ -41,18 +41,18 @@ trait ModelGenerators extends RegexConstants with Generators {
       for {
         state <- Gen.oneOf(Seq("Valid", "Invalid"))
         code  <- Gen.pick(countryNumber, 'A' to 'Z')
-        name  <- arbitrary[String]
+        name  <- nonEmptyString
       } yield Country(state, code.mkString, name)
     }
 
   implicit lazy val arbitraryAddress: Arbitrary[models.Address] =
     Arbitrary {
       for {
-        addressLine1 <- arbitrary[String].suchThat(_.nonEmpty)
-        addressLine2 <- arbitrary[Option[String]]
-        addressLine3 <- arbitrary[String].suchThat(_.nonEmpty)
-        addressLine4 <- arbitrary[Option[String]]
-        postCode     <- arbitrary[Option[String]]
+        addressLine1 <- nonEmptyString
+        addressLine2 <- Gen.option(nonEmptyString)
+        addressLine3 <- Gen.option(nonEmptyString)
+        addressLine4 <- Gen.option(nonEmptyString)
+        postCode     <- Gen.option(nonEmptyString)
         country      <- arbitrary[Country]
       } yield Address(addressLine1, addressLine2, addressLine3, addressLine4, postCode, country)
     }
@@ -60,13 +60,13 @@ trait ModelGenerators extends RegexConstants with Generators {
   implicit lazy val arbitraryAddressLookup: Arbitrary[models.AddressLookup] =
     Arbitrary {
       for {
-        addressLine1 <- arbitrary[Option[String]]
-        addressLine2 <- arbitrary[Option[String]]
-        addressLine3 <- arbitrary[Option[String]]
-        addressLine4 <- arbitrary[Option[String]]
-        postCode     <- arbitrary[String]
-        town         <- arbitrary[String]
-        county       <- arbitrary[Option[String]]
+        addressLine1 <- Gen.option(nonEmptyString)
+        addressLine2 <- Gen.option(nonEmptyString)
+        addressLine3 <- Gen.option(nonEmptyString)
+        addressLine4 <- Gen.option(nonEmptyString)
+        postCode     <- nonEmptyString
+        town         <- nonEmptyString
+        county       <- Gen.option(nonEmptyString)
         country      <- arbitrary[Option[Country]]
       } yield AddressLookup(addressLine1, addressLine2, addressLine3, addressLine4, town, county, postCode, country)
     }
@@ -77,12 +77,12 @@ trait ModelGenerators extends RegexConstants with Generators {
       postCode <- Gen.option(Gen.listOfN(size, Gen.alphaNumChar).map(_.mkString))
     } yield postCode
     for {
-      addressline  <- arbitrary[String]
-      addressline2 <- arbitrary[Option[String]]
-      addressline3 <- arbitrary[Option[String]]
-      addressline4 <- arbitrary[Option[String]]
+      addressline  <- nonEmptyString
+      addressline2 <- Gen.option(nonEmptyString)
+      addressline3 <- Gen.option(nonEmptyString)
+      addressline4 <- Gen.option(nonEmptyString)
       postcode     <- postCode
-      countrycode  <- arbitrary[String]
+      countrycode  <- nonEmptyString
     } yield AddressResponse(addressline, addressline2, addressline3, addressline4, postcode, countrycode)
   }
 
@@ -90,7 +90,7 @@ trait ModelGenerators extends RegexConstants with Generators {
     for {
       addressLine1 <- stringOfLength(35)
       addressLine2 <- Gen.option(stringOfLength(35))
-      addressLine3 <- stringOfLength(35)
+      addressLine3 <- Gen.option(stringOfLength(35))
       addressLine4 <- Gen.option(stringOfLength(35))
       postalCode   <- Gen.option(validPostCodes)
       countryCode  <- stringOfLength(2)
@@ -127,9 +127,10 @@ trait ModelGenerators extends RegexConstants with Generators {
       fiId                    <- stringOfLength(15)
       fiName                  <- stringOfLength(105)
       subscriptionId          <- validSubscriptionID
-      tinType                 <- Gen.oneOf(TINType.UTR, TINType.CRN, TINType.TRN, TINType.GIIN)
+      tinType                 <- Gen.oneOf(TINType.UTR, TINType.CRN, TINType.TURN)
       tin                     <- stringOfLength(10)
       tinDetails              <- Gen.const(List(TINDetails(tinType, tin, "GB")))
+      giin                    <- Gen.option(stringOfLength(10))
       isFIUser                <- arbitrary[Boolean]
       addressDetails          <- arbitrary[AddressDetails]
       primaryContactDetails   <- arbitrary[ContactDetails]
@@ -139,6 +140,7 @@ trait ModelGenerators extends RegexConstants with Generators {
       FIName = fiName,
       SubscriptionID = subscriptionId,
       TINDetails = tinDetails,
+      GIIN = giin,
       IsFIUser = isFIUser,
       AddressDetails = addressDetails,
       PrimaryContactDetails = Some(primaryContactDetails),
@@ -148,12 +150,12 @@ trait ModelGenerators extends RegexConstants with Generators {
 
   implicit val arbitraryUniqueTaxpayerReference: Arbitrary[UniqueTaxpayerReference] = Arbitrary {
     for {
-      id <- arbitrary[String]
+      id <- nonEmptyString
     } yield UniqueTaxpayerReference(id)
   }
 
   implicit val arbitraryGIIN: Arbitrary[GIINumber] = Arbitrary {
-    arbitrary[String].map(GIINumber.apply)
+    nonEmptyString.map(GIINumber.apply)
   }
 
   // Line holder for template scripts

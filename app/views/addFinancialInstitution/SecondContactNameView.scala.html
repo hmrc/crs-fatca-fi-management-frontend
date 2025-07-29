@@ -37,17 +37,14 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @heading(messages("secondContactName.heading", fiName))
-
-        @paragraph(Html(messages("secondContactName.p1")))
-
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("secondContactName.heading")).visuallyHidden()
+                label = LabelViewModel(messages("secondContactName.heading", fiName)).asPageHeading()
             )
+            .withHint(Hint(content = Text(messages("secondContactName.hint"))))
             .asContactName()
-            .withWidth(Full)
+            .withWidth(ThreeQuarters)
         )
 
         @govukButton(

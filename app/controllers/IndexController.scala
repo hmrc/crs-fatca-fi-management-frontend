@@ -42,7 +42,7 @@ class IndexController @Inject() (
     with Logging
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = identify.async {
+  def onPageLoad(goToYourFIs: Boolean = false): Action[AnyContent] = identify.async {
     implicit request =>
       sessionRepository.set(UserAnswers.apply(request.userId))
       val fatcaId = request.fatcaId
@@ -63,10 +63,19 @@ class IndexController @Inject() (
 
                   sessionRepository.get(fatcaId) flatMap {
                     case Some(_) =>
-                      Future.successful(Ok(view(indexPageDetails)))
+                      if (goToYourFIs) {
+                        Future.successful(Redirect(controllers.routes.YourFinancialInstitutionsController.onPageLoad()))
+                      } else {
+                        Future.successful(Ok(view(indexPageDetails)))
+                      }
                     case None =>
                       sessionRepository.set(UserAnswers(fatcaId)) map {
-                        case true => Ok(view(indexPageDetails))
+                        case true =>
+                          if (goToYourFIs) {
+                            Redirect(controllers.routes.YourFinancialInstitutionsController.onPageLoad())
+                          } else {
+                            Ok(view(indexPageDetails))
+                          }
                         case false =>
                           logger.error(s"Failed to initialize user answers for userId: [$fatcaId]")
                           Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())

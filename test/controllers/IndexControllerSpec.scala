@@ -57,6 +57,23 @@ class IndexControllerSpec extends SpecBase {
 
   "Index Controller" - {
 
+    "must redirect to YourFinancialInstitutions page when goToYourFIs is true" in {
+      val individualSubscription =
+        UserSubscription("FATCAID", None, gbUser = true, ContactInformation(IndividualDetails("firstName", "lastName"), "test@test.com", None), None)
+      when(mockSubscriptionService.getSubscription(any())(any[HeaderCarrier](), any[ExecutionContext]())).thenReturn(Future.successful(individualSubscription))
+
+      val application = getApplication
+
+      running(application) {
+        val request = FakeRequest(GET, routes.IndexController.onPageLoad(goToYourFIs = true).url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.YourFinancialInstitutionsController.onPageLoad().url)
+
+      }
+    }
+
     "must return OK and the correct view for a GET with individualSubscription details" in {
       val individualSubscription =
         UserSubscription("FATCAID", None, gbUser = true, ContactInformation(IndividualDetails("firstName", "lastName"), "test@test.com", None), None)
@@ -70,24 +87,14 @@ class IndexControllerSpec extends SpecBase {
 
       when(mockSubscriptionService.getSubscription(any())(any[HeaderCarrier](), any[ExecutionContext]())).thenReturn(Future.successful(individualSubscription))
 
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(
-          bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService),
-          bind[SubscriptionService].toInstance(mockSubscriptionService),
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[FrontendAppConfig].toInstance(mockAppConfig)
-        )
-        .build()
+      val application = getApplication
 
       running(application) {
         val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[IndexView]
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[IndexView]
 
         status(result) mustEqual OK
-
         contentAsString(result) mustEqual view(indViewModel)(request, messages(application)).toString
       }
     }
@@ -106,28 +113,27 @@ class IndexControllerSpec extends SpecBase {
       when(mockSubscriptionService.getSubscription(any())(any[HeaderCarrier](), any[ExecutionContext]()))
         .thenReturn(Future.successful(organisationSubscription))
 
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(
-          bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService),
-          bind[SubscriptionService].toInstance(mockSubscriptionService),
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[FrontendAppConfig].toInstance(mockAppConfig)
-        )
-        .build()
+      val application = getApplication
 
       running(application) {
         val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[IndexView]
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[IndexView]
 
         status(result) mustEqual OK
-
         contentAsString(result) mustEqual view(orgViewModel)(request, messages(application)).toString
       }
     }
-
   }
+
+  private def getApplication =
+    applicationBuilder(userAnswers = None)
+      .overrides(
+        bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService),
+        bind[SubscriptionService].toInstance(mockSubscriptionService),
+        bind[SessionRepository].toInstance(mockSessionRepository),
+        bind[FrontendAppConfig].toInstance(mockAppConfig)
+      )
+      .build()
 
 }

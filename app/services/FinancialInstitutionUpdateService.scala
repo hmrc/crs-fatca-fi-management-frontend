@@ -17,9 +17,11 @@
 package services
 
 import com.google.inject.Inject
+import models.Country.GB
 import models.FinancialInstitutions.TINType._
 import models.FinancialInstitutions._
-import models.{CompanyRegistrationNumber, GIINumber, TrustUniqueReferenceNumber, UniqueTaxpayerReference, UserAnswers}
+import models.requests.DataRequest
+import models.{AddressResponse, CompanyRegistrationNumber, GIINumber, TrustUniqueReferenceNumber, UniqueTaxpayerReference, UserAnswers}
 import pages.addFinancialInstitution.IsRegisteredBusiness.{
   FetchedRegisteredAddressPage,
   IsTheAddressCorrectPage,
@@ -29,16 +31,21 @@ import pages.addFinancialInstitution.IsRegisteredBusiness.{
 import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import pages.{CompanyRegistrationNumberPage, QuestionPage, TrustURNPage}
+import play.api.i18n.Lang.logger
 import play.api.libs.json.Json
+import play.api.mvc.AnyContent
 import repositories.{ChangeUserAnswersRepository, SessionRepository}
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.CountryListFactory
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success, Try}
 
 class FinancialInstitutionUpdateService @Inject() (
   countryListFactory: CountryListFactory,
   sessionRepository: SessionRepository,
-  changeUserAnswersRepository: ChangeUserAnswersRepository
+  changeUserAnswersRepository: ChangeUserAnswersRepository,
+  regService: RegistrationWithUtrService
 )(implicit ec: ExecutionContext) {
 
   def populateAndSaveFiDetails(userAnswers: UserAnswers, fiDetails: FIDetail): Future[(UserAnswers, Boolean)] = for {
@@ -49,7 +56,10 @@ class FinancialInstitutionUpdateService @Inject() (
     _                  <- sessionRepository.set(updatedUserAnswers)
   } yield (updatedUserAnswers, changeAnswers.isDefined)
 
-  def populateAndSaveRegisteredFiDetails(userAnswers: UserAnswers, fiDetails: FIDetail): Future[(UserAnswers, Boolean)] =
+  def populateAndSaveRegisteredFiDetails(userAnswers: UserAnswers, fiDetails: FIDetail)(implicit
+    request: DataRequest[AnyContent],
+    headerCarrier: HeaderCarrier
+  ): Future[(UserAnswers, Boolean)] =
     for {
       userAnswersWithProgressFlag <- Future.fromTry(userAnswers.set(ChangeFiDetailsInProgressId, fiDetails.FIID, cleanup = false))
       changeId = s"${fiDetails.SubscriptionID}-${fiDetails.FIID}"
@@ -61,6 +71,7 @@ class FinancialInstitutionUpdateService @Inject() (
   def fiDetailsHasChanged(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean =
     userAnswers.get(NameOfFinancialInstitutionPage).exists(_ != fiDetails.FIName) ||
       checkTINTypeForChanges(userAnswers, fiDetails.TINDetails) ||
+      checkGIINForChanges(userAnswers, fiDetails) ||
       checkAddressForChanges(userAnswers, fiDetails.AddressDetails) ||
       checkPrimaryContactForChanges(userAnswers, fiDetails) ||
       checkSecondaryContactForChanges(userAnswers, fiDetails)
@@ -68,6 +79,7 @@ class FinancialInstitutionUpdateService @Inject() (
   def registeredFiDetailsHasChanged(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean =
     userAnswers.get(NameOfFinancialInstitutionPage).exists(_ != fiDetails.FIName) ||
       checkTINTypeForChanges(userAnswers, fiDetails.TINDetails) ||
+      checkGIINForChanges(userAnswers, fiDetails) ||
       checkAddressForChanges(userAnswers, fiDetails.AddressDetails)
 
   def clearUserAnswers(userAnswers: UserAnswers): Future[Boolean] =
@@ -80,7 +92,7 @@ class FinancialInstitutionUpdateService @Inject() (
     for {
       a <- Future.fromTry(userAnswers.set(NameOfFinancialInstitutionPage, fiDetails.FIName, cleanup = false))
       b <- setTaxIdentifier(a, fiDetails.TINDetails)
-      c <- setGIIN(b, fiDetails.TINDetails)
+      c <- setGIIN(b, fiDetails.GIIN)
       d <- setAddress(c, fiDetails.AddressDetails)
       e <- setPrimaryContactDetails(d, fiDetails)
       f <- setSecondaryContactDetails(e, fiDetails)
@@ -89,12 +101,12 @@ class FinancialInstitutionUpdateService @Inject() (
   private def populateUserAnswersWithRegisteredFiDetail(
     fiDetails: FIDetail,
     userAnswers: UserAnswers
-  )(implicit ec: ExecutionContext): Future[UserAnswers] =
+  )(implicit request: DataRequest[AnyContent], headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers] =
     for {
       a <- Future.fromTry(userAnswers.set(ReportForRegisteredBusinessPage, fiDetails.IsFIUser, cleanup = false))
       b <- Future.fromTry(a.set(NameOfFinancialInstitutionPage, fiDetails.FIName, cleanup = false))
       c <- setTaxIdentifier(b, fiDetails.TINDetails)
-      d <- setGIIN(c, fiDetails.TINDetails)
+      d <- setGIIN(c, fiDetails.GIIN)
       e <- setAddress(d, fiDetails.AddressDetails)
       f <- setFiUserDetails(e)
     } yield f
@@ -117,10 +129,10 @@ class FinancialInstitutionUpdateService @Inject() (
                     .set(WhichIdentificationNumbersPage, answers.get(WhichIdentificationNumbersPage).getOrElse(Set.empty) + TINType.CRN, cleanup = false)
                     .flatMap(_.set(CompanyRegistrationNumberPage, CompanyRegistrationNumber(details.TIN), cleanup = false))
                 )
-              case TRN =>
+              case TURN =>
                 Future.fromTry(
                   answers
-                    .set(WhichIdentificationNumbersPage, answers.get(WhichIdentificationNumbersPage).getOrElse(Set.empty) + TINType.TRN, cleanup = false)
+                    .set(WhichIdentificationNumbersPage, answers.get(WhichIdentificationNumbersPage).getOrElse(Set.empty) + TINType.TURN, cleanup = false)
                     .flatMap(_.set(TrustURNPage, TrustUniqueReferenceNumber(details.TIN), cleanup = false))
                 )
               case _ =>
@@ -133,12 +145,12 @@ class FinancialInstitutionUpdateService @Inject() (
         }
     }
 
-  private def setGIIN(userAnswers: UserAnswers, tinDetails: Seq[TINDetails])(implicit ec: ExecutionContext): Future[UserAnswers] =
-    tinDetails.find(_.TINType == GIIN) match {
+  private def setGIIN(userAnswers: UserAnswers, giin: Option[String]): Future[UserAnswers] =
+    giin match {
       case Some(details) =>
         for {
           a <- Future.fromTry(userAnswers.set(HaveGIINPage, true, cleanup = false))
-          b <- Future.fromTry(a.set(WhatIsGIINPage, GIINumber(details.TIN), cleanup = false))
+          b <- Future.fromTry(a.set(WhatIsGIINPage, GIINumber(details), cleanup = false))
         } yield b
       case None =>
         for {
@@ -190,13 +202,57 @@ class FinancialInstitutionUpdateService @Inject() (
         } yield b
     }
 
-  private def setFiUserDetails(userAnswers: UserAnswers): Future[UserAnswers] =
+  private def setFiUserDetails(userAnswers: UserAnswers)(implicit request: DataRequest[AnyContent], headerCarrier: HeaderCarrier): Future[UserAnswers] =
     for {
       a <- Future.fromTry(userAnswers.set(ReportForRegisteredBusinessPage, true, cleanup = false))
       b <- Future.fromTry(a.set(IsThisYourBusinessNamePage, true, cleanup = false))
-      c <- Future.fromTry(b.set(IsThisAddressPage, true, cleanup = false))
-      d <- Future.fromTry(c.set(IsTheAddressCorrectPage, true, cleanup = false))
-    } yield d
+      c <- setIsThisAddressCorrect(b)
+    } yield c
+
+  private def setIsThisAddressCorrect(userAnswers: UserAnswers)(implicit request: DataRequest[AnyContent], headerCarrier: HeaderCarrier) =
+    request.ctutr match {
+      case Some(utr) =>
+        regService
+          .fetchAddress(utr)
+          .flatMap {
+            address =>
+              for {
+                addressWithCountry <- Future.fromTry(addCountryToAddress(address))
+                updatedUserAnswerWithIsTheAddressCorrect <- Future.fromTry(
+                  userAnswers.set(
+                    IsTheAddressCorrectPage,
+                    addressWithCountry.countryCode.equalsIgnoreCase(GB.code) && addressWithCountry.toAddress.equals(userAnswers.get(UkAddressPage).get),
+                    cleanup = false
+                  )
+                )
+                updatedUserAnswser <- updatedUserAnswerWithIsTheAddressCorrect.get(IsTheAddressCorrectPage).get match {
+                  case true  => Future.fromTry(updatedUserAnswerWithIsTheAddressCorrect.set(FetchedRegisteredAddressPage, addressWithCountry, cleanup = false))
+                  case false => Future.successful(updatedUserAnswerWithIsTheAddressCorrect)
+                }
+              } yield updatedUserAnswser
+          }
+          .recoverWith {
+            case _ =>
+              logger.error(s"Unable to fetch Registered address")
+              Future.failed(new RuntimeException("Unable to fetch Registered address"))
+          }
+      case None =>
+        logger.error(s"Unable to find CT-UTR in the request")
+        Future.failed(new RuntimeException("Unable to fetch Registered address"))
+    }
+
+  private def addCountryToAddress(addressResponse: AddressResponse): Try[AddressResponse] =
+    if (addressResponse.country.isDefined) {
+      Success(addressResponse)
+    } else {
+      countryListFactory.findCountryWithCode(addressResponse.countryCode) match {
+        case Some(country) =>
+          Success(addressResponse.copy(country = Some(country)))
+        case None =>
+          logger.error(s"Country with code ${addressResponse.countryCode} not found in list of countries")
+          Failure(new RuntimeException("Country not found"))
+      }
+    }
 
   private def setSecondaryContactDetails(userAnswers: UserAnswers, fiDetails: FIDetail)(implicit ec: ExecutionContext): Future[UserAnswers] =
     for {
@@ -220,15 +276,12 @@ class FinancialInstitutionUpdateService @Inject() (
 
   private def checkGIINForChanges(
     userAnswers: UserAnswers,
-    tinDetails: Seq[TINDetails]
-  ): Boolean =
-    tinDetails.find(_.TINType == GIIN) match {
-      case Some(id) =>
-        userAnswers.get(HaveGIINPage).contains(false) ||
-        userAnswers.get(WhatIsGIINPage).exists(_.value.toLowerCase != id.TIN.toLowerCase)
-      case None =>
-        userAnswers.get(HaveGIINPage).contains(true)
-    }
+    fiDetails: FIDetail
+  ): Boolean = {
+    val uaValue: Option[String]     = userAnswers.get(WhatIsGIINPage).map(_.value)
+    val detailValue: Option[String] = fiDetails.GIIN
+    uaValue != detailValue
+  }
 
   def checkUTRforChange(userAnswers: UserAnswers, tinDetails: Seq[TINDetails]): Boolean = {
     val uaValue: Option[String]     = userAnswers.get(WhatIsUniqueTaxpayerReferencePage).map(_.value)
@@ -244,7 +297,7 @@ class FinancialInstitutionUpdateService @Inject() (
 
   def checkTRNforChange(userAnswers: UserAnswers, tinDetails: Seq[TINDetails]): Boolean = {
     val uaValue: Option[String]     = userAnswers.get(TrustURNPage).map(_.value)
-    val detailValue: Option[String] = tinDetails.find(_.TINType == TRN).map(_.TIN)
+    val detailValue: Option[String] = tinDetails.find(_.TINType == TURN).map(_.TIN)
     uaValue != detailValue
   }
 
@@ -256,8 +309,7 @@ class FinancialInstitutionUpdateService @Inject() (
     val uaTinTypes: Set[TINType] =
       userAnswers
         .get(WhichIdentificationNumbersPage)
-        .getOrElse(Set.empty) ++
-        (if (userAnswers.get(HaveGIINPage).contains(true)) Set(GIIN) else Set.empty)
+        .getOrElse(Set.empty)
 
     val detailTinTypes: Set[TINType]    = tinDetails.map(_.TINType).toSet
     val identifiersHaveChanged: Boolean = uaTinTypes != detailTinTypes
@@ -267,8 +319,7 @@ class FinancialInstitutionUpdateService @Inject() (
           tinType match {
             case TINType.UTR  => checkUTRforChange(userAnswers, tinDetails)
             case TINType.CRN  => checkCRNforChange(userAnswers, tinDetails)
-            case TINType.TRN  => checkTRNforChange(userAnswers, tinDetails)
-            case TINType.GIIN => checkGIINForChanges(userAnswers, tinDetails)
+            case TINType.TURN => checkTRNforChange(userAnswers, tinDetails)
             case _            => false
           }
       }
@@ -283,10 +334,10 @@ class FinancialInstitutionUpdateService @Inject() (
     val fetchedAddress = addressDetails.toAddress(countryListFactory)
     val enteredAddress = if (isUkAddress) {
       (userAnswers.get(UkAddressPage), userAnswers.get(SelectedAddressLookupPage), userAnswers.get(FetchedRegisteredAddressPage)) match {
-        case (Some(ukAddress), None, _)             => Option(ukAddress)
-        case (None, Some(selectedLookupAddress), _) => Option(selectedLookupAddress.toAddress)
-        case (None, None, Some(fetchedAddress))     => Option(fetchedAddress.toAddress)
-        case _                                      => None
+        case (Some(ukAddress), None, _)                 => Option(ukAddress)
+        case (None, Some(selectedLookupAddress), _)     => Option(selectedLookupAddress.toAddress)
+        case (None, None, Some(fetchedAddressResponse)) => Option(fetchedAddressResponse.toAddress)
+        case _                                          => None
       }
     } else {
       userAnswers.get(NonUkAddressPage)

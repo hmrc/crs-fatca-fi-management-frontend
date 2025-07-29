@@ -21,14 +21,15 @@ import controllers.actions.{CtUtrRetrievalAction, FakeCtUtrRetrievalAction}
 import controllers.routes
 import forms.addFinancialInstitution.IsRegisteredBusiness.IsTheAddressCorrectFormProvider
 import generators.ModelGenerators
-import models.{AddressResponse, Country, NormalMode, UserAnswers}
+import models.{AddressResponse, CheckMode, Country, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, IsTheAddressCorrectPage}
-import pages.addFinancialInstitution.NameOfFinancialInstitutionPage
+import pages.addFinancialInstitution.{NameOfFinancialInstitutionPage, UkAddressPage}
+import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -220,7 +221,7 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar with 
       }
     }
 
-    "must redirect to information-sent page for a GET when the user answers is empty" in {
+    "must redirect to pageUnavailable page for a GET when the user answers is empty" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
@@ -229,7 +230,7 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar with 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.InformationSentController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.PageUnavailableController.onPageLoad.url
       }
     }
 

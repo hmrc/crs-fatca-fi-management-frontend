@@ -25,7 +25,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ContactHelper
-import views.html.{FinancialInstitutionAddedConfirmationView, ThereIsAProblemView}
+import views.html.{FinancialInstitutionAddedConfirmationView, PageUnavailableView}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,7 +38,7 @@ class FinancialInstitutionAddedConfirmationController @Inject() (
   sessionRepository: SessionRepository,
   val controllerComponents: MessagesControllerComponents,
   view: FinancialInstitutionAddedConfirmationView,
-  errorView: ThereIsAProblemView
+  errorView: PageUnavailableView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with ContactHelper
@@ -49,14 +49,15 @@ class FinancialInstitutionAddedConfirmationController @Inject() (
     implicit request =>
       val ua = request.userAnswers
       ua.get(FiidPage) match {
-        case None => Future.successful(Redirect(controllers.routes.InformationSentController.onPageLoad))
+        case None => Future.successful(Ok(errorView(controllers.routes.IndexController.onPageLoad().url)))
         case Some(fiIdValue) =>
           val fiName = getFinancialInstitutionName(ua)
           sessionRepository.set(ua.copy(data = Json.obj())).map {
             case true => Ok(view(fiName, fiIdValue))
             case false =>
               logger.error(s"Failed to clear user answers after adding an FI for userId: [${request.userId}]")
-              Ok(errorView())
+              Ok(errorView(controllers.routes.IndexController.onPageLoad().url))
+
           }
       }
   }
