@@ -28,7 +28,7 @@
 
     <h1 class="govuk-heading-l">@messages("unauthorised.heading")</h1>
 
-    <p class="govuk-body">@link(controllers.routes.IndexController.onPageLoad.url, "unauthorised.link")</p>
+    <p class="govuk-body">@link(controllers.routes.IndexController.onPageLoad().url, "unauthorised.link")</p>
 
     <p class="govuk-body">@Html(messages("unauthorised.emailLink" , link(s"mailto:$emailLink", "enquiries.email", openInNewWindow = true)))</p>
 }
