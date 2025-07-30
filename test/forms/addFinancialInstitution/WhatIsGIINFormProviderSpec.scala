@@ -88,7 +88,6 @@ class WhatIsGIINFormProviderSpec extends StringFieldBehaviours {
       FormError(fieldName, invalidCharKey),
       Some("chars")
     )
-
   }
 
 }
