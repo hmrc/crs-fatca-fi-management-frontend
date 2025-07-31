@@ -18,10 +18,8 @@ package viewmodels.yourFinancialInstitutions
 
 import models.FinancialInstitutions.FIDetail
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.hmrcfrontend.views.viewmodels.listwithactions.{ListWithActions, ListWithActionsItem}
-import viewmodels.common.accessibleListActionItem
-import viewmodels.govuk.all.FluentListActionItem
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
+import uk.gov.hmrc.hmrcfrontend.views.viewmodels.listwithactions.{ListWithActions, ListWithActionsAction, ListWithActionsItem}
 
 object YourFinancialInstitutionsViewModel {
 
@@ -32,19 +30,25 @@ object YourFinancialInstitutionsViewModel {
         ListWithActionsItem(
           name = getValueContent(institution.FIName, institution.IsFIUser),
           actions = Seq(
-            accessibleListActionItem(
-              "site.change",
+            ListWithActionsAction(
               if (institution.IsFIUser) {
                 controllers.changeFinancialInstitution.routes.ChangeRegisteredFinancialInstitutionController.onPageLoad(institution.FIID).url
               } else {
                 controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(institution.FIID).url
-              }
+              },
+              Text(messages("site.change")),
+              Some(messages("yourFinancialInstitutions.change.hidden", institution.FIName))
+            ),
+            ListWithActionsAction(
+              controllers.routes.UserAccessController.onPageLoad(institution.FIID).url,
+              Text(messages("site.remove")),
+              Some(messages("yourFinancialInstitutions.remove.hidden", institution.FIName))
+            ),
+            ListWithActionsAction(
+              controllers.routes.YourFinancialInstitutionsController.onPageLoad().url,
+              Text(messages("yourFinancialInstitutions.link.manageReports")),
+              Some(messages("yourFinancialInstitutions.manageReports.hidden", institution.FIName))
             )
-              .withVisuallyHiddenText(messages("yourFinancialInstitutions.change.hidden", institution.FIName)),
-            accessibleListActionItem("site.remove", controllers.routes.UserAccessController.onPageLoad(institution.FIID).url)
-              .withVisuallyHiddenText(messages("yourFinancialInstitutions.remove.hidden", institution.FIName)),
-            accessibleListActionItem("yourFinancialInstitutions.link.manageReports", controllers.routes.YourFinancialInstitutionsController.onPageLoad().url)
-              .withVisuallyHiddenText(messages("yourFinancialInstitutions.manageReports.hidden", institution.FIName))
           )
         )
     }
