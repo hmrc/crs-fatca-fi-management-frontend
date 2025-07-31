@@ -40,6 +40,12 @@ class WhatIsGIINFormProviderSpec extends StringFieldBehaviours {
       validGIIN
     )
 
+    behave like fieldThatBindsValidDataWithASpace(
+      form,
+      fieldName,
+      validGIIN
+    )
+
     behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,

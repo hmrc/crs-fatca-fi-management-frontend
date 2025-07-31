@@ -18,6 +18,7 @@ package forms.behaviours
 
 import forms.FormSpec
 import generators.Generators
+import models.GIINumber
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.data.{Form, FormError}
@@ -32,6 +33,18 @@ trait FieldBehaviours extends FormSpec with ScalaCheckPropertyChecks with Genera
           val result = form.bind(Map(fieldName -> dataItem)).apply(fieldName)
           result.value.value mustBe dataItem
           result.errors mustBe empty
+      }
+    }
+
+  def fieldThatBindsValidDataWithASpace(form: Form[_], fieldName: String, validDataGenerator: Gen[String]): Unit =
+    "bind valid data that has spaces" in {
+
+      forAll(validDataGenerator -> "validDataItem") {
+        dataItem: String =>
+          val input  = s" $dataItem "
+          val result = form.bindFromRequest(Map(fieldName -> Seq(input)))
+          result.errors mustBe empty
+          result.value.value mustBe GIINumber(dataItem.toUpperCase)
       }
     }
 
