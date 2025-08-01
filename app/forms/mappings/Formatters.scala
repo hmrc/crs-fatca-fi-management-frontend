@@ -295,8 +295,8 @@ trait Formatters extends Transforms with RegexConstants {
 
         giin match {
           case None | Some("")                                 => Left(Seq(FormError(key, requiredKey)))
-          case Some(value) if value.length != setLength        => Left(Seq(FormError(key, lengthKey)))
           case Some(value) if !value.matches(giinAllowedChars) => Left(Seq(FormError(key, invalidCharKey)))
+          case Some(value) if value.length != setLength        => Left(Seq(FormError(key, lengthKey)))
           case Some(value) if !value.matches(invalidGIINRegex) => Left(Seq(FormError(key, formatKey)))
           case Some(value) if !value.matches(giinFormatRegex)  => Left(Seq(FormError(key, invalidKey)))
           case Some(value)                                     => Right(validGIINFormat(value))
