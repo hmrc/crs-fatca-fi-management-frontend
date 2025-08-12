@@ -32,9 +32,11 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
+import services.FinancialInstitutionsService
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessView
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class ReportForRegisteredBusinessControllerSpec extends SpecBase with MockitoSugar {
 
@@ -52,11 +54,20 @@ class ReportForRegisteredBusinessControllerSpec extends SpecBase with MockitoSug
   lazy val reportForRegisteredBusinessRouteCheckMode =
     controllers.addFinancialInstitution.registeredBusiness.routes.ReportForRegisteredBusinessController.onPageLoad(CheckMode).url
 
+  val mockFinancialInstitutionsService = mock[FinancialInstitutionsService]
+
+  when(mockFinancialInstitutionsService.getListOfFinancialInstitutions(any())(any[HeaderCarrier](), any[ExecutionContext]()))
+    .thenReturn(Future.successful(Seq.empty))
+
   "ReportForRegisteredBusiness Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(
+          bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService)
+        )
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, reportForRegisteredBusinessRoute)
@@ -78,7 +89,11 @@ class ReportForRegisteredBusinessControllerSpec extends SpecBase with MockitoSug
 
       val userAnswers = UserAnswers(userAnswersId).set(ReportForRegisteredBusinessPage, true).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService)
+        )
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, reportForRegisteredBusinessRoute)
@@ -95,14 +110,15 @@ class ReportForRegisteredBusinessControllerSpec extends SpecBase with MockitoSug
     "must populate the view correctly on a GET when the question has previously been answered And ChangeInProgress as True" in {
 
       val userAnswers = UserAnswers(userAnswersId)
-        .set(ChangeFiDetailsInProgressId, "67867812")
-        .success
-        .value
-        .set(ReportForRegisteredBusinessPage, true)
-        .success
-        .value
+        .withPage(ChangeFiDetailsInProgressId, "67867812")
+        .withPage(ReportForRegisteredBusinessPage, true)
 
-      val application      = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService)
+        )
+        .build()
+
       val changeInProgress = true
 
       running(application) {
@@ -144,6 +160,27 @@ class ReportForRegisteredBusinessControllerSpec extends SpecBase with MockitoSug
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
+      }
+    }
+    "must redirect to Page Unavailable if user already reports for a registered business" in {
+
+      when(mockFinancialInstitutionsService.getListOfFinancialInstitutions(any())(any[HeaderCarrier](), any[ExecutionContext]()))
+        .thenReturn(Future.successful(testFiDetails))
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService)
+          )
+          .build()
+
+      running(application) {
+        val request = FakeRequest(GET, reportForRegisteredBusinessRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.PageUnavailableController.onPageLoad.url
       }
     }
 
