@@ -18,7 +18,7 @@ package controllers.addFinancialInstitution.registeredBusiness
 
 import controllers.actions._
 import forms.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessFormProvider
-import models.Mode
+import models.{Mode, NormalMode}
 import navigation.Navigator
 import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
@@ -52,7 +52,7 @@ class ReportForRegisteredBusinessController @Inject() (
     implicit request =>
       financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId).map {
         institutions =>
-          if (institutions.exists(_.IsFIUser)) Redirect(controllers.routes.PageUnavailableController.onPageLoad)
+          if (institutions.exists(_.IsFIUser) && mode == NormalMode) Redirect(controllers.routes.PageUnavailableController.onPageLoad)
           else {
             val isChangeFIInProgress = request.userAnswers.get(ChangeFiDetailsInProgressId).isDefined
             val form                 = formProvider(isChangeFIInProgress)
