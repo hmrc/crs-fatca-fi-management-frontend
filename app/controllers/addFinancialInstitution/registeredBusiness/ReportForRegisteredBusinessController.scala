@@ -18,13 +18,14 @@ package controllers.addFinancialInstitution.registeredBusiness
 
 import controllers.actions._
 import forms.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessFormProvider
-import models.Mode
+import models.{Mode, NormalMode}
 import navigation.Navigator
 import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.{ChangeUserAnswersRepository, SessionRepository}
+import services.FinancialInstitutionsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessView
 
@@ -39,6 +40,7 @@ class ReportForRegisteredBusinessController @Inject() (
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
+  financialInstitutionsService: FinancialInstitutionsService,
   formProvider: ReportForRegisteredBusinessFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: ReportForRegisteredBusinessView
@@ -46,21 +48,21 @@ class ReportForRegisteredBusinessController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val isChangeFIInProgress = request.userAnswers.get(ChangeFiDetailsInProgressId) match {
-        case Some(_) => true
-        case None    => false
+      financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId).map {
+        institutions =>
+          if (institutions.exists(_.IsFIUser) && mode == NormalMode) Redirect(controllers.routes.PageUnavailableController.onPageLoad)
+          else {
+            val isChangeFIInProgress = request.userAnswers.get(ChangeFiDetailsInProgressId).isDefined
+            val form                 = formProvider(isChangeFIInProgress)
+            val preparedForm = request.userAnswers.get(ReportForRegisteredBusinessPage) match {
+              case None        => form
+              case Some(value) => form.fill(value)
+            }
+            Ok(view(preparedForm, mode, isChangeFIInProgress))
+          }
       }
-
-      val form = formProvider(isChangeFIInProgress)
-
-      val preparedForm = request.userAnswers.get(ReportForRegisteredBusinessPage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
-
-      Ok(view(preparedForm, mode, isChangeFIInProgress))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
