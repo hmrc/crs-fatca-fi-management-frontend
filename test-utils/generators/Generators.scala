@@ -209,7 +209,7 @@ trait Generators extends RegexConstants {
 
     for {
       pt1 <- Gen.listOfN(6, alphaNumNoOChar).map(_.mkString)
-      pt2 <- Gen.listOfN(5, alphaNumChar).map(_.mkString)
+      pt2 <- Gen.listOfN(5, alphaNumNoOChar).map(_.mkString)
       pt3 <- Gen.listOfN(2, alphaNoOChar).map(_.mkString)
       pt4 <- Gen.listOfN(3, Gen.numChar).map(_.mkString)
     } yield s"$pt1.$pt2.$pt3.$pt4"
