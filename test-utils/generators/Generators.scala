@@ -195,14 +195,23 @@ trait Generators extends RegexConstants {
   }
 
   def validGIIN: Gen[String] = {
-    val disallowed = 'o' // this is weird
-    for {
-      pt1 <- Gen.listOfN(6, Gen.alphaNumChar).map(_.mkString) suchThat (
-        ch => !ch.toLowerCase.contains(disallowed)
+    val alphaNumNoOChar: Gen[Char] =
+      Gen.oneOf(
+        (('0' to '9') ++
+          ('A' to 'Z').filterNot(_ == 'O') ++
+          ('a' to 'z').filterNot(_ == 'o')).toArray
       )
-      pt2 <- Gen.listOfN(5, Gen.alphaNumChar).map(_.mkString)
-      pt3 <- Gen.listOfN(2, Gen.alphaNumChar).map(_.mkString)
-      pt4 <- Gen.listOfN(3, Gen.alphaNumChar).map(_.mkString)
+    val alphaNoOChar: Gen[Char] =
+      Gen.oneOf(
+        (('A' to 'Z').filterNot(_ == 'O') ++
+          ('a' to 'z').filterNot(_ == 'o')).toArray
+      )
+
+    for {
+      pt1 <- Gen.listOfN(6, alphaNumNoOChar).map(_.mkString)
+      pt2 <- Gen.listOfN(5, alphaNumNoOChar).map(_.mkString)
+      pt3 <- Gen.listOfN(2, alphaNoOChar).map(_.mkString)
+      pt4 <- Gen.listOfN(3, Gen.numChar).map(_.mkString)
     } yield s"$pt1.$pt2.$pt3.$pt4"
   }
 

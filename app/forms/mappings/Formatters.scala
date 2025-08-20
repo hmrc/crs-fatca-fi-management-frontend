@@ -290,15 +290,15 @@ trait Formatters extends Transforms with RegexConstants {
     new Formatter[String] {
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
-        val giin      = data.get(key).map(validGIINFormat)
-        val setLength = 19
-
+        val giin        = data.get(key).map(validGIINFormat)
+        val setLength   = 19
+        val exampleGIIN = "98O96B.00000.LE.350"
         giin match {
           case None | Some("")                                 => Left(Seq(FormError(key, requiredKey)))
           case Some(value) if !value.matches(giinAllowedChars) => Left(Seq(FormError(key, invalidCharKey)))
           case Some(value) if value.length != setLength        => Left(Seq(FormError(key, lengthKey)))
-          case Some(value) if !value.matches(invalidGIINRegex) => Left(Seq(FormError(key, formatKey)))
-          case Some(value) if !value.matches(giinFormatRegex)  => Left(Seq(FormError(key, invalidKey)))
+          case Some(value) if value.matches(exampleGIIN)       => Left(Seq(FormError(key, invalidKey)))
+          case Some(value) if !value.matches(giinFormatRegex)  => Left(Seq(FormError(key, formatKey)))
           case Some(value)                                     => Right(validGIINFormat(value))
           case _                                               => Left(Seq(FormError(key, invalidKey)))
         }
