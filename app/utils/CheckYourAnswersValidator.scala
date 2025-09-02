@@ -153,8 +153,8 @@ class CheckYourAnswersValidator(val userAnswers: UserAnswers) extends AddFIValid
 
   private val pageToRedirectUrl: Map[Page, String] = Map(
     PostcodePage                      -> controllers.addFinancialInstitution.routes.PostcodeController.onPageLoad(CheckMode).url,
-    FirstContactPhoneNumberPage       -> controllers.addFinancialInstitution.routes.FirstContactHavePhoneController.onPageLoad(CheckMode).url,
-    SecondContactPhoneNumberPage      -> controllers.addFinancialInstitution.routes.SecondContactCanWePhoneController.onPageLoad(CheckMode).url,
+    FirstContactPhoneNumberPage       -> controllers.addFinancialInstitution.routes.FirstContactPhoneNumberController.onPageLoad(CheckMode).url,
+    SecondContactPhoneNumberPage      -> controllers.addFinancialInstitution.routes.SecondContactPhoneNumberController.onPageLoad(CheckMode).url,
     SecondContactEmailPage            -> controllers.addFinancialInstitution.routes.SecondContactEmailController.onPageLoad(CheckMode).url,
     SecondContactNamePage             -> controllers.addFinancialInstitution.routes.SecondContactExistsController.onPageLoad(CheckMode).url,
     SecondContactExistsPage           -> controllers.addFinancialInstitution.routes.SecondContactExistsController.onPageLoad(CheckMode).url,

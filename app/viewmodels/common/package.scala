@@ -20,7 +20,13 @@ import models.FinancialInstitutions.TINType
 import models.FinancialInstitutions.TINType._
 import models.{AnswersReviewPageType, CheckMode, UserAnswers}
 import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
-import pages.addFinancialInstitution.{HaveGIINPage, WhichIdentificationNumbersPage}
+import pages.addFinancialInstitution.{
+  FirstContactHavePhonePage,
+  FirstContactPhoneNumberPage,
+  HaveGIINPage,
+  SecondContactCanWePhonePage,
+  WhichIdentificationNumbersPage
+}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, SummaryListRow}
@@ -57,19 +63,40 @@ package object common {
       href = href
     )
 
-  def getFirstContactSummaries(ua: UserAnswers, pageType: AnswersReviewPageType)(implicit messages: Messages): Seq[SummaryListRow] = Seq(
-    FirstContactNameSummary.row(ua, pageType),
-    FirstContactEmailSummary.row(ua, pageType),
-    FirstContactPhoneNumberSummary.row(ua, pageType)
-  ).flatten
+  def getFirstContactSummaries(ua: UserAnswers, pageType: AnswersReviewPageType)(implicit messages: Messages): Seq[SummaryListRow] = {
+    val havePhone = ua.get(FirstContactHavePhonePage).getOrElse(false)
 
-  def getSecondContactSummaries(ua: UserAnswers, pageType: AnswersReviewPageType)(implicit messages: Messages): Seq[SummaryListRow] =
-    Seq(
+    val nameRow      = FirstContactNameSummary.row(ua, pageType)
+    val emailRow     = FirstContactEmailSummary.row(ua, pageType)
+    val havePhoneRow = FirstContactHavePhoneNumberSummary.row(ua, pageType)
+
+    val phoneNumberRow = if (havePhone) {
+      FirstContactPhoneNumberSummary.row(ua, pageType)
+    } else {
+      None
+    }
+
+    nameRow.toSeq ++ emailRow.toSeq ++ havePhoneRow.toSeq ++ phoneNumberRow.toSeq
+  }
+
+  def getSecondContactSummaries(ua: UserAnswers, pageType: AnswersReviewPageType)(implicit messages: Messages): Seq[SummaryListRow] = {
+    val havePhoneNumber = ua.get(SecondContactCanWePhonePage).getOrElse(false)
+
+    val commonRows = Seq(
       SecondContactExistsSummary.row(ua, pageType),
       SecondContactNameSummary.row(ua, pageType),
       SecondContactEmailSummary.row(ua, pageType),
-      SecondContactPhoneNumberSummary.row(ua, pageType)
+      SecondContactCanWePhoneNumberSummary.row(ua, pageType)
     ).flatten
+
+    val phoneNumberRow = if (havePhoneNumber) {
+      Seq(SecondContactPhoneNumberSummary.row(ua, pageType)).flatten
+    } else {
+      Nil
+    }
+
+    commonRows ++ phoneNumberRow
+  }
 
   def getGIINRows(ua: UserAnswers, pageType: AnswersReviewPageType)(implicit messages: Messages): Seq[SummaryListRow] = {
     val haveGIIN = ua.get(HaveGIINPage)

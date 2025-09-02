@@ -17,29 +17,31 @@
 package viewmodels.common
 
 import models.{AnswersReviewPageType, CheckMode, UserAnswers}
-import pages.addFinancialInstitution.FirstContactPhoneNumberPage
+import pages.addFinancialInstitution.SecondContactCanWePhonePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object FirstContactPhoneNumberSummary {
+object SecondContactCanWePhoneNumberSummary {
 
   def row(ua: UserAnswers, pageType: AnswersReviewPageType)(implicit messages: Messages): Option[SummaryListRow] =
-    ua.get(FirstContactPhoneNumberPage) match {
+    ua.get(SecondContactCanWePhonePage) match {
       case Some(answer) => Some(createRow(answer, pageType))
-      case _            => Some(createRow(messages("site.notProvided"), pageType))
+      case _            => None
     }
 
-  private def createRow(answer: String, pageType: AnswersReviewPageType)(implicit messages: Messages) =
+  private def createRow(answer: Boolean, pageType: AnswersReviewPageType)(implicit messages: Messages) = {
+    val answerText = if (answer) messages("site.yes") else messages("site.no")
     SummaryListRowViewModel(
-      key = s"firstContactPhoneNumber.${pageType.labelPrefix}YourAnswersLabel",
-      value = ValueViewModel(HtmlContent(answer)),
+      key = s"secondContactCanWePhone.${pageType.labelPrefix}YourAnswersLabel",
+      value = ValueViewModel(HtmlContent(answerText)),
       actions = Seq(
-        accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.FirstContactPhoneNumberController.onPageLoad(CheckMode).url)
-          .withVisuallyHiddenText(messages("firstContactPhoneNumber.change.hidden"))
+        accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.SecondContactCanWePhoneController.onPageLoad(CheckMode).url)
+          .withVisuallyHiddenText(messages("secondContactCanWePhone.change.hidden"))
       )
     )
+  }
 
 }

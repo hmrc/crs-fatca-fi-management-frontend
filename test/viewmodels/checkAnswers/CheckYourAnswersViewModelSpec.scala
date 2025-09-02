@@ -65,33 +65,67 @@ class CheckYourAnswersViewModelSpec extends SpecBase {
       }
     }
     "getFirstContactSummaries must" - {
-      "only return rows for relevant populated answers" in {
-        val ans = ua
-          .withPage(FirstContactPhoneNumberPage, "04025429852")
+      "return all four rows when 'Have Phone' is true and all fields are populated" in {
+        val userAnswers = ua
+          .withPage(FirstContactHavePhonePage, true)
+          .withPage(FirstContactPhoneNumberPage, "01234567890")
           .withPage(FirstContactEmailPage, "test@email.com")
-        val ans2 = ua
-          .withPage(FirstContactPhoneNumberPage, "04025429852")
-          .withPage(SecondContactEmailPage, "test@email.com")
+          .withPage(FirstContactNamePage, "Test Name")
 
-        getFirstContactSummaries(ans, CheckAnswers).length mustBe 2
-        getFirstContactSummaries(ans2, CheckAnswers).length mustBe 1
+        val result = getFirstContactSummaries(userAnswers, CheckAnswers)
+        result.length mustBe 4
+        result.map(_.key.content.asHtml.toString) mustBe Seq(
+          "firstContactName.checkYourAnswersLabel",
+          "firstContactEmail.checkYourAnswersLabel",
+          "firstContactHavePhone.checkYourAnswersLabel",
+          "firstContactPhoneNumber.checkYourAnswersLabel"
+        )
       }
-      "display phone number not provided row by default" in {
-        val ans = ua
-          .withPage(FirstContactNamePage, "MrTest")
-          .withPage(FirstContactPhoneNumberPage, "04025429852")
-        val ans2 = ua.withPage(FirstContactNamePage, "MrTest")
+      "return three rows when 'Have Phone' is false and all fields are populated" in {
+        val userAnswers = ua
+          .withPage(FirstContactHavePhonePage, false)
+          .withPage(FirstContactEmailPage, "test@email.com")
+          .withPage(FirstContactNamePage, "Test Name")
 
-        getFirstContactSummaries(ans, CheckAnswers).length mustBe 2
-        getFirstContactSummaries(ans2, CheckAnswers).length mustBe 2
+        val result = getFirstContactSummaries(userAnswers, CheckAnswers)
+        result.length mustBe 3
+        result.map(_.key.content.asHtml.toString) mustBe Seq(
+          "firstContactName.checkYourAnswersLabel",
+          "firstContactEmail.checkYourAnswersLabel",
+          "firstContactHavePhone.checkYourAnswersLabel"
+        )
       }
     }
     "getSecondContactSummaries must" - {
-      "only return rows for relevant populated answers" in {
-        val ans = ua.withPage(SecondContactNamePage, "SecondContact")
+      "return all four rows when 'Have Phone' is true and all fields are populated" in {
+        val userAnswers = ua
+          .withPage(SecondContactCanWePhonePage, true)
+          .withPage(SecondContactPhoneNumberPage, "01234567890")
+          .withPage(SecondContactEmailPage, "test@email.com")
+          .withPage(SecondContactNamePage, "Test Name")
 
-        getSecondContactSummaries(emptyUserAnswers, CheckAnswers).length mustBe 0
-        getSecondContactSummaries(ans, CheckAnswers).length mustBe 1
+        val result = getSecondContactSummaries(userAnswers, CheckAnswers)
+        result.length mustBe 4
+        result.map(_.key.content.asHtml.toString) mustBe Seq(
+          "secondContactName.checkYourAnswersLabel",
+          "secondContactEmail.checkYourAnswersLabel",
+          "secondContactCanWePhone.checkYourAnswersLabel",
+          "secondContactPhoneNumber.checkYourAnswersLabel"
+        )
+      }
+      "return three rows when 'Have phone' is false and all fields are populated" in {
+        val userAnswers = ua
+          .withPage(SecondContactCanWePhonePage, false)
+          .withPage(SecondContactEmailPage, "test@email.com")
+          .withPage(SecondContactNamePage, "Test Name")
+
+        val result = getSecondContactSummaries(userAnswers, CheckAnswers)
+        result.length mustBe 3
+        result.map(_.key.content.asHtml.toString) mustBe Seq(
+          "secondContactName.checkYourAnswersLabel",
+          "secondContactEmail.checkYourAnswersLabel",
+          "secondContactCanWePhone.checkYourAnswersLabel"
+        )
       }
     }
     "getRegisteredBusinessSummaries must" - {

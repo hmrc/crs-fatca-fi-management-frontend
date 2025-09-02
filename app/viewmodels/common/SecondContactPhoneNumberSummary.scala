@@ -17,7 +17,7 @@
 package viewmodels.common
 
 import models.{AnswersReviewPageType, CheckMode, UserAnswers}
-import pages.addFinancialInstitution.{SecondContactCanWePhonePage, SecondContactExistsPage, SecondContactPhoneNumberPage}
+import pages.addFinancialInstitution.SecondContactPhoneNumberPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -26,25 +26,18 @@ import viewmodels.implicits._
 
 object SecondContactPhoneNumberSummary {
 
-  def row(ua: UserAnswers, pageType: AnswersReviewPageType)(implicit messages: Messages): Option[SummaryListRow] = {
-    val sendContactExists = ua.get(SecondContactExistsPage)
-    val canPhoneAnswer    = ua.get(SecondContactCanWePhonePage)
-    val phoneAnswer       = ua.get(SecondContactPhoneNumberPage)
-
-    (sendContactExists, canPhoneAnswer, phoneAnswer) match {
-      case (None, _, _)                           => None
-      case (Some(true), Some(false), _)           => Option(createRow(messages("site.notProvided"), pageType))
-      case (Some(true), Some(true), Some(answer)) => Option(createRow(answer, pageType))
-      case (_, _, _)                              => None
+  def row(ua: UserAnswers, pageType: AnswersReviewPageType)(implicit messages: Messages): Option[SummaryListRow] =
+    ua.get(SecondContactPhoneNumberPage) match {
+      case Some(answer) => Some(createRow(answer, pageType))
+      case _            => Some(createRow(messages("site.notProvided"), pageType))
     }
-  }
 
   private def createRow(answer: String, pageType: AnswersReviewPageType)(implicit messages: Messages) =
     SummaryListRowViewModel(
       key = s"secondContactPhoneNumber.${pageType.labelPrefix}YourAnswersLabel",
       value = ValueViewModel(HtmlContent(answer)),
       actions = Seq(
-        accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.SecondContactCanWePhoneController.onPageLoad(CheckMode).url)
+        accessibleActionItem("site.change", controllers.addFinancialInstitution.routes.SecondContactPhoneNumberController.onPageLoad(CheckMode).url)
           .withVisuallyHiddenText(messages("secondContactPhoneNumber.change.hidden"))
       )
     )
