@@ -122,6 +122,9 @@ firstContactHavePhone.heading.business = Can we contact {0} by telephone?
 firstContactHavePhone.title.individual = Can we contact you by telephone?
 firstContactHavePhone.heading.individual = Can we contact you by telephone?
 firstContactHavePhone.p1 = We will call if we have any questions about reports for {0}.
+firstContactHavePhone.checkYourAnswersLabel = Can we contact the first contact by telephone?
+firstContactHavePhone.changeYourAnswersLabel = Can we contact the first contact by telephone?
+firstContactHavePhone.change.hidden = Change if we can contact the first contact by telephone
 firstContactHavePhone.error.required.individual = Select yes if we can contact you by telephone
 firstContactHavePhone.error.required.business = Select yes if they can be contacted by telephone
 
@@ -203,9 +206,10 @@ secondContactName.error.length = The name must be 35 characters or less
 secondContactCanWePhone.title = Can we contact the second contact by telephone?
 secondContactCanWePhone.heading = Can we contact {0} by telephone?
 secondContactCanWePhone.p1 = We will call if we have any questions about reports for {0}.
-secondContactCanWePhone.checkYourAnswersLabel = Can we contact {0} by telephone?
+secondContactCanWePhone.checkYourAnswersLabel = Can we contact the second contact by telephone?
+secondContactCanWePhone.changeYourAnswersLabel = Can we contact the second contact by telephone?
 secondContactCanWePhone.error.required = Select yes if they can be contacted by telephone
-secondContactCanWePhone.change.hidden = Change can we contact {0} by telephone?
+secondContactCanWePhone.change.hidden = Change if we can contact the second contact by telephone?
 
 secondContactPhoneNumber.title = What is the telephone number for the second contact?
 secondContactPhoneNumber.heading = What is the telephone number for {0}?
