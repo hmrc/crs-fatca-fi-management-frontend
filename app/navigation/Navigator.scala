@@ -189,14 +189,7 @@ class Navigator @Inject() () {
           resolveRoute(userAnswers, registeredBusinessRoute = true),
           resolveRoute(userAnswers, registeredBusinessRoute = false)
         )
-    case FirstContactHavePhonePage =>
-      userAnswers =>
-        yesNoPage(
-          userAnswers,
-          FirstContactHavePhonePage,
-          routes.FirstContactPhoneNumberController.onPageLoad(CheckMode),
-          redirectToCheckYourAnswers(userAnswers)
-        )
+    case FirstContactHavePhonePage => firstContactHavePhoneCheckModeNavigation
     case SecondContactExistsPage =>
       userAnswers =>
         yesNoPage(
@@ -210,14 +203,7 @@ class Navigator @Inject() () {
     case SecondContactEmailPage =>
       userAnswers =>
         checkNextPageForValueThenRoute(CheckMode, userAnswers, SecondContactCanWePhonePage, routes.SecondContactCanWePhoneController.onPageLoad(CheckMode))
-    case SecondContactCanWePhonePage =>
-      userAnswers =>
-        yesNoPage(
-          userAnswers,
-          SecondContactCanWePhonePage,
-          routes.SecondContactPhoneNumberController.onPageLoad(CheckMode),
-          redirectToCheckYourAnswers(userAnswers)
-        )
+    case SecondContactCanWePhonePage => secondContactCanWePhoneCheckModeNavigation
     case IsTheAddressCorrectPage =>
       userAnswers =>
         yesNoPage(
@@ -363,4 +349,33 @@ class Navigator @Inject() () {
       case None     => controllers.addFinancialInstitution.registeredBusiness.routes.RegisteredBusinessCheckYourAnswersController.onPageLoad()
     }
 
+  private def firstContactHavePhoneCheckModeNavigation(userAnswers: UserAnswers): Call =
+    userAnswers.get(FirstContactHavePhonePage) match {
+      case Some(true) =>
+        userAnswers.get(FirstContactPhoneNumberPage) match {
+          case Some(_) =>
+            redirectToCheckYourAnswers(userAnswers)
+          case None =>
+            controllers.addFinancialInstitution.routes.FirstContactPhoneNumberController.onPageLoad(CheckMode)
+        }
+      case Some(false) =>
+        redirectToCheckYourAnswers(userAnswers)
+      case None =>
+        controllers.routes.JourneyRecoveryController.onPageLoad()
+    }
+
+  private def secondContactCanWePhoneCheckModeNavigation(userAnswers: UserAnswers): Call =
+    userAnswers.get(SecondContactCanWePhonePage) match {
+      case Some(true) =>
+        userAnswers.get(SecondContactPhoneNumberPage) match {
+          case Some(_) =>
+            redirectToCheckYourAnswers(userAnswers)
+          case None =>
+            controllers.addFinancialInstitution.routes.SecondContactPhoneNumberController.onPageLoad(CheckMode)
+        }
+      case Some(false) =>
+        redirectToCheckYourAnswers(userAnswers)
+      case None =>
+        controllers.routes.JourneyRecoveryController.onPageLoad()
+    }
 }
