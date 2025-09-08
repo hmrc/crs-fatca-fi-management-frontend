@@ -429,6 +429,20 @@ class CheckModeNavigatorSpec extends SpecBase {
           }
         }
 
+        "must navigate from FirstContactHavePhonePage to ChangeAnswersController when user answers yes + phone number is present" in {
+          forAll {
+            fiId: String =>
+              val userAnswers = emptyUserAnswers
+                .withPage(ChangeFiDetailsInProgressId, fiId)
+                .withPage(FirstContactHavePhonePage, true)
+                .withPage(FirstContactPhoneNumberPage, "123456789")
+
+              navigator
+                .nextPage(FirstContactHavePhonePage, CheckMode, userAnswers)
+                .mustBe(controllers.changeFinancialInstitution.routes.ChangeFinancialInstitutionController.onPageLoad(fiId))
+          }
+        }
+
         "must navigate from SecondContactExistsPage to ChangeFinancialInstitution when user answers no" in {
           forAll {
             fiId: String =>
