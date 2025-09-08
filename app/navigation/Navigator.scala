@@ -378,4 +378,5 @@ class Navigator @Inject() () {
       case None =>
         controllers.routes.JourneyRecoveryController.onPageLoad()
     }
+
 }
