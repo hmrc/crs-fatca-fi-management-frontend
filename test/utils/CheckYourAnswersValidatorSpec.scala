@@ -80,6 +80,7 @@ class CheckYourAnswersValidatorSpec extends AnyFreeSpec with Matchers with Model
               controllers.addFinancialInstitution.routes.HaveGIINController.onPageLoad(CheckMode).url,
               controllers.addFinancialInstitution.routes.PostcodeController.onPageLoad(CheckMode).url,
               controllers.addFinancialInstitution.routes.FirstContactHavePhoneController.onPageLoad(CheckMode).url,
+              controllers.addFinancialInstitution.routes.SecondContactPhoneNumberController.onPageLoad(CheckMode).url,
               controllers.addFinancialInstitution.routes.SecondContactCanWePhoneController.onPageLoad(CheckMode).url,
               controllers.addFinancialInstitution.routes.SecondContactEmailController.onPageLoad(CheckMode).url,
               controllers.addFinancialInstitution.routes.SecondContactExistsController.onPageLoad(CheckMode).url,

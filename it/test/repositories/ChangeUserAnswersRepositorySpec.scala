@@ -17,7 +17,7 @@
 package repositories
 
 import config.{CryptoProvider, FrontendAppConfig}
-import models.CryptoType.{CryptoT, randomAesKey}
+import models.CryptoType.{randomAesKey, CryptoT}
 import models.UserAnswers
 import org.mockito.Mockito.when
 import org.mongodb.scala.model.{Filters, IndexModel}
