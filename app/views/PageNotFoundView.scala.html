@@ -27,7 +27,7 @@
 
 @(emailLink: String)(implicit request: RequestHeader, messages: Messages)
 
-@emailLink = {@link(href="mailto:$emailLink", "pageNotFound.para.email", openInNewWindow = true)}
+@emailLink = {@link(href="mailto:$emailLink", "pageNotFound.para.email", openInNewWindow = false)}
 
 @layout(pageTitle = titleNoForm(messages("pageNotFound.title"))) {
 
