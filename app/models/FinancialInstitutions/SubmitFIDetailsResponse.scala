@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package models.response
+package models.FinancialInstitutions
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json._
 
-case class ErrorDetail(
-  timestamp: String,
-  correlationId: String,
-  errorCode: Option[String] = None,
-  errorMessage: Option[String] = None,
-  source: Option[String] = None,
-  sourceFaultDetail: Option[SourceFaultDetail] = None
-)
+case class SubmitFIDetailsResponse(fiid: Option[String])
 
-object ErrorDetail {
-  implicit val errorDetailReads: OFormat[ErrorDetail] = Json.format[ErrorDetail]
+object SubmitFIDetailsResponse {
+
+  implicit val reads: Reads[SubmitFIDetailsResponse] = (json: JsValue) => {
+    val fiid = (json \ "ResponseDetails" \ "ReturnParameters" \ "Value").asOpt[String] // TODO: VALIDATE FULLY
+    JsSuccess(SubmitFIDetailsResponse(fiid))
+  }
+
 }

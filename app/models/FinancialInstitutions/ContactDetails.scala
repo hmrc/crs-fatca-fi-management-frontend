@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package models.response
+package models.FinancialInstitutions
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json._
 
-case class ErrorDetail(
-  timestamp: String,
-  correlationId: String,
-  errorCode: Option[String] = None,
-  errorMessage: Option[String] = None,
-  source: Option[String] = None,
-  sourceFaultDetail: Option[SourceFaultDetail] = None
-)
+final case class ContactDetails(ContactName: String, EmailAddress: String, PhoneNumber: Option[String])
 
-object ErrorDetail {
-  implicit val errorDetailReads: OFormat[ErrorDetail] = Json.format[ErrorDetail]
+object ContactDetails {
+  implicit val format: OFormat[ContactDetails] = Json.format[ContactDetails]
 }

@@ -18,15 +18,10 @@ package models.response
 
 import play.api.libs.json.{Json, OFormat}
 
-case class ErrorDetail(
-  timestamp: String,
-  correlationId: String,
-  errorCode: Option[String] = None,
-  errorMessage: Option[String] = None,
-  source: Option[String] = None,
-  sourceFaultDetail: Option[SourceFaultDetail] = None
+case class ErrorResponse(
+  errorDetail: ErrorDetail
 )
 
-object ErrorDetail {
-  implicit val errorDetailReads: OFormat[ErrorDetail] = Json.format[ErrorDetail]
+object ErrorResponse {
+  implicit val format: OFormat[ErrorResponse] = Json.format[ErrorResponse]
 }
