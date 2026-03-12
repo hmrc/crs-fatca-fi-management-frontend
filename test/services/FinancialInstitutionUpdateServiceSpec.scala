@@ -74,7 +74,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must populate and persist user answers with FI details" in {
         forAll {
-          (fiDetails: FIDetail, isUkAddress: Boolean) =>
+          (fiDetails: FIDetails, isUkAddress: Boolean) =>
             val country        = if (isUkAddress) Country.GB else nonUkCountry
             val ukCountryCodes = if (isUkAddress) Set(country.code, fiDetails.AddressDetails.CountryCode.value) else Set.empty[String]
             setUpMock(country, ukCountryCodes)
@@ -88,7 +88,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return error when there is a failure while persisting the user answers" in {
         forAll {
-          fiDetails: FIDetail =>
+          fiDetails: FIDetails =>
             when(mockSessionRepository.set(any())).thenReturn(Future.failed(persistenceError))
 
             an[Exception] must be thrownBy service.populateAndSaveFiDetails(emptyUserAnswers, fiDetails).futureValue
@@ -138,7 +138,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return error when there is a failure while persisting the user answers" in {
         forAll {
-          fiDetails: FIDetail =>
+          fiDetails: FIDetails =>
             when(mockSessionRepository.set(any())).thenReturn(Future.failed(persistenceError))
 
             an[Exception] must be thrownBy service.populateAndSaveRegisteredFiDetails(emptyUserAnswers, fiDetails).futureValue
@@ -150,7 +150,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return false when there has been no changes to the FI details" in {
         forAll {
-          fiDetails: FIDetail =>
+          fiDetails: FIDetails =>
             setUpMock(Country.GB, fiDetails.AddressDetails.CountryCode.toSet)
 
             val (populatedUserAnswers, _) = service
@@ -163,7 +163,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return true when the NameOfFinancialInstitutionPage in user answers does not equal value in FIDetail" in {
         forAll {
-          fiDetails: FIDetail =>
+          fiDetails: FIDetails =>
             setUpMock(Country.GB, fiDetails.AddressDetails.CountryCode.toSet)
 
             val (result, _) = service
@@ -179,7 +179,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return true when the UkAddressPage in user answers does not match address in FIDetail" in {
         forAll {
-          (fiDetails: FIDetail, newAddress: AddressDetails) =>
+          (fiDetails: FIDetails, newAddress: AddressDetails) =>
             setUpMock(Country.GB, Set(fiDetails.AddressDetails.CountryCode.value, newAddress.CountryCode.value))
 
             val (result, _) = service
@@ -197,7 +197,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return true when the NonUkAddressPage in user answers does not match address in FIDetail" in {
         forAll {
-          (fiDetails: FIDetail, newAddress: AddressDetails) =>
+          (fiDetails: FIDetails, newAddress: AddressDetails) =>
             setUpMock(nonUkCountry, Set(fiDetails.AddressDetails.CountryCode.value, newAddress.CountryCode.value))
 
             val (result, _) = service
@@ -215,7 +215,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return true when the SelectedAddressLookupPage in user answers does not match address in FIDetail" in {
         forAll {
-          (fiDetails: FIDetail, newAddress: AddressLookup) =>
+          (fiDetails: FIDetails, newAddress: AddressLookup) =>
             setUpMock(Country.GB, Set(fiDetails.AddressDetails.CountryCode.value, Country.GB.code))
 
             val (result, _) = service
@@ -233,7 +233,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return true when the FirstContactNamePage in user answers does not equal value in FIDetail" in {
         forAll {
-          fiDetails: FIDetail =>
+          fiDetails: FIDetails =>
             setUpMock(Country.GB, fiDetails.AddressDetails.CountryCode.toSet)
 
             val (result, _) = service
@@ -249,7 +249,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return true when the FirstContactEmailPage in user answers does not equal value in FIDetail" in {
         forAll {
-          fiDetails: FIDetail =>
+          fiDetails: FIDetails =>
             setUpMock(Country.GB, fiDetails.AddressDetails.CountryCode.toSet)
 
             val (result, _) = service
@@ -265,7 +265,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return true when FirstContactHavePhonePage in user answers does not equal value in FIDetail" in {
         forAll {
-          fiDetails: FIDetail =>
+          fiDetails: FIDetails =>
             setUpMock(Country.GB, fiDetails.AddressDetails.CountryCode.toSet)
 
             val (result, _) = service
@@ -281,7 +281,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return true when SecondContactExistsPage in user answers does not equal value in FIDetail" in {
         forAll {
-          fiDetails: FIDetail =>
+          fiDetails: FIDetails =>
             setUpMock(Country.GB, fiDetails.AddressDetails.CountryCode.toSet)
 
             val (result, _) = service
@@ -297,7 +297,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return true when user answers UTR is different from UTR in FIDetail" in {
         forAll {
-          fiDetails: FIDetail =>
+          fiDetails: FIDetails =>
             val fiDetailsUTR = UniqueTaxpayerReference(UUID.randomUUID().toString)
             setUpMock(Country.GB, fiDetails.AddressDetails.CountryCode.toSet)
 
@@ -315,9 +315,9 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return true when user answers GIIN is different from GIIN in FIDetail" in {
         forAll {
-          fiDetails: FIDetail =>
+          fiDetails: FIDetails =>
             val fiDetailsGIIN     = GIINumber(UUID.randomUUID().toString)
-            val fiDetailsWithGIIN = fiDetails.copy(TINDetails = Seq(TINDetails(TINType = UTR, TIN = fiDetailsGIIN.value, "")))
+            val fiDetailsWithGIIN = fiDetails.copy(TINDetails = Some(Seq(TINDetails(TINType = UTR, TIN = fiDetailsGIIN.value, ""))))
             setUpMock(Country.GB, fiDetails.AddressDetails.CountryCode.toSet)
 
             val (result, _) = service
@@ -333,7 +333,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return true when FirstContactHavePhonePage is false but there is a phone in FIDetails" in {
         forAll {
-          (fiDetails: FIDetail, name: String, email: String, phone: String) =>
+          (fiDetails: FIDetails, name: String, email: String, phone: String) =>
             val fiDetailsWithSecondaryContact = fiDetails
               .copy(PrimaryContactDetails = Some(ContactDetails(name, email, PhoneNumber = Option(phone))))
             setUpMock(Country.GB, fiDetails.AddressDetails.CountryCode.toSet)
@@ -351,7 +351,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return true when FirstContactHavePhonePage is true but there is no first contact phone in FIDetails" in {
         forAll {
-          (fiDetails: FIDetail, name: String, email: String) =>
+          (fiDetails: FIDetails, name: String, email: String) =>
             val fiDetailsWithSecondaryContact = fiDetails
               .copy(PrimaryContactDetails = Some(ContactDetails(name, email, PhoneNumber = None)))
             setUpMock(Country.GB, fiDetails.AddressDetails.CountryCode.toSet)
@@ -369,7 +369,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return true when SecondContactNamePage is different from that in FIDetails" in {
         forAll {
-          (fiDetails: FIDetail, name: String, email: String) =>
+          (fiDetails: FIDetails, name: String, email: String) =>
             val fiDetailsWithSecondaryContact = fiDetails
               .copy(SecondaryContactDetails = Option(ContactDetails(name, email, PhoneNumber = None)))
             setUpMock(Country.GB, fiDetails.AddressDetails.CountryCode.toSet)
@@ -390,7 +390,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return true when SecondContactEmailPage is different from that in FIDetails" in {
         forAll {
-          (fiDetails: FIDetail, name: String, email: String) =>
+          (fiDetails: FIDetails, name: String, email: String) =>
             val fiDetailsWithSecondaryContact = fiDetails
               .copy(SecondaryContactDetails = Option(ContactDetails(name, email, PhoneNumber = None)))
             setUpMock(Country.GB, fiDetails.AddressDetails.CountryCode.toSet)
@@ -411,7 +411,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return true when SecondContactPhoneNumberPage is different from second contact phone in FIDetails" in {
         forAll {
-          (fiDetails: FIDetail, name: String, email: String, phone: String) =>
+          (fiDetails: FIDetails, name: String, email: String, phone: String) =>
             val fiDetailsWithSecondaryContact = fiDetails
               .copy(SecondaryContactDetails = Option(ContactDetails(name, email, PhoneNumber = Option(phone))))
             setUpMock(Country.GB, fiDetails.AddressDetails.CountryCode.toSet)
@@ -433,7 +433,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return true when user answers SecondContactExistsPage is false but second contact exists in FIDetails" in {
         forAll {
-          (fiDetails: FIDetail, name: String, email: String) =>
+          (fiDetails: FIDetails, name: String, email: String) =>
             val fiDetailsWithSecondaryContact = fiDetails
               .copy(SecondaryContactDetails = Option(ContactDetails(name, email, PhoneNumber = None)))
             setUpMock(Country.GB, fiDetails.AddressDetails.CountryCode.toSet)
@@ -454,7 +454,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return true when user answers SecondContactCanWePhonePage is true but second contact phone does not exists in FIDetails" in {
         forAll {
-          (fiDetails: FIDetail, name: String, email: String) =>
+          (fiDetails: FIDetails, name: String, email: String) =>
             val fiDetailsWithSecondaryContact = fiDetails
               .copy(SecondaryContactDetails = Option(ContactDetails(name, email, PhoneNumber = None)))
             setUpMock(Country.GB, fiDetails.AddressDetails.CountryCode.toSet)
@@ -475,7 +475,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return true when user answers SecondContactCanWePhonePage is false but second contact phone exists in FIDetails" in {
         forAll {
-          (fiDetails: FIDetail, name: String, email: String, phone: String) =>
+          (fiDetails: FIDetails, name: String, email: String, phone: String) =>
             val fiDetailsWithSecondaryContact = fiDetails
               .copy(SecondaryContactDetails = Option(ContactDetails(name, email, PhoneNumber = Option(phone))))
             setUpMock(Country.GB, fiDetails.AddressDetails.CountryCode.toSet)
@@ -519,7 +519,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
     }
   }
 
-  private def verifyUserAnswersMatchFIDetails(fiDetails: FIDetail, populatedUserAnswers: UserAnswers, isUkAddress: Boolean) = {
+  private def verifyUserAnswersMatchFIDetails(fiDetails: FIDetails, populatedUserAnswers: UserAnswers, isUkAddress: Boolean) = {
     populatedUserAnswers.get(NameOfFinancialInstitutionPage).value mustBe fiDetails.FIName
 
     verifyTINMatch(fiDetails, populatedUserAnswers)
@@ -539,20 +539,29 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
     populatedUserAnswers.get(SecondContactPhoneNumberPage) mustBe fiDetails.SecondaryContactDetails.flatMap(_.PhoneNumber)
   }
 
-  private def verifyTINMatch(fiDetails: FIDetail, populatedUserAnswers: UserAnswers) = {
-    val maybeUTR: Option[TINDetails] = fiDetails.TINDetails.find(_.TINType == UTR)
-    populatedUserAnswers.get(WhichIdentificationNumbersPage) contains UTR
+  private def verifyTINMatch(fiDetails: FIDetails, populatedUserAnswers: UserAnswers) = {
+    val tins = fiDetails.TINDetails.getOrElse(Seq.empty)
+
+    val maybeUTR = tins.find(_.TINType == UTR)
+    if (maybeUTR.isDefined) {
+      populatedUserAnswers.get(WhichIdentificationNumbersPage).value must contain(TINType.UTR)
+    }
     populatedUserAnswers.get(WhatIsUniqueTaxpayerReferencePage) mustBe maybeUTR.map(
       id => UniqueTaxpayerReference(id.TIN)
     )
-    val maybeCRN: Option[TINDetails] = fiDetails.TINDetails.find(_.TINType == CRN)
-    populatedUserAnswers.get(WhichIdentificationNumbersPage) contains CRN
+
+    val maybeCRN = tins.find(_.TINType == CRN)
+    if (maybeCRN.isDefined) {
+      populatedUserAnswers.get(WhichIdentificationNumbersPage).value must contain(TINType.CRN)
+    }
     populatedUserAnswers.get(CompanyRegistrationNumberPage) mustBe maybeCRN.map(
       id => CompanyRegistrationNumber(id.TIN)
     )
 
-    val maybeTRN: Option[TINDetails] = fiDetails.TINDetails.find(_.TINType == TURN)
-    populatedUserAnswers.get(WhichIdentificationNumbersPage) contains TURN
+    val maybeTRN = tins.find(_.TINType == TURN)
+    if (maybeTRN.isDefined) {
+      populatedUserAnswers.get(WhichIdentificationNumbersPage).value must contain(TINType.TURN)
+    }
     populatedUserAnswers.get(TrustURNPage) mustBe maybeTRN.map(
       id => TrustUniqueReferenceNumber(id.TIN)
     )

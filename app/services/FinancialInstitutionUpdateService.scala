@@ -48,7 +48,7 @@ class FinancialInstitutionUpdateService @Inject() (
   regService: RegistrationWithUtrService
 )(implicit ec: ExecutionContext) {
 
-  def populateAndSaveFiDetails(userAnswers: UserAnswers, fiDetails: FIDetail): Future[(UserAnswers, Boolean)] = for {
+  def populateAndSaveFiDetails(userAnswers: UserAnswers, fiDetails: FIDetails): Future[(UserAnswers, Boolean)] = for {
     userAnswersWithProgressFlag <- Future.fromTry(userAnswers.set(ChangeFiDetailsInProgressId, fiDetails.FIID, cleanup = false))
     changeId = s"${fiDetails.SubscriptionID}-${fiDetails.FIID}"
     changeAnswers      <- changeUserAnswersRepository.get(changeId).map(_.map(_.copy(id = userAnswers.id)))
@@ -56,7 +56,7 @@ class FinancialInstitutionUpdateService @Inject() (
     _                  <- sessionRepository.set(updatedUserAnswers)
   } yield (updatedUserAnswers, changeAnswers.isDefined)
 
-  def populateAndSaveRegisteredFiDetails(userAnswers: UserAnswers, fiDetails: FIDetail)(implicit
+  def populateAndSaveRegisteredFiDetails(userAnswers: UserAnswers, fiDetails: FIDetails)(implicit
     request: DataRequest[AnyContent],
     headerCarrier: HeaderCarrier
   ): Future[(UserAnswers, Boolean)] =
@@ -68,7 +68,7 @@ class FinancialInstitutionUpdateService @Inject() (
       _                  <- sessionRepository.set(updatedUserAnswers)
     } yield (updatedUserAnswers, changeAnswers.isDefined)
 
-  def fiDetailsHasChanged(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean =
+  def fiDetailsHasChanged(userAnswers: UserAnswers, fiDetails: FIDetails): Boolean =
     userAnswers.get(NameOfFinancialInstitutionPage).exists(_ != fiDetails.FIName) ||
       checkTINTypeForChanges(userAnswers, fiDetails.TINDetails) ||
       checkGIINForChanges(userAnswers, fiDetails) ||
@@ -76,7 +76,7 @@ class FinancialInstitutionUpdateService @Inject() (
       checkPrimaryContactForChanges(userAnswers, fiDetails) ||
       checkSecondaryContactForChanges(userAnswers, fiDetails)
 
-  def registeredFiDetailsHasChanged(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean =
+  def registeredFiDetailsHasChanged(userAnswers: UserAnswers, fiDetails: FIDetails): Boolean =
     userAnswers.get(NameOfFinancialInstitutionPage).exists(_ != fiDetails.FIName) ||
       checkTINTypeForChanges(userAnswers, fiDetails.TINDetails) ||
       checkGIINForChanges(userAnswers, fiDetails) ||
@@ -86,7 +86,7 @@ class FinancialInstitutionUpdateService @Inject() (
     sessionRepository.set(userAnswers.copy(data = Json.obj()))
 
   private def populateUserAnswersWithFiDetail(
-    fiDetails: FIDetail,
+    fiDetails: FIDetails,
     userAnswers: UserAnswers
   )(implicit ec: ExecutionContext): Future[UserAnswers] =
     for {
@@ -99,7 +99,7 @@ class FinancialInstitutionUpdateService @Inject() (
     } yield f
 
   private def populateUserAnswersWithRegisteredFiDetail(
-    fiDetails: FIDetail,
+    fiDetails: FIDetails,
     userAnswers: UserAnswers
   )(implicit request: DataRequest[AnyContent], headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers] =
     for {
@@ -111,36 +111,48 @@ class FinancialInstitutionUpdateService @Inject() (
       f <- setFiUserDetails(e)
     } yield f
 
-  private def setTaxIdentifier(userAnswers: UserAnswers, listOfTinDetails: Seq[TINDetails])(implicit ec: ExecutionContext): Future[UserAnswers] =
-    listOfTinDetails.foldLeft(Future.successful(userAnswers)) {
-      (futureAnswers, details) =>
-        futureAnswers.flatMap {
-          answers =>
-            details.TINType match {
-              case UTR =>
-                Future.fromTry(
-                  answers
-                    .set(WhichIdentificationNumbersPage, answers.get(WhichIdentificationNumbersPage).getOrElse(Set.empty) + TINType.UTR, cleanup = false)
-                    .flatMap(_.set(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference(details.TIN), cleanup = false))
-                )
-              case CRN =>
-                Future.fromTry(
-                  answers
-                    .set(WhichIdentificationNumbersPage, answers.get(WhichIdentificationNumbersPage).getOrElse(Set.empty) + TINType.CRN, cleanup = false)
-                    .flatMap(_.set(CompanyRegistrationNumberPage, CompanyRegistrationNumber(details.TIN), cleanup = false))
-                )
-              case TURN =>
-                Future.fromTry(
-                  answers
-                    .set(WhichIdentificationNumbersPage, answers.get(WhichIdentificationNumbersPage).getOrElse(Set.empty) + TINType.TURN, cleanup = false)
-                    .flatMap(_.set(TrustURNPage, TrustUniqueReferenceNumber(details.TIN), cleanup = false))
-                )
-              case _ =>
-                Future.fromTry(
-                  answers
-                    .set(HaveGIINPage, true, cleanup = false)
-                    .flatMap(_.set(WhatIsGIINPage, GIINumber(details.TIN), cleanup = false))
-                )
+  private def setTaxIdentifier(
+    answers: UserAnswers,
+    listOfTinDetails: Option[Seq[TINDetails]]
+  )(implicit ec: ExecutionContext): Future[UserAnswers] =
+    listOfTinDetails match {
+      case None => Future.successful(answers)
+      case Some(detailsList) =>
+        detailsList.foldLeft(Future.successful(answers)) {
+          (futureAnswers, details) =>
+            futureAnswers.flatMap {
+              currentAnswers =>
+                details.TINType match {
+                  case UTR =>
+                    Future.fromTry(
+                      currentAnswers
+                        .set(WhichIdentificationNumbersPage,
+                             currentAnswers.get(WhichIdentificationNumbersPage).getOrElse(Set.empty) + TINType.UTR,
+                             cleanup = false
+                        )
+                        .flatMap(_.set(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference(details.TIN), cleanup = false))
+                    )
+                  case CRN =>
+                    Future.fromTry(
+                      currentAnswers
+                        .set(WhichIdentificationNumbersPage,
+                             currentAnswers.get(WhichIdentificationNumbersPage).getOrElse(Set.empty) + TINType.CRN,
+                             cleanup = false
+                        )
+                        .flatMap(_.set(CompanyRegistrationNumberPage, CompanyRegistrationNumber(details.TIN), cleanup = false))
+                    )
+                  case TURN =>
+                    Future.fromTry(
+                      currentAnswers
+                        .set(WhichIdentificationNumbersPage,
+                             currentAnswers.get(WhichIdentificationNumbersPage).getOrElse(Set.empty) + TINType.TURN,
+                             cleanup = false
+                        )
+                        .flatMap(_.set(TrustURNPage, TrustUniqueReferenceNumber(details.TIN), cleanup = false))
+                    )
+                  case _ =>
+                    Future.successful(currentAnswers)
+                }
             }
         }
     }
@@ -171,7 +183,7 @@ class FinancialInstitutionUpdateService @Inject() (
     } yield a
   }
 
-  private def setPrimaryContactDetails(userAnswers: UserAnswers, fiDetails: FIDetail)(implicit ec: ExecutionContext): Future[UserAnswers] = {
+  private def setPrimaryContactDetails(userAnswers: UserAnswers, fiDetails: FIDetails)(implicit ec: ExecutionContext): Future[UserAnswers] = {
     val primaryContact = fiDetails.PrimaryContactDetails
     primaryContact map {
       contact =>
@@ -254,7 +266,7 @@ class FinancialInstitutionUpdateService @Inject() (
       }
     }
 
-  private def setSecondaryContactDetails(userAnswers: UserAnswers, fiDetails: FIDetail)(implicit ec: ExecutionContext): Future[UserAnswers] =
+  private def setSecondaryContactDetails(userAnswers: UserAnswers, fiDetails: FIDetails)(implicit ec: ExecutionContext): Future[UserAnswers] =
     for {
       a <- Future.fromTry(userAnswers.set(SecondContactExistsPage, fiDetails.SecondaryContactDetails.isDefined, cleanup = false))
       b <- fiDetails.SecondaryContactDetails match {
@@ -276,7 +288,7 @@ class FinancialInstitutionUpdateService @Inject() (
 
   private def checkGIINForChanges(
     userAnswers: UserAnswers,
-    fiDetails: FIDetail
+    fiDetails: FIDetails
   ): Boolean = {
     val uaValue: Option[String]     = userAnswers.get(WhatIsGIINPage).map(_.value)
     val detailValue: Option[String] = fiDetails.GIIN
@@ -303,7 +315,7 @@ class FinancialInstitutionUpdateService @Inject() (
 
   private def checkTINTypeForChanges(
     userAnswers: UserAnswers,
-    tinDetails: Seq[TINDetails]
+    maybeTinDetails: Option[Seq[TINDetails]]
   ): Boolean = {
 
     val uaTinTypes: Set[TINType] =
@@ -311,10 +323,12 @@ class FinancialInstitutionUpdateService @Inject() (
         .get(WhichIdentificationNumbersPage)
         .getOrElse(Set.empty)
 
-    val detailTinTypes: Set[TINType]    = tinDetails.map(_.TINType).toSet
+    val tinDetails                   = maybeTinDetails.getOrElse(Seq.empty)
+    val detailTinTypes: Set[TINType] = tinDetails.map(_.TINType).toSet
+
     val identifiersHaveChanged: Boolean = uaTinTypes != detailTinTypes
     val valuesHaveChanged: Boolean = if (!identifiersHaveChanged) {
-      detailTinTypes.toSeq.exists {
+      detailTinTypes.exists {
         tinType =>
           tinType match {
             case TINType.UTR  => checkUTRforChange(userAnswers, tinDetails)
@@ -350,7 +364,7 @@ class FinancialInstitutionUpdateService @Inject() (
     }
   }
 
-  private def checkPrimaryContactForChanges(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean = {
+  private def checkPrimaryContactForChanges(userAnswers: UserAnswers, fiDetails: FIDetails): Boolean = {
     val primaryContact = fiDetails.PrimaryContactDetails
     primaryContact match {
       case Some(contact) =>
@@ -361,7 +375,7 @@ class FinancialInstitutionUpdateService @Inject() (
     }
   }
 
-  private def checkSecondaryContactForChanges(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean =
+  private def checkSecondaryContactForChanges(userAnswers: UserAnswers, fiDetails: FIDetails): Boolean =
     fiDetails.SecondaryContactDetails match {
       case Some(secondaryContact) =>
         userAnswers.get(SecondContactExistsPage).contains(false) ||

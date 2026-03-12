@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.UserAccessFormProvider
-import models.FinancialInstitutions.FIDetail
+import models.FinancialInstitutions.FIDetails
 import models.subscription.response.UserSubscription
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -108,7 +108,7 @@ class UserAccessController @Inject() (
       }
   }
 
-  private def getAccessType(sub: UserSubscription, institutionToRemove: FIDetail): String = {
+  private def getAccessType(sub: UserSubscription, institutionToRemove: FIDetails): String = {
     val key = (sub.isBusiness, institutionToRemove.IsFIUser) match {
       case (true, true)  => "registeredUser"
       case (true, false) => "organisation"

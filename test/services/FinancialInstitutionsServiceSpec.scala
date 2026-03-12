@@ -19,7 +19,7 @@ package services
 import base.SpecBase
 import connectors.FinancialInstitutionsConnector
 import generators.{ModelGenerators, UserAnswersGenerator}
-import models.FinancialInstitutions.{BaseFIDetail, FIDetail, SubmitFIDetailsResponse}
+import models.FinancialInstitutions.{FIDetails, SubmitFIDetailsResponse}
 import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.when
@@ -47,7 +47,7 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
       val mockResponse   = Future.successful(HttpResponse(OK, testViewFIDetailsBody))
 
       when(mockConnector.viewFis(subscriptionId)).thenReturn(mockResponse)
-      val result: Future[Seq[FIDetail]] = sut.getListOfFinancialInstitutions(subscriptionId)
+      val result: Future[Seq[FIDetails]] = sut.getListOfFinancialInstitutions(subscriptionId)
       result.futureValue mustBe testFiDetails
     }
 
@@ -56,7 +56,7 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
       val mockResponse   = Future.successful(HttpResponse(UNPROCESSABLE_ENTITY, testViewFIDetailsErrorBody))
 
       when(mockConnector.viewFis(subscriptionId)).thenReturn(mockResponse)
-      val result: Future[Seq[FIDetail]] = sut.getListOfFinancialInstitutions(subscriptionId)
+      val result: Future[Seq[FIDetails]] = sut.getListOfFinancialInstitutions(subscriptionId)
       result.futureValue mustBe Seq.empty
     }
 
@@ -73,7 +73,7 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
 
       "must return financial institution details" in {
         forAll {
-          fiDetail: FIDetail =>
+          fiDetail: FIDetails =>
             val viewFIDetailsResponse = createViewFIDetailsResponse(Seq(fiDetail))
 
             when(mockConnector.viewFi(fiDetail.SubscriptionID, fiDetail.FIID))
@@ -87,7 +87,7 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
 
       "must return None when there is no financial institution details" in {
         forAll {
-          fiDetail: FIDetail =>
+          fiDetail: FIDetails =>
             val viewFIDetailsResponse = createViewFIDetailsResponse(Nil)
 
             when(mockConnector.viewFi(fiDetail.SubscriptionID, fiDetail.FIID))
@@ -110,12 +110,12 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
       sut.getInstitutionById(fiDetails, noFiid) mustBe None
 
     }
-    "addOrUpdateFinancialInstitution" - {
+
+    "addFinancialInstitution adds FI details" in {
       val subscriptionId = "XE5123456789"
 
-      "adds FI details" in {
-        val responseJson =
-          s"""
+      val responseJson =
+        s"""
             |{
             |  "ResponseDetails": {
             |    "ReturnParameters": {
@@ -124,26 +124,27 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
             |  }
             |}
             |""".stripMargin
-        val mockResponse = Future.successful(HttpResponse(OK, responseJson))
+      val mockResponse = Future.successful(HttpResponse(OK, responseJson))
 
-        forAll(fiNotRegistered.arbitrary) {
-          (userAnswers: UserAnswers) =>
-            when(mockConnector.addOrUpdateFI(any())(any[HeaderCarrier](), any[ExecutionContext](), any[Writes[BaseFIDetail]])).thenReturn(mockResponse)
-            val result = sut.addFinancialInstitution(subscriptionId, userAnswers)
-            result.futureValue mustBe SubmitFIDetailsResponse(Some(testFiid))
-        }
+      forAll(fiNotRegistered.arbitrary) {
+        (userAnswers: UserAnswers) =>
+          when(mockConnector.addFI(any())(any[HeaderCarrier](), any[ExecutionContext]())).thenReturn(mockResponse)
+          val result = sut.addFinancialInstitution(subscriptionId, userAnswers)
+          result.futureValue mustBe SubmitFIDetailsResponse(Some(testFiid))
       }
+    }
 
-      "updates FI details" in {
-        val mockResponse = Future.successful(HttpResponse(OK, "{}"))
+    "updateFinancialInstitution updates FI details" in {
+      val subscriptionId = "XE5123456789"
 
-        forAll(fiRegistered.arbitrary) {
-          (userAnswers: UserAnswers) =>
-            val updatedAnswers = userAnswers.withPage(ChangeFiDetailsInProgressId, "123456789")
-            when(mockConnector.addOrUpdateFI(any())(any[HeaderCarrier](), any[ExecutionContext](), any[Writes[BaseFIDetail]])).thenReturn(mockResponse)
-            val result = sut.updateFinancialInstitution(subscriptionId, updatedAnswers)
-            result.futureValue mustBe ()
-        }
+      val mockResponse = Future.successful(HttpResponse(OK, "{}"))
+
+      forAll(fiRegistered.arbitrary) {
+        (userAnswers: UserAnswers) =>
+          val updatedAnswers = userAnswers.withPage(ChangeFiDetailsInProgressId, "123456789")
+          when(mockConnector.updateFI(any())(any[HeaderCarrier](), any[ExecutionContext]())).thenReturn(mockResponse)
+          val result = sut.updateFinancialInstitution(subscriptionId, updatedAnswers)
+          result.futureValue mustBe ()
       }
     }
 
@@ -156,7 +157,7 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
 
   }
 
-  private def createViewFIDetailsResponse(fiDetails: Seq[FIDetail]): JsObject = {
+  private def createViewFIDetailsResponse(fiDetails: Seq[FIDetails]): JsObject = {
     val fiDetailsJsObject       = Json.obj(("FIDetails", JsArray(fiDetails.map(Json.toJson(_)))))
     val responseDetailsJsObject = Json.obj(("ResponseDetails", fiDetailsJsObject))
     Json.obj(("ViewFIDetails", responseDetailsJsObject))

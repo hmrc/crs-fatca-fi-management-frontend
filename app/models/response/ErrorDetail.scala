@@ -18,27 +18,33 @@ package models.response
 
 import play.api.libs.json.{Json, OFormat}
 
-case class ErrorDetails(
+case class ErrorDetail(
   timestamp: String,
   correlationId: String,
   errorCode: Option[String] = None,
   errorMessage: Option[String] = None,
   source: Option[String] = None,
-  sourceFaultDetail: Option[SourceFault] = None
+  sourceFaultDetail: Option[SourceFaultDetail] = None
 )
 
-case class SourceFault(
-  RestFault: Option[String] = None,
+object ErrorDetail {
+  implicit val errorDetailReads: OFormat[ErrorDetail] = Json.format[ErrorDetail]
+}
+
+case class SourceFaultDetail(
+  Detail: Array[String],
   SoapFault: Option[String] = None,
-  Detail: List[String]
+  RestFault: Option[String] = None
 )
 
-object SourceFault {
-  implicit val sourceFaultDetailReads: OFormat[SourceFault] = Json.format[SourceFault]
+object SourceFaultDetail {
+  implicit val sourceFaultDetailReads: OFormat[SourceFaultDetail] = Json.format[SourceFaultDetail]
 }
 
-object ErrorDetails {
-  implicit val errorDetailReads: OFormat[ErrorDetails] = Json.format[ErrorDetails]
-}
+case class ErrorResponse(
+  errorDetail: ErrorDetail
+)
 
-case class DownstreamServiceError(message: String, cause: Throwable) extends RuntimeException
+object ErrorResponse {
+  implicit val format: OFormat[ErrorResponse] = Json.format[ErrorResponse]
+}

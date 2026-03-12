@@ -17,53 +17,23 @@
 package models.FinancialInstitutions
 
 import models.Address
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import utils.CountryListFactory
 
-sealed trait BaseFIDetail {
-  val FIName: String
-  val SubscriptionID: String
-  val TINDetails: Seq[TINDetails]
-  val GIIN: Option[String]
-  val IsFIUser: Boolean
-  val AddressDetails: AddressDetails
-  val PrimaryContactDetails: Option[ContactDetails]
-  val SecondaryContactDetails: Option[ContactDetails]
-}
-
-object BaseFIDetail {
-  implicit val format: OFormat[BaseFIDetail] = Json.format[BaseFIDetail]
-}
-
-final case class FIDetail(
+final case class FIDetails(
   FIID: String,
   FIName: String,
   SubscriptionID: String,
-  TINDetails: Seq[TINDetails],
+  TINDetails: Option[Seq[TINDetails]],
   GIIN: Option[String],
   IsFIUser: Boolean,
   AddressDetails: AddressDetails,
   PrimaryContactDetails: Option[ContactDetails],
   SecondaryContactDetails: Option[ContactDetails]
-) extends BaseFIDetail
+)
 
-object FIDetail {
-
-  implicit val reads: Reads[FIDetail] = (
-    (JsPath \ "FIID").read[String] and
-      (JsPath \ "FIName").read[String] and
-      (JsPath \ "SubscriptionID").read[String] and
-      (JsPath \ "TINDetails").readNullable[Seq[TINDetails]].map(_.getOrElse(Seq.empty)) and
-      (JsPath \ "GIIN").readNullable[String] and
-      (JsPath \ "IsFIUser").read[Boolean] and
-      (JsPath \ "AddressDetails").read[AddressDetails] and
-      (JsPath \ "PrimaryContactDetails").readNullable[ContactDetails] and
-      (JsPath \ "SecondaryContactDetails").readNullable[ContactDetails]
-  )(FIDetail.apply _)
-
-  implicit val writes: OWrites[FIDetail] = Json.writes[FIDetail]
-  implicit val format: OFormat[FIDetail] = OFormat(reads, writes)
+object FIDetails {
+  implicit val format: OFormat[FIDetails] = Json.format[FIDetails]
 }
 
 final case class RemoveFIDetail(
@@ -115,13 +85,13 @@ object ContactDetails {
 final case class CreateFIDetails(
   FIName: String,
   SubscriptionID: String,
-  TINDetails: Seq[TINDetails],
+  TINDetails: Option[Seq[TINDetails]],
   GIIN: Option[String],
   IsFIUser: Boolean,
   AddressDetails: AddressDetails,
   PrimaryContactDetails: Option[ContactDetails],
   SecondaryContactDetails: Option[ContactDetails]
-) extends BaseFIDetail
+)
 
 object CreateFIDetails {
   implicit val format: OFormat[CreateFIDetails] = Json.format[CreateFIDetails]
@@ -132,7 +102,7 @@ case class SubmitFIDetailsResponse(fiid: Option[String])
 object SubmitFIDetailsResponse {
 
   implicit val reads: Reads[SubmitFIDetailsResponse] = (json: JsValue) => {
-    val fiid = (json \ "ResponseDetails" \ "ReturnParameters" \ "Value").asOpt[String]
+    val fiid = (json \ "ResponseDetails" \ "ReturnParameters" \ "Value").asOpt[String] // TODO: VALIDATE FULLY
     JsSuccess(SubmitFIDetailsResponse(fiid))
   }
 

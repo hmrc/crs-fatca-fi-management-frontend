@@ -24,9 +24,9 @@ import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddr
 import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import pages.{CompanyRegistrationNumberPage, TrustURNPage}
-import play.api.libs.json.{JsResult, JsResultException, JsValue, Json}
+import play.api.libs.json._
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.HttpErrorFunctions.is2xx
+import uk.gov.hmrc.http.HttpErrorFunctions._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,7 +36,7 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
   def getListOfFinancialInstitutions(subscriptionId: String)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[Seq[FIDetail]] =
+  ): Future[Seq[FIDetails]] =
     connector
       .viewFis(subscriptionId)
       .map {
@@ -45,26 +45,49 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
         case res                                                                                                  => throw new RuntimeException(res.body)
       }
 
+//  res =>
+//    res.status match {
+//      case status if is2xx(status) =>
+//        Json.parse(res.body).validate[Seq[FIDetail]] match {
+//          case JsSuccess(fiList, _) => Future.successful(fiList)
+//          case JsError(errors)      => Future.failed(new Exception(s"Failed to parse FI list: $errors"))
+//        }
+//
+//      case status if is4xx(status) =>
+//        Json.parse(res.body).validate[ErrorDetail] match {
+//          case JsSuccess(errorDetail, _) => Future.successful(errorDetail)
+//          case JsError(errors)          => Future.failed(throw new Exception(s"Failed to parse error detail: $errors"))
+//        }
+//
+//
+//
+//    .flatMap(_.errorCode)).contains("001") =>
+//    Future.successful(Seq.empty)
+//
+//      case status =>
+//        Future.failed(new RuntimeException(s"Unexpected response status: $status with body: ${res.body}"))
+//    }
+
   def getFinancialInstitution(subscriptionId: String, fiId: String)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[Option[FIDetail]] =
+  ): Future[Option[FIDetails]] =
     connector
       .viewFi(subscriptionId, fiId)
       .map(
         res => extractList(res.body).headOption
       )
 
-  def getInstitutionById(details: Seq[FIDetail], fiid: String): Option[FIDetail] =
+  def getInstitutionById(details: Seq[FIDetails], fiid: String): Option[FIDetails] =
     details
       .find(
         detail => detail.FIID == fiid
       )
-      .fold[Option[FIDetail]](None)(Some(_))
+      .fold[Option[FIDetails]](None)(Some(_))
 
-  def extractList(body: String): Seq[FIDetail] = {
-    val json: JsValue                        = Json.parse(body)
-    val listsResult: JsResult[Seq[FIDetail]] = (json \ "ViewFIDetails" \ "ResponseDetails" \ "FIDetails").validate[Seq[FIDetail]]
+  def extractList(body: String): Seq[FIDetails] = {
+    val json: JsValue                         = Json.parse(body)
+    val listsResult: JsResult[Seq[FIDetails]] = (json \ "ViewFIDetails" \ "ResponseDetails" \ "FIDetails").validate[Seq[FIDetails]]
 
     listsResult.fold(
       errors => throw JsResultException(errors),
@@ -78,7 +101,7 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
   ): Future[Unit] = {
     val fiDetailsRequest = buildUpdateFiDetailsRequest(subscriptionId, userAnswers)
     connector
-      .addOrUpdateFI(fiDetailsRequest)
+      .updateFI(fiDetailsRequest)
       .map(
         _ => ()
       )
@@ -90,13 +113,13 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
   ): Future[SubmitFIDetailsResponse] = {
     val fiDetailsRequest = buildCreateFiDetailsRequest(subscriptionId, userAnswers)
     connector
-      .addOrUpdateFI(fiDetailsRequest)
+      .addFI(fiDetailsRequest)
       .map(
         res => Json.parse(res.body).as[SubmitFIDetailsResponse]
       )
   }
 
-  def removeFinancialInstitution(details: FIDetail)(implicit
+  def removeFinancialInstitution(details: FIDetails)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Unit] = {
@@ -105,7 +128,7 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
     connector.removeFi(removeFIDetail).map(_.body)
   }
 
-  private def buildCreateFiDetailsRequest(subscriptionId: String, userAnswers: UserAnswers): BaseFIDetail =
+  private def buildCreateFiDetailsRequest(subscriptionId: String, userAnswers: UserAnswers): CreateFIDetails =
     (for {
       fiName  <- userAnswers.get(NameOfFinancialInstitutionPage)
       address <- extractAddress(userAnswers)
@@ -120,12 +143,12 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
       SecondaryContactDetails = extractSecondaryContactDetails(userAnswers)
     )).getOrElse(throw new IllegalStateException("Unable to build FIDetail"))
 
-  private def buildUpdateFiDetailsRequest(subscriptionId: String, userAnswers: UserAnswers): BaseFIDetail =
+  private def buildUpdateFiDetailsRequest(subscriptionId: String, userAnswers: UserAnswers): FIDetails =
     (for {
       fiid    <- userAnswers.get(ChangeFiDetailsInProgressId)
       fiName  <- userAnswers.get(NameOfFinancialInstitutionPage)
       address <- extractAddress(userAnswers)
-    } yield FIDetail(
+    } yield FIDetails(
       FIID = fiid,
       FIName = fiName,
       SubscriptionID = subscriptionId,
@@ -137,20 +160,26 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
       SecondaryContactDetails = extractSecondaryContactDetails(userAnswers)
     )).getOrElse(throw new IllegalStateException("Unable to build FIDetail"))
 
-  private def extractTinDetails(userAnswers: UserAnswers): Seq[TINDetails] = {
-    val crn = userAnswers.get(CompanyRegistrationNumberPage) match {
-      case Some(crn) => Seq(TINDetails(CRN, crn.value, "GB"))
-      case _         => Seq.empty
-    }
-    val utr = userAnswers.get(WhatIsUniqueTaxpayerReferencePage) match {
-      case Some(utr) => Seq(TINDetails(UTR, utr.value, "GB"))
-      case _         => Seq.empty
-    }
-    val trn = userAnswers.get(TrustURNPage) match {
-      case Some(trn) => Seq(TINDetails(TURN, trn.value, "GB"))
-      case _         => Seq.empty
-    }
-    utr ++ crn ++ trn
+  private def extractTinDetails(userAnswers: UserAnswers): Option[Seq[TINDetails]] = {
+    val details = Seq(
+      userAnswers
+        .get(WhatIsUniqueTaxpayerReferencePage)
+        .map(
+          utr => TINDetails(UTR, utr.value, "GB")
+        ),
+      userAnswers
+        .get(CompanyRegistrationNumberPage)
+        .map(
+          crn => TINDetails(CRN, crn.value, "GB")
+        ),
+      userAnswers
+        .get(TrustURNPage)
+        .map(
+          trn => TINDetails(TURN, trn.value, "GB")
+        )
+    ).flatten
+
+    if (details.nonEmpty) Some(details) else None
   }
 
   private def extractPrimaryContactDetails(userAnswers: UserAnswers): Option[ContactDetails] = for {

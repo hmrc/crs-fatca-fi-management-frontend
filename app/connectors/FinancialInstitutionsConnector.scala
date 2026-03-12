@@ -17,12 +17,12 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.FinancialInstitutions.{BaseFIDetail, CreateFIDetails, FIDetail, RemoveFIDetail}
+import models.FinancialInstitutions.{CreateFIDetails, FIDetails, RemoveFIDetail}
 import play.api.i18n.Lang.logger
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.Json
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
-import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,18 +46,25 @@ class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, v
       .get(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/$subscriptionId/$fiId")
       .execute[HttpResponse]
 
-  def addOrUpdateFI(fiDetails: BaseFIDetail)(implicit
+  def updateFI(fiDetails: FIDetails)(implicit
     hc: HeaderCarrier,
-    ec: ExecutionContext,
-    writes: Writes[BaseFIDetail]
+    ec: ExecutionContext
   ): Future[HttpResponse] =
     (fiDetails match {
-      case _: CreateFIDetails => httpClient.post(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/create")
-      case _: FIDetail        => httpClient.put(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/update")
+      case _: FIDetails => httpClient.put(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/update")
     }).withBody(Json.toJson(fiDetails))
       .execute[HttpResponse]
       .andThen {
-        case Failure(exception) => logger.error(s"Failed to add or update FI: ${exception.getMessage}", exception)
+        case Failure(exception) => logger.error(s"Failed to update FI: ${exception.getMessage}", exception)
+      }
+
+  def addFI(fiDetails: CreateFIDetails)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] =
+    (fiDetails match {
+      case _: CreateFIDetails => httpClient.post(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/create")
+    }).withBody(Json.toJson(fiDetails))
+      .execute[HttpResponse]
+      .andThen {
+        case Failure(exception) => logger.error(s"Failed to add FI: ${exception.getMessage}", exception)
       }
 
   def removeFi(fiDetails: RemoveFIDetail)(implicit

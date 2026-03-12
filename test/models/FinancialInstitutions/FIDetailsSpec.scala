@@ -21,9 +21,9 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.libs.json.{JsSuccess, Json}
 
-class FIDetailSpec extends AnyFreeSpec with Matchers {
+class FIDetailsSpec extends AnyFreeSpec with Matchers {
 
-  "FIDetail" - {
+  "FIDetails" - {
     "must unmarshal TINDetails correctly when null" in {
       val json =
         """
@@ -46,11 +46,11 @@ class FIDetailSpec extends AnyFreeSpec with Matchers {
           |}
           |""".stripMargin
 
-      val expected = FIDetail(
+      val expected = FIDetails(
         FIID = "683373339",
         FIName = "First FI",
         SubscriptionID = "[subscriptionId]",
-        TINDetails = Seq.empty,
+        TINDetails = None,
         GIIN = None,
         IsFIUser = true,
         AddressDetails = AddressDetails(
@@ -65,7 +65,7 @@ class FIDetailSpec extends AnyFreeSpec with Matchers {
         SecondaryContactDetails = None
       )
 
-      FIDetail.format.reads(Json.parse(json)) mustEqual JsSuccess(expected)
+      FIDetails.format.reads(Json.parse(json)) mustEqual JsSuccess(expected)
     }
 
     "must unmarshal TINDetails correctly when not null" in {
@@ -97,11 +97,11 @@ class FIDetailSpec extends AnyFreeSpec with Matchers {
           |}
           |""".stripMargin
 
-      val expected = FIDetail(
+      val expected = FIDetails(
         FIID = "683373339",
         FIName = "First FI",
         SubscriptionID = "[subscriptionId]",
-        TINDetails = Seq(TINDetails(UTR, "1234567890", "GB")),
+        TINDetails = Some(Seq(TINDetails(UTR, "1234567890", "GB"))),
         GIIN = None,
         IsFIUser = true,
         AddressDetails = AddressDetails(
@@ -116,7 +116,7 @@ class FIDetailSpec extends AnyFreeSpec with Matchers {
         SecondaryContactDetails = None
       )
 
-      FIDetail.format.reads(Json.parse(json)) mustEqual JsSuccess(expected)
+      FIDetails.format.reads(Json.parse(json)) mustEqual JsSuccess(expected)
     }
   }
 

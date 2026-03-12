@@ -17,18 +17,18 @@
 package viewmodels.yourFinancialInstitutions
 
 import base.SpecBase
-import models.FinancialInstitutions.FIDetail
+import models.FinancialInstitutions.FIDetails
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 
 class YourFinancialInstitutionsViewModelSpec extends SpecBase {
 
   val viewModelSut             = YourFinancialInstitutionsViewModel
-  val privateOrderInstitutions = PrivateMethod[Seq[FIDetail]](Symbol("orderInstitutions"))
+  val privateOrderInstitutions = PrivateMethod[Seq[FIDetails]](Symbol("orderInstitutions"))
   val privateGetValueContent   = PrivateMethod[HtmlContent](Symbol("getValueContent"))
 
   "privateOrderInstitutions" - {
     "must order the institutions alphabetically" in {
-      val listOfInstitutions: Seq[FIDetail] = Seq(
+      val listOfInstitutions: Seq[FIDetails] = Seq(
         testFiDetail.copy(FIName = "Theta", IsFIUser = false),
         testFiDetail.copy(FIName = "Alpha", IsFIUser = false),
         testFiDetail.copy(FIName = "Beta", IsFIUser = false)
@@ -42,7 +42,7 @@ class YourFinancialInstitutionsViewModelSpec extends SpecBase {
       result mustBe expectedOrderedDetails
     }
     "must put IsFIUser = true at the top of the list" in {
-      val listOfInstitutions: Seq[FIDetail] = Seq(
+      val listOfInstitutions: Seq[FIDetails] = Seq(
         testFiDetail.copy(FIName = "Alpha", IsFIUser = false),
         testFiDetail.copy(FIName = "Beta", IsFIUser = false),
         testFiDetail.copy(FIName = "Theta", IsFIUser = true)
@@ -56,7 +56,7 @@ class YourFinancialInstitutionsViewModelSpec extends SpecBase {
       result mustBe expectedOrderedDetails
     }
     "must be case agnostic to alphabetical ordering" in {
-      val listOfInstitutions: Seq[FIDetail] = Seq(
+      val listOfInstitutions: Seq[FIDetails] = Seq(
         testFiDetail.copy(FIName = "Beta", IsFIUser = false),
         testFiDetail.copy(FIName = "Theta", IsFIUser = false),
         testFiDetail.copy(FIName = "alpha", IsFIUser = false)

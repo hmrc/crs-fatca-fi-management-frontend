@@ -17,7 +17,7 @@
 package helpers
 
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post, put, urlEqualTo}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Suite}
@@ -61,6 +61,20 @@ trait WireMockServerHandler extends BeforeAndAfterAll with BeforeAndAfterEach {
   ): StubMapping =
     server.stubFor(
       post(urlEqualTo(expectedUrl))
+        .willReturn(
+          aResponse()
+            .withStatus(expectedStatus)
+            .withBody(responseBody)
+        )
+    )
+
+  def stubPutResponse(
+    expectedUrl: String,
+    expectedStatus: Int,
+    responseBody: String
+  ): StubMapping =
+    server.stubFor(
+      put(urlEqualTo(expectedUrl))
         .willReturn(
           aResponse()
             .withStatus(expectedStatus)

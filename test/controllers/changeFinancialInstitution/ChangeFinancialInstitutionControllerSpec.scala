@@ -19,7 +19,7 @@ package controllers.changeFinancialInstitution
 import base.SpecBase
 import controllers.routes
 import generators.{ModelGenerators, UserAnswersGenerator}
-import models.FinancialInstitutions.FIDetail
+import models.FinancialInstitutions.FIDetails
 import models.UserAnswers
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => mockitoEq}
@@ -66,7 +66,7 @@ class ChangeFinancialInstitutionControllerSpec
 
         "must return OK and the correct view without the 'Confirm and send' button for a GET when ChangeFiDetailsInProgress is false" in {
           forAll(fiNotRegistered.arbitrary, arbitraryFIDetail.arbitrary) {
-            (userAnswers: UserAnswers, fiDetail: FIDetail) =>
+            (userAnswers: UserAnswers, fiDetail: FIDetails) =>
               val updatedAnswers = userAnswers.withPage(ChangeFiDetailsInProgressId, fiDetail.FIID)
 
               mockSuccessfulFiRetrieval(fiDetail)
@@ -87,7 +87,7 @@ class ChangeFinancialInstitutionControllerSpec
 
         "must return OK and the correct view without the 'Confirm and send' button for a GET when ChangeFiDetailsInProgress is not set" in {
           forAll {
-            fiDetail: FIDetail =>
+            fiDetail: FIDetails =>
               val userAnswers = emptyUserAnswers
 
               mockSuccessfulFiRetrieval(fiDetail)
@@ -126,7 +126,7 @@ class ChangeFinancialInstitutionControllerSpec
             val document = Jsoup.parse(contentAsString(result))
             document.getElementsContainingText(SendButtonText).isEmpty mustBe true
 
-            verify(mockFinancialInstitutionUpdateService, times(0)).fiDetailsHasChanged(any[UserAnswers](), any[FIDetail]())
+            verify(mockFinancialInstitutionUpdateService, times(0)).fiDetailsHasChanged(any[UserAnswers](), any[FIDetails]())
           }
         }
 
@@ -140,7 +140,7 @@ class ChangeFinancialInstitutionControllerSpec
             mockFinancialInstitutionUpdateService.populateAndSaveFiDetails(mockitoEq(userAnswers), mockitoEq(fiDetail))
           ).thenReturn(Future.successful((updatedUserAnswer, true)))
           when(
-            mockFinancialInstitutionUpdateService.fiDetailsHasChanged(any[UserAnswers](), any[FIDetail]())
+            mockFinancialInstitutionUpdateService.fiDetailsHasChanged(any[UserAnswers](), any[FIDetails]())
           ).thenReturn(true)
 
           val application = createAppWithAnswers(Option(userAnswers))
@@ -153,7 +153,7 @@ class ChangeFinancialInstitutionControllerSpec
             val document = Jsoup.parse(contentAsString(result))
             document.getElementsContainingText(SendButtonText).isEmpty mustBe false
 
-            verify(mockFinancialInstitutionUpdateService, times(1)).fiDetailsHasChanged(mockitoEq(updatedUserAnswer), any[FIDetail]())
+            verify(mockFinancialInstitutionUpdateService, times(1)).fiDetailsHasChanged(mockitoEq(updatedUserAnswer), any[FIDetails]())
           }
         }
 
@@ -167,7 +167,7 @@ class ChangeFinancialInstitutionControllerSpec
             mockFinancialInstitutionUpdateService.populateAndSaveFiDetails(mockitoEq(userAnswers), mockitoEq(fiDetail))
           ).thenReturn(Future.successful((updatedUserAnswer, true)))
           when(
-            mockFinancialInstitutionUpdateService.fiDetailsHasChanged(mockitoEq(updatedUserAnswer), any[FIDetail]())
+            mockFinancialInstitutionUpdateService.fiDetailsHasChanged(mockitoEq(updatedUserAnswer), any[FIDetails]())
           ).thenReturn(false)
 
           val application = createAppWithAnswers(Option(userAnswers))
@@ -180,13 +180,13 @@ class ChangeFinancialInstitutionControllerSpec
             val document = Jsoup.parse(contentAsString(result))
             document.getElementsContainingText(SendButtonText).isEmpty mustBe true
 
-            verify(mockFinancialInstitutionUpdateService, times(1)).fiDetailsHasChanged(mockitoEq(updatedUserAnswer), any[FIDetail]())
+            verify(mockFinancialInstitutionUpdateService, times(1)).fiDetailsHasChanged(mockitoEq(updatedUserAnswer), any[FIDetails]())
           }
         }
 
         "must return INTERNAL_SERVER_ERROR when an error occurs during persistence of FI details" in {
           forAll {
-            fiDetail: FIDetail =>
+            fiDetail: FIDetails =>
               mockSuccessfulFiRetrieval(fiDetail)
               when(mockFinancialInstitutionUpdateService.populateAndSaveFiDetails(any(), any()))
                 .thenReturn(Future.failed(new Exception("failed to populate and save FI details")))
@@ -210,7 +210,7 @@ class ChangeFinancialInstitutionControllerSpec
 
         "must return OK and the correct view with the 'Confirm and send' button for a GET when FI details has been changed" in {
           forAll(fiNotRegistered.arbitrary, arbitraryFIDetail.arbitrary) {
-            (userAnswers: UserAnswers, fiDetail: FIDetail) =>
+            (userAnswers: UserAnswers, fiDetail: FIDetails) =>
               val updatedAnswers = userAnswers.withPage(ChangeFiDetailsInProgressId, fiDetail.FIID)
 
               mockSuccessfulFiRetrieval(fiDetail)
@@ -232,7 +232,7 @@ class ChangeFinancialInstitutionControllerSpec
 
         "must return OK and the correct view without the 'Confirm and send' button for a GET when FI details has NOT been changed" in {
           forAll(fiNotRegistered.arbitrary, arbitraryFIDetail.arbitrary) {
-            (userAnswers: UserAnswers, fiDetail: FIDetail) =>
+            (userAnswers: UserAnswers, fiDetail: FIDetails) =>
               val updatedAnswers = userAnswers.withPage(ChangeFiDetailsInProgressId, fiDetail.FIID)
 
               mockSuccessfulFiRetrieval(fiDetail)
@@ -254,7 +254,7 @@ class ChangeFinancialInstitutionControllerSpec
 
         "must redirect to information missing page when ChangeFiDetails In Progress and missing answers" in {
           forAll(fiNotRegisteredMissingAnswers.arbitrary, arbitraryFIDetail.arbitrary) {
-            (userAnswers: UserAnswers, fiDetail: FIDetail) =>
+            (userAnswers: UserAnswers, fiDetail: FIDetails) =>
               val updatedAnswers = userAnswers.withPage(ChangeFiDetailsInProgressId, fiDetail.FIID)
 
               mockSuccessfulFiRetrieval(fiDetail)
@@ -276,7 +276,7 @@ class ChangeFinancialInstitutionControllerSpec
 
       "must return INTERNAL_SERVER_ERROR when unable to find FI details" in {
         forAll {
-          fiDetail: FIDetail =>
+          fiDetail: FIDetails =>
             when(mockFinancialInstitutionsService.getFinancialInstitution(any(), any())(any(), any()))
               .thenReturn(Future.successful(None))
 
@@ -296,7 +296,7 @@ class ChangeFinancialInstitutionControllerSpec
 
       "must return INTERNAL_SERVER_ERROR when an error occurs during retrieval of FI details" in {
         forAll {
-          fiDetail: FIDetail =>
+          fiDetail: FIDetails =>
             when(mockFinancialInstitutionsService.getFinancialInstitution(any(), any())(any(), any()))
               .thenReturn(Future.failed(new Exception("failed to read FI details")))
 
@@ -378,13 +378,13 @@ class ChangeFinancialInstitutionControllerSpec
       )
       .build()
 
-  private def mockSuccessfulFiRetrieval(fiDetail: FIDetail) =
+  private def mockSuccessfulFiRetrieval(fiDetail: FIDetails) =
     when(
       mockFinancialInstitutionsService
         .getFinancialInstitution(mockitoEq(SubscriptionId), mockitoEq(fiDetail.FIID))(any[HeaderCarrier], any[ExecutionContext])
     ).thenReturn(Future.successful(Option(fiDetail)))
 
-  private def mockSuccessfulUserAnswersPersistence(userAnswers: UserAnswers, fiDetail: FIDetail) =
+  private def mockSuccessfulUserAnswersPersistence(userAnswers: UserAnswers, fiDetail: FIDetails) =
     when(
       mockFinancialInstitutionUpdateService.populateAndSaveFiDetails(mockitoEq(userAnswers), mockitoEq(fiDetail))
     ).thenReturn(Future.successful((userAnswers, false)))

@@ -17,6 +17,7 @@
 package base
 
 import controllers.actions._
+import models.FinancialInstitutions.TINType.UTR
 import models.FinancialInstitutions._
 import models.{Address, AddressLookup, AddressResponse, Country, GIINumber, UniqueTaxpayerReference, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -95,12 +96,12 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
        |}
        |}""".stripMargin
 
-  val testFiDetail: FIDetail =
-    FIDetail(
+  val testFiDetail: FIDetails =
+    FIDetails(
       s"$testFiid",
       "First FI",
       "[subscriptionId]",
-      List(),
+      Some(Seq(TINDetails(UTR, "123456789", "GB"))),
       Some("689355555"),
       IsFIUser = true,
       AddressDetails("22", Some("High Street"), Some("Dawley"), Some("Dawley"), Some("GB"), Some("TF22 2RE")),
@@ -108,24 +109,24 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
       Some(ContactDetails("John Doe", "johndoe@example.com", Some("0333458888")))
     )
 
-  val testFiDetails: Seq[FIDetail] =
+  val testFiDetails: Seq[FIDetails] =
     Seq(
-      FIDetail(
+      FIDetails(
         "683373339",
         "First FI",
         "[subscriptionId]",
-        List(),
+        Some(Seq(TINDetails(UTR, "123456789", "GB"))),
         Some("689355555"),
         IsFIUser = true,
         AddressDetails("22", Some("High Street"), Some("Dawley"), Some("Dawley"), Some("GB"), Some("TF22 2RE")),
         Some(ContactDetails("Jane Doe", "janedoe@example.com", Some("0444458888"))),
         Some(ContactDetails("John Doe", "johndoe@example.com", Some("0333458888")))
       ),
-      FIDetail(
+      FIDetails(
         "683373300",
         "Second FI",
         "[subscriptionId]",
-        List(),
+        None,
         Some("689344444"),
         IsFIUser = false,
         AddressDetails("22", Some("High Street"), Some("Dawley"), Some("Dawley"), Some("GB"), Some("TF22 2RE")),
@@ -143,7 +144,13 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
             "FIID": "683373339",
             "FIName": "First FI",
             "SubscriptionID": "[subscriptionId]",
-            "TINDetails": [],
+            "TINDetails": [
+              {
+                "IssuedBy": "GB",
+                "TIN": "123456789",
+                "TINType": "UTR"
+              }
+            ],
             "GIIN": "689355555",
             "IsFIUser": true,
             "AddressDetails": {
@@ -169,7 +176,6 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
             "FIID": "683373300",
             "FIName": "Second FI",
             "SubscriptionID": "[subscriptionId]",
-            "TINDetails": [],
             "GIIN": "689344444",
             "IsFIUser": false,
             "AddressDetails": {

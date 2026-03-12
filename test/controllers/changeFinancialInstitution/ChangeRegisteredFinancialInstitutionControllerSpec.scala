@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.actions.{CtUtrRetrievalAction, FakeCtUtrRetrievalAction}
 import controllers.routes
 import generators.{ModelGenerators, UserAnswersGenerator}
-import models.FinancialInstitutions.FIDetail
+import models.FinancialInstitutions.FIDetails
 import models.requests.DataRequest
 import models.{Address, Country, UserAnswers}
 import org.jsoup.Jsoup
@@ -81,7 +81,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
 
         "must return OK and the correct view without the 'Confirm and send' button for a GET when ChangeFiDetailsInProgress is false" in {
           forAll(fiRegistered.arbitrary, arbitraryFIDetail.arbitrary) {
-            (userAnswers: UserAnswers, fiDetail: FIDetail) =>
+            (userAnswers: UserAnswers, fiDetail: FIDetails) =>
               val updatedAnswers = userAnswers.withPage(ChangeFiDetailsInProgressId, fiDetail.FIID)
 
               mockSuccessfulFiRetrieval(fiDetail)
@@ -105,7 +105,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
 
         "must return OK and the correct view without the 'Confirm and send' button for a GET when ChangeFiDetailsInProgress is not set" in {
           forAll {
-            fiDetail: FIDetail =>
+            fiDetail: FIDetails =>
               val userAnswers = emptyUserAnswers
 
               mockSuccessfulFiRetrieval(fiDetail)
@@ -210,7 +210,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
 
         "must return INTERNAL_SERVER_ERROR when an error occurs during persistence of FI details" in {
           forAll {
-            fiDetail: FIDetail =>
+            fiDetail: FIDetails =>
               mockSuccessfulFiRetrieval(fiDetail)
               when(mockFinancialInstitutionUpdateService.populateAndSaveFiDetails(any(), any()))
                 .thenReturn(Future.failed(new Exception("failed to populate and save FI details")))
@@ -235,7 +235,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
 
         "must return OK and the correct view with the 'Confirm and send' button for a GET when FI details has been changed" in {
           forAll(fiRegistered.arbitrary, arbitraryFIDetail.arbitrary) {
-            (userAnswers: UserAnswers, fiDetail: FIDetail) =>
+            (userAnswers: UserAnswers, fiDetail: FIDetails) =>
               val updatedAnswers = userAnswers.withPage(ChangeFiDetailsInProgressId, fiDetail.FIID)
 
               mockSuccessfulFiRetrieval(fiDetail)
@@ -258,7 +258,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
 
         "must return OK and the correct view without the 'Confirm and send' button for a GET when FI details has NOT been changed" in {
           forAll(fiRegistered.arbitrary, arbitraryFIDetail.arbitrary) {
-            (userAnswers: UserAnswers, fiDetail: FIDetail) =>
+            (userAnswers: UserAnswers, fiDetail: FIDetails) =>
               val updatedAnswers = userAnswers.withPage(ChangeFiDetailsInProgressId, fiDetail.FIID)
 
               mockSuccessfulFiRetrieval(fiDetail)
@@ -281,7 +281,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
 
         "must redirect to information missing page when ChangeFiDetails In Progress and missing answers" in {
           forAll(fiRegisteredMissingAnswers.arbitrary, arbitraryFIDetail.arbitrary) {
-            (userAnswers: UserAnswers, fiDetail: FIDetail) =>
+            (userAnswers: UserAnswers, fiDetail: FIDetails) =>
               val updatedAnswers = userAnswers.withPage(ChangeFiDetailsInProgressId, fiDetail.FIID)
 
               mockSuccessfulFiRetrieval(fiDetail)
@@ -327,7 +327,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
 
       "must return INTERNAL_SERVER_ERROR when unable to find FI details" in {
         forAll {
-          fiDetail: FIDetail =>
+          fiDetail: FIDetails =>
             when(mockFinancialInstitutionsService.getFinancialInstitution(any(), any())(any(), any()))
               .thenReturn(Future.successful(None))
 
@@ -348,7 +348,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
 
       "must return INTERNAL_SERVER_ERROR when an error occurs during retrieval of FI details" in {
         forAll {
-          fiDetail: FIDetail =>
+          fiDetail: FIDetails =>
             when(mockFinancialInstitutionsService.getFinancialInstitution(any(), any())(any(), any()))
               .thenReturn(Future.failed(new Exception("failed to read FI details")))
 
@@ -469,13 +469,13 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
       )
       .build()
 
-  private def mockSuccessfulFiRetrieval(fiDetail: FIDetail) =
+  private def mockSuccessfulFiRetrieval(fiDetail: FIDetails) =
     when(
       mockFinancialInstitutionsService
         .getFinancialInstitution(mockitoEq(SubscriptionId), mockitoEq(fiDetail.FIID))(any[HeaderCarrier], any[ExecutionContext])
     ).thenReturn(Future.successful(Option(fiDetail)))
 
-  private def mockSuccessfulUserAnswersPersistence(userAnswers: UserAnswers, fiDetail: FIDetail) =
+  private def mockSuccessfulUserAnswersPersistence(userAnswers: UserAnswers, fiDetail: FIDetails) =
     when(
       mockFinancialInstitutionUpdateService.populateAndSaveRegisteredFiDetails(mockitoEq(userAnswers), mockitoEq(fiDetail))(any[DataRequest[AnyContent]],
                                                                                                                             any[HeaderCarrier]

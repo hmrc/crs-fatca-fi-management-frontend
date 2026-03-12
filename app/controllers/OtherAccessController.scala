@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.OtherAccessFormProvider
-import models.FinancialInstitutions.FIDetail
+import models.FinancialInstitutions.FIDetails
 import models.UserAnswers
 import pages.{InstitutionDetail, OtherAccessPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -89,7 +89,7 @@ class OtherAccessController @Inject() (
       )
   }
 
-  private def getFormKey(institutionToRemove: FIDetail): String =
+  private def getFormKey(institutionToRemove: FIDetails): String =
     institutionToRemove.IsFIUser match {
       case true => "fiisuser"
       case _    => "regular"

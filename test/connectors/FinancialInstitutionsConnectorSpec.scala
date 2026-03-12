@@ -19,7 +19,8 @@ package connectors
 import base.SpecBase
 import generators.Generators
 import helpers.WireMockServerHandler
-import models.FinancialInstitutions.{AddressDetails, ContactDetails, CreateFIDetails, RemoveFIDetail}
+import models.FinancialInstitutions.TINType.UTR
+import models.FinancialInstitutions._
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.Application
 import play.api.http.Status.{OK, SERVICE_UNAVAILABLE}
@@ -42,7 +43,7 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
   val createFIDetails = CreateFIDetails(
     FIName = "financial-institution",
     SubscriptionID = "XE512345678",
-    TINDetails = Seq.empty,
+    TINDetails = Some(Seq(TINDetails(UTR, "TIN", "IssuedBy"))),
     GIIN = None,
     IsFIUser = true,
     AddressDetails = AddressDetails(
@@ -95,7 +96,7 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
           OK,
           "{}"
         )
-        val result = connector.addOrUpdateFI(createFIDetails).futureValue
+        val result = connector.addFI(createFIDetails).futureValue
         result.status mustBe OK
       }
 
@@ -113,11 +114,43 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
           SERVICE_UNAVAILABLE,
           errorResponseJson
         )
-        val result = connector.addOrUpdateFI(createFIDetails).futureValue
+        val result = connector.addFI(createFIDetails).futureValue
 
         result.status mustBe SERVICE_UNAVAILABLE
       }
     }
+
+    "updateFI" - {
+      "must return Right(HttpResponse) when the response status is OK" in {
+        stubPutResponse(
+          s"/crs-fatca-fi-management/financial-institutions/update",
+          OK,
+          "{}"
+        )
+        val result = connector.updateFI(testFiDetail).futureValue
+        result.status mustBe OK
+      }
+
+      "must return ErrorDetails and correct status code when the response status is not OK" in {
+        val errorResponseJson =
+          """{
+            |"errorDetails": {
+            |    "timestamp": "2016-08-16T18:15:41Z",
+            |    "correlationId": "",
+            |    "errorCode": "503"
+            |}}""".stripMargin
+
+        stubPutResponse(
+          s"/crs-fatca-fi-management/financial-institutions/update",
+          SERVICE_UNAVAILABLE,
+          errorResponseJson
+        )
+        val result = connector.updateFI(testFiDetail).futureValue
+
+        result.status mustBe SERVICE_UNAVAILABLE
+      }
+    }
+
     "must return status as OK for removeFi" in {
       val removeFIDetail = RemoveFIDetail("FIID", "SubscriptionID")
       stubPostResponse(
