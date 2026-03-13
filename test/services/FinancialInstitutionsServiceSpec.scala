@@ -26,7 +26,7 @@ import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
-import play.api.http.Status.{OK, UNPROCESSABLE_ENTITY}
+import play.api.http.Status.{BAD_REQUEST, OK, UNPROCESSABLE_ENTITY}
 import play.api.libs.json._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
@@ -59,6 +59,15 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
       val result: Future[Seq[FIDetails]] = sut.getListOfFinancialInstitutions(subscriptionId)
       result.futureValue mustBe Seq.empty
     }
+//
+//    "getListOfFinancialInstitutions return empty response when no matching records error" in {
+//      val subscriptionId = "XE5123456789"
+//      val mockResponse   = Future.successful(HttpResponse(BAD_REQUEST, testViewFIDetailsErrorBody))
+//
+//      when(mockConnector.viewFis(subscriptionId)).thenReturn(mockResponse)
+//      val result: Future[Seq[FIDetails]] = sut.getListOfFinancialInstitutions(subscriptionId)
+//      result.futureValue mustBe Seq.empty
+//    }
 
     "getFinancialInstitution" - {
       "must throw an exception when extractList yields json validation errors" in {

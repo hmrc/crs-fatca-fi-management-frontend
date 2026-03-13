@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package models.response
+package models.readFIs.response
 
 import play.api.libs.json.{Json, OFormat}
 
-case class ErrorDetail(
-  timestamp: String,
-  correlationId: String,
-  errorCode: Option[String] = None,
-  errorMessage: Option[String] = None,
-  source: Option[String] = None,
-  sourceFaultDetail: Option[SourceFaultDetail] = None
+case class SourceFaultDetail(
+  detail: Array[String],
+  SoapFault: Option[String] = None,
+  RestFault: Option[String] = None
 )
 
-object ErrorDetail {
-  implicit val errorDetailReads: OFormat[ErrorDetail] = Json.format[ErrorDetail]
+object SourceFaultDetail {
+  implicit val sourceFaultDetailReads: OFormat[SourceFaultDetail] = Json.format[SourceFaultDetail]
 }

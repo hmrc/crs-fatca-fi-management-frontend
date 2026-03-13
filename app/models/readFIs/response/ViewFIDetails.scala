@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package models.readFIs.response
 
-import enumeratum._
+import play.api.libs.json.{Json, OFormat}
 
-sealed trait RequestType extends EnumEntry
+final case class ViewFIDetails(ResponseCommon: ResponseCommon, ResponseDetails: ResponseDetails)
 
-object RequestType extends PlayEnum[RequestType] {
-
-  val values: IndexedSeq[RequestType] = findValues
-
-  case object CREATE extends RequestType
-  case object UPDATE extends RequestType
-  case object VIEW extends RequestType
-
+object ViewFIDetails {
+  implicit val format: OFormat[ViewFIDetails] = Json.format[ViewFIDetails]
 }

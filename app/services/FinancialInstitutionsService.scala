@@ -20,6 +20,8 @@ import connectors.FinancialInstitutionsConnector
 import models.FinancialInstitutions.TINType.{CRN, TURN, UTR}
 import models.FinancialInstitutions._
 import models.UserAnswers
+import models.error.ApiError.{JsValidationError, UnexpectedResponse}
+import models.readFIs.response.{ErrorResponse, ViewFIDetails, ViewFIDetailsResponse}
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
@@ -39,34 +41,25 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
   ): Future[Seq[FIDetails]] =
     connector
       .viewFis(subscriptionId)
-      .map {
-        case res if is2xx(res.status)                                                                             => extractList(res.body)
-        case res if res.status == 422 && (Json.parse(res.body) \ "errorDetail" \ "errorCode").as[String] == "001" => Seq.empty
-        case res                                                                                                  => throw new RuntimeException(res.body)
+      .flatMap {
+        case res if is2xx(res.status) =>
+          Json.parse(res.body).validate[ViewFIDetailsResponse] match {
+            case JsSuccess(viewFIDetailsResponse, _) => Future.successful(viewFIDetailsResponse.ViewFIDetails.ResponseDetails.FIDetails)
+            case JsError(_) =>
+              println(Console.BLUE + s"JSON validation error while parsing FIDetails: ${Json.parse(res.body)}" + Console.RESET)
+              Future.failed(throw JsValidationError)
+          }
+        case res =>
+          Json.parse(res.body).validate[ErrorResponse] match {
+            case JsSuccess(errorResponse, _) =>
+              if (res.status == 422 && errorResponse.errorDetail.errorCode.contains("001"))
+                Future.successful(Seq.empty) // 001 - No matching records found for the request
+              else Future.failed(throw UnexpectedResponse)
+            case JsError(_) =>
+              println(Console.BLUE + s"JSON validation error while parsing eRRORdETAILS: ${Json.parse(res.body)}" + Console.RESET)
+              Future.failed(throw JsValidationError)
+          }
       }
-
-//  res =>
-//    res.status match {
-//      case status if is2xx(status) =>
-//        Json.parse(res.body).validate[Seq[FIDetail]] match {
-//          case JsSuccess(fiList, _) => Future.successful(fiList)
-//          case JsError(errors)      => Future.failed(new Exception(s"Failed to parse FI list: $errors"))
-//        }
-//
-//      case status if is4xx(status) =>
-//        Json.parse(res.body).validate[ErrorDetail] match {
-//          case JsSuccess(errorDetail, _) => Future.successful(errorDetail)
-//          case JsError(errors)          => Future.failed(throw new Exception(s"Failed to parse error detail: $errors"))
-//        }
-//
-//
-//
-//    .flatMap(_.errorCode)).contains("001") =>
-//    Future.successful(Seq.empty)
-//
-//      case status =>
-//        Future.failed(new RuntimeException(s"Unexpected response status: $status with body: ${res.body}"))
-//    }
 
   def getFinancialInstitution(subscriptionId: String, fiId: String)(implicit
     hc: HeaderCarrier,

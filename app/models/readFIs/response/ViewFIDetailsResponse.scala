@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package models.response
+package models.readFIs.response
 
 import play.api.libs.json.{Json, OFormat}
 
-case class SourceFaultDetail(
-  Detail: Array[String],
-  SoapFault: Option[String] = None,
-  RestFault: Option[String] = None
-)
+final case class ViewFIDetailsResponse(ViewFIDetails: ViewFIDetails)
 
-object SourceFaultDetail {
-  implicit val sourceFaultDetailReads: OFormat[SourceFaultDetail] = Json.format[SourceFaultDetail]
+object ViewFIDetailsResponse {
+  implicit val format: OFormat[ViewFIDetailsResponse] = Json.format[ViewFIDetailsResponse]
 }

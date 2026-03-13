@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package models
+package models.error
 
-import enumeratum._
+sealed abstract class ApiError extends Throwable { // Put this in backend?
+  override def toString: String = getClass.getSimpleName.replace("$", "")
+}
 
-sealed trait RequestType extends EnumEntry
-
-object RequestType extends PlayEnum[RequestType] {
-
-  val values: IndexedSeq[RequestType] = findValues
-
-  case object CREATE extends RequestType
-  case object UPDATE extends RequestType
-  case object VIEW extends RequestType
-
+object ApiError {
+  case object UnexpectedResponse extends ApiError
+  case object JsValidationError extends ApiError
 }

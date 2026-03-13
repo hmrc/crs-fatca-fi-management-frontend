@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.response
+package models.readFIs.response
 
 import play.api.libs.json.{Json, OFormat}
 

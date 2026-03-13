@@ -205,12 +205,19 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
 
   val testViewFIDetailsErrorBody =
     """{
-      |  "errorDetail": {
-      |    "errorCode": "001",
-      |    "errorMessage": "No matching records found"
-      |  }
-      |}
-      |""".stripMargin
+    "errorDetail": {
+      "correlationId": "someCorrId",
+      "errorCode": "001",
+      "errorMessage": "No matching records found for the request",
+      "source": "test-service",
+      "sourceFaultDetail": {
+        "detail": [
+          "001 - No matching records found for the request"
+        ]
+      },
+      "timestamp": "2020-09-25T21:54:12.015Z"
+    }
+  }""".stripMargin
 
   val testAddress: Address                 = Address("value 1", Some("value 2"), Some("value 3"), Some("value 4"), Some("XX9 9XX"), Country.GB)
   val testAddressResponse: AddressResponse = AddressResponse("value 1", Some("value 2"), Some("value 3"), Some("value 4"), Some("XX9 9XX"), Country.GB.code)
