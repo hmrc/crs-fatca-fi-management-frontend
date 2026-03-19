@@ -17,7 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.FinancialInstitutions.{CreateFIDetails, FIDetails, RemoveFIDetail}
+import models.FinancialInstitutions.{CreateFIDetails, FIDetail, RemoveFIDetail}
 import play.api.i18n.Lang.logger
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -46,12 +46,12 @@ class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, v
       .get(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/$subscriptionId/$fiId")
       .execute[HttpResponse]
 
-  def updateFI(fiDetails: FIDetails)(implicit
+  def updateFI(fiDetails: FIDetail)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[HttpResponse] =
     (fiDetails match {
-      case _: FIDetails => httpClient.put(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/update")
+      case _: FIDetail => httpClient.put(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/update")
     }).withBody(Json.toJson(fiDetails))
       .execute[HttpResponse]
       .andThen {

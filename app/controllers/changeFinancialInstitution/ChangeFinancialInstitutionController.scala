@@ -18,7 +18,7 @@ package controllers.changeFinancialInstitution
 
 import com.google.inject.Inject
 import controllers.actions._
-import models.FinancialInstitutions.FIDetails
+import models.FinancialInstitutions.FIDetail
 import models.requests.DataRequest
 import models.{ChangeAnswers, UserAnswers}
 import pages.Page
@@ -96,7 +96,7 @@ class ChangeFinancialInstitutionController @Inject() (
         }
   }
 
-  def hasChanges(answers: UserAnswers, detail: FIDetails): Boolean = financialInstitutionUpdateService.fiDetailsHasChanged(answers, detail)
+  def hasChanges(answers: UserAnswers, detail: FIDetail): Boolean = financialInstitutionUpdateService.fiDetailsHasChanged(answers, detail)
 
   def confirmAndAdd(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>

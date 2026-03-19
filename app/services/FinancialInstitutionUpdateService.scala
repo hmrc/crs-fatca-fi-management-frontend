@@ -48,7 +48,7 @@ class FinancialInstitutionUpdateService @Inject() (
   regService: RegistrationWithUtrService
 )(implicit ec: ExecutionContext) {
 
-  def populateAndSaveFiDetails(userAnswers: UserAnswers, fiDetails: FIDetails): Future[(UserAnswers, Boolean)] = for {
+  def populateAndSaveFiDetails(userAnswers: UserAnswers, fiDetails: FIDetail): Future[(UserAnswers, Boolean)] = for {
     userAnswersWithProgressFlag <- Future.fromTry(userAnswers.set(ChangeFiDetailsInProgressId, fiDetails.FIID, cleanup = false))
     changeId = s"${fiDetails.SubscriptionID}-${fiDetails.FIID}"
     changeAnswers      <- changeUserAnswersRepository.get(changeId).map(_.map(_.copy(id = userAnswers.id)))
@@ -56,7 +56,7 @@ class FinancialInstitutionUpdateService @Inject() (
     _                  <- sessionRepository.set(updatedUserAnswers)
   } yield (updatedUserAnswers, changeAnswers.isDefined)
 
-  def populateAndSaveRegisteredFiDetails(userAnswers: UserAnswers, fiDetails: FIDetails)(implicit
+  def populateAndSaveRegisteredFiDetails(userAnswers: UserAnswers, fiDetails: FIDetail)(implicit
     request: DataRequest[AnyContent],
     headerCarrier: HeaderCarrier
   ): Future[(UserAnswers, Boolean)] =
@@ -68,7 +68,7 @@ class FinancialInstitutionUpdateService @Inject() (
       _                  <- sessionRepository.set(updatedUserAnswers)
     } yield (updatedUserAnswers, changeAnswers.isDefined)
 
-  def fiDetailsHasChanged(userAnswers: UserAnswers, fiDetails: FIDetails): Boolean =
+  def fiDetailsHasChanged(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean =
     userAnswers.get(NameOfFinancialInstitutionPage).exists(_ != fiDetails.FIName) ||
       checkTINTypeForChanges(userAnswers, fiDetails.TINDetails) ||
       checkGIINForChanges(userAnswers, fiDetails) ||
@@ -76,7 +76,7 @@ class FinancialInstitutionUpdateService @Inject() (
       checkPrimaryContactForChanges(userAnswers, fiDetails) ||
       checkSecondaryContactForChanges(userAnswers, fiDetails)
 
-  def registeredFiDetailsHasChanged(userAnswers: UserAnswers, fiDetails: FIDetails): Boolean =
+  def registeredFiDetailsHasChanged(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean =
     userAnswers.get(NameOfFinancialInstitutionPage).exists(_ != fiDetails.FIName) ||
       checkTINTypeForChanges(userAnswers, fiDetails.TINDetails) ||
       checkGIINForChanges(userAnswers, fiDetails) ||
@@ -86,7 +86,7 @@ class FinancialInstitutionUpdateService @Inject() (
     sessionRepository.set(userAnswers.copy(data = Json.obj()))
 
   private def populateUserAnswersWithFiDetail(
-    fiDetails: FIDetails,
+    fiDetails: FIDetail,
     userAnswers: UserAnswers
   )(implicit ec: ExecutionContext): Future[UserAnswers] =
     for {
@@ -99,7 +99,7 @@ class FinancialInstitutionUpdateService @Inject() (
     } yield f
 
   private def populateUserAnswersWithRegisteredFiDetail(
-    fiDetails: FIDetails,
+    fiDetails: FIDetail,
     userAnswers: UserAnswers
   )(implicit request: DataRequest[AnyContent], headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers] =
     for {
@@ -183,7 +183,7 @@ class FinancialInstitutionUpdateService @Inject() (
     } yield a
   }
 
-  private def setPrimaryContactDetails(userAnswers: UserAnswers, fiDetails: FIDetails)(implicit ec: ExecutionContext): Future[UserAnswers] = {
+  private def setPrimaryContactDetails(userAnswers: UserAnswers, fiDetails: FIDetail)(implicit ec: ExecutionContext): Future[UserAnswers] = {
     val primaryContact = fiDetails.PrimaryContactDetails
     primaryContact map {
       contact =>
@@ -266,7 +266,7 @@ class FinancialInstitutionUpdateService @Inject() (
       }
     }
 
-  private def setSecondaryContactDetails(userAnswers: UserAnswers, fiDetails: FIDetails)(implicit ec: ExecutionContext): Future[UserAnswers] =
+  private def setSecondaryContactDetails(userAnswers: UserAnswers, fiDetails: FIDetail)(implicit ec: ExecutionContext): Future[UserAnswers] =
     for {
       a <- Future.fromTry(userAnswers.set(SecondContactExistsPage, fiDetails.SecondaryContactDetails.isDefined, cleanup = false))
       b <- fiDetails.SecondaryContactDetails match {
@@ -288,7 +288,7 @@ class FinancialInstitutionUpdateService @Inject() (
 
   private def checkGIINForChanges(
     userAnswers: UserAnswers,
-    fiDetails: FIDetails
+    fiDetails: FIDetail
   ): Boolean = {
     val uaValue: Option[String]     = userAnswers.get(WhatIsGIINPage).map(_.value)
     val detailValue: Option[String] = fiDetails.GIIN
@@ -364,7 +364,7 @@ class FinancialInstitutionUpdateService @Inject() (
     }
   }
 
-  private def checkPrimaryContactForChanges(userAnswers: UserAnswers, fiDetails: FIDetails): Boolean = {
+  private def checkPrimaryContactForChanges(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean = {
     val primaryContact = fiDetails.PrimaryContactDetails
     primaryContact match {
       case Some(contact) =>
@@ -375,7 +375,7 @@ class FinancialInstitutionUpdateService @Inject() (
     }
   }
 
-  private def checkSecondaryContactForChanges(userAnswers: UserAnswers, fiDetails: FIDetails): Boolean =
+  private def checkSecondaryContactForChanges(userAnswers: UserAnswers, fiDetails: FIDetail): Boolean =
     fiDetails.SecondaryContactDetails match {
       case Some(secondaryContact) =>
         userAnswers.get(SecondContactExistsPage).contains(false) ||

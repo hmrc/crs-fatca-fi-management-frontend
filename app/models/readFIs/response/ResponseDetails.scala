@@ -16,10 +16,10 @@
 
 package models.readFIs.response
 
-import models.FinancialInstitutions.FIDetails
+import models.FinancialInstitutions.FIDetail
 import play.api.libs.json.{Json, OFormat}
 
-final case class ResponseDetails(FIDetails: Seq[FIDetails])
+final case class ResponseDetails(FIDetails: Seq[FIDetail])
 
 object ResponseDetails {
   implicit val format: OFormat[ResponseDetails] = Json.format[ResponseDetails]

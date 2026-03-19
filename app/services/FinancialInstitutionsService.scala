@@ -38,7 +38,7 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
   def getListOfFinancialInstitutions(subscriptionId: String)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[Seq[FIDetails]] =
+  ): Future[Seq[FIDetail]] =
     connector
       .viewFis(subscriptionId)
       .flatMap {
@@ -64,23 +64,23 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
   def getFinancialInstitution(subscriptionId: String, fiId: String)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[Option[FIDetails]] =
+  ): Future[Option[FIDetail]] =
     connector
       .viewFi(subscriptionId, fiId)
       .map(
         res => extractList(res.body).headOption
       )
 
-  def getInstitutionById(details: Seq[FIDetails], fiid: String): Option[FIDetails] =
+  def getInstitutionById(details: Seq[FIDetail], fiid: String): Option[FIDetail] =
     details
       .find(
         detail => detail.FIID == fiid
       )
-      .fold[Option[FIDetails]](None)(Some(_))
+      .fold[Option[FIDetail]](None)(Some(_))
 
-  def extractList(body: String): Seq[FIDetails] = {
-    val json: JsValue                         = Json.parse(body)
-    val listsResult: JsResult[Seq[FIDetails]] = (json \ "ViewFIDetails" \ "ResponseDetails" \ "FIDetails").validate[Seq[FIDetails]]
+  def extractList(body: String): Seq[FIDetail] = {
+    val json: JsValue                        = Json.parse(body)
+    val listsResult: JsResult[Seq[FIDetail]] = (json \ "ViewFIDetails" \ "ResponseDetails" \ "FIDetails").validate[Seq[FIDetail]]
 
     listsResult.fold(
       errors => throw JsResultException(errors),
@@ -112,7 +112,7 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
       )
   }
 
-  def removeFinancialInstitution(details: FIDetails)(implicit
+  def removeFinancialInstitution(details: FIDetail)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Unit] = {
@@ -136,12 +136,12 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
       SecondaryContactDetails = extractSecondaryContactDetails(userAnswers)
     )).getOrElse(throw new IllegalStateException("Unable to build FIDetail"))
 
-  private def buildUpdateFiDetailsRequest(subscriptionId: String, userAnswers: UserAnswers): FIDetails =
+  private def buildUpdateFiDetailsRequest(subscriptionId: String, userAnswers: UserAnswers): FIDetail =
     (for {
       fiid    <- userAnswers.get(ChangeFiDetailsInProgressId)
       fiName  <- userAnswers.get(NameOfFinancialInstitutionPage)
       address <- extractAddress(userAnswers)
-    } yield FIDetails(
+    } yield FIDetail(
       FIID = fiid,
       FIName = fiName,
       SubscriptionID = subscriptionId,

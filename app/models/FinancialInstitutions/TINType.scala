@@ -55,8 +55,8 @@ object TINType extends Enumerable.Implicits {
 
   }
 
-    override def writes(o: TINType): JsValue = JsString(o.toString)
-  }
+//    override def writes(o: TINType): JsValue = JsString(o.toString)
+//  }
 
   implicit val enumerable: Enumerable[TINType] =
     Enumerable(

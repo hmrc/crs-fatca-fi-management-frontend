@@ -21,7 +21,7 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.libs.json.{JsSuccess, Json}
 
-class FIDetailsSpec extends AnyFreeSpec with Matchers {
+class FIDetailSpec extends AnyFreeSpec with Matchers {
 
   "FIDetails" - {
     "must unmarshal TINDetails correctly when null" in {
@@ -46,7 +46,7 @@ class FIDetailsSpec extends AnyFreeSpec with Matchers {
           |}
           |""".stripMargin
 
-      val expected = FIDetails(
+      val expected = FIDetail(
         FIID = "683373339",
         FIName = "First FI",
         SubscriptionID = "[subscriptionId]",
@@ -65,7 +65,7 @@ class FIDetailsSpec extends AnyFreeSpec with Matchers {
         SecondaryContactDetails = None
       )
 
-      FIDetails.format.reads(Json.parse(json)) mustEqual JsSuccess(expected)
+      FIDetail.format.reads(Json.parse(json)) mustEqual JsSuccess(expected)
     }
 
     "must unmarshal TINDetails correctly when not null" in {
@@ -97,7 +97,7 @@ class FIDetailsSpec extends AnyFreeSpec with Matchers {
           |}
           |""".stripMargin
 
-      val expected = FIDetails(
+      val expected = FIDetail(
         FIID = "683373339",
         FIName = "First FI",
         SubscriptionID = "[subscriptionId]",
@@ -116,7 +116,7 @@ class FIDetailsSpec extends AnyFreeSpec with Matchers {
         SecondaryContactDetails = None
       )
 
-      FIDetails.format.reads(Json.parse(json)) mustEqual JsSuccess(expected)
+      FIDetail.format.reads(Json.parse(json)) mustEqual JsSuccess(expected)
     }
   }
 

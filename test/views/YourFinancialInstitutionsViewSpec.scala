@@ -18,7 +18,7 @@ package views
 
 import base.SpecBase
 import forms.addFinancialInstitution.YourFinancialInstitutionsFormProvider
-import models.FinancialInstitutions.{AddressDetails, FIDetails}
+import models.FinancialInstitutions.{AddressDetails, FIDetail}
 import org.jsoup.Jsoup
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Lang, Messages}
@@ -44,7 +44,7 @@ class YourFinancialInstitutionsViewSpec extends SpecBase with GuiceOneAppPerSuit
       val summaryListViewModel =
         YourFinancialInstitutionsViewModel.getYourFinancialInstitutionsRows(
           Seq(
-            FIDetails(
+            FIDetail(
               FIID = "12345",
               FIName = "Test Financial Institution",
               SubscriptionID = "sub12345",

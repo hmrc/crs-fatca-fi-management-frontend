@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import forms.addFinancialInstitution.YourFinancialInstitutionsFormProvider
 import generators.ModelGenerators
-import models.FinancialInstitutions.FIDetails
+import models.FinancialInstitutions.FIDetail
 import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
@@ -69,7 +69,7 @@ class YourFinancialInstitutionsControllerSpec extends SpecBase with MockitoSugar
 
     "must list FIs as non-registered for non-CT user" in {
       forAll {
-        fiDetail: FIDetails =>
+        fiDetail: FIDetail =>
           val mockFinancialInstitutionsService = mock[FinancialInstitutionsService]
           when(mockFinancialInstitutionsService.getListOfFinancialInstitutions(any())(any[HeaderCarrier](), any[ExecutionContext]()))
             .thenReturn(Future.successful(Seq(fiDetail)))

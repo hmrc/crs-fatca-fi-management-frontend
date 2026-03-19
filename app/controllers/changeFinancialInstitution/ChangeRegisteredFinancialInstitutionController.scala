@@ -19,7 +19,7 @@ package controllers.changeFinancialInstitution
 import com.google.inject.Inject
 import controllers.actions._
 import controllers.routes
-import models.FinancialInstitutions.FIDetails
+import models.FinancialInstitutions.FIDetail
 import models.UserAnswers
 import models.requests.DataRequest
 import pages.Page
@@ -94,7 +94,7 @@ class ChangeRegisteredFinancialInstitutionController @Inject() (
         }
   }
 
-  private def handleChangeInProgressFlow(fiid: String, userAnswers: UserAnswers, fiDetails: FIDetails)(implicit request: DataRequest[AnyContent]) =
+  private def handleChangeInProgressFlow(fiid: String, userAnswers: UserAnswers, fiDetails: FIDetail)(implicit request: DataRequest[AnyContent]) =
     getMissingAnswers(userAnswers) match {
       case Nil =>
         val hasChanges = financialInstitutionUpdateService.registeredFiDetailsHasChanged(userAnswers, fiDetails)
@@ -103,7 +103,7 @@ class ChangeRegisteredFinancialInstitutionController @Inject() (
         Future.successful(Redirect(routes.SomeInformationMissingController.onPageLoad()))
     }
 
-  private def handleChangesInCacheFlow(fiDetail: FIDetails, ua: UserAnswers)(implicit request: DataRequest[AnyContent]) =
+  private def handleChangesInCacheFlow(fiDetail: FIDetail, ua: UserAnswers)(implicit request: DataRequest[AnyContent]) =
     ua.get(ReportForRegisteredBusinessPage) match {
       case Some(isFIUser) if isFIUser =>
         getMissingAnswers(ua) match {

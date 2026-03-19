@@ -122,7 +122,7 @@ trait ModelGenerators extends RegexConstants with Generators {
       } yield TINDetails(tinType, tin, issuedBy.toUpperCase)
     }
 
-  implicit val arbitraryFIDetail: Arbitrary[FIDetails] = Arbitrary {
+  implicit val arbitraryFIDetail: Arbitrary[FIDetail] = Arbitrary {
     for {
       fiId                    <- stringOfLength(15)
       fiName                  <- stringOfLength(105)
@@ -135,7 +135,7 @@ trait ModelGenerators extends RegexConstants with Generators {
       addressDetails          <- arbitrary[AddressDetails]
       primaryContactDetails   <- arbitrary[ContactDetails]
       secondaryContactDetails <- Gen.option(arbitrary[ContactDetails])
-    } yield FIDetails(
+    } yield FIDetail(
       FIID = fiId,
       FIName = fiName,
       SubscriptionID = subscriptionId,

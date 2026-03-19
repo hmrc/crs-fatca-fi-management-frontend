@@ -16,14 +16,14 @@
 
 package viewmodels.yourFinancialInstitutions
 
-import models.FinancialInstitutions.FIDetails
+import models.FinancialInstitutions.FIDetail
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
 import uk.gov.hmrc.hmrcfrontend.views.viewmodels.listwithactions.{ListWithActions, ListWithActionsAction, ListWithActionsItem}
 
 object YourFinancialInstitutionsViewModel {
 
-  def getYourFinancialInstitutionsRows(institutions: Seq[FIDetails])(implicit messages: Messages): ListWithActions = {
+  def getYourFinancialInstitutionsRows(institutions: Seq[FIDetail])(implicit messages: Messages): ListWithActions = {
     val orderedInstitutions = orderInstitutions(institutions)
     val items = orderedInstitutions.map {
       institution =>
@@ -69,7 +69,7 @@ object YourFinancialInstitutionsViewModel {
   """.stripMargin.trim)
   }
 
-  private def orderInstitutions(institutions: Seq[FIDetails]): Seq[FIDetails] =
+  private def orderInstitutions(institutions: Seq[FIDetail]): Seq[FIDetail] =
     institutions.sortBy(
       fi => (!fi.IsFIUser, fi.FIName.toUpperCase)
     )

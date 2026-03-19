@@ -18,7 +18,7 @@ package models.FinancialInstitutions
 
 import play.api.libs.json._
 
-final case class FIDetails(
+final case class FIDetail(
   FIID: String,
   FIName: String,
   SubscriptionID: String,
@@ -30,7 +30,7 @@ final case class FIDetails(
   SecondaryContactDetails: Option[ContactDetails]
 )
 
-object FIDetails {
-  implicit val format: OFormat[FIDetails] = Json.format[FIDetails]
+object FIDetail {
+  implicit val format: OFormat[FIDetail] = Json.format[FIDetail]
 
 }

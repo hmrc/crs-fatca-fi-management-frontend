@@ -96,8 +96,8 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
        |}
        |}""".stripMargin
 
-  val testFiDetail: FIDetails =
-    FIDetails(
+  val testFiDetail: FIDetail =
+    FIDetail(
       s"$testFiid",
       "First FI",
       "[subscriptionId]",
@@ -109,9 +109,9 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
       Some(ContactDetails("John Doe", "johndoe@example.com", Some("0333458888")))
     )
 
-  val testFiDetails: Seq[FIDetails] =
+  val testFiDetails: Seq[FIDetail] =
     Seq(
-      FIDetails(
+      FIDetail(
         "683373339",
         "First FI",
         "[subscriptionId]",
@@ -122,7 +122,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
         Some(ContactDetails("Jane Doe", "janedoe@example.com", Some("0444458888"))),
         Some(ContactDetails("John Doe", "johndoe@example.com", Some("0333458888")))
       ),
-      FIDetails(
+      FIDetail(
         "683373300",
         "Second FI",
         "[subscriptionId]",
