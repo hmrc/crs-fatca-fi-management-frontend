@@ -28,7 +28,7 @@ import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
-import play.api.http.Status.{BAD_REQUEST, OK, UNPROCESSABLE_ENTITY}
+import play.api.http.Status.OK
 import play.api.libs.json._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
@@ -73,44 +73,45 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
     }
 
     "getFinancialInstitution" - {
-      "must throw an exception when extractList yields json validation errors" in {
-        val invalidBody = """{ "invalidKey": "invalidValue" }"""
-
-        when(mockConnector.viewFi("subId", "fiId"))
-          .thenReturn(Future.successful(HttpResponse(OK, invalidBody, Map.empty)))
-
-        an[JsResultException] must be thrownBy sut.extractList(invalidBody)
-
-      }
-
       "must return financial institution details" in {
-        forAll {
-          fiDetail: FIDetail =>
-            val viewFIDetailsResponse = createViewFIDetailsResponse(Seq(fiDetail))
+        val fiId                  = "some-fiid"
+        val subscriptionId        = "XE5123456789"
+        val viewFIDetailsResponse = Json.parse(testViewFIDetailsBody).as[ViewFIDetailsResponse]
+        val mockResponse          = Future.successful(viewFIDetailsResponse)
 
-            when(mockConnector.viewFi(fiDetail.SubscriptionID, fiDetail.FIID))
-              .thenReturn(Future.successful(HttpResponse(OK, Json.toJson(viewFIDetailsResponse), Map.empty)))
+        when(mockConnector.viewFi(subscriptionId, fiId))
+          .thenReturn(mockResponse)
 
-            val result = sut.getFinancialInstitution(fiDetail.SubscriptionID, fiDetail.FIID)
+        val result = sut.getFinancialInstitution(subscriptionId, fiId)
 
-            result.futureValue.value mustBe fiDetail
-        }
+        result.futureValue.value mustBe testFiDetail
+
       }
 
       "must return None when there is no financial institution details" in {
-        forAll {
-          fiDetail: FIDetail =>
-            val viewFIDetailsResponse = createViewFIDetailsResponse(Nil)
+        val fiId           = "some-fiid"
+        val subscriptionId = "XE5123456789"
+        val mockResponse   = Future.failed(NoMatchingRecords)
 
-            when(mockConnector.viewFi(fiDetail.SubscriptionID, fiDetail.FIID))
-              .thenReturn(Future.successful(HttpResponse(OK, Json.toJson(viewFIDetailsResponse), Map.empty)))
+        when(mockConnector.viewFi(subscriptionId, fiId))
+          .thenReturn(mockResponse)
 
-            val result = sut.getFinancialInstitution(fiDetail.SubscriptionID, fiDetail.FIID)
+        val result = sut.getFinancialInstitution(subscriptionId, fiId)
 
-            result.futureValue mustBe empty
-        }
+        result.futureValue mustBe None
       }
 
+      "throws exception when unexpected error is returned" in {
+        val fiId           = "some-fiid"
+        val subscriptionId = "XE5123456789"
+        val mockResponse   = Future.failed(UnexpectedResponse)
+
+        when(mockConnector.viewFi(subscriptionId, fiId))
+          .thenReturn(mockResponse)
+
+        val result = sut.getFinancialInstitution(subscriptionId, fiId)
+        an[Exception] must be thrownBy result.futureValue
+      }
     }
 
     "getInstitutionById extracts details matching given FIID" in {

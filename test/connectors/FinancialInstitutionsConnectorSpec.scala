@@ -150,16 +150,92 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
       result.failed.futureValue mustBe UnexpectedResponse
     }
 
-    "must return status as OK for viewFI" in {
+    "must return status as OK for viewFI" in new TestContext {
       forAll(validSubscriptionID, validFiId) {
         (subscriptionId, fiId) =>
-          stubResponse(
+          stubGetResponse(
             s"/crs-fatca-fi-management/financial-institutions/$subscriptionId/$fiId",
-            OK
+            OK,
+            viewFIDetailsSuccessJson
           )
-          val result = connector.viewFi(subscriptionId, fiId)
-          result.futureValue.status mustBe OK
+          val result: Future[ViewFIDetailsResponse]        = connector.viewFi(subscriptionId, fiId)
+          val viewFiDetailsresponse: ViewFIDetailsResponse = result.futureValue
+          viewFiDetailsresponse.ViewFIDetails.ResponseCommon.OriginatingSystem mustBe "CADX"
+          viewFiDetailsresponse.ViewFIDetails.ResponseCommon.Regime mustBe "CRFA"
+          viewFiDetailsresponse.ViewFIDetails.ResponseCommon.RequestType mustBe VIEW
+          viewFiDetailsresponse.ViewFIDetails.ResponseCommon.ResponseParameters must contain theSameElementsAs Seq(
+            ResponseParameter("FATCA1", "FATCA2")
+          )
+          viewFiDetailsresponse.ViewFIDetails.ResponseCommon.TransmittingSystem mustBe "EIS"
+          viewFiDetailsresponse.ViewFIDetails.ResponseDetails.FIDetails must have size 1
+          val fiDetail = viewFiDetailsresponse.ViewFIDetails.ResponseDetails.FIDetails.head
+          fiDetail.FIID mustBe "683373339"
+          fiDetail.FIName mustBe "Amazom UK"
+          fiDetail.SubscriptionID mustBe "345567808"
+          fiDetail.GIIN mustBe Some("123456234564456")
+          fiDetail.IsFIUser mustBe false
+          fiDetail.AddressDetails.AddressLine1 mustBe "22"
+          fiDetail.AddressDetails.AddressLine2 mustBe Some("High Street")
+          fiDetail.AddressDetails.AddressLine3 mustBe Some("Dawley")
+          fiDetail.AddressDetails.AddressLine4 mustBe Some("Dawley")
+          fiDetail.AddressDetails.CountryCode mustBe Some("GB")
+          fiDetail.AddressDetails.PostalCode mustBe Some("TF22 2RE")
+          fiDetail.PrimaryContactDetails mustBe Some(ContactDetails("John Smith", "jdoe@example.com", Some("789876568")))
+          fiDetail.SecondaryContactDetails mustBe Some(ContactDetails("John Smith", "jdoe@example.com", Some("789876568")))
+          fiDetail.TINDetails.get must contain theSameElementsAs Seq(
+            TINDetails(TINType.UTR, "68936493", "GB")
+          )
       }
+    }
+
+    "must return NoMatchingRecords when a 422 status code is return with error code 001 in viewFi" in new TestContext {
+      val subscriptionId = "XE512345678"
+      val fiId           = "683373339"
+      stubGetResponse(
+        s"/crs-fatca-fi-management/financial-institutions/$subscriptionId/$fiId",
+        UNPROCESSABLE_ENTITY,
+        unprocessible_entity_not_found_viewFiResponseJson
+      )
+      val result = connector.viewFi(subscriptionId, fiId)
+      result.failed.futureValue mustBe NoMatchingRecords
+    }
+
+    "must return a JsValidationError when invalid json is return for a 200 response in viewFi" in new TestContext {
+      val subscriptionId = "XE512345678"
+      val fiId           = "683373339"
+      stubGetResponse(
+        s"/crs-fatca-fi-management/financial-institutions/$subscriptionId/$fiId",
+        OK,
+        """{"invalid": "json"}"""
+      )
+      val result = connector.viewFi(subscriptionId, fiId)
+      result.failed.futureValue mustBe JsValidationError
+    }
+
+    "must return a BadRequestError when a 400 status code is returned in viewFi" in new TestContext {
+      val subscriptionId = "XE512345678"
+      val fiId           = "683373339"
+
+      stubGetResponse(
+        s"/crs-fatca-fi-management/financial-institutions/$subscriptionId/$fiId",
+        BAD_REQUEST,
+        badRequest_viewFiResponseJson
+      )
+      val result = connector.viewFi(subscriptionId, fiId)
+      result.failed.futureValue mustBe BadRequestError
+    }
+
+    "must return a UnexpectedResponse when a unexpected status code is returned in viewFi" in new TestContext {
+      val subscriptionId = "XE512345678"
+      val fiId           = "683373339"
+
+      stubGetResponse(
+        s"/crs-fatca-fi-management/financial-institutions/$subscriptionId/$fiId",
+        INTERNAL_SERVER_ERROR,
+        unexpectedErrorResponseJson
+      )
+      val result = connector.viewFi(subscriptionId, fiId)
+      result.failed.futureValue mustBe UnexpectedResponse
     }
 
     "addFi" - {

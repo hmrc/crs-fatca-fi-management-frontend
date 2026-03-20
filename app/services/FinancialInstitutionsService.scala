@@ -20,15 +20,13 @@ import connectors.FinancialInstitutionsConnector
 import models.FinancialInstitutions.TINType.{CRN, TURN, UTR}
 import models.FinancialInstitutions._
 import models.UserAnswers
-import models.error.ApiError.{JsValidationError, NoMatchingRecords, UnexpectedResponse}
-import models.readFIs.response.{ErrorResponse, ViewFIDetails, ViewFIDetailsResponse}
+import models.error.ApiError.NoMatchingRecords
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import pages.{CompanyRegistrationNumberPage, TrustURNPage}
 import play.api.libs.json._
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.HttpErrorFunctions._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -56,9 +54,13 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
   ): Future[Option[FIDetail]] =
     connector
       .viewFi(subscriptionId, fiId)
-      .map(
-        res => extractList(res.body).headOption
+      .flatMap(
+        res => Future.successful(res.ViewFIDetails.ResponseDetails.FIDetails.headOption)
       )
+      .recover {
+        case NoMatchingRecords => None
+        case e                 => throw e
+      }
 
   def getInstitutionById(details: Seq[FIDetail], fiid: String): Option[FIDetail] =
     details
@@ -66,16 +68,6 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
         detail => detail.FIID == fiid
       )
       .fold[Option[FIDetail]](None)(Some(_))
-
-  def extractList(body: String): Seq[FIDetail] = {
-    val json: JsValue                        = Json.parse(body)
-    val listsResult: JsResult[Seq[FIDetail]] = (json \ "ViewFIDetails" \ "ResponseDetails" \ "FIDetails").validate[Seq[FIDetail]]
-
-    listsResult.fold(
-      errors => throw JsResultException(errors),
-      value => value
-    )
-  }
 
   def updateFinancialInstitution(subscriptionId: String, userAnswers: UserAnswers)(implicit
     hc: HeaderCarrier,
