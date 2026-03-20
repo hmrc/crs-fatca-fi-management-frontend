@@ -54,6 +54,20 @@ trait WireMockServerHandler extends BeforeAndAfterAll with BeforeAndAfterEach {
         )
     )
 
+  def stubGetResponse(
+    expectedUrl: String,
+    expectedStatus: Int,
+    expectedResponse: String
+  ): StubMapping =
+    server.stubFor(
+      get(urlEqualTo(expectedUrl))
+        .willReturn(
+          aResponse()
+            .withStatus(expectedStatus)
+            .withBody(expectedResponse)
+        )
+    )
+
   def stubPostResponse(
     expectedUrl: String,
     expectedStatus: Int,

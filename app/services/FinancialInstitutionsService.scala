@@ -20,7 +20,7 @@ import connectors.FinancialInstitutionsConnector
 import models.FinancialInstitutions.TINType.{CRN, TURN, UTR}
 import models.FinancialInstitutions._
 import models.UserAnswers
-import models.error.ApiError.{JsValidationError, UnexpectedResponse}
+import models.error.ApiError.{JsValidationError, NoMatchingRecords, UnexpectedResponse}
 import models.readFIs.response.{ErrorResponse, ViewFIDetails, ViewFIDetailsResponse}
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
@@ -42,23 +42,12 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
     connector
       .viewFis(subscriptionId)
       .flatMap {
-        case res if is2xx(res.status) =>
-          Json.parse(res.body).validate[ViewFIDetailsResponse] match {
-            case JsSuccess(viewFIDetailsResponse, _) => Future.successful(viewFIDetailsResponse.ViewFIDetails.ResponseDetails.FIDetails)
-            case JsError(_) =>
-              println(Console.BLUE + s"JSON validation error while parsing FIDetails: ${Json.parse(res.body)}" + Console.RESET)
-              Future.failed(throw JsValidationError)
-          }
-        case res =>
-          Json.parse(res.body).validate[ErrorResponse] match {
-            case JsSuccess(errorResponse, _) =>
-              if (res.status == 422 && errorResponse.errorDetail.errorCode.contains("001"))
-                Future.successful(Seq.empty) // 001 - No matching records found for the request
-              else Future.failed(throw UnexpectedResponse)
-            case JsError(_) =>
-              println(Console.BLUE + s"JSON validation error while parsing eRRORdETAILS: ${Json.parse(res.body)}" + Console.RESET)
-              Future.failed(throw JsValidationError)
-          }
+        result =>
+          Future.successful(result.ViewFIDetails.ResponseDetails.FIDetails)
+      }
+      .recover {
+        case NoMatchingRecords => Seq.empty
+        case e                 => throw e
       }
 
   def getFinancialInstitution(subscriptionId: String, fiId: String)(implicit

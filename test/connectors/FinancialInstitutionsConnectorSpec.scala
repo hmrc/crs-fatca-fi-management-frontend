@@ -21,11 +21,15 @@ import generators.Generators
 import helpers.WireMockServerHandler
 import models.FinancialInstitutions.TINType.UTR
 import models.FinancialInstitutions._
+import models.RequestType.VIEW
+import models.error.ApiError.{BadRequestError, JsValidationError, NoMatchingRecords, UnexpectedResponse}
+import models.readFIs.response.{ResponseParameter, ViewFIDetailsResponse}
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.Application
-import play.api.http.Status.{OK, SERVICE_UNAVAILABLE}
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SERVICE_UNAVAILABLE, UNPROCESSABLE_ENTITY}
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHandler with ScalaCheckDrivenPropertyChecks with Generators {
 
@@ -66,14 +70,84 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
 
   "FinancialInstitutionsConnector" - {
 
-    "must return status as OK for viewFIs" in {
+    "must return a ViewFIDetailsResponse for 200 status for viewFIs" in new TestContext {
       val subscriptionId = "XE512345678"
-      stubResponse(
+      stubGetResponse(
         s"/crs-fatca-fi-management/financial-institutions/$subscriptionId",
-        OK
+        OK,
+        viewFIDetailsSuccessJson
+      )
+      val result: Future[ViewFIDetailsResponse]        = connector.viewFis(subscriptionId)
+      val viewFiDetailsresponse: ViewFIDetailsResponse = result.futureValue
+      viewFiDetailsresponse.ViewFIDetails.ResponseCommon.OriginatingSystem mustBe "CADX"
+      viewFiDetailsresponse.ViewFIDetails.ResponseCommon.Regime mustBe "CRFA"
+      viewFiDetailsresponse.ViewFIDetails.ResponseCommon.RequestType mustBe VIEW
+      viewFiDetailsresponse.ViewFIDetails.ResponseCommon.ResponseParameters must contain theSameElementsAs Seq(
+        ResponseParameter("FATCA1", "FATCA2")
+      )
+      viewFiDetailsresponse.ViewFIDetails.ResponseCommon.TransmittingSystem mustBe "EIS"
+      viewFiDetailsresponse.ViewFIDetails.ResponseDetails.FIDetails must have size 1
+      val fiDetail = viewFiDetailsresponse.ViewFIDetails.ResponseDetails.FIDetails.head
+      fiDetail.FIID mustBe "683373339"
+      fiDetail.FIName mustBe "Amazom UK"
+      fiDetail.SubscriptionID mustBe "345567808"
+      fiDetail.GIIN mustBe Some("123456234564456")
+      fiDetail.IsFIUser mustBe false
+      fiDetail.AddressDetails.AddressLine1 mustBe "22"
+      fiDetail.AddressDetails.AddressLine2 mustBe Some("High Street")
+      fiDetail.AddressDetails.AddressLine3 mustBe Some("Dawley")
+      fiDetail.AddressDetails.AddressLine4 mustBe Some("Dawley")
+      fiDetail.AddressDetails.CountryCode mustBe Some("GB")
+      fiDetail.AddressDetails.PostalCode mustBe Some("TF22 2RE")
+      fiDetail.PrimaryContactDetails mustBe Some(ContactDetails("John Smith", "jdoe@example.com", Some("789876568")))
+      fiDetail.SecondaryContactDetails mustBe Some(ContactDetails("John Smith", "jdoe@example.com", Some("789876568")))
+      fiDetail.TINDetails.get must contain theSameElementsAs Seq(
+        TINDetails(TINType.UTR, "68936493", "GB")
+      )
+    }
+
+    "must return NoMatchingRecords when a 422 status code is return with error code 001 in viewFis" in new TestContext {
+      val subscriptionId = "XE512345678"
+      stubGetResponse(
+        s"/crs-fatca-fi-management/financial-institutions/$subscriptionId",
+        UNPROCESSABLE_ENTITY,
+        unprocessible_entity_not_found_viewFiResponseJson
       )
       val result = connector.viewFis(subscriptionId)
-      result.futureValue.status mustBe OK
+      result.failed.futureValue mustBe NoMatchingRecords
+    }
+
+    "must return a JsValidationError when invalid json is return for a 200 response in viewFis" in new TestContext {
+      val subscriptionId = "XE512345678"
+      stubGetResponse(
+        s"/crs-fatca-fi-management/financial-institutions/$subscriptionId",
+        OK,
+        """{"invalid": "json"}"""
+      )
+      val result = connector.viewFis(subscriptionId)
+      result.failed.futureValue mustBe JsValidationError
+    }
+
+    "must return a BadRequestError when a 400 status code is returned in viewFis" in new TestContext {
+      val subscriptionId = "XE512345678"
+      stubGetResponse(
+        s"/crs-fatca-fi-management/financial-institutions/$subscriptionId",
+        BAD_REQUEST,
+        badRequest_viewFiResponseJson
+      )
+      val result = connector.viewFis(subscriptionId)
+      result.failed.futureValue mustBe BadRequestError
+    }
+
+    "must return a UnexpectedResponse when a unexpected status code is returned in viewFis" in new TestContext {
+      val subscriptionId = "XE512345678"
+      stubGetResponse(
+        s"/crs-fatca-fi-management/financial-institutions/$subscriptionId",
+        INTERNAL_SERVER_ERROR,
+        unexpectedErrorResponseJson
+      )
+      val result = connector.viewFis(subscriptionId)
+      result.failed.futureValue mustBe UnexpectedResponse
     }
 
     "must return status as OK for viewFI" in {
@@ -161,6 +235,106 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
       val result = connector.removeFi(removeFIDetail)
       result.futureValue.status mustBe OK
     }
+
+  }
+
+  trait TestContext {
+
+    val unexpectedErrorResponseJson = """{
+                                        |  "errorDetail": {
+                                        |    "correlationId": "d60de98c-f499-47f5-b2d6-e80966e8d19e",
+                                        |    "errorCode": 405,
+                                        |    "errorMessage": "<detail as generated by service>",
+                                        |    "source": "Back End",
+                                        |    "sourceFaultDetail": {
+                                        |      "detail": [
+                                        |        "<detail as generated by service>"
+                                        |      ]
+                                        |    },
+                                        |    "timestamp": "2020-09-28T14:31:41.286Z"
+                                        |  }
+                                        |}""".stripMargin
+
+    val unprocessible_entity_not_found_viewFiResponseJson = """{
+                                                                |  "errorDetail": {
+                                                                |    "correlationId": "1ae81b45-41b4-4642-ae1c-db1126900001",
+                                                                |    "errorCode": "001",
+                                                                |    "errorMessage": "No matching records found for the request",
+                                                                |    "source": "journey-dct139b-service-camel",
+                                                                |    "sourceFaultDetail": {
+                                                                |      "detail": "001 - No matching records found for the request"
+                                                                |    },
+                                                                |    "timestamp": "2020-09-25T21:54:12.015Z"
+                                                                |  }
+                                                                |}""".stripMargin
+
+    val badRequest_viewFiResponseJson = """{
+                                           |  "errorDetail": {
+                                           |    "correlationId": "1ae81b45-41b4-4642-ae1c-db1126900001",
+                                           |    "errorCode": "400",
+                                           |    "errorMessage": "Failed header validation",
+                                           |    "source": "journey-dct139b-service-camel",
+                                           |    "sourceFaultDetail": {
+                                           |      "detail": [
+                                           |        "Failed header validation: Invalid x-correlation-id header"
+                                           |      ]
+                                           |    },
+                                           |    "timestamp": "2020-09-25T21:54:12.015Z"
+                                           |  }
+                                           |}""".stripMargin
+
+    val viewFIDetailsSuccessJson = """{
+                                |  "ViewFIDetails": {
+                                |    "ResponseCommon": {
+                                |      "OriginatingSystem": "CADX",
+                                |      "Regime": "CRFA",
+                                |      "RequestType": "VIEW",
+                                |      "ResponseParameters": [
+                                |        {
+                                |          "ParamName": "FATCA1",
+                                |          "ParamValue": "FATCA2"
+                                |        }
+                                |      ],
+                                |      "TransmittingSystem": "EIS"
+                                |    },
+                                |    "ResponseDetails": {
+                                |      "FIDetails": [
+                                |        {
+                                |          "AddressDetails": {
+                                |            "AddressLine1": "22",
+                                |            "AddressLine2": "High Street",
+                                |            "AddressLine3": "Dawley",
+                                |            "AddressLine4": "Dawley",
+                                |            "CountryCode": "GB",
+                                |            "PostalCode": "TF22 2RE"
+                                |          },
+                                |          "FIID": "683373339",
+                                |          "FIName": "Amazom UK",
+                                |          "GIIN": "123456234564456",
+                                |          "IsFIUser": false,
+                                |          "PrimaryContactDetails": {
+                                |            "ContactName": "John Smith",
+                                |            "EmailAddress": "jdoe@example.com",
+                                |            "PhoneNumber": "789876568"
+                                |          },
+                                |          "SecondaryContactDetails": {
+                                |            "ContactName": "John Smith",
+                                |            "EmailAddress": "jdoe@example.com",
+                                |            "PhoneNumber": "789876568"
+                                |          },
+                                |          "SubscriptionID": "345567808",
+                                |          "TINDetails": [
+                                |            {
+                                |              "IssuedBy": "GB",
+                                |              "TIN": "68936493",
+                                |              "TINType": "UTR"
+                                |            }
+                                |          ]
+                                |        }
+                                |      ]
+                                |    }
+                                |  }
+                                |}""".stripMargin
 
   }
 

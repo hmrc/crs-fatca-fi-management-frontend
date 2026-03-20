@@ -18,8 +18,11 @@ package connectors
 
 import config.FrontendAppConfig
 import models.FinancialInstitutions.{CreateFIDetails, FIDetail, RemoveFIDetail}
+import models.error.ApiError.{BadRequestError, JsValidationError, NoMatchingRecords, UnexpectedResponse}
+import models.readFIs.response.ViewFIDetailsResponse
+import play.api.http.Status.{BAD_REQUEST, OK, UNPROCESSABLE_ENTITY}
 import play.api.i18n.Lang.logger
-import play.api.libs.json.Json
+import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
@@ -33,10 +36,28 @@ class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, v
   def viewFis(subscriptionId: String)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[HttpResponse] =
+  ): Future[ViewFIDetailsResponse] =
     httpClient
       .get(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/$subscriptionId")
       .execute[HttpResponse]
+      .flatMap {
+        case res if res.status == OK =>
+          res.json.validate[ViewFIDetailsResponse] match {
+            case JsSuccess(viewFiDetails, _) => Future.successful(viewFiDetails)
+            case JsError(errors) =>
+              logger.error(s"Failed to parse FIs for subscriptionId: $subscriptionId, errors: $errors")
+              Future.failed(JsValidationError)
+          }
+        case res if res.status == BAD_REQUEST =>
+          logger.error(s"Bad request when retrieving FIs for subscriptionId: $subscriptionId, response: ${res.body}")
+          Future.failed(BadRequestError)
+        case res if res.status == UNPROCESSABLE_ENTITY && (Json.parse(res.body) \ "errorDetail" \ "errorCode").as[String] == "001" =>
+          logger.warn(s"No FIs found for subscriptionId: $subscriptionId")
+          Future.failed(NoMatchingRecords)
+        case res =>
+          logger.error(s"Unexpected response when retrieving FIs for subscriptionId: $subscriptionId, response: ${res.body} and status: ${res.status}")
+          Future.failed(UnexpectedResponse)
+      }
 
   def viewFi(subscriptionId: String, fiId: String)(implicit
     hc: HeaderCarrier,

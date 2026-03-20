@@ -21,6 +21,8 @@ import connectors.FinancialInstitutionsConnector
 import generators.{ModelGenerators, UserAnswersGenerator}
 import models.FinancialInstitutions.{FIDetail, SubmitFIDetailsResponse}
 import models.UserAnswers
+import models.error.ApiError.{NoMatchingRecords, UnexpectedResponse}
+import models.readFIs.response.ViewFIDetailsResponse
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar._
@@ -43,31 +45,32 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
   "FinancialInstitutionsService" - {
 
     "getListOfFinancialInstitutions extracts list of FI details" in {
-      val subscriptionId = "XE5123456789"
-      val mockResponse   = Future.successful(HttpResponse(OK, testViewFIDetailsBody))
+      val subscriptionId        = "XE5123456789"
+      val viewFIDetailsResponse = Json.parse(testViewFIDetailsBody).as[ViewFIDetailsResponse]
+      val mockResponse          = Future.successful(viewFIDetailsResponse)
 
       when(mockConnector.viewFis(subscriptionId)).thenReturn(mockResponse)
       val result: Future[Seq[FIDetail]] = sut.getListOfFinancialInstitutions(subscriptionId)
       result.futureValue mustBe testFiDetails
     }
 
-    "getListOfFinancialInstitutions return empty response when no matching records error" in {
+    "getListOfFinancialInstitutions return empty response when no matching records error is returned" in {
       val subscriptionId = "XE5123456789"
-      val mockResponse   = Future.successful(HttpResponse(UNPROCESSABLE_ENTITY, testViewFIDetailsErrorBody))
+      val mockResponse   = Future.failed(NoMatchingRecords)
 
       when(mockConnector.viewFis(subscriptionId)).thenReturn(mockResponse)
       val result: Future[Seq[FIDetail]] = sut.getListOfFinancialInstitutions(subscriptionId)
       result.futureValue mustBe Seq.empty
     }
-//
-//    "getListOfFinancialInstitutions return empty response when no matching records error" in {
-//      val subscriptionId = "XE5123456789"
-//      val mockResponse   = Future.successful(HttpResponse(BAD_REQUEST, testViewFIDetailsErrorBody))
-//
-//      when(mockConnector.viewFis(subscriptionId)).thenReturn(mockResponse)
-//      val result: Future[Seq[FIDetails]] = sut.getListOfFinancialInstitutions(subscriptionId)
-//      result.futureValue mustBe Seq.empty
-//    }
+
+    "getListOfFinancialInstitutions throws exception when unexpected error is returned" in {
+      val subscriptionId = "XE5123456789"
+      val mockResponse   = Future.failed(UnexpectedResponse)
+
+      when(mockConnector.viewFis(subscriptionId)).thenReturn(mockResponse)
+      val result: Future[Seq[FIDetail]] = sut.getListOfFinancialInstitutions(subscriptionId)
+      an[Exception] must be thrownBy result.futureValue
+    }
 
     "getFinancialInstitution" - {
       "must throw an exception when extractList yields json validation errors" in {
