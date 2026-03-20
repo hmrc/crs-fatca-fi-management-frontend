@@ -18,7 +18,6 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.IdentifierAction
-import models.error.ApiError.UnexpectedResponse
 import models.{IndexViewModel, UserAnswers}
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -82,10 +81,6 @@ class IndexController @Inject() (
                           Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
                       }
                   }
-              }
-              .recover {
-                case UnexpectedResponse =>
-                  Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
               }
           }
 
