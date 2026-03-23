@@ -36,31 +36,12 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
   def getListOfFinancialInstitutions(subscriptionId: String)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[Seq[FIDetail]] =
-    connector
-      .viewFis(subscriptionId)
-      .flatMap {
-        result =>
-          Future.successful(result.ViewFIDetails.ResponseDetails.FIDetails)
-      }
-      .recover {
-        case NoMatchingRecords => Seq.empty
-        case e                 => throw e
-      }
+  ): Future[Seq[FIDetail]] = connector.viewFis(subscriptionId)
 
   def getFinancialInstitution(subscriptionId: String, fiId: String)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[Option[FIDetail]] =
-    connector
-      .viewFi(subscriptionId, fiId)
-      .flatMap(
-        res => Future.successful(res.ViewFIDetails.ResponseDetails.FIDetails.headOption)
-      )
-      .recover {
-        case NoMatchingRecords => None
-        case e                 => throw e
-      }
+  ): Future[Option[FIDetail]] = connector.viewFi(subscriptionId, fiId)
 
   def getInstitutionById(details: Seq[FIDetail], fiid: String): Option[FIDetail] =
     details

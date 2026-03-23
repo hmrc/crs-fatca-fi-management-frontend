@@ -77,17 +77,11 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
         OK,
         viewFIDetailsSuccessJson
       )
-      val result: Future[ViewFIDetailsResponse]        = connector.viewFis(subscriptionId)
-      val viewFiDetailsresponse: ViewFIDetailsResponse = result.futureValue
-      viewFiDetailsresponse.ViewFIDetails.ResponseCommon.OriginatingSystem mustBe "CADX"
-      viewFiDetailsresponse.ViewFIDetails.ResponseCommon.Regime mustBe "CRFA"
-      viewFiDetailsresponse.ViewFIDetails.ResponseCommon.RequestType mustBe VIEW
-      viewFiDetailsresponse.ViewFIDetails.ResponseCommon.ResponseParameters must contain theSameElementsAs Seq(
-        ResponseParameter("FATCA1", "FATCA2")
-      )
-      viewFiDetailsresponse.ViewFIDetails.ResponseCommon.TransmittingSystem mustBe "EIS"
-      viewFiDetailsresponse.ViewFIDetails.ResponseDetails.FIDetails must have size 1
-      val fiDetail = viewFiDetailsresponse.ViewFIDetails.ResponseDetails.FIDetails.head
+      val fidetailFuture: Future[Seq[FIDetail]] = connector.viewFis(subscriptionId)
+      val result                                = fidetailFuture.futureValue
+
+      result must have size 1
+      val fiDetail = result.head
       fiDetail.FIID mustBe "683373339"
       fiDetail.FIName mustBe "Amazom UK"
       fiDetail.SubscriptionID mustBe "345567808"
@@ -106,15 +100,15 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
       )
     }
 
-    "must return NoMatchingRecords when a 422 status code is return with error code 001 in viewFis" in new TestContext {
+    "must return an empty sequence when a 422 status code is return with error code 001 in viewFis" in new TestContext {
       val subscriptionId = "XE512345678"
       stubGetResponse(
         s"/crs-fatca-fi-management/financial-institutions/$subscriptionId",
         UNPROCESSABLE_ENTITY,
         unprocessible_entity_not_found_viewFiResponseJson
       )
-      val result = connector.viewFis(subscriptionId)
-      result.failed.futureValue mustBe NoMatchingRecords
+      val result: Future[Seq[FIDetail]] = connector.viewFis(subscriptionId)
+      result.futureValue must have size 0
     }
 
     "must return a JsValidationError when invalid json is return for a 200 response in viewFis" in new TestContext {
@@ -128,7 +122,7 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
       result.failed.futureValue mustBe JsValidationError
     }
 
-    "must return a BadRequestError when a 400 status code is returned in viewFis" in new TestContext {
+    "must return a UnexpectedError when a 400 status code is returned in viewFis" in new TestContext {
       val subscriptionId = "XE512345678"
       stubGetResponse(
         s"/crs-fatca-fi-management/financial-institutions/$subscriptionId",
@@ -136,7 +130,7 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
         badRequest_viewFiResponseJson
       )
       val result = connector.viewFis(subscriptionId)
-      result.failed.futureValue mustBe BadRequestError
+      result.failed.futureValue mustBe UnexpectedResponse
     }
 
     "must return a UnexpectedResponse when a unexpected status code is returned in viewFis" in new TestContext {
@@ -158,17 +152,9 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
             OK,
             viewFIDetailsSuccessJson
           )
-          val result: Future[ViewFIDetailsResponse]        = connector.viewFi(subscriptionId, fiId)
-          val viewFiDetailsresponse: ViewFIDetailsResponse = result.futureValue
-          viewFiDetailsresponse.ViewFIDetails.ResponseCommon.OriginatingSystem mustBe "CADX"
-          viewFiDetailsresponse.ViewFIDetails.ResponseCommon.Regime mustBe "CRFA"
-          viewFiDetailsresponse.ViewFIDetails.ResponseCommon.RequestType mustBe VIEW
-          viewFiDetailsresponse.ViewFIDetails.ResponseCommon.ResponseParameters must contain theSameElementsAs Seq(
-            ResponseParameter("FATCA1", "FATCA2")
-          )
-          viewFiDetailsresponse.ViewFIDetails.ResponseCommon.TransmittingSystem mustBe "EIS"
-          viewFiDetailsresponse.ViewFIDetails.ResponseDetails.FIDetails must have size 1
-          val fiDetail = viewFiDetailsresponse.ViewFIDetails.ResponseDetails.FIDetails.head
+          val result: Future[Option[FIDetail]] = connector.viewFi(subscriptionId, fiId)
+
+          val fiDetail: FIDetail = result.futureValue.get
           fiDetail.FIID mustBe "683373339"
           fiDetail.FIName mustBe "Amazom UK"
           fiDetail.SubscriptionID mustBe "345567808"
@@ -188,7 +174,7 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
       }
     }
 
-    "must return NoMatchingRecords when a 422 status code is return with error code 001 in viewFi" in new TestContext {
+    "must return a None when a 422 status code is return with error code 001 in viewFi" in new TestContext {
       val subscriptionId = "XE512345678"
       val fiId           = "683373339"
       stubGetResponse(
@@ -197,7 +183,7 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
         unprocessible_entity_not_found_viewFiResponseJson
       )
       val result = connector.viewFi(subscriptionId, fiId)
-      result.failed.futureValue mustBe NoMatchingRecords
+      result.futureValue mustBe None
     }
 
     "must return a JsValidationError when invalid json is return for a 200 response in viewFi" in new TestContext {
@@ -212,7 +198,7 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
       result.failed.futureValue mustBe JsValidationError
     }
 
-    "must return a BadRequestError when a 400 status code is returned in viewFi" in new TestContext {
+    "must return an unexpectedError when a 400 status code is returned in viewFi" in new TestContext {
       val subscriptionId = "XE512345678"
       val fiId           = "683373339"
 
@@ -222,7 +208,7 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
         badRequest_viewFiResponseJson
       )
       val result = connector.viewFi(subscriptionId, fiId)
-      result.failed.futureValue mustBe BadRequestError
+      result.failed.futureValue mustBe UnexpectedResponse
     }
 
     "must return a UnexpectedResponse when a unexpected status code is returned in viewFi" in new TestContext {

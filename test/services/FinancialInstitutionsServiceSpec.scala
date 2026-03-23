@@ -47,7 +47,7 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
     "getListOfFinancialInstitutions extracts list of FI details" in {
       val subscriptionId        = "XE5123456789"
       val viewFIDetailsResponse = Json.parse(testViewFIDetailsBody).as[ViewFIDetailsResponse]
-      val mockResponse          = Future.successful(viewFIDetailsResponse)
+      val mockResponse          = Future.successful(viewFIDetailsResponse.ViewFIDetails.ResponseDetails.FIDetails)
 
       when(mockConnector.viewFis(subscriptionId)).thenReturn(mockResponse)
       val result: Future[Seq[FIDetail]] = sut.getListOfFinancialInstitutions(subscriptionId)
@@ -56,7 +56,7 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
 
     "getListOfFinancialInstitutions return empty response when no matching records error is returned" in {
       val subscriptionId = "XE5123456789"
-      val mockResponse   = Future.failed(NoMatchingRecords)
+      val mockResponse   = Future.successful(Seq.empty)
 
       when(mockConnector.viewFis(subscriptionId)).thenReturn(mockResponse)
       val result: Future[Seq[FIDetail]] = sut.getListOfFinancialInstitutions(subscriptionId)
@@ -77,7 +77,7 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
         val fiId                  = "some-fiid"
         val subscriptionId        = "XE5123456789"
         val viewFIDetailsResponse = Json.parse(testViewFIDetailsBody).as[ViewFIDetailsResponse]
-        val mockResponse          = Future.successful(viewFIDetailsResponse)
+        val mockResponse          = Future.successful(viewFIDetailsResponse.ViewFIDetails.ResponseDetails.FIDetails.headOption)
 
         when(mockConnector.viewFi(subscriptionId, fiId))
           .thenReturn(mockResponse)
@@ -91,7 +91,7 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
       "must return None when there is no financial institution details" in {
         val fiId           = "some-fiid"
         val subscriptionId = "XE5123456789"
-        val mockResponse   = Future.failed(NoMatchingRecords)
+        val mockResponse   = Future.successful(None)
 
         when(mockConnector.viewFi(subscriptionId, fiId))
           .thenReturn(mockResponse)

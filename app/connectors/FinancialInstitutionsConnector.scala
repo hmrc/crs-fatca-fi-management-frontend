@@ -36,24 +36,21 @@ class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, v
   def viewFis(subscriptionId: String)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[ViewFIDetailsResponse] =
+  ): Future[Seq[FIDetail]] =
     httpClient
       .get(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/$subscriptionId")
       .execute[HttpResponse]
       .flatMap {
         case res if res.status == OK =>
           res.json.validate[ViewFIDetailsResponse] match {
-            case JsSuccess(viewFiDetails, _) => Future.successful(viewFiDetails)
+            case JsSuccess(viewFiDetails, _) => Future.successful(viewFiDetails.ViewFIDetails.ResponseDetails.FIDetails)
             case JsError(errors) =>
               logger.error(s"Failed to parse FIs for subscriptionId: $subscriptionId, errors: $errors")
               Future.failed(JsValidationError)
           }
-        case res if res.status == BAD_REQUEST =>
-          logger.error(s"Bad request when retrieving FIs for subscriptionId: $subscriptionId, response: ${res.body}")
-          Future.failed(BadRequestError)
         case res if res.status == UNPROCESSABLE_ENTITY && (Json.parse(res.body) \ "errorDetail" \ "errorCode").as[String] == "001" =>
           logger.warn(s"No FIs found for subscriptionId: $subscriptionId")
-          Future.failed(NoMatchingRecords)
+          Future.successful(Seq.empty)
         case res =>
           logger.error(s"Unexpected response when retrieving FIs for subscriptionId: $subscriptionId, response: ${res.body} and status: ${res.status}")
           Future.failed(UnexpectedResponse)
@@ -62,24 +59,21 @@ class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, v
   def viewFi(subscriptionId: String, fiId: String)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[ViewFIDetailsResponse] =
+  ): Future[Option[FIDetail]] =
     httpClient
       .get(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/$subscriptionId/$fiId")
       .execute[HttpResponse]
       .flatMap {
         case res if res.status == OK =>
           res.json.validate[ViewFIDetailsResponse] match {
-            case JsSuccess(viewFiDetails, _) => Future.successful(viewFiDetails)
+            case JsSuccess(viewFiDetails, _) => Future.successful(viewFiDetails.ViewFIDetails.ResponseDetails.FIDetails.headOption)
             case JsError(errors) =>
               logger.error(s"Failed to parse an FI for subscriptionId: $subscriptionId errors: $errors")
               Future.failed(JsValidationError)
           }
-        case res if res.status == BAD_REQUEST =>
-          logger.error(s"Bad request when retrieving an FI for subscriptionId: $subscriptionId, response: ${res.body}")
-          Future.failed(BadRequestError)
         case res if res.status == UNPROCESSABLE_ENTITY && (Json.parse(res.body) \ "errorDetail" \ "errorCode").as[String] == "001" =>
           logger.warn(s"No FI found for subscriptionId: $subscriptionId")
-          Future.failed(NoMatchingRecords)
+          Future.successful(None)
         case res =>
           logger.error(s"Unexpected response when retrieving an FI for subscriptionId: $subscriptionId, response: ${res.body} and status: ${res.status}")
           Future.failed(UnexpectedResponse)
