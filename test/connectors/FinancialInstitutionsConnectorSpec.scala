@@ -21,12 +21,10 @@ import generators.Generators
 import helpers.WireMockServerHandler
 import models.FinancialInstitutions.TINType.UTR
 import models.FinancialInstitutions._
-import models.RequestType.VIEW
-import models.error.ApiError.{BadRequestError, JsValidationError, NoMatchingRecords, UnexpectedResponse}
-import models.readFIs.response.{ResponseParameter, ViewFIDetailsResponse}
+import models.error.ApiError.{JsValidationError, UnexpectedResponse}
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.Application
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SERVICE_UNAVAILABLE, UNPROCESSABLE_ENTITY}
+import play.api.http.Status._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

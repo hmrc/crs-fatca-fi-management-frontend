@@ -18,9 +18,9 @@ package connectors
 
 import config.FrontendAppConfig
 import models.FinancialInstitutions.{CreateFIDetails, FIDetail, RemoveFIDetail}
-import models.error.ApiError.{BadRequestError, JsValidationError, NoMatchingRecords, UnexpectedResponse}
+import models.error.ApiError.{JsValidationError, UnexpectedResponse}
 import models.readFIs.response.ViewFIDetailsResponse
-import play.api.http.Status.{BAD_REQUEST, OK, UNPROCESSABLE_ENTITY}
+import play.api.http.Status.{OK, UNPROCESSABLE_ENTITY}
 import play.api.i18n.Lang.logger
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.http.HttpReads.Implicits._

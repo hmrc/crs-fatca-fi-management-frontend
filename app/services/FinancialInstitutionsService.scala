@@ -20,7 +20,6 @@ import connectors.FinancialInstitutionsConnector
 import models.FinancialInstitutions.TINType.{CRN, TURN, UTR}
 import models.FinancialInstitutions._
 import models.UserAnswers
-import models.error.ApiError.NoMatchingRecords
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, ReportForRegisteredBusinessPage}
 import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId

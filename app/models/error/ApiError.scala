@@ -23,6 +23,4 @@ sealed abstract class ApiError extends Throwable { // Put this in backend?
 object ApiError {
   case object UnexpectedResponse extends ApiError
   case object JsValidationError extends ApiError
-  case object BadRequestError extends ApiError
-  case object NoMatchingRecords extends ApiError
 }

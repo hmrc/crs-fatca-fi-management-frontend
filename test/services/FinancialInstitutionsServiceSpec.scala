@@ -21,7 +21,7 @@ import connectors.FinancialInstitutionsConnector
 import generators.{ModelGenerators, UserAnswersGenerator}
 import models.FinancialInstitutions.{FIDetail, SubmitFIDetailsResponse}
 import models.UserAnswers
-import models.error.ApiError.{NoMatchingRecords, UnexpectedResponse}
+import models.error.ApiError.UnexpectedResponse
 import models.readFIs.response.ViewFIDetailsResponse
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.when
