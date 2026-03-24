@@ -127,30 +127,20 @@ class FinancialInstitutionsServiceSpec extends SpecBase with ModelGenerators wit
     "addFinancialInstitution adds FI details" in {
       val subscriptionId = "XE5123456789"
 
-      val responseJson =
-        s"""
-            |{
-            |  "ResponseDetails": {
-            |    "ReturnParameters": {
-            |      "Value": "$testFiid"
-            |    }
-            |  }
-            |}
-            |""".stripMargin
-      val mockResponse = Future.successful(HttpResponse(OK, responseJson))
+      val mockResponse = Future.successful(SubmitFIDetailsResponse(testFiid))
 
       forAll(fiNotRegistered.arbitrary) {
         (userAnswers: UserAnswers) =>
           when(mockConnector.addFI(any())(any[HeaderCarrier](), any[ExecutionContext]())).thenReturn(mockResponse)
           val result = sut.addFinancialInstitution(subscriptionId, userAnswers)
-          result.futureValue mustBe SubmitFIDetailsResponse(Some(testFiid))
+          result.futureValue mustBe SubmitFIDetailsResponse(testFiid)
       }
     }
 
     "updateFinancialInstitution updates FI details" in {
       val subscriptionId = "XE5123456789"
 
-      val mockResponse = Future.successful(HttpResponse(OK, "{}"))
+      val mockResponse = Future.successful(())
 
       forAll(fiRegistered.arbitrary) {
         (userAnswers: UserAnswers) =>

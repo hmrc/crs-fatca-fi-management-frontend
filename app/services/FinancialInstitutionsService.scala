@@ -24,7 +24,6 @@ import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddr
 import pages.addFinancialInstitution._
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import pages.{CompanyRegistrationNumberPage, TrustURNPage}
-import play.api.libs.json._
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -52,26 +51,12 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
   def updateFinancialInstitution(subscriptionId: String, userAnswers: UserAnswers)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[Unit] = {
-    val fiDetailsRequest = buildUpdateFiDetailsRequest(subscriptionId, userAnswers)
-    connector
-      .updateFI(fiDetailsRequest)
-      .map(
-        _ => ()
-      )
-  }
+  ): Future[Unit] = connector.updateFI(buildUpdateFiDetailsRequest(subscriptionId, userAnswers))
 
   def addFinancialInstitution(subscriptionId: String, userAnswers: UserAnswers)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[SubmitFIDetailsResponse] = {
-    val fiDetailsRequest = buildCreateFiDetailsRequest(subscriptionId, userAnswers)
-    connector
-      .addFI(fiDetailsRequest)
-      .map(
-        res => Json.parse(res.body).as[SubmitFIDetailsResponse]
-      )
-  }
+  ): Future[SubmitFIDetailsResponse] = connector.addFI(buildCreateFiDetailsRequest(subscriptionId, userAnswers))
 
   def removeFinancialInstitution(details: FIDetail)(implicit
     hc: HeaderCarrier,

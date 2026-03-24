@@ -153,7 +153,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       "must redirect to confirmation page when submitting answers" in {
         when(mockChangeUserAnswersRepository.clear(any())) thenReturn Future.successful(true)
         when(mockService.addFinancialInstitution(any[String](), any[UserAnswers]())(any[HeaderCarrier](), any[ExecutionContext]()))
-          .thenReturn(Future.successful(SubmitFIDetailsResponse(Some(testFiid))))
+          .thenReturn(Future.successful(SubmitFIDetailsResponse(testFiid)))
 
         val application = applicationBuilder(userAnswers = Some(someUserAnswers))
           .overrides(

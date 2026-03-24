@@ -66,7 +66,7 @@ class RegisteredBusinessCheckYourAnswersController @Inject() (
       financialInstitutionsService
         .addFinancialInstitution(request.fatcaId, request.userAnswers)
         .flatMap(
-          resp => Future.fromTry(request.userAnswers.set(FiidPage, resp.fiid.get))
+          resp => Future.fromTry(request.userAnswers.set(FiidPage, resp.fiid))
         )
         .flatMap(sessionRepository.set)
         .flatMap(

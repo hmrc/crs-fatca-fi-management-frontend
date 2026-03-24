@@ -135,7 +135,7 @@ class RegisteredBusinessCheckYourAnswersControllerSpec extends SpecBase with Sum
       "must redirect to financial-institution-added when create fi call is successful" in {
         when(mockChangeUserAnswersRepository.clear(any())).thenReturn(Future.successful(true))
         when(mockFinancialInstitutionsService.addFinancialInstitution(any(), any())(any[HeaderCarrier](), any[ExecutionContext]()))
-          .thenReturn(Future.successful(SubmitFIDetailsResponse(Some(testFiid))))
+          .thenReturn(Future.successful(SubmitFIDetailsResponse(testFiid)))
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(data = Json.obj(("key", "value")))))
           .overrides(
             bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService),

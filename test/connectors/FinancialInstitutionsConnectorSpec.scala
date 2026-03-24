@@ -224,64 +224,56 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
 
     "addFi" - {
 
-      "must return Right(HttpResponse) when the response status is OK" in {
+      "must return a SubmitFIDetailsResponse got an ok status code" in new TestContext {
         stubPostResponse(
           s"/crs-fatca-fi-management/financial-institutions/create",
           OK,
-          "{}"
+          createFiResponseJson
         )
-        val result = connector.addFI(createFIDetails).futureValue
-        result.status mustBe OK
+        val result: SubmitFIDetailsResponse = connector.addFI(createFIDetails).futureValue
+        result mustBe SubmitFIDetailsResponse("FI12345")
       }
 
-      "must return ErrorDetails and correct status code when the response status is not OK" in {
-        val errorResponseJson =
-          """{
-            |"errorDetails": {
-            |    "timestamp": "2016-08-16T18:15:41Z",
-            |    "correlationId": "",
-            |    "errorCode": "503"
-            |}}""".stripMargin
-
+      "must return a JsValidationError for an ok status code with an unexpected json response" in new TestContext {
         stubPostResponse(
           s"/crs-fatca-fi-management/financial-institutions/create",
-          SERVICE_UNAVAILABLE,
-          errorResponseJson
+          OK,
+          """{"invalid": "json"}"""
         )
-        val result = connector.addFI(createFIDetails).futureValue
+        val result = connector.addFI(createFIDetails)
+        result.failed.futureValue mustBe JsValidationError
+      }
 
-        result.status mustBe SERVICE_UNAVAILABLE
+      "must return a UnexpectedResponse for an unexpected status code" in new TestContext {
+        stubPostResponse(
+          s"/crs-fatca-fi-management/financial-institutions/create",
+          INTERNAL_SERVER_ERROR,
+          unexpectedErrorResponseJson
+        )
+        val result = connector.addFI(createFIDetails)
+        result.failed.futureValue mustBe UnexpectedResponse
       }
     }
 
     "updateFI" - {
-      "must return Right(HttpResponse) when the response status is OK" in {
+      "must return Right(HttpResponse) when the response status is OK" in new TestContext {
         stubPutResponse(
           s"/crs-fatca-fi-management/financial-institutions/update",
           OK,
-          "{}"
+          updateFiResponseJson
         )
         val result = connector.updateFI(testFiDetail).futureValue
-        result.status mustBe OK
+        result mustBe ()
       }
 
-      "must return ErrorDetails and correct status code when the response status is not OK" in {
-        val errorResponseJson =
-          """{
-            |"errorDetails": {
-            |    "timestamp": "2016-08-16T18:15:41Z",
-            |    "correlationId": "",
-            |    "errorCode": "503"
-            |}}""".stripMargin
-
+      "must return an unexpectedErrorResponse and correct status code when the response status is not OK" in new TestContext {
         stubPutResponse(
           s"/crs-fatca-fi-management/financial-institutions/update",
           SERVICE_UNAVAILABLE,
-          errorResponseJson
+          unexpectedErrorResponseJson
         )
-        val result = connector.updateFI(testFiDetail).futureValue
-
-        result.status mustBe SERVICE_UNAVAILABLE
+        val result = connector.updateFI(testFiDetail)
+        result.failed.futureValue mustBe UnexpectedResponse
       }
     }
 
@@ -395,6 +387,22 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
                                 |    }
                                 |  }
                                 |}""".stripMargin
+
+    val createFiResponseJson = """{
+                                 |  "ResponseDetails": {
+                                 |    "ReturnParameters": {
+                                 |      "Key": "FIID",
+                                 |      "Value": "FI12345"
+                                 |    },
+                                 |    "processingDate": "2001-12-17T09:30:47Z"
+                                 |  }
+                                 |}""".stripMargin
+
+    val updateFiResponseJson = """{
+                                 |  "ResponseDetails": {
+                                 |    "processingDate": "2001-12-17T09:30:47Z"
+                                 |  }
+                                 |}""".stripMargin
 
   }
 

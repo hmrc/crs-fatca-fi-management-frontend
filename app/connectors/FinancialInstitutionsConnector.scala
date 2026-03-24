@@ -17,9 +17,10 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.FinancialInstitutions.{CreateFIDetails, FIDetail, RemoveFIDetail}
+import models.FinancialInstitutions.{CreateFIDetails, FIDetail, RemoveFIDetail, SubmitFIDetailsResponse}
 import models.error.ApiError.{JsValidationError, UnexpectedResponse}
 import models.readFIs.response.ViewFIDetailsResponse
+import models.updateFi.CreateFiResponse
 import play.api.http.Status.{OK, UNPROCESSABLE_ENTITY}
 import play.api.i18n.Lang.logger
 import play.api.libs.json.{JsError, JsSuccess, Json}
@@ -29,7 +30,6 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Failure
 
 class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, val httpClient: HttpClientV2) {
 
@@ -52,7 +52,7 @@ class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, v
           logger.warn(s"No FIs found for subscriptionId: $subscriptionId")
           Future.successful(Seq.empty)
         case res =>
-          logger.error(s"Unexpected response when retrieving FIs for subscriptionId: $subscriptionId, response: ${res.body} and status: ${res.status}")
+          logger.error(s"Unexpected response when retrieving FIs for subscriptionId: $subscriptionId, status: ${res.status} and response: ${res.body}")
           Future.failed(UnexpectedResponse)
       }
 
@@ -75,29 +75,43 @@ class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, v
           logger.warn(s"No FI found for subscriptionId: $subscriptionId")
           Future.successful(None)
         case res =>
-          logger.error(s"Unexpected response when retrieving an FI for subscriptionId: $subscriptionId, response: ${res.body} and status: ${res.status}")
+          logger.error(s"Unexpected response when retrieving an FI for subscriptionId: $subscriptionId, status: ${res.status} and response: ${res.body}")
           Future.failed(UnexpectedResponse)
       }
 
   def updateFI(fiDetails: FIDetail)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[HttpResponse] =
+  ): Future[Unit] =
     (fiDetails match {
       case _: FIDetail => httpClient.put(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/update")
     }).withBody(Json.toJson(fiDetails))
       .execute[HttpResponse]
-      .andThen {
-        case Failure(exception) => logger.error(s"Failed to update FI: ${exception.getMessage}", exception)
+      .flatMap {
+        case res if res.status == OK =>
+          Future.successful(())
+        case res =>
+          logger.error(s"Unexpected response when updating an FI: status: ${res.status} and response: ${res.body}")
+          Future.failed(UnexpectedResponse)
       }
 
-  def addFI(fiDetails: CreateFIDetails)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] =
+  def addFI(fiDetails: CreateFIDetails)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SubmitFIDetailsResponse] =
     (fiDetails match {
       case _: CreateFIDetails => httpClient.post(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/create")
     }).withBody(Json.toJson(fiDetails))
       .execute[HttpResponse]
-      .andThen {
-        case Failure(exception) => logger.error(s"Failed to add FI: ${exception.getMessage}", exception)
+      .flatMap {
+        case res if res.status == OK =>
+          res.json.validate[CreateFiResponse] match {
+            case JsSuccess(createFiResponse, _) =>
+              Future.successful(SubmitFIDetailsResponse(createFiResponse.ResponseDetails.ReturnParameters.Value))
+            case JsError(errors) =>
+              logger.error(s"Failed to parse create FI response for subscriptionId: ${fiDetails.SubscriptionID}, errors: $errors")
+              Future.failed(JsValidationError)
+          }
+        case res =>
+          logger.error(s"Unexpected response when creating a FI: status: ${res.status} and status: ${res.body}")
+          Future.failed(UnexpectedResponse)
       }
 
   def removeFi(fiDetails: RemoveFIDetail)(implicit

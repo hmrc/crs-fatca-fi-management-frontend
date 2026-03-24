@@ -16,15 +16,4 @@
 
 package models.FinancialInstitutions
 
-import play.api.libs.json._
-
-case class SubmitFIDetailsResponse(fiid: Option[String])
-
-object SubmitFIDetailsResponse {
-
-  implicit val reads: Reads[SubmitFIDetailsResponse] = (json: JsValue) => {
-    val fiid = (json \ "ResponseDetails" \ "ReturnParameters" \ "Value").asOpt[String] // TODO: VALIDATE FULLY
-    JsSuccess(SubmitFIDetailsResponse(fiid))
-  }
-
-}
+case class SubmitFIDetailsResponse(fiid: String)
