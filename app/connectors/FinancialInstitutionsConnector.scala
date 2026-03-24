@@ -24,6 +24,7 @@ import models.updateFi.CreateFiResponse
 import play.api.http.Status.{OK, UNPROCESSABLE_ENTITY}
 import play.api.i18n.Lang.logger
 import play.api.libs.json.{JsError, JsSuccess, Json}
+import uk.gov.hmrc.http.HttpErrorFunctions.is5xx
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
@@ -52,7 +53,8 @@ class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, v
           logger.warn(s"No FIs found for subscriptionId: $subscriptionId")
           Future.successful(Seq.empty)
         case res =>
-          logger.error(s"Unexpected response when retrieving FIs for subscriptionId: $subscriptionId, status: ${res.status} and response: ${res.body}")
+          val message = s"Unexpected response when retrieving FIs for subscriptionId: $subscriptionId, status: ${res.status} and response: ${res.body}"
+          if (is5xx(res.status)) logger.error(message) else logger.warn(message)
           Future.failed(UnexpectedResponse)
       }
 
@@ -75,7 +77,8 @@ class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, v
           logger.warn(s"No FI found for subscriptionId: $subscriptionId")
           Future.successful(None)
         case res =>
-          logger.error(s"Unexpected response when retrieving an FI for subscriptionId: $subscriptionId, status: ${res.status} and response: ${res.body}")
+          val message = s"Unexpected response when retrieving an FI for subscriptionId: $subscriptionId, status: ${res.status} and response: ${res.body}"
+          if (is5xx(res.status)) logger.error(message) else logger.warn(message)
           Future.failed(UnexpectedResponse)
       }
 
@@ -91,7 +94,9 @@ class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, v
         case res if res.status == OK =>
           Future.successful(())
         case res =>
-          logger.error(s"Unexpected response when updating an FI: status: ${res.status} and response: ${res.body}")
+          val message =
+            s"Unexpected response when updating an FI for subscriptionId: ${fiDetails.SubscriptionID}, status: ${res.status} and response: ${res.body}"
+          if (is5xx(res.status)) logger.error(message) else logger.warn(message)
           Future.failed(UnexpectedResponse)
       }
 
@@ -110,7 +115,9 @@ class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, v
               Future.failed(JsValidationError)
           }
         case res =>
-          logger.error(s"Unexpected response when creating a FI: status: ${res.status} and status: ${res.body}")
+          val message =
+            s"Unexpected response when creating an FI for subscriptionId: ${fiDetails.SubscriptionID}, status: ${res.status} and response: ${res.body}"
+          if (is5xx(res.status)) logger.error(message) else logger.warn(message)
           Future.failed(UnexpectedResponse)
       }
 
