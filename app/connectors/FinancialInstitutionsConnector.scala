@@ -49,7 +49,7 @@ class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, v
               logger.error(s"Failed to parse FIs for subscriptionId: $subscriptionId, errors: $errors")
               Future.failed(JsValidationError)
           }
-        case res if res.status == UNPROCESSABLE_ENTITY && (Json.parse(res.body) \ "errorDetail" \ "errorCode").as[String] == "001" =>
+        case res if res.status == UNPROCESSABLE_ENTITY && (Json.parse(res.body) \ "errorDetail" \ "errorCode").asOpt[String] == Some("001") =>
           logger.warn(s"No FIs found for subscriptionId: $subscriptionId")
           Future.successful(Seq.empty)
         case res =>
@@ -73,7 +73,7 @@ class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, v
               logger.error(s"Failed to parse an FI for subscriptionId: $subscriptionId errors: $errors")
               Future.failed(JsValidationError)
           }
-        case res if res.status == UNPROCESSABLE_ENTITY && (Json.parse(res.body) \ "errorDetail" \ "errorCode").as[String] == "001" =>
+        case res if res.status == UNPROCESSABLE_ENTITY && (Json.parse(res.body) \ "errorDetail" \ "errorCode").asOpt[String] == Some("001") =>
           logger.warn(s"No FI found for subscriptionId: $subscriptionId")
           Future.successful(None)
         case res =>

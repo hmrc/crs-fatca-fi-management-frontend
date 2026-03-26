@@ -109,6 +109,17 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
       result.futureValue must have size 0
     }
 
+    "must return an unexpectedError  when a 422 status code is return and error code is missing in viewFis" in new TestContext {
+      val subscriptionId = "XE512345678"
+      stubGetResponse(
+        s"/crs-fatca-fi-management/financial-institutions/$subscriptionId",
+        UNPROCESSABLE_ENTITY,
+        unprocessible_entity_missing_code_viewFiResponseJson
+      )
+      val result: Future[Seq[FIDetail]] = connector.viewFis(subscriptionId)
+      result.failed.futureValue mustBe UnexpectedResponse
+    }
+
     "must return a JsValidationError when invalid json is return for a 200 response in viewFis" in new TestContext {
       val subscriptionId = "XE512345678"
       stubGetResponse(
@@ -182,6 +193,18 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
       )
       val result = connector.viewFi(subscriptionId, fiId)
       result.futureValue mustBe None
+    }
+
+    "must return an unexpectedError when a 422 status and error code is missing in viewFi" in new TestContext {
+      val subscriptionId = "XE512345678"
+      val fiId           = "683373339"
+      stubGetResponse(
+        s"/crs-fatca-fi-management/financial-institutions/$subscriptionId/$fiId",
+        UNPROCESSABLE_ENTITY,
+        unprocessible_entity_missing_code_viewFiResponseJson
+      )
+      val result = connector.viewFi(subscriptionId, fiId)
+      result.failed.futureValue mustBe UnexpectedResponse
     }
 
     "must return a JsValidationError when invalid json is return for a 200 response in viewFi" in new TestContext {
@@ -319,6 +342,18 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
                                                                 |    "timestamp": "2020-09-25T21:54:12.015Z"
                                                                 |  }
                                                                 |}""".stripMargin
+
+    val unprocessible_entity_missing_code_viewFiResponseJson = """{
+                                                              |  "errorDetail": {
+                                                              |    "correlationId": "1ae81b45-41b4-4642-ae1c-db1126900001",
+                                                              |    "errorMessage": "No matching records found for the request",
+                                                              |    "source": "journey-dct139b-service-camel",
+                                                              |    "sourceFaultDetail": {
+                                                              |      "detail": "001 - No matching records found for the request"
+                                                              |    },
+                                                              |    "timestamp": "2020-09-25T21:54:12.015Z"
+                                                              |  }
+                                                              |}""".stripMargin
 
     val badRequest_viewFiResponseJson = """{
                                            |  "errorDetail": {

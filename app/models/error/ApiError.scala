@@ -16,7 +16,7 @@
 
 package models.error
 
-sealed abstract class ApiError extends Throwable { // Put this in backend?
+sealed abstract class ApiError extends Throwable {
   override def toString: String = getClass.getSimpleName.replace("$", "")
 }
 
