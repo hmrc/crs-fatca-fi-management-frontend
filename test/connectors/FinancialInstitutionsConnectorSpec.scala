@@ -45,7 +45,7 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
   val createFIDetails = CreateFIDetails(
     FIName = "financial-institution",
     SubscriptionID = "XE512345678",
-    TINDetails = Some(Seq(TINDetails(UTR, "TIN", "IssuedBy"))),
+    TINDetails = Seq(TINDetails(UTR, "TIN", "IssuedBy")),
     GIIN = None,
     IsFIUser = true,
     AddressDetails = AddressDetails(

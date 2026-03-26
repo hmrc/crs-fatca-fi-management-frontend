@@ -91,7 +91,7 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
       FIID = fiid,
       FIName = fiName,
       SubscriptionID = subscriptionId,
-      TINDetails = extractTinDetails(userAnswers),
+      TINDetails = Some(extractTinDetails(userAnswers)),
       GIIN = userAnswers.get(WhatIsGIINPage).map(_.value),
       IsFIUser = userAnswers.get(ReportForRegisteredBusinessPage).contains(true),
       AddressDetails = address,
@@ -99,8 +99,8 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
       SecondaryContactDetails = extractSecondaryContactDetails(userAnswers)
     )).getOrElse(throw new IllegalStateException("Unable to build FIDetail"))
 
-  private def extractTinDetails(userAnswers: UserAnswers): Option[Seq[TINDetails]] = {
-    val details = Seq(
+  private def extractTinDetails(userAnswers: UserAnswers): Seq[TINDetails] =
+    Seq(
       userAnswers
         .get(WhatIsUniqueTaxpayerReferencePage)
         .map(
@@ -117,9 +117,6 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
           trn => TINDetails(TURN, trn.value, "GB")
         )
     ).flatten
-
-    if (details.nonEmpty) Some(details) else None
-  }
 
   private def extractPrimaryContactDetails(userAnswers: UserAnswers): Option[ContactDetails] = for {
     contactName  <- userAnswers.get(FirstContactNamePage)

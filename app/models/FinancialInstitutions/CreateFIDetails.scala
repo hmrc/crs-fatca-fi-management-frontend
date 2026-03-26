@@ -21,7 +21,7 @@ import play.api.libs.json._
 final case class CreateFIDetails(
   FIName: String,
   SubscriptionID: String,
-  TINDetails: Option[Seq[TINDetails]],
+  TINDetails: Seq[TINDetails],
   GIIN: Option[String],
   IsFIUser: Boolean,
   AddressDetails: AddressDetails,
