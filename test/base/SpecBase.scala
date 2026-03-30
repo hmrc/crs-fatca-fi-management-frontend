@@ -17,6 +17,7 @@
 package base
 
 import controllers.actions._
+import models.FinancialInstitutions.TINType.UTR
 import models.FinancialInstitutions._
 import models.{Address, AddressLookup, AddressResponse, Country, GIINumber, UniqueTaxpayerReference, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -100,7 +101,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
       s"$testFiid",
       "First FI",
       "[subscriptionId]",
-      List(),
+      Some(Seq(TINDetails(UTR, "123456789", "GB"))),
       Some("689355555"),
       IsFIUser = true,
       AddressDetails("22", Some("High Street"), Some("Dawley"), Some("Dawley"), Some("GB"), Some("TF22 2RE")),
@@ -114,7 +115,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
         "683373339",
         "First FI",
         "[subscriptionId]",
-        List(),
+        Some(Seq(TINDetails(UTR, "123456789", "GB"))),
         Some("689355555"),
         IsFIUser = true,
         AddressDetails("22", Some("High Street"), Some("Dawley"), Some("Dawley"), Some("GB"), Some("TF22 2RE")),
@@ -125,7 +126,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
         "683373300",
         "Second FI",
         "[subscriptionId]",
-        List(),
+        None,
         Some("689344444"),
         IsFIUser = false,
         AddressDetails("22", Some("High Street"), Some("Dawley"), Some("Dawley"), Some("GB"), Some("TF22 2RE")),
@@ -137,13 +138,26 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
   val testViewFIDetailsBody =
     """{
     "ViewFIDetails": {
+      "ResponseCommon": {
+      "OriginatingSystem": "CADX",
+      "Regime": "CRFA",
+      "RequestType": "VIEW",
+      "ResponseParameters": [],
+       "TransmittingSystem": "EIS"
+      },
       "ResponseDetails": {
         "FIDetails": [
           {
             "FIID": "683373339",
             "FIName": "First FI",
             "SubscriptionID": "[subscriptionId]",
-            "TINDetails": [],
+            "TINDetails": [
+              {
+                "IssuedBy": "GB",
+                "TIN": "123456789",
+                "TINType": "UTR"
+              }
+            ],
             "GIIN": "689355555",
             "IsFIUser": true,
             "AddressDetails": {
@@ -169,7 +183,6 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
             "FIID": "683373300",
             "FIName": "Second FI",
             "SubscriptionID": "[subscriptionId]",
-            "TINDetails": [],
             "GIIN": "689344444",
             "IsFIUser": false,
             "AddressDetails": {
@@ -199,12 +212,19 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
 
   val testViewFIDetailsErrorBody =
     """{
-      |  "errorDetail": {
-      |    "errorCode": "001",
-      |    "errorMessage": "No matching records found"
-      |  }
-      |}
-      |""".stripMargin
+    "errorDetail": {
+      "correlationId": "someCorrId",
+      "errorCode": "001",
+      "errorMessage": "No matching records found for the request",
+      "source": "test-service",
+      "sourceFaultDetail": {
+        "detail": [
+          "001 - No matching records found for the request"
+        ]
+      },
+      "timestamp": "2020-09-25T21:54:12.015Z"
+    }
+  }""".stripMargin
 
   val testAddress: Address                 = Address("value 1", Some("value 2"), Some("value 3"), Some("value 4"), Some("XX9 9XX"), Country.GB)
   val testAddressResponse: AddressResponse = AddressResponse("value 1", Some("value 2"), Some("value 3"), Some("value 4"), Some("XX9 9XX"), Country.GB.code)

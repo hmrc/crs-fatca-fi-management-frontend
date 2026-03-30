@@ -14,31 +14,16 @@
  * limitations under the License.
  */
 
-package models.response
+package models.readFIs.response
 
 import play.api.libs.json.{Json, OFormat}
 
-case class ErrorDetails(
-  timestamp: String,
-  correlationId: String,
-  errorCode: Option[String] = None,
-  errorMessage: Option[String] = None,
-  source: Option[String] = None,
-  sourceFaultDetail: Option[SourceFault] = None
-)
-
-case class SourceFault(
-  RestFault: Option[String] = None,
+case class SourceFaultDetail(
+  detail: Array[String],
   SoapFault: Option[String] = None,
-  Detail: List[String]
+  RestFault: Option[String] = None
 )
 
-object SourceFault {
-  implicit val sourceFaultDetailReads: OFormat[SourceFault] = Json.format[SourceFault]
+object SourceFaultDetail {
+  implicit val sourceFaultDetailReads: OFormat[SourceFaultDetail] = Json.format[SourceFaultDetail]
 }
-
-object ErrorDetails {
-  implicit val errorDetailReads: OFormat[ErrorDetails] = Json.format[ErrorDetails]
-}
-
-case class DownstreamServiceError(message: String, cause: Throwable) extends RuntimeException

@@ -111,36 +111,48 @@ class FinancialInstitutionUpdateService @Inject() (
       f <- setFiUserDetails(e)
     } yield f
 
-  private def setTaxIdentifier(userAnswers: UserAnswers, listOfTinDetails: Seq[TINDetails])(implicit ec: ExecutionContext): Future[UserAnswers] =
-    listOfTinDetails.foldLeft(Future.successful(userAnswers)) {
-      (futureAnswers, details) =>
-        futureAnswers.flatMap {
-          answers =>
-            details.TINType match {
-              case UTR =>
-                Future.fromTry(
-                  answers
-                    .set(WhichIdentificationNumbersPage, answers.get(WhichIdentificationNumbersPage).getOrElse(Set.empty) + TINType.UTR, cleanup = false)
-                    .flatMap(_.set(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference(details.TIN), cleanup = false))
-                )
-              case CRN =>
-                Future.fromTry(
-                  answers
-                    .set(WhichIdentificationNumbersPage, answers.get(WhichIdentificationNumbersPage).getOrElse(Set.empty) + TINType.CRN, cleanup = false)
-                    .flatMap(_.set(CompanyRegistrationNumberPage, CompanyRegistrationNumber(details.TIN), cleanup = false))
-                )
-              case TURN =>
-                Future.fromTry(
-                  answers
-                    .set(WhichIdentificationNumbersPage, answers.get(WhichIdentificationNumbersPage).getOrElse(Set.empty) + TINType.TURN, cleanup = false)
-                    .flatMap(_.set(TrustURNPage, TrustUniqueReferenceNumber(details.TIN), cleanup = false))
-                )
-              case _ =>
-                Future.fromTry(
-                  answers
-                    .set(HaveGIINPage, true, cleanup = false)
-                    .flatMap(_.set(WhatIsGIINPage, GIINumber(details.TIN), cleanup = false))
-                )
+  private def setTaxIdentifier(
+    answers: UserAnswers,
+    listOfTinDetails: Option[Seq[TINDetails]]
+  )(implicit ec: ExecutionContext): Future[UserAnswers] =
+    listOfTinDetails match {
+      case None => Future.successful(answers)
+      case Some(detailsList) =>
+        detailsList.foldLeft(Future.successful(answers)) {
+          (futureAnswers, details) =>
+            futureAnswers.flatMap {
+              currentAnswers =>
+                details.TINType match {
+                  case UTR =>
+                    Future.fromTry(
+                      currentAnswers
+                        .set(WhichIdentificationNumbersPage,
+                             currentAnswers.get(WhichIdentificationNumbersPage).getOrElse(Set.empty) + TINType.UTR,
+                             cleanup = false
+                        )
+                        .flatMap(_.set(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference(details.TIN), cleanup = false))
+                    )
+                  case CRN =>
+                    Future.fromTry(
+                      currentAnswers
+                        .set(WhichIdentificationNumbersPage,
+                             currentAnswers.get(WhichIdentificationNumbersPage).getOrElse(Set.empty) + TINType.CRN,
+                             cleanup = false
+                        )
+                        .flatMap(_.set(CompanyRegistrationNumberPage, CompanyRegistrationNumber(details.TIN), cleanup = false))
+                    )
+                  case TURN =>
+                    Future.fromTry(
+                      currentAnswers
+                        .set(WhichIdentificationNumbersPage,
+                             currentAnswers.get(WhichIdentificationNumbersPage).getOrElse(Set.empty) + TINType.TURN,
+                             cleanup = false
+                        )
+                        .flatMap(_.set(TrustURNPage, TrustUniqueReferenceNumber(details.TIN), cleanup = false))
+                    )
+                  case _ =>
+                    Future.successful(currentAnswers)
+                }
             }
         }
     }
@@ -303,7 +315,7 @@ class FinancialInstitutionUpdateService @Inject() (
 
   private def checkTINTypeForChanges(
     userAnswers: UserAnswers,
-    tinDetails: Seq[TINDetails]
+    maybeTinDetails: Option[Seq[TINDetails]]
   ): Boolean = {
 
     val uaTinTypes: Set[TINType] =
@@ -311,10 +323,12 @@ class FinancialInstitutionUpdateService @Inject() (
         .get(WhichIdentificationNumbersPage)
         .getOrElse(Set.empty)
 
-    val detailTinTypes: Set[TINType]    = tinDetails.map(_.TINType).toSet
+    val tinDetails                   = maybeTinDetails.getOrElse(Seq.empty)
+    val detailTinTypes: Set[TINType] = tinDetails.map(_.TINType).toSet
+
     val identifiersHaveChanged: Boolean = uaTinTypes != detailTinTypes
     val valuesHaveChanged: Boolean = if (!identifiersHaveChanged) {
-      detailTinTypes.toSeq.exists {
+      detailTinTypes.exists {
         tinType =>
           tinType match {
             case TINType.UTR  => checkUTRforChange(userAnswers, tinDetails)

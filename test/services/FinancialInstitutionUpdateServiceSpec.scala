@@ -317,7 +317,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
         forAll {
           fiDetails: FIDetail =>
             val fiDetailsGIIN     = GIINumber(UUID.randomUUID().toString)
-            val fiDetailsWithGIIN = fiDetails.copy(TINDetails = Seq(TINDetails(TINType = UTR, TIN = fiDetailsGIIN.value, "")))
+            val fiDetailsWithGIIN = fiDetails.copy(TINDetails = Some(Seq(TINDetails(TINType = UTR, TIN = fiDetailsGIIN.value, ""))))
             setUpMock(Country.GB, fiDetails.AddressDetails.CountryCode.toSet)
 
             val (result, _) = service
@@ -540,19 +540,28 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
   }
 
   private def verifyTINMatch(fiDetails: FIDetail, populatedUserAnswers: UserAnswers) = {
-    val maybeUTR: Option[TINDetails] = fiDetails.TINDetails.find(_.TINType == UTR)
-    populatedUserAnswers.get(WhichIdentificationNumbersPage) contains UTR
+    val tins = fiDetails.TINDetails.getOrElse(Seq.empty)
+
+    val maybeUTR = tins.find(_.TINType == UTR)
+    if (maybeUTR.isDefined) {
+      populatedUserAnswers.get(WhichIdentificationNumbersPage).value must contain(TINType.UTR)
+    }
     populatedUserAnswers.get(WhatIsUniqueTaxpayerReferencePage) mustBe maybeUTR.map(
       id => UniqueTaxpayerReference(id.TIN)
     )
-    val maybeCRN: Option[TINDetails] = fiDetails.TINDetails.find(_.TINType == CRN)
-    populatedUserAnswers.get(WhichIdentificationNumbersPage) contains CRN
+
+    val maybeCRN = tins.find(_.TINType == CRN)
+    if (maybeCRN.isDefined) {
+      populatedUserAnswers.get(WhichIdentificationNumbersPage).value must contain(TINType.CRN)
+    }
     populatedUserAnswers.get(CompanyRegistrationNumberPage) mustBe maybeCRN.map(
       id => CompanyRegistrationNumber(id.TIN)
     )
 
-    val maybeTRN: Option[TINDetails] = fiDetails.TINDetails.find(_.TINType == TURN)
-    populatedUserAnswers.get(WhichIdentificationNumbersPage) contains TURN
+    val maybeTRN = tins.find(_.TINType == TURN)
+    if (maybeTRN.isDefined) {
+      populatedUserAnswers.get(WhichIdentificationNumbersPage).value must contain(TINType.TURN)
+    }
     populatedUserAnswers.get(TrustURNPage) mustBe maybeTRN.map(
       id => TrustUniqueReferenceNumber(id.TIN)
     )

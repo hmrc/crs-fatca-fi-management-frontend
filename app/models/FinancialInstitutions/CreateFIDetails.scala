@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
-package models
+package models.FinancialInstitutions
 
-import enumeratum._
+import play.api.libs.json._
 
-sealed trait RequestType extends EnumEntry
+final case class CreateFIDetails(
+  FIName: String,
+  SubscriptionID: String,
+  TINDetails: Seq[TINDetails],
+  GIIN: Option[String],
+  IsFIUser: Boolean,
+  AddressDetails: AddressDetails,
+  PrimaryContactDetails: Option[ContactDetails],
+  SecondaryContactDetails: Option[ContactDetails]
+)
 
-object RequestType extends PlayEnum[RequestType] {
-
-  val values: IndexedSeq[RequestType] = findValues
-
-  case object CREATE extends RequestType
-  case object UPDATE extends RequestType
-  case object VIEW extends RequestType
-
+object CreateFIDetails {
+  implicit val format: OFormat[CreateFIDetails] = Json.format[CreateFIDetails]
 }

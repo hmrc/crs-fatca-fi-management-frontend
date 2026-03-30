@@ -23,7 +23,7 @@ import play.api.libs.json.{JsSuccess, Json}
 
 class FIDetailSpec extends AnyFreeSpec with Matchers {
 
-  "FIDetail" - {
+  "FIDetails" - {
     "must unmarshal TINDetails correctly when null" in {
       val json =
         """
@@ -50,7 +50,7 @@ class FIDetailSpec extends AnyFreeSpec with Matchers {
         FIID = "683373339",
         FIName = "First FI",
         SubscriptionID = "[subscriptionId]",
-        TINDetails = Seq.empty,
+        TINDetails = None,
         GIIN = None,
         IsFIUser = true,
         AddressDetails = AddressDetails(
@@ -101,7 +101,7 @@ class FIDetailSpec extends AnyFreeSpec with Matchers {
         FIID = "683373339",
         FIName = "First FI",
         SubscriptionID = "[subscriptionId]",
-        TINDetails = Seq(TINDetails(UTR, "1234567890", "GB")),
+        TINDetails = Some(Seq(TINDetails(UTR, "1234567890", "GB"))),
         GIIN = None,
         IsFIUser = true,
         AddressDetails = AddressDetails(

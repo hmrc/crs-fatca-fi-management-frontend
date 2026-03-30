@@ -48,7 +48,7 @@ class YourFinancialInstitutionsViewSpec extends SpecBase with GuiceOneAppPerSuit
               FIID = "12345",
               FIName = "Test Financial Institution",
               SubscriptionID = "sub12345",
-              TINDetails = Seq.empty,
+              TINDetails = None,
               GIIN = None,
               IsFIUser = false,
               AddressDetails = AddressDetails(
