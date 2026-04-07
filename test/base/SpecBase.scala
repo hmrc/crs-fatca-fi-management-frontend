@@ -142,7 +142,6 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
       "OriginatingSystem": "CADX",
       "Regime": "CRFA",
       "RequestType": "VIEW",
-      "ResponseParameters": [],
        "TransmittingSystem": "EIS"
       },
       "ResponseDetails": {
