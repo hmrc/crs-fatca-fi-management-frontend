@@ -84,7 +84,7 @@ class IndexController @Inject() (
                               Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
                           }
                       }
-                  } //
+                  }
               }
           }
 
