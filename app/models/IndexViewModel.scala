@@ -21,5 +21,6 @@ case class IndexViewModel(
   fatcaId: String,
   changeContactDetailsUrl: String,
   businessName: Option[String] = None,
-  hasFis: Boolean
+  hasFis: Boolean,
+  hasRecentSubmissions: Boolean
 )

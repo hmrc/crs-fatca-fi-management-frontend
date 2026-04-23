@@ -24,7 +24,7 @@ final case class ResponseCommon(
   TransmittingSystem: String,
   RequestType: RequestType,
   Regime: String,
-  ResponseParameters: Option[List[ResponseParameter]]
+  ResponseParameters: Option[List[ResponseParameter]] = None
 )
 
 object ResponseCommon {

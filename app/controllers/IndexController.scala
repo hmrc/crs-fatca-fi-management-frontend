@@ -23,7 +23,7 @@ import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.{FinancialInstitutionsService, SubscriptionService}
+import services.{FileDetailsService, FinancialInstitutionsService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.IndexView
 
@@ -36,7 +36,8 @@ class IndexController @Inject() (
   identify: IdentifierAction,
   subscriptionService: SubscriptionService,
   financialInstitutionsService: FinancialInstitutionsService,
-  view: IndexView
+  view: IndexView,
+  fileDetailsService: FileDetailsService
 )(implicit ec: ExecutionContext, conf: FrontendAppConfig)
     extends FrontendBaseController
     with Logging
@@ -57,30 +58,33 @@ class IndexController @Inject() (
               .map(_.nonEmpty)
               .flatMap {
                 hasFis =>
-                  val changeContactDetailsUrl = if (sub.isBusiness) conf.changeOrganisationDetailsUrl else conf.changeIndividualDetailsUrl
-                  val indexPageDetails =
-                    IndexViewModel(sub.isBusiness, fatcaId, changeContactDetailsUrl, sub.businessName, hasFis)
+                  fileDetailsService.checkSubscriptionHasRecentSubmissions(fatcaId).flatMap {
+                    hasRecentSubmissions =>
+                      val changeContactDetailsUrl = if (sub.isBusiness) conf.changeOrganisationDetailsUrl else conf.changeIndividualDetailsUrl
+                      val indexPageDetails =
+                        IndexViewModel(sub.isBusiness, fatcaId, changeContactDetailsUrl, sub.businessName, hasFis, hasRecentSubmissions)
 
-                  sessionRepository.get(fatcaId) flatMap {
-                    case Some(_) =>
-                      if (goToYourFIs) {
-                        Future.successful(Redirect(controllers.routes.YourFinancialInstitutionsController.onPageLoad()))
-                      } else {
-                        Future.successful(Ok(view(indexPageDetails)))
-                      }
-                    case None =>
-                      sessionRepository.set(UserAnswers(fatcaId)) map {
-                        case true =>
+                      sessionRepository.get(fatcaId) flatMap {
+                        case Some(_) =>
                           if (goToYourFIs) {
-                            Redirect(controllers.routes.YourFinancialInstitutionsController.onPageLoad())
+                            Future.successful(Redirect(controllers.routes.YourFinancialInstitutionsController.onPageLoad()))
                           } else {
-                            Ok(view(indexPageDetails))
+                            Future.successful(Ok(view(indexPageDetails)))
                           }
-                        case false =>
-                          logger.error(s"Failed to initialize user answers for userId: [$fatcaId]")
-                          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+                        case None =>
+                          sessionRepository.set(UserAnswers(fatcaId)) map {
+                            case true =>
+                              if (goToYourFIs) {
+                                Redirect(controllers.routes.YourFinancialInstitutionsController.onPageLoad())
+                              } else {
+                                Ok(view(indexPageDetails))
+                              }
+                            case false =>
+                              logger.error(s"Failed to initialize user answers for userId: [$fatcaId]")
+                              Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+                          }
                       }
-                  }
+                  } //
               }
           }
 

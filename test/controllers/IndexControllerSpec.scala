@@ -29,7 +29,7 @@ import play.api.mvc.RequestHeader
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.{ChangeUserAnswersRepository, SessionRepository}
-import services.{FinancialInstitutionsService, SubscriptionService}
+import services.{FileDetailsService, FinancialInstitutionsService, SubscriptionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.IndexView
 
@@ -38,6 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class IndexControllerSpec extends SpecBase {
 
   val mockSubscriptionService: SubscriptionService                   = mock[SubscriptionService]
+  val mockFileDetailsService: FileDetailsService                     = mock[FileDetailsService]
   val mockSessionRepository: SessionRepository                       = mock[SessionRepository]
   val mockChangeUserAnswersRepository: ChangeUserAnswersRepository   = mock[ChangeUserAnswersRepository]
   val mockAppConfig: FrontendAppConfig                               = mock[FrontendAppConfig]
@@ -54,6 +55,9 @@ class IndexControllerSpec extends SpecBase {
 
   when(mockFinancialInstitutionsService.getListOfFinancialInstitutions(any())(any[HeaderCarrier](), any[ExecutionContext]()))
     .thenReturn(Future.successful(testFiDetails))
+
+  when(mockFileDetailsService.checkSubscriptionHasRecentSubmissions(any[String](), any[Int]())(any[HeaderCarrier](), any[ExecutionContext]()))
+    .thenReturn(Future.successful(true))
 
   "Index Controller" - {
 
@@ -82,7 +86,8 @@ class IndexControllerSpec extends SpecBase {
         "subscriptionId",
         "/change-contact/individual/details",
         None,
-        hasFis = true
+        hasFis = true,
+        hasRecentSubmissions = true
       )
 
       when(mockSubscriptionService.getSubscription(any())(any[HeaderCarrier](), any[ExecutionContext]())).thenReturn(Future.successful(individualSubscription))
@@ -107,7 +112,8 @@ class IndexControllerSpec extends SpecBase {
         "subscriptionId",
         "/change-contact/organisation/details",
         Some("Test Business inc"),
-        hasFis = true
+        hasFis = true,
+        hasRecentSubmissions = true
       )
 
       when(mockSubscriptionService.getSubscription(any())(any[HeaderCarrier](), any[ExecutionContext]()))
@@ -132,7 +138,8 @@ class IndexControllerSpec extends SpecBase {
         bind[FinancialInstitutionsService].toInstance(mockFinancialInstitutionsService),
         bind[SubscriptionService].toInstance(mockSubscriptionService),
         bind[SessionRepository].toInstance(mockSessionRepository),
-        bind[FrontendAppConfig].toInstance(mockAppConfig)
+        bind[FrontendAppConfig].toInstance(mockAppConfig),
+        bind[FileDetailsService].toInstance(mockFileDetailsService)
       )
       .build()
 
