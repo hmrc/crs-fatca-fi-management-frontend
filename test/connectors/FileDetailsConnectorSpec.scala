@@ -19,9 +19,10 @@ package connectors
 import base.SpecBase
 import generators.Generators
 import helpers.WireMockServerHandler
+import models.IntenalIssueError
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.Application
-import play.api.http.Status.{CREATED, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -50,30 +51,26 @@ class FileDetailsConnectorSpec extends SpecBase with WireMockServerHandler with 
       result mustBe true
     }
 
-    "checkSubscriptionHasRecentSubmissions should return false when the response is OK but content is not correct" in {
+    "checkSubscriptionHasRecentSubmissions should return false when the response is a notfound status code" in {
       val subscriptionId = "XE512345678"
       stubGetResponse(
         s"/crs-fatca-reporting/files/details/$subscriptionId?page=1",
-        OK,
-        """{"invalid": "response"}"""
+        NOT_FOUND,
+        ""
       )
-
       val result = connector.checkSubscriptionHasRecentSubmissions(subscriptionId).futureValue
       result mustBe false
     }
 
-    "checkSubscriptionHasRecentSubmissions should return false when the response is not an OK" in {
+    "checkSubscriptionHasRecentSubmissions should return false when the response is an internal server error" in {
       val subscriptionId = "XE512345678"
-      Seq(CREATED, NOT_FOUND, INTERNAL_SERVER_ERROR).foreach {
-        status =>
-          stubGetResponse(
-            s"/crs-fatca-reporting/files/details/$subscriptionId?page=1",
-            status,
-            ""
-          )
-          val result = connector.checkSubscriptionHasRecentSubmissions(subscriptionId).futureValue
-          result mustBe false
-      }
+      stubGetResponse(
+        s"/crs-fatca-reporting/files/details/$subscriptionId?page=1",
+        INTERNAL_SERVER_ERROR,
+        ""
+      )
+      val result = connector.checkSubscriptionHasRecentSubmissions(subscriptionId)
+      result.failed.futureValue mustBe an[IntenalIssueError.type]
     }
   }
 

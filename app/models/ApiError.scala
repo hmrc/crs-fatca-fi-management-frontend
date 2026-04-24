@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,8 @@
  * limitations under the License.
  */
 
-package models.readFIs.response
+package models
 
-import models.RequestType
-import play.api.libs.json.{Json, OFormat}
-
-final case class ResponseCommon(
-  OriginatingSystem: String,
-  TransmittingSystem: String,
-  RequestType: RequestType,
-  Regime: String,
-  ResponseParameters: Option[List[ResponseParameter]]
-)
-
-object ResponseCommon {
-  implicit val format: OFormat[ResponseCommon] = Json.format[ResponseCommon]
-}
+sealed trait ApiError extends Throwable
+case object UnExpectedResponse extends ApiError
+case object IntenalIssueError extends ApiError

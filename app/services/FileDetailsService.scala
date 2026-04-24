@@ -32,10 +32,10 @@ class FileDetailsService @Inject() (val connector: FileDetailsConnector) {
   ): Future[Boolean] =
     connector
       .checkSubscriptionHasRecentSubmissions(subscriptionId, page)
-      .recoverWith {
+      .recover {
         case e =>
           logger.error(s"FileDetailsService: Failed to check recent submissions", e)
-          Future.successful(false)
+          false
       }
 
 }
