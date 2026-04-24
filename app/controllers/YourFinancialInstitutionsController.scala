@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.FrontendAppConfig
 import controllers.actions._
 import forms.addFinancialInstitution.YourFinancialInstitutionsFormProvider
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
@@ -38,6 +39,7 @@ class YourFinancialInstitutionsController @Inject() (
   getData: DataRetrievalAction,
   retrieveCtUTR: CtUtrRetrievalAction,
   requireData: DataRequiredAction,
+  config: FrontendAppConfig,
   formProvider: YourFinancialInstitutionsFormProvider,
   val controllerComponents: MessagesControllerComponents,
   val financialInstitutionUpdateService: FinancialInstitutionUpdateService,
@@ -74,7 +76,7 @@ class YourFinancialInstitutionsController @Inject() (
         answersWithoutRemoveFI <- Future.fromTry(request.userAnswers.remove(InstitutionDetail))
         answersWithoutChangeFI <- Future.fromTry(answersWithoutRemoveFI.remove(ChangeFiDetailsInProgressId))
         _                      <- sessionRepository.set(answersWithoutChangeFI)
-      } yield Ok(view(form, getYourFinancialInstitutionsRows(updatedInstitutions), removedInstitutionName))
+      } yield Ok(view(form, getYourFinancialInstitutionsRows(updatedInstitutions, config.manageReport), removedInstitutionName))
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -84,7 +86,7 @@ class YourFinancialInstitutionsController @Inject() (
         .fold(
           formWithErrors =>
             financialInstitutionsService.getListOfFinancialInstitutions(request.fatcaId) map {
-              institutions => Ok(view(formWithErrors, getYourFinancialInstitutionsRows(institutions)))
+              institutions => Ok(view(formWithErrors, getYourFinancialInstitutionsRows(institutions, config.manageReport)))
             },
           {
             case true =>
