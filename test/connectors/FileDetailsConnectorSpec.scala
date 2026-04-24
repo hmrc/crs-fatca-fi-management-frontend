@@ -43,11 +43,23 @@ class FileDetailsConnectorSpec extends SpecBase with WireMockServerHandler with 
       stubGetResponse(
         s"/crs-fatca-reporting/files/details/$subscriptionId?page=1",
         OK,
-        ""
+        getAllFileDetailsStubResponse
       )
 
       val result = connector.checkSubscriptionHasRecentSubmissions(subscriptionId).futureValue
       result mustBe true
+    }
+
+    "checkSubscriptionHasRecentSubmissions should return false when the response is OK but content is not correct" in {
+      val subscriptionId = "XE512345678"
+      stubGetResponse(
+        s"/crs-fatca-reporting/files/details/$subscriptionId?page=1",
+        OK,
+        """{"invalid": "response"}"""
+      )
+
+      val result = connector.checkSubscriptionHasRecentSubmissions(subscriptionId).futureValue
+      result mustBe false
     }
 
     "checkSubscriptionHasRecentSubmissions should return false when the response is not an OK" in {
@@ -64,5 +76,35 @@ class FileDetailsConnectorSpec extends SpecBase with WireMockServerHandler with 
       }
     }
   }
+
+  private def getAllFileDetailsStubResponse: String =
+    """
+      |{
+      |"fileDetailsList": [
+      |{
+      |  "_id": "conversation-123",
+      |  "enrolmentId": "XACBC0000123456",
+      |  "messageRefId": "GBXACBC12345678",
+      |  "reportingEntityName": "Test Entity",
+      |  "status": {"Pending":{}},
+      |  "name": "test-file.xml",
+      |  "submitted": "2026-01-06T12:00:00",
+      |  "lastUpdated": "2026-01-06T12:00:00",
+      |  "reportingPeriod": "2026-01-01",
+      |  "messageType": "CRS",
+      |  "reportType": "TEST_DATA",
+      |  "fiNameFromFim": "Test FI Name",
+      |  "isFiUser": true,
+      |  "fileType":"NormalFile",
+      |  "fiPrimaryContactEmail":"fiPrimary@email.com",
+      |  "fiSecondaryContactEmail":"fiSecondary@email.com",
+      |  "subscriptionPrimaryContactEmail":"test@email.com",
+      |  "subscriptionSecondaryContactEmail":"secondarySub@email.com",
+      |  "sendCompanyIn":"some-company-in"
+      |}
+      |],
+      |"pages": 1
+      |}
+      |""".stripMargin
 
 }

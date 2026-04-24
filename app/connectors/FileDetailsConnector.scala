@@ -17,10 +17,13 @@
 package connectors
 
 import config.FrontendAppConfig
+import models.FileDetailsResult
 import play.api.http.Status.OK
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException, StringContextOps}
 import uk.gov.hmrc.http.client.HttpClientV2
 import play.api.i18n.Lang.logger
+import play.api.libs.json.{JsError, JsSuccess}
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -34,12 +37,25 @@ class FileDetailsConnector @Inject() (val config: FrontendAppConfig, val httpCli
       .execute[HttpResponse]
       .flatMap {
         case responseMessage if responseMessage.status == OK =>
-          Future.successful(true)
+          responseMessage.json.validate[FileDetailsResult] match {
+            case JsSuccess(_, _) => Future.successful(true)
+            case JsError(errors) =>
+              val errorMsg = errors
+                .map {
+                  case (path, validationErrors) => s"$path: ${validationErrors.map(_.message).mkString(",")}"
+                }
+                .mkString("; ")
+              logger.error(s"FileDetailsConnector: Failed to parse FileDetails JSON. Errors: $errorMsg")
+              Future.successful(false)
+          }
         case responseMessage =>
           logger.warn(s"FileDetailsConnector: Failed to check for recent submissions: ${responseMessage.status} and response: ${responseMessage.body}")
           Future.successful(false)
       }
       .recoverWith {
+        case _: NotFoundException =>
+          logger.warn(s"FileDetailsConnector: No file details found for subscriptionId: $subscriptionId")
+          Future.successful(false)
         case e: Exception =>
           logger.error(s"FileDetailsConnector: Exception occurred while checking for recent submissions", e)
           Future.successful(false)
