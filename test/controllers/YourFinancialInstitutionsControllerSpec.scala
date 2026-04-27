@@ -85,9 +85,10 @@ class YourFinancialInstitutionsControllerSpec extends SpecBase with MockitoSugar
 
             val result = route(application, request).value
 
-            val view = application.injector.instanceOf[YourFinancialInstitutionsView]
-
-            val institutions = YourFinancialInstitutionsViewModel.getYourFinancialInstitutionsRows(Seq(fiDetail.copy(IsFIUser = false)))(messages(application))
+            val view            = application.injector.instanceOf[YourFinancialInstitutionsView]
+            val manageReportUrl = s"http://localhost:10039/crs-fatca-manual-submission-frontend/read-submission-data"
+            val institutions =
+              YourFinancialInstitutionsViewModel.getYourFinancialInstitutionsRows(Seq(fiDetail.copy(IsFIUser = false)), manageReportUrl)(messages(application))
 
             status(result) mustEqual OK
             contentAsString(result) mustEqual view(form, institutions)(request, messages(application)).toString

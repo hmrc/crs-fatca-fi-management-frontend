@@ -23,7 +23,7 @@ import uk.gov.hmrc.hmrcfrontend.views.viewmodels.listwithactions.{ListWithAction
 
 object YourFinancialInstitutionsViewModel {
 
-  def getYourFinancialInstitutionsRows(institutions: Seq[FIDetail])(implicit messages: Messages): ListWithActions = {
+  def getYourFinancialInstitutionsRows(institutions: Seq[FIDetail], manageReportLink: String)(implicit messages: Messages): ListWithActions = {
     val orderedInstitutions = orderInstitutions(institutions)
     val items = orderedInstitutions.map {
       institution =>
@@ -45,7 +45,7 @@ object YourFinancialInstitutionsViewModel {
               Some(messages("yourFinancialInstitutions.remove.hidden", institution.FIName))
             ),
             ListWithActionsAction(
-              controllers.routes.YourFinancialInstitutionsController.onPageLoad().url,
+              createManageReportUrl(manageReportLink, institution.FIID),
               Text(messages("yourFinancialInstitutions.link.manageReports")),
               Some(messages("yourFinancialInstitutions.manageReports.hidden", institution.FIName))
             )
@@ -54,6 +54,8 @@ object YourFinancialInstitutionsViewModel {
     }
     ListWithActions(items = items)
   }
+
+  private def createManageReportUrl(baseUrl: String, fiid: String) = s"$baseUrl?fiid=$fiid"
 
   private def getValueContent(name: String, fiIsRegisteredBusiness: Boolean): HtmlContent = {
     val registeredBusinessTag =
