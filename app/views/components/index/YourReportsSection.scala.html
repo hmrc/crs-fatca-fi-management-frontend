@@ -18,10 +18,14 @@
 @import config.FrontendAppConfig
 @this(link: Link, appConfig: FrontendAppConfig)
 
-@()(implicit messages: Messages)
+@(hasRecentSubmissions: Boolean)(implicit messages: Messages)
 
 @uploadLink = {@link(appConfig.reportingUrl, messages("index.uploadFile.link"))}
+@submissionResultsLink = {@link(appConfig.submissionsResultsUrl, messages("index.submissionsResults.link"))}
 <div class="govuk-!-padding-top-5">
     <h2 class="govuk-heading-m">@messages("index.yourReports.h2")</h2>
     <p class="govuk-body">@uploadLink</p>
+    @if(hasRecentSubmissions){
+       <p class="govuk-body">@submissionResultsLink</p>
+    }
 </div>

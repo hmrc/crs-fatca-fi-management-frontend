@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,6 @@
 
 package models
 
-case class IndexViewModel(
-  isBusiness: Boolean,
-  fatcaId: String,
-  changeContactDetailsUrl: String,
-  businessName: Option[String] = None,
-  hasFis: Boolean,
-  hasRecentSubmissions: Boolean
-)
+sealed trait ApiError extends Throwable
+case object UnExpectedResponse extends ApiError
+case object IntenalIssueError extends ApiError
