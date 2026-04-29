@@ -24,7 +24,7 @@
 @submissionResultsLink = {@link(appConfig.submissionsResultsUrl, messages("index.submissionsResults.link"), Some("view-results-of-recent-submissions"))}
 <div class="govuk-!-padding-top-5">
     <h2 class="govuk-heading-m">@messages("index.yourReports.h2")</h2>
-    <p class="govuk-body">@uploadLink</p>
+    <p class="govuk-body govuk-!-margin-bottom-2 ">@uploadLink</p>
     @if(hasRecentSubmissions){
        <p class="govuk-body">@submissionResultsLink</p>
     }
