@@ -45,7 +45,7 @@ object YourFinancialInstitutionsViewModel {
               Some(messages("yourFinancialInstitutions.remove.hidden", institution.FIName))
             ),
             ListWithActionsAction(
-              createManageReportUrl(manageReportLink, institution.FIID),
+              createManageReportUrl(manageReportLink, institution.FIID, institution.FIName),
               Text(messages("yourFinancialInstitutions.link.manageReports")),
               Some(messages("yourFinancialInstitutions.manageReports.hidden", institution.FIName))
             )
@@ -55,7 +55,7 @@ object YourFinancialInstitutionsViewModel {
     ListWithActions(items = items)
   }
 
-  private def createManageReportUrl(baseUrl: String, fiid: String) = s"$baseUrl?fiid=$fiid"
+  private def createManageReportUrl(baseUrl: String, fiId: String, fiName: String) = s"$baseUrl?fiId=$fiId&fiName=$fiName"
 
   private def getValueContent(name: String, fiIsRegisteredBusiness: Boolean): HtmlContent = {
     val registeredBusinessTag =
