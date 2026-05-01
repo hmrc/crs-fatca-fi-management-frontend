@@ -73,7 +73,7 @@ class YourFinancialInstitutionsViewSpec extends SpecBase with GuiceOneAppPerSuit
       getWindowTitle(doc) must include("Manage your financial institutions")
       getPageHeading(doc) mustEqual "You have added 1 financial institution"
       doc.body.select("dt").text() must include("Test Financial Institution")
-      doc.body.select(".govuk-summary-list__actions-list-item").html() must include("baseUrl?fiid=12345")
+      doc.body.select(".govuk-summary-list__actions-list-item").html() must include("baseUrl?fiId=12345")
     }
   }
 
