@@ -21,6 +21,8 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
 import uk.gov.hmrc.hmrcfrontend.views.viewmodels.listwithactions.{ListWithActions, ListWithActionsAction, ListWithActionsItem}
 
+import java.time.LocalDate
+
 object YourFinancialInstitutionsViewModel {
 
   def getYourFinancialInstitutionsRows(institutions: Seq[FIDetail], manageReportLink: String)(implicit messages: Messages): ListWithActions = {
@@ -54,8 +56,8 @@ object YourFinancialInstitutionsViewModel {
     }
     ListWithActions(items = items)
   }
-
-  private def createManageReportUrl(baseUrl: String, fiId: String, fiName: String) = s"$baseUrl?fiId=$fiId&fiName=$fiName"
+  private def latestFinancialYear = LocalDate.now().getYear - 1
+  private def createManageReportUrl(baseUrl: String, fiId: String, fiName: String) = s"$baseUrl?fiId=$fiId&year=$latestFinancialYear"
 
   private def getValueContent(name: String, fiIsRegisteredBusiness: Boolean): HtmlContent = {
     val registeredBusinessTag =
