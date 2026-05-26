@@ -47,7 +47,7 @@ object YourFinancialInstitutionsViewModel {
               Some(messages("yourFinancialInstitutions.remove.hidden", institution.FIName))
             ),
             ListWithActionsAction(
-              createManageReportUrl(manageReportLink, institution.FIID, institution.FIName),
+              createManageReportUrl(manageReportLink, institution.FIID),
               Text(messages("yourFinancialInstitutions.link.manageReports")),
               Some(messages("yourFinancialInstitutions.manageReports.hidden", institution.FIName))
             )
@@ -56,8 +56,9 @@ object YourFinancialInstitutionsViewModel {
     }
     ListWithActions(items = items)
   }
-  private def latestFinancialYear = LocalDate.now().getYear - 1
-  private def createManageReportUrl(baseUrl: String, fiId: String, fiName: String) = s"$baseUrl?fiId=$fiId&year=$latestFinancialYear"
+
+  private def latestFinancialYear: Int                             = LocalDate.now().getYear - 1
+  private def createManageReportUrl(baseUrl: String, fiId: String) = s"$baseUrl/manage-reports-for-$latestFinancialYear?fiId=$fiId"
 
   private def getValueContent(name: String, fiIsRegisteredBusiness: Boolean): HtmlContent = {
     val registeredBusinessTag =
