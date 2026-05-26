@@ -28,13 +28,15 @@ import utils.ViewHelper
 import viewmodels.yourFinancialInstitutions.YourFinancialInstitutionsViewModel
 import views.html.YourFinancialInstitutionsView
 
+import java.time.LocalDate
+
 class YourFinancialInstitutionsViewSpec extends SpecBase with GuiceOneAppPerSuite with Injecting with ViewHelper {
 
-  private val view                                = app.injector.instanceOf[YourFinancialInstitutionsView]
-  private val formProvider                        = new YourFinancialInstitutionsFormProvider()
-  private val form                                = formProvider()
-  private val messagesControllerComponentsForView = app.injector.instanceOf[MessagesControllerComponents]
-
+  private val view                                      = app.injector.instanceOf[YourFinancialInstitutionsView]
+  private val formProvider                              = new YourFinancialInstitutionsFormProvider()
+  private val form                                      = formProvider()
+  private val messagesControllerComponentsForView       = app.injector.instanceOf[MessagesControllerComponents]
+  private val year                                      = LocalDate.now().getYear - 1
   implicit private val request: FakeRequest[AnyContent] = FakeRequest()
   implicit private val messages: Messages               = messagesControllerComponentsForView.messagesApi.preferred(Seq(Lang("en")))
 
@@ -73,7 +75,7 @@ class YourFinancialInstitutionsViewSpec extends SpecBase with GuiceOneAppPerSuit
       getWindowTitle(doc) must include("Manage your financial institutions")
       getPageHeading(doc) mustEqual "You have added 1 financial institution"
       doc.body.select("dt").text() must include("Test Financial Institution")
-      doc.body.select(".govuk-summary-list__actions-list-item").html() must include("baseUrl?fiId=12345")
+      doc.body.select(".govuk-summary-list__actions-list-item").html() must include(s"baseUrl/manage-reports-for-$year?fiId=12345")
     }
   }
 
