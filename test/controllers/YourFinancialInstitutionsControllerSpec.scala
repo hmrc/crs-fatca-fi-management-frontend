@@ -34,6 +34,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import viewmodels.yourFinancialInstitutions.YourFinancialInstitutionsViewModel
 import views.html.YourFinancialInstitutionsView
 
+import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 class YourFinancialInstitutionsControllerSpec extends SpecBase with MockitoSugar with ModelGenerators with ScalaCheckDrivenPropertyChecks {
@@ -83,10 +84,10 @@ class YourFinancialInstitutionsControllerSpec extends SpecBase with MockitoSugar
           running(application) {
             val request = FakeRequest(GET, routes.YourFinancialInstitutionsController.onPageLoad().url)
 
-            val result = route(application, request).value
-
+            val result          = route(application, request).value
+            val year            = LocalDate.now().getYear - 1
             val view            = application.injector.instanceOf[YourFinancialInstitutionsView]
-            val manageReportUrl = s"http://localhost:10039/crs-fatca-manual-submission-frontend/read-submission-data"
+            val manageReportUrl = s"http://localhost:10039/crs-fatca-manual-submission-frontend"
             val institutions =
               YourFinancialInstitutionsViewModel.getYourFinancialInstitutionsRows(Seq(fiDetail.copy(IsFIUser = false)), manageReportUrl)(messages(application))
 
