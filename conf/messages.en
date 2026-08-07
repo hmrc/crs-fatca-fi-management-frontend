@@ -480,3 +480,13 @@ fIRemoved.p3 = Back to manage your CRS and FATCA reports
 fIAlreadyRemoved.title = You have already removed this financial institution
 fIAlreadyRemoved.heading = You have already removed this financial institution
 fIAlreadyRemoved.p1 = Manage your financial institutions
+
+haveIdentificationNumbers.title = Identification numbers
+haveIdentificationNumbers.heading = Identification numbers
+haveIdentificationNumbers.para.1 = We’ll accept a:
+haveIdentificationNumbers.list.1 = Unique Taxpayer Reference (UTR), Company Registration Number (CRN) or both
+haveIdentificationNumbers.list.2 = trust Unique Reference Number (URN)
+haveIdentificationNumbers.subheading = Can you provide an identification number for {0}?
+haveIdentificationNumbers.checkYourAnswersLabel = Identification numbers
+haveIdentificationNumbers.error.required = SSelect yes if you can provide an identification number for the financial institution
+haveIdentificationNumbers.change.hidden = Identification numbers
