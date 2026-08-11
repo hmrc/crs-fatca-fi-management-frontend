@@ -40,7 +40,7 @@ class Navigator @Inject() () {
         isFiUser(
           userAnswers,
           routes.HaveGIINController.onPageLoad(NormalMode),
-          routes.WhichIdentificationNumbersController.onPageLoad(NormalMode)
+          routes.HaveIdentificationNumbersController.onPageLoad(NormalMode)
         )
     case WhichIdentificationNumbersPage => userAnswers => whichIdPage(userAnswers)
     case WhatIsUniqueTaxpayerReferencePage =>
@@ -236,6 +236,14 @@ class Navigator @Inject() () {
           IsThisYourBusinessNamePage,
           redirectToCheckYourAnswers(userAnswers),
           routes.NameOfFinancialInstitutionController.onPageLoad(CheckMode)
+        )
+    case HaveIdentificationNumbersPage =>
+      userAnswers =>
+        yesNoPage(
+          userAnswers,
+          HaveIdentificationNumbersPage,
+          routes.WhichIdentificationNumbersController.onPageLoad(NormalMode),
+          routes.HaveGIINController.onPageLoad(NormalMode)
         )
     case WhichIdentificationNumbersPage => changeWhichIdPage
     case WhatIsUniqueTaxpayerReferencePage =>

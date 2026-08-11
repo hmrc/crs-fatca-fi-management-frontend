@@ -20,13 +20,7 @@ import models.FinancialInstitutions.TINType
 import models.FinancialInstitutions.TINType._
 import models.{AnswersReviewPageType, CheckMode, UserAnswers}
 import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
-import pages.addFinancialInstitution.{
-  FirstContactHavePhonePage,
-  FirstContactPhoneNumberPage,
-  HaveGIINPage,
-  SecondContactCanWePhonePage,
-  WhichIdentificationNumbersPage
-}
+import pages.addFinancialInstitution.{FirstContactHavePhonePage, FirstContactPhoneNumberPage, HaveGIINPage, HaveIdentificationNumbersPage, SecondContactCanWePhonePage, WhichIdentificationNumbersPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, SummaryListRow}
@@ -110,16 +104,24 @@ package object common {
   }
 
   def getIdRows(ua: UserAnswers, pageType: AnswersReviewPageType)(implicit messages: Messages): Seq[SummaryListRow] = {
-    val idsUsed: Seq[TINType] = ua.get(WhichIdentificationNumbersPage).fold(Seq.empty[TINType])(_.toSeq)
-    idsUsed match {
-      case Seq(TINType.UTR) => Seq(WhichIdentificationNumbersSummary.row(ua), WhatIsUniqueTaxpayerReferenceSummary.row(ua, pageType)).flatten
-      case Seq(TINType.CRN) => Seq(WhichIdentificationNumbersSummary.row(ua), CompanyRegistrationNumberSummary.row(ua)).flatten
-      case Seq(TINType.UTR, TINType.CRN) =>
-        Seq(WhichIdentificationNumbersSummary.row(ua), WhatIsUniqueTaxpayerReferenceSummary.row(ua, pageType), CompanyRegistrationNumberSummary.row(ua)).flatten
-      case Seq(TINType.TURN) => Seq(WhichIdentificationNumbersSummary.row(ua), TrustURNSummary.row(ua)).flatten
-      case _                 => Seq.empty[SummaryListRow]
+    ua.get(HaveIdentificationNumbersPage) match {
+      case None => Seq.empty
+      case Some(false) =>
+        Seq(HaveIdentificationNumbersSummary.row(ua)).flatten
+      case Some(true) =>
+        val idsUsed = ua.get(WhichIdentificationNumbersPage).toSeq.flatten
+
+        Seq(
+          HaveIdentificationNumbersSummary.row(ua),
+          if (idsUsed.nonEmpty) WhichIdentificationNumbersSummary.row(ua) else None,
+          if (idsUsed.contains(TINType.UTR)) WhatIsUniqueTaxpayerReferenceSummary.row(ua, pageType) else None,
+          if (idsUsed.contains(TINType.CRN)) CompanyRegistrationNumberSummary.row(ua) else None,
+          if (idsUsed.contains(TINType.TURN)) TrustURNSummary.row(ua) else None
+        ).flatten
     }
   }
+
+
 
   def getAddressRow(ua: UserAnswers, pageType: AnswersReviewPageType)(implicit messages: Messages): Option[SummaryListRow] = {
     val addressLookup  = SelectedAddressLookupSummary.row(ua)

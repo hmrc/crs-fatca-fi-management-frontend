@@ -48,22 +48,43 @@ class CheckYourAnswersViewModelSpec extends SpecBase {
       "display relevant rows" in {
         val identifiers: Set[TINType] = Set(UTR: TINType)
         val ua1 = ua
+          .withPage(HaveIdentificationNumbersPage, true)
+          .withPage(WhichIdentificationNumbersPage, identifiers)
+          .withPage(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference("test"))
+          .withPage(CompanyRegistrationNumberPage, CompanyRegistrationNumber("test"))
+
+        val ua2 = ua
+          .withPage(HaveIdentificationNumbersPage, true)
+          .withPage(WhichIdentificationNumbersPage, Set(UTR: TINType, CRN: TINType))
+          .withPage(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference("test"))
+          .withPage(CompanyRegistrationNumberPage, CompanyRegistrationNumber("test"))
+
+        val ua4 = ua
+          .withPage(HaveIdentificationNumbersPage, true)
+          .withPage(WhichIdentificationNumbersPage, Set(TURN: TINType))
+          .withPage(TrustURNPage, TrustUniqueReferenceNumber("test"))
+
+        sut.getFinancialInstitutionSummaries(ua1).length mustBe 3
+        sut.getFinancialInstitutionSummaries(ua2).length mustBe 4
+        sut.getFinancialInstitutionSummaries(ua4).length mustBe 3
+      }
+
+      "only display HaveIdentificationNumbers when false" in {
+        val identifiers: Set[TINType] = Set(UTR: TINType)
+        val ua1 = ua
+          .withPage(HaveIdentificationNumbersPage, false)
           .withPage(WhichIdentificationNumbersPage, identifiers)
           .withPage(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference("test"))
           .withPage(CompanyRegistrationNumberPage, CompanyRegistrationNumber("test"))
         val ua2 = ua
-          .withPage(WhichIdentificationNumbersPage, Set(UTR: TINType, CRN: TINType))
-          .withPage(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference("test"))
-          .withPage(CompanyRegistrationNumberPage, CompanyRegistrationNumber("test"))
-        val ua3 = ua
-          .withPage(WhichIdentificationNumbersPage, Set(TURN: TINType))
-          .withPage(TrustURNPage, TrustUniqueReferenceNumber("test"))
+          .withPage(HaveIdentificationNumbersPage, false)
 
-        sut.getFinancialInstitutionSummaries(ua1).length mustBe 2
-        sut.getFinancialInstitutionSummaries(ua2).length mustBe 3
-        sut.getFinancialInstitutionSummaries(ua3).length mustBe 2
+        sut.getFinancialInstitutionSummaries(ua1).length mustBe 1
+        sut.getFinancialInstitutionSummaries(ua2).length mustBe 1
+
       }
     }
+
     "getFirstContactSummaries must" - {
       "return all four rows when 'Have Phone' is true and all fields are populated" in {
         val userAnswers = ua
