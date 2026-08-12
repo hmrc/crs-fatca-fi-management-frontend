@@ -105,8 +105,7 @@ package object common {
 
   def getIdRows(ua: UserAnswers, pageType: AnswersReviewPageType)(implicit messages: Messages): Seq[SummaryListRow] =
     ua.get(HaveIdentificationNumbersPage) match {
-      case None => Seq.empty
-      case Some(false) =>
+      case None | Some(false) =>
         Seq(HaveIdentificationNumbersSummary.row(ua)).flatten
       case Some(true) =>
         val idsUsed = ua.get(WhichIdentificationNumbersPage).toSeq.flatten
