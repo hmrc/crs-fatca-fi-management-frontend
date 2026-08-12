@@ -222,7 +222,9 @@ trait UserAnswersGenerator extends UserAnswersEntryGenerators with TryValues {
       utr            <- UTRDetails.arbitrary
       obj =
         setFields(
-          Json.obj()
+          Json.obj(
+            "haveIdentificationNumbers" -> true
+          )
         ) ++ address ++ contactDetails ++ nameAndGIIN ++ utr
     } yield UserAnswers(
       id = id,

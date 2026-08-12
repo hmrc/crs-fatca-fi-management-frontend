@@ -235,6 +235,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
 
   val userAnswersForAddFI: UserAnswers = emptyUserAnswers
     .withPage(NameOfFinancialInstitutionPage, "testfi")
+    .withPage(HaveIdentificationNumbersPage, true)
     .withPage(WhichIdentificationNumbersPage, Set[TINType](TINType.UTR))
     .withPage(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference("222333444"))
     .withPage(HaveGIINPage, true)

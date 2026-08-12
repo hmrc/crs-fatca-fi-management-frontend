@@ -20,7 +20,7 @@ import models.FinancialInstitutions.TINType
 import models.FinancialInstitutions.TINType._
 import models.{AnswersReviewPageType, CheckMode, UserAnswers}
 import pages.addFinancialInstitution.IsRegisteredBusiness.ReportForRegisteredBusinessPage
-import pages.addFinancialInstitution.{FirstContactHavePhonePage, FirstContactPhoneNumberPage, HaveGIINPage, HaveIdentificationNumbersPage, SecondContactCanWePhonePage, WhichIdentificationNumbersPage}
+import pages.addFinancialInstitution._
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, SummaryListRow}
@@ -103,7 +103,7 @@ package object common {
     }
   }
 
-  def getIdRows(ua: UserAnswers, pageType: AnswersReviewPageType)(implicit messages: Messages): Seq[SummaryListRow] = {
+  def getIdRows(ua: UserAnswers, pageType: AnswersReviewPageType)(implicit messages: Messages): Seq[SummaryListRow] =
     ua.get(HaveIdentificationNumbersPage) match {
       case None => Seq.empty
       case Some(false) =>
@@ -119,9 +119,6 @@ package object common {
           if (idsUsed.contains(TINType.TURN)) TrustURNSummary.row(ua) else None
         ).flatten
     }
-  }
-
-
 
   def getAddressRow(ua: UserAnswers, pageType: AnswersReviewPageType)(implicit messages: Messages): Option[SummaryListRow] = {
     val addressLookup  = SelectedAddressLookupSummary.row(ua)

@@ -113,24 +113,29 @@ sealed trait AddFIValidator {
   ).flatten ++ checkIdentificationNumbersMissingAnswers ++ fiGIINMissingAnswers
 
   private def checkIdentificationNumbersMissingAnswers: Seq[Page] =
-    userAnswers.get(WhichIdentificationNumbersPage) match {
-      case Some(selectedIds) =>
-        selectedIds.flatMap {
-          case TINType.UTR =>
-            checkPage(WhatIsUniqueTaxpayerReferencePage).map(
-              _ => WhatIsUniqueTaxpayerReferencePage
-            )
-          case TINType.CRN =>
-            checkPage(CompanyRegistrationNumberPage).map(
-              _ => CompanyRegistrationNumberPage
-            )
-          case TINType.TURN =>
-            checkPage(TrustURNPage).map(
-              _ => TrustURNPage
-            )
-        }.toSeq
-      case None =>
-        Seq(WhichIdentificationNumbersPage)
+    userAnswers.get(HaveIdentificationNumbersPage) match {
+      case Some(true) =>
+        userAnswers.get(WhichIdentificationNumbersPage) match {
+          case Some(selectedIds) =>
+            selectedIds.flatMap {
+              case TINType.UTR =>
+                checkPage(WhatIsUniqueTaxpayerReferencePage).map(
+                  _ => WhatIsUniqueTaxpayerReferencePage
+                )
+              case TINType.CRN =>
+                checkPage(CompanyRegistrationNumberPage).map(
+                  _ => CompanyRegistrationNumberPage
+                )
+              case TINType.TURN =>
+                checkPage(TrustURNPage).map(
+                  _ => TrustURNPage
+                )
+            }.toSeq
+          case None =>
+            Seq(WhichIdentificationNumbersPage)
+        }
+      case Some(false) => Seq.empty
+      case None        => Seq(HaveIdentificationNumbersPage)
     }
 
   private[utils] def checkRegisteredBusiness: Seq[Page] = Seq(
@@ -158,7 +163,7 @@ class CheckYourAnswersValidator(val userAnswers: UserAnswers) extends AddFIValid
     SecondContactEmailPage            -> controllers.addFinancialInstitution.routes.SecondContactEmailController.onPageLoad(CheckMode).url,
     SecondContactNamePage             -> controllers.addFinancialInstitution.routes.SecondContactExistsController.onPageLoad(CheckMode).url,
     SecondContactExistsPage           -> controllers.addFinancialInstitution.routes.SecondContactExistsController.onPageLoad(CheckMode).url,
-    WhichIdentificationNumbersPage    -> controllers.addFinancialInstitution.routes.WhichIdentificationNumbersController.onPageLoad(CheckMode).url,
+    HaveIdentificationNumbersPage     -> controllers.addFinancialInstitution.routes.HaveIdentificationNumbersController.onPageLoad(CheckMode).url,
     WhatIsUniqueTaxpayerReferencePage -> controllers.addFinancialInstitution.routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(CheckMode).url,
     CompanyRegistrationNumberPage     -> controllers.addFinancialInstitution.routes.WhatIsCompanyRegistrationNumberController.onPageLoad(CheckMode).url,
     TrustURNPage                      -> controllers.addFinancialInstitution.routes.TrustURNController.onPageLoad(CheckMode).url

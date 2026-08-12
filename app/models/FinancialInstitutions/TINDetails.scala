@@ -22,4 +22,6 @@ final case class TINDetails(TINType: TINType, TIN: String, IssuedBy: String)
 
 object TINDetails {
   implicit val format: OFormat[TINDetails] = Json.format[TINDetails]
+
+  val noTinAvailable = TINDetails(TINType.OTHER, "no_tin_available", "GB")
 }

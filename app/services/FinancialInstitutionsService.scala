@@ -74,7 +74,7 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
     } yield CreateFIDetails(
       FIName = fiName,
       SubscriptionID = subscriptionId,
-      TINDetails = extractTinDetails(userAnswers),
+      TINDetails = extractAndSetTinDetails(userAnswers),
       GIIN = userAnswers.get(WhatIsGIINPage).map(_.value),
       IsFIUser = userAnswers.get(ReportForRegisteredBusinessPage).contains(true),
       AddressDetails = address,
@@ -91,7 +91,7 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
       FIID = fiid,
       FIName = fiName,
       SubscriptionID = subscriptionId,
-      TINDetails = Some(extractTinDetails(userAnswers)),
+      TINDetails = Some(extractAndSetTinDetails(userAnswers)),
       GIIN = userAnswers.get(WhatIsGIINPage).map(_.value),
       IsFIUser = userAnswers.get(ReportForRegisteredBusinessPage).contains(true),
       AddressDetails = address,
@@ -99,24 +99,30 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
       SecondaryContactDetails = extractSecondaryContactDetails(userAnswers)
     )).getOrElse(throw new IllegalStateException("Unable to build FIDetail"))
 
-  private def extractTinDetails(userAnswers: UserAnswers): Seq[TINDetails] =
-    Seq(
-      userAnswers
-        .get(WhatIsUniqueTaxpayerReferencePage)
-        .map(
-          utr => TINDetails(UTR, utr.value, "GB")
-        ),
-      userAnswers
-        .get(CompanyRegistrationNumberPage)
-        .map(
-          crn => TINDetails(CRN, crn.value, "GB")
-        ),
-      userAnswers
-        .get(TrustURNPage)
-        .map(
-          trn => TINDetails(TURN, trn.value, "GB")
-        )
-    ).flatten
+  private def extractAndSetTinDetails(userAnswers: UserAnswers): Seq[TINDetails] =
+    userAnswers.get(HaveIdentificationNumbersPage) match {
+      case Some(true) =>
+        Seq(
+          userAnswers
+            .get(WhatIsUniqueTaxpayerReferencePage)
+            .map(
+              utr => TINDetails(UTR, utr.value, "GB")
+            ),
+          userAnswers
+            .get(CompanyRegistrationNumberPage)
+            .map(
+              crn => TINDetails(CRN, crn.value, "GB")
+            ),
+          userAnswers
+            .get(TrustURNPage)
+            .map(
+              trn => TINDetails(TURN, trn.value, "GB")
+            )
+        ).flatten
+
+      case _ =>
+        Seq(TINDetails.noTinAvailable)
+    }
 
   private def extractPrimaryContactDetails(userAnswers: UserAnswers): Option[ContactDetails] = for {
     contactName  <- userAnswers.get(FirstContactNamePage)
