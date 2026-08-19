@@ -30,7 +30,7 @@ object TINType extends Enumerable.Implicits {
   case object UTR extends TINType
   case object CRN extends TINType
   case object TURN extends TINType
-  case object OTHER extends TINType
+  case object Other extends TINType
 
   val allValues: IndexedSeq[TINType]     = IndexedSeq(UTR, CRN, TURN)
   val whichIdValues: IndexedSeq[TINType] = IndexedSeq(UTR, CRN, TURN)

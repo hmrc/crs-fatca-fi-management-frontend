@@ -130,6 +130,7 @@ sealed trait AddFIValidator {
                 checkPage(TrustURNPage).map(
                   _ => TrustURNPage
                 )
+              case _ => Seq.empty
             }.toSeq
           case None =>
             Seq(WhichIdentificationNumbersPage)
