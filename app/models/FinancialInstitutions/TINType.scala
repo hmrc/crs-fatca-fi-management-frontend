@@ -32,7 +32,7 @@ object TINType extends Enumerable.Implicits {
   case object TURN extends TINType
   case object Other extends TINType
 
-  val allValues: IndexedSeq[TINType]     = IndexedSeq(UTR, CRN, TURN)
+  val allValues: IndexedSeq[TINType]     = IndexedSeq(UTR, CRN, TURN, Other)
   val whichIdValues: IndexedSeq[TINType] = IndexedSeq(UTR, CRN, TURN)
 
   def checkboxItems(implicit messages: Messages): Seq[CheckboxItem] = {
