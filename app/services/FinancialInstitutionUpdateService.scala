@@ -116,9 +116,9 @@ class FinancialInstitutionUpdateService @Inject() (
     listOfTinDetails: Option[Seq[TINDetails]]
   )(implicit ec: ExecutionContext): Future[UserAnswers] =
     listOfTinDetails match {
-      case None => Future.successful(answers)
+      case None => Future.fromTry(answers.set(HaveIdentificationNumbersPage, false))
       case Some(detailsList) =>
-        detailsList.foldLeft(Future.successful(answers)) {
+        detailsList.foldLeft(Future.fromTry(answers.set(HaveIdentificationNumbersPage, false))) {
           (futureAnswers, details) =>
             futureAnswers.flatMap {
               currentAnswers =>
@@ -131,6 +131,7 @@ class FinancialInstitutionUpdateService @Inject() (
                              cleanup = false
                         )
                         .flatMap(_.set(WhatIsUniqueTaxpayerReferencePage, UniqueTaxpayerReference(details.TIN), cleanup = false))
+                        .flatMap(_.set(HaveIdentificationNumbersPage, true))
                     )
                   case CRN =>
                     Future.fromTry(
@@ -140,6 +141,7 @@ class FinancialInstitutionUpdateService @Inject() (
                              cleanup = false
                         )
                         .flatMap(_.set(CompanyRegistrationNumberPage, CompanyRegistrationNumber(details.TIN), cleanup = false))
+                        .flatMap(_.set(HaveIdentificationNumbersPage, true))
                     )
                   case TURN =>
                     Future.fromTry(
@@ -149,6 +151,7 @@ class FinancialInstitutionUpdateService @Inject() (
                              cleanup = false
                         )
                         .flatMap(_.set(TrustURNPage, TrustUniqueReferenceNumber(details.TIN), cleanup = false))
+                        .flatMap(_.set(HaveIdentificationNumbersPage, true))
                     )
                   case _ =>
                     Future.successful(currentAnswers)
