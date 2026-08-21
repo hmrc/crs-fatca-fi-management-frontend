@@ -149,10 +149,25 @@ class NavigatorSpec extends SpecBase {
           routes.HaveGIINController.onPageLoad(NormalMode)
       }
 
-      "must go from NameOfFinancialInstitutionPage to WhichIdentificationNumbersPage when user is not FI" in {
+      "must go from NameOfFinancialInstitutionPage to HaveIdentificationNumbersPage when user is not FI" in {
         val userAnswers = emptyUserAnswers.withPage(NameOfFinancialInstitutionPage, "FI")
         navigator.nextPage(NameOfFinancialInstitutionPage, NormalMode, userAnswers) mustBe
-          routes.WhichIdentificationNumbersController.onPageLoad(NormalMode)
+          routes.HaveIdentificationNumbersController.onPageLoad(NormalMode)
+      }
+
+      "must go from HaveIdentificationNumbersPage " - {
+        "to WhichIdentificationNumbers page when Yes" in {
+          val userAnswers = emptyUserAnswers.withPage(HaveIdentificationNumbersPage, true)
+
+          navigator.nextPage(HaveIdentificationNumbersPage, NormalMode, userAnswers) mustBe
+            routes.WhichIdentificationNumbersController.onPageLoad(NormalMode)
+        }
+        "to HaveGiin page when No" in {
+          val userAnswers = emptyUserAnswers.withPage(HaveIdentificationNumbersPage, false)
+
+          navigator.nextPage(HaveIdentificationNumbersPage, NormalMode, userAnswers) mustBe
+            routes.HaveGIINController.onPageLoad(NormalMode)
+        }
       }
 
       "must go from WhichIdentificationNumbersPage " - {

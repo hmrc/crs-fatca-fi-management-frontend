@@ -56,6 +56,43 @@ class CheckModeNavigatorSpec extends SpecBase {
         navigator.nextPage(NameOfFinancialInstitutionPage, CheckMode, userAnswers) mustBe
           controllers.addFinancialInstitution.routes.CheckYourAnswersController.onPageLoad()
       }
+
+      "HaveIdentificationNumbers" - {
+        "must go to CheckAnswers" - {
+          "when answer is unchanged" in {
+            val existingAnswers = userAnswersForAddFI
+
+            val answers = existingAnswers
+              .withPage(HaveIdentificationNumbersPage, true)
+
+            navigator.nextPage(HaveIdentificationNumbersPage, CheckMode, answers) mustBe
+              routes.CheckYourAnswersController.onPageLoad()
+          }
+
+          "when answer is changed to No (false)" in {
+            val existingAnswers = emptyUserAnswers
+              .withPage(HaveIdentificationNumbersPage, true)
+
+            val answers = existingAnswers
+              .withPage(HaveIdentificationNumbersPage, false)
+
+            navigator.nextPage(HaveIdentificationNumbersPage, CheckMode, answers) mustBe
+              routes.CheckYourAnswersController.onPageLoad()
+          }
+        }
+
+        "must go to WhichIdentificationNumbers" - {
+          "when answer is changed to Yes (true)" in {
+            val answers = emptyUserAnswers
+              .withPage(HaveIdentificationNumbersPage, true)
+              .withPage(WhichIdentificationNumbersPage, Set(UTR: TINType))
+
+            navigator.nextPage(HaveIdentificationNumbersPage, CheckMode, answers) mustBe
+              routes.WhichIdentificationNumbersController.onPageLoad(CheckMode)
+          }
+        }
+      }
+
       "must go from WhichIdentificationNumbersPage" - {
         "with UTR selected" - {
           "to CheckAnswers if WhatIsUniqueTaxpayerReferencePage is populated" in {

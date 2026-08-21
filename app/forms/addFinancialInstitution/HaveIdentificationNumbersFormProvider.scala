@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package models.FinancialInstitutions
+package forms.addFinancialInstitution
 
-import play.api.libs.json.{Json, OFormat}
+import forms.mappings.Mappings
+import play.api.data.Form
 
-final case class TINDetails(TINType: TINType, TIN: String, IssuedBy: String)
+import javax.inject.Inject
 
-object TINDetails {
-  implicit val format: OFormat[TINDetails] = Json.format[TINDetails]
+class HaveIdentificationNumbersFormProvider @Inject() extends Mappings {
 
-  val noTinAvailable = TINDetails(TINType.Other, "no_tin_available", "GB")
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("haveIdentificationNumbers.error.required")
+    )
+
 }

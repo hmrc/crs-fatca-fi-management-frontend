@@ -21,6 +21,7 @@ import models.{CheckMode, NormalMode, UserAnswers}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.{CompanyRegistrationNumberPage, TrustURNPage}
 import pages.addFinancialInstitution.IsRegisteredBusiness.{
   FetchedRegisteredAddressPage,
   IsTheAddressCorrectPage,
@@ -50,7 +51,10 @@ class CheckYourAnswersValidatorSpec extends AnyFreeSpec with Matchers with Model
             result mustNot be(empty)
             Set(
               NameOfFinancialInstitutionPage,
+              HaveIdentificationNumbersPage,
               WhichIdentificationNumbersPage,
+              CompanyRegistrationNumberPage,
+              TrustURNPage,
               FirstContactEmailPage,
               FirstContactHavePhonePage,
               FirstContactNamePage,
@@ -84,6 +88,7 @@ class CheckYourAnswersValidatorSpec extends AnyFreeSpec with Matchers with Model
               controllers.addFinancialInstitution.routes.SecondContactCanWePhoneController.onPageLoad(CheckMode).url,
               controllers.addFinancialInstitution.routes.SecondContactEmailController.onPageLoad(CheckMode).url,
               controllers.addFinancialInstitution.routes.SecondContactExistsController.onPageLoad(CheckMode).url,
+              controllers.addFinancialInstitution.routes.HaveIdentificationNumbersController.onPageLoad(CheckMode).url,
               controllers.addFinancialInstitution.routes.WhichIdentificationNumbersController.onPageLoad(CheckMode).url,
               controllers.addFinancialInstitution.routes.WhatIsUniqueTaxpayerReferenceController.onPageLoad(CheckMode).url,
               controllers.addFinancialInstitution.routes.WhatIsCompanyRegistrationNumberController.onPageLoad(CheckMode).url,

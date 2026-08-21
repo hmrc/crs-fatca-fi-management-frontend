@@ -157,6 +157,11 @@ POST        /change-trust-urn                                             contro
 
 GET         /problem/not-in-uk                                            controllers.NotInUKController.onPageLoad()
 
+GET         /have-identification-numbers                                  controllers.addFinancialInstitution.HaveIdentificationNumbersController.onPageLoad(mode: Mode = NormalMode)
+POST        /have-identification-numbers                                  controllers.addFinancialInstitution.HaveIdentificationNumbersController.onSubmit(mode: Mode = NormalMode)
+GET         /change-have-identification-numbers                           controllers.addFinancialInstitution.HaveIdentificationNumbersController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-have-identification-numbers                           controllers.addFinancialInstitution.HaveIdentificationNumbersController.onSubmit(mode: Mode = CheckMode)
+
 GET         /identification-numbers                                       controllers.addFinancialInstitution.WhichIdentificationNumbersController.onPageLoad(mode: Mode = NormalMode)
 POST        /identification-numbers                                       controllers.addFinancialInstitution.WhichIdentificationNumbersController.onSubmit(mode: Mode = NormalMode)
 GET         /change-identification-numbers                                controllers.addFinancialInstitution.WhichIdentificationNumbersController.onPageLoad(mode: Mode = CheckMode)
@@ -168,4 +173,4 @@ POST        /remove/user-access/:fiid                                     contro
 GET         /remove/other-access/:fiid                                    controllers.OtherAccessController.onPageLoad(fiid: String)
 POST        /remove/other-access                                          controllers.OtherAccessController.onSubmit()
 
-GET        /remove/fi-removed                                             controllers.FIRemovedController.onPageLoad()
+GET         /remove/fi-removed                                             controllers.FIRemovedController.onPageLoad()

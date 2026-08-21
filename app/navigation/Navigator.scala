@@ -40,7 +40,15 @@ class Navigator @Inject() () {
         isFiUser(
           userAnswers,
           routes.HaveGIINController.onPageLoad(NormalMode),
-          routes.WhichIdentificationNumbersController.onPageLoad(NormalMode)
+          routes.HaveIdentificationNumbersController.onPageLoad(NormalMode)
+        )
+    case HaveIdentificationNumbersPage =>
+      userAnswers =>
+        yesNoPage(
+          userAnswers,
+          HaveIdentificationNumbersPage,
+          routes.WhichIdentificationNumbersController.onPageLoad(NormalMode),
+          routes.HaveGIINController.onPageLoad(NormalMode)
         )
     case WhichIdentificationNumbersPage => userAnswers => whichIdPage(userAnswers)
     case WhatIsUniqueTaxpayerReferencePage =>
@@ -237,6 +245,29 @@ class Navigator @Inject() () {
           redirectToCheckYourAnswers(userAnswers),
           routes.NameOfFinancialInstitutionController.onPageLoad(CheckMode)
         )
+    case HaveIdentificationNumbersPage =>
+      userAnswers =>
+        def checkModeRoute(userAnswers: UserAnswers, identificationNumbersRoute: Boolean) = {
+          val validator        = CheckYourAnswersValidator(userAnswers)
+          val validationResult = validator.validate
+
+          validationResult match {
+            case Nil =>
+              redirectToCheckYourAnswers(userAnswers)
+            case _ if identificationNumbersRoute =>
+              routes.WhichIdentificationNumbersController.onPageLoad(CheckMode)
+            case _ =>
+              redirectToCheckYourAnswers(userAnswers)
+          }
+        }
+
+        yesNoPage(
+          userAnswers,
+          HaveIdentificationNumbersPage,
+          checkModeRoute(userAnswers, identificationNumbersRoute = true),
+          checkModeRoute(userAnswers, identificationNumbersRoute = false)
+        )
+
     case WhichIdentificationNumbersPage => changeWhichIdPage
     case WhatIsUniqueTaxpayerReferencePage =>
       userAnswers =>
@@ -255,7 +286,7 @@ class Navigator @Inject() () {
     case _ => redirectToCheckYourAnswers
   }
 
-  def redirectToCheckYourAnswers(ua: UserAnswers): Call = resolveAnswersVerificationRoute(ua)
+  private def redirectToCheckYourAnswers(ua: UserAnswers): Call = resolveAnswersVerificationRoute(ua)
 
   private def isFiUser(ua: UserAnswers, yesCall: => Call, noCall: => Call): Call =
     ua.get(ReportForRegisteredBusinessPage) match {
