@@ -71,7 +71,7 @@ class NavigatorSpec extends SpecBase {
         " to CheckYourAnswers if No with No ChangeFIInProgress" in {
           val userAnswers = emptyUserAnswers.set(SecondContactExistsPage, false).get
           navigator.nextPage(SecondContactExistsPage, NormalMode, userAnswers) mustBe
-            routes.CheckYourAnswersController.onPageLoad
+            routes.CheckYourAnswersController.onPageLoad()
         }
         " to ChangeYourAnswerPage if No with ChangeFIInProgress" in {
           val userAnswers    = emptyUserAnswers.set(SecondContactExistsPage, false).get
@@ -100,7 +100,7 @@ class NavigatorSpec extends SpecBase {
         "to CheckYourAnswersPage when No With No ChangeFIIdInProgress" in {
           val userAnswers = emptyUserAnswers.set(SecondContactCanWePhonePage, false).get
           navigator.nextPage(SecondContactCanWePhonePage, NormalMode, userAnswers) mustBe
-            routes.CheckYourAnswersController.onPageLoad
+            routes.CheckYourAnswersController.onPageLoad()
         }
 
         "to ChangeYourAnswerPage when No With ChangeFIIdInProgress" in {
@@ -113,7 +113,7 @@ class NavigatorSpec extends SpecBase {
       }
       "must go from SecondContactPhoneNumber to CheckYourAnswers When No ChangeFIInProgress" in {
         navigator.nextPage(SecondContactPhoneNumberPage, NormalMode, UserAnswers("id")) mustBe
-          routes.CheckYourAnswersController.onPageLoad
+          routes.CheckYourAnswersController.onPageLoad()
       }
 
       "must go from SecondContactPhoneNumber to ChangeYourAnswer When ChangeFIInprogress" in {
@@ -132,7 +132,7 @@ class NavigatorSpec extends SpecBase {
       "must go from SecondContactCanWePhonePage to CheckYourAnswersPage when user answers no" in {
         val userAnswers = emptyUserAnswers.withPage(SecondContactCanWePhonePage, false)
         navigator.nextPage(SecondContactCanWePhonePage, NormalMode, userAnswers) mustBe
-          routes.CheckYourAnswersController.onPageLoad
+          routes.CheckYourAnswersController.onPageLoad()
       }
 
       "must go from SecondContactCanWePhonePage to ChangeYourAnswersPage when user answers no And ChangeFIInProgress" in {

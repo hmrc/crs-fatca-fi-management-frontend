@@ -88,7 +88,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return error when there is a failure while persisting the user answers" in {
         forAll {
-          fiDetails: FIDetail =>
+          (fiDetails: FIDetail) =>
             when(mockSessionRepository.set(any())).thenReturn(Future.failed(persistenceError))
 
             an[Exception] must be thrownBy service.populateAndSaveFiDetails(emptyUserAnswers, fiDetails).futureValue
@@ -138,7 +138,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return error when there is a failure while persisting the user answers" in {
         forAll {
-          fiDetails: FIDetail =>
+          (fiDetails: FIDetail) =>
             when(mockSessionRepository.set(any())).thenReturn(Future.failed(persistenceError))
 
             an[Exception] must be thrownBy service.populateAndSaveRegisteredFiDetails(emptyUserAnswers, fiDetails).futureValue
@@ -150,7 +150,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return false when there has been no changes to the FI details" in {
         forAll {
-          fiDetails: FIDetail =>
+          (fiDetails: FIDetail) =>
             setUpMock(Country.GB, fiDetails.AddressDetails.CountryCode.toSet)
 
             val (populatedUserAnswers, _) = service
@@ -163,7 +163,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return true when the NameOfFinancialInstitutionPage in user answers does not equal value in FIDetail" in {
         forAll {
-          fiDetails: FIDetail =>
+          (fiDetails: FIDetail) =>
             setUpMock(Country.GB, fiDetails.AddressDetails.CountryCode.toSet)
 
             val (result, _) = service
@@ -171,7 +171,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
               .futureValue
 
             val populatedUserAnswers = result
-              .withPage(NameOfFinancialInstitutionPage, UUID.randomUUID() + "suffix")
+              .withPage(NameOfFinancialInstitutionPage, UUID.randomUUID().toString + "suffix")
 
             service.fiDetailsHasChanged(populatedUserAnswers, fiDetails) mustBe true
         }
@@ -233,7 +233,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return true when the FirstContactNamePage in user answers does not equal value in FIDetail" in {
         forAll {
-          fiDetails: FIDetail =>
+          (fiDetails: FIDetail) =>
             setUpMock(Country.GB, fiDetails.AddressDetails.CountryCode.toSet)
 
             val (result, _) = service
@@ -241,7 +241,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
               .futureValue
 
             val populatedUserAnswers = result
-              .withPage(FirstContactNamePage, UUID.randomUUID() + "suffix")
+              .withPage(FirstContactNamePage, UUID.randomUUID().toString + "suffix")
 
             service.fiDetailsHasChanged(populatedUserAnswers, fiDetails) mustBe true
         }
@@ -249,7 +249,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return true when the FirstContactEmailPage in user answers does not equal value in FIDetail" in {
         forAll {
-          fiDetails: FIDetail =>
+          (fiDetails: FIDetail) =>
             setUpMock(Country.GB, fiDetails.AddressDetails.CountryCode.toSet)
 
             val (result, _) = service
@@ -257,7 +257,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
               .futureValue
 
             val populatedUserAnswers = result
-              .withPage(FirstContactEmailPage, UUID.randomUUID() + "suffix")
+              .withPage(FirstContactEmailPage, UUID.randomUUID().toString + "suffix")
 
             service.fiDetailsHasChanged(populatedUserAnswers, fiDetails) mustBe true
         }
@@ -265,7 +265,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return true when FirstContactHavePhonePage in user answers does not equal value in FIDetail" in {
         forAll {
-          fiDetails: FIDetail =>
+          (fiDetails: FIDetail) =>
             setUpMock(Country.GB, fiDetails.AddressDetails.CountryCode.toSet)
 
             val (result, _) = service
@@ -281,7 +281,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return true when SecondContactExistsPage in user answers does not equal value in FIDetail" in {
         forAll {
-          fiDetails: FIDetail =>
+          (fiDetails: FIDetail) =>
             setUpMock(Country.GB, fiDetails.AddressDetails.CountryCode.toSet)
 
             val (result, _) = service
@@ -297,7 +297,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return true when user answers UTR is different from UTR in FIDetail" in {
         forAll {
-          fiDetails: FIDetail =>
+          (fiDetails: FIDetail) =>
             val fiDetailsUTR = UniqueTaxpayerReference(UUID.randomUUID().toString)
             setUpMock(Country.GB, fiDetails.AddressDetails.CountryCode.toSet)
 
@@ -315,7 +315,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must return true when user answers GIIN is different from GIIN in FIDetail" in {
         forAll {
-          fiDetails: FIDetail =>
+          (fiDetails: FIDetail) =>
             val fiDetailsGIIN     = GIINumber(UUID.randomUUID().toString)
             val fiDetailsWithGIIN = fiDetails.copy(TINDetails = Some(Seq(TINDetails(TINType = UTR, TIN = fiDetailsGIIN.value, ""))))
             setUpMock(Country.GB, fiDetails.AddressDetails.CountryCode.toSet)
@@ -500,7 +500,7 @@ class FinancialInstitutionUpdateServiceSpec extends SpecBase with MockitoSugar w
 
       "must clear user answers data" in {
         forAll {
-          userAnswers: UserAnswers =>
+          (userAnswers: UserAnswers) =>
             val userAnswersWithDataCleared = userAnswers.copy(data = Json.obj())
 
             when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))

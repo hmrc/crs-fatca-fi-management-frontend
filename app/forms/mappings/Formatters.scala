@@ -300,7 +300,6 @@ trait Formatters extends Transforms with RegexConstants {
           case Some(value) if value.matches(exampleGIIN)       => Left(Seq(FormError(key, invalidKey)))
           case Some(value) if !value.matches(giinFormatRegex)  => Left(Seq(FormError(key, formatKey)))
           case Some(value)                                     => Right(validGIINFormat(value))
-          case _                                               => Left(Seq(FormError(key, invalidKey)))
         }
       }
 

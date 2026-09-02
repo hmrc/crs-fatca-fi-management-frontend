@@ -69,7 +69,7 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar with 
 
     "must return OK and the correct view with the country name for a GET" in {
       forAll {
-        addressResponse: AddressResponse =>
+        (addressResponse: AddressResponse) =>
           val application = applicationBuilder(userAnswers = Some(userAnswersWithName))
             .overrides(bind[CtUtrRetrievalAction].toInstance(mockCtUtrRetrievalAction))
             .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
@@ -96,7 +96,7 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar with 
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
       forAll {
-        addressResponse: AddressResponse =>
+        (addressResponse: AddressResponse) =>
           val userAnswers = userAnswersWithName
             .withPage(IsTheAddressCorrectPage, true)
 
@@ -185,7 +185,7 @@ class IsTheAddressCorrectControllerSpec extends SpecBase with MockitoSugar with 
 
     "must redirect to Journey Recovery page for a GET when a country could not be found for the country code" in {
       forAll {
-        addressResponse: AddressResponse =>
+        (addressResponse: AddressResponse) =>
           val application = applicationBuilder(userAnswers = Some(userAnswersWithName))
             .overrides(bind[CtUtrRetrievalAction].toInstance(mockCtUtrRetrievalAction))
             .overrides(bind[SessionRepository].toInstance(mockSessionRepository))

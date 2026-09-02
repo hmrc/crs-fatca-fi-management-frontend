@@ -37,7 +37,7 @@ class WhatIsUniqueTaxpayerReferenceFormProvider @Inject() extends Mappings with 
       )(
         UniqueTaxpayerReference.apply
       )(
-        UniqueTaxpayerReference.unapply
+        utr => Some(utr.value)
       )
     )
 
