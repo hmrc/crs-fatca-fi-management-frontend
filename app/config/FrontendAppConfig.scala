@@ -20,7 +20,7 @@ import com.google.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.i18n.Lang
 import play.api.mvc.RequestHeader
-import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
+import uk.gov.hmrc.http.StringContextOps
 
 @Singleton
 class FrontendAppConfig @Inject() (configuration: Configuration) {
@@ -31,7 +31,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   private val contactHost = configuration.get[String]("contact-frontend.host")
 
   def feedbackUrl(implicit request: RequestHeader): String =
-    s"$contactHost/contact/beta-feedback?service=$appName&backUrl=${SafeRedirectUrl(host + request.uri).encodedUrl}"
+    url"$contactHost/contact/beta-feedback?service=$appName&backUrl=${host + request.uri}".toString
 
   val loginUrl: String                          = configuration.get[String]("urls.login")
   val loginContinueUrl: String                  = configuration.get[String]("urls.loginContinue")
@@ -64,8 +64,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   val timeout: Int   = configuration.get[Int]("timeout-dialog.timeout")
   val countdown: Int = configuration.get[Int]("timeout-dialog.countdown")
 
-  val cacheTtl: Int              = configuration.get[Int]("mongodb.timeToLiveInSeconds")
-  val changeAnswersCacheTtl: Int = configuration.get[Int]("mongodb.changeAnswersTimeToLiveInSeconds")
+  val cacheTtl: Long              = configuration.get[Int]("mongodb.timeToLiveInSeconds")
+  val changeAnswersCacheTtl: Long = configuration.get[Int]("mongodb.changeAnswersTimeToLiveInSeconds")
 
   val enrolmentKey: String   = configuration.get[String]("keys.enrolmentKey.crsFatca")
   val ctEnrolmentKey: String = configuration.get[String]("keys.enrolmentKey.ct")

@@ -27,7 +27,6 @@ trait ButtonFluency {
 
     def apply(content: Content): Button =
       Button(
-        element = Some("button"),
         content = content
       )
 
@@ -37,14 +36,7 @@ trait ButtonFluency {
 
     def asLink(href: String): Button =
       button.copy(
-        element = Some("a"),
         href = Some(href)
-      )
-
-    def asInput(inputType: String): Button =
-      button.copy(
-        element = Some("input"),
-        inputType = Some(inputType)
       )
 
     def withName(name: String): Button =
@@ -61,15 +53,6 @@ trait ButtonFluency {
 
     def preventingDoubleClick(): Button =
       button.copy(preventDoubleClick = Some(true))
-
-    def asStartButton(): Button =
-      button.copy(isStartButton = true)
-
-    def asSecondaryButton(): Button =
-      withCssClass("govuk-button--secondary")
-
-    def asWarningButton(): Button =
-      withCssClass("govuk-button--warning")
 
   }
 

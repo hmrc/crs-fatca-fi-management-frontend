@@ -31,7 +31,7 @@ class SecondContactCanWePhonePageSpec extends PageBehaviours {
   "cleanup" - {
     "must remove SecondContactPhoneNumberPage when answer is false" in {
       forAll {
-        value: String =>
+        (value: String) =>
           val userAnswers = emptyUserAnswers.withPage(SecondContactPhoneNumberPage, value)
 
           val result = SecondContactCanWePhonePage.cleanup(Some(false), userAnswers).success.value
@@ -42,7 +42,7 @@ class SecondContactCanWePhonePageSpec extends PageBehaviours {
 
     "must not remove SecondContactPhoneNumberPage when answer is true" in {
       forAll {
-        value: String =>
+        (value: String) =>
           val userAnswers = emptyUserAnswers.withPage(SecondContactPhoneNumberPage, value)
 
           val result = SecondContactCanWePhonePage.cleanup(Some(true), userAnswers).success.value

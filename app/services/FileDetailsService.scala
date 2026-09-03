@@ -17,7 +17,6 @@
 package services
 
 import connectors.FileDetailsConnector
-import models.FinancialInstitutions.FIDetail
 import play.api.i18n.Lang.logger
 import uk.gov.hmrc.http.HeaderCarrier
 

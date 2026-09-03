@@ -87,7 +87,7 @@ class ChangeFinancialInstitutionControllerSpec
 
         "must return OK and the correct view without the 'Confirm and send' button for a GET when ChangeFiDetailsInProgress is not set" in {
           forAll {
-            fiDetail: FIDetail =>
+            (fiDetail: FIDetail) =>
               val userAnswers = emptyUserAnswers
 
               mockSuccessfulFiRetrieval(fiDetail)
@@ -186,7 +186,7 @@ class ChangeFinancialInstitutionControllerSpec
 
         "must return INTERNAL_SERVER_ERROR when an error occurs during persistence of FI details" in {
           forAll {
-            fiDetail: FIDetail =>
+            (fiDetail: FIDetail) =>
               mockSuccessfulFiRetrieval(fiDetail)
               when(mockFinancialInstitutionUpdateService.populateAndSaveFiDetails(any(), any()))
                 .thenReturn(Future.failed(new Exception("failed to populate and save FI details")))
@@ -276,7 +276,7 @@ class ChangeFinancialInstitutionControllerSpec
 
       "must return INTERNAL_SERVER_ERROR when unable to find FI details" in {
         forAll {
-          fiDetail: FIDetail =>
+          (fiDetail: FIDetail) =>
             when(mockFinancialInstitutionsService.getFinancialInstitution(any(), any())(any(), any()))
               .thenReturn(Future.successful(None))
 
@@ -296,7 +296,7 @@ class ChangeFinancialInstitutionControllerSpec
 
       "must return INTERNAL_SERVER_ERROR when an error occurs during retrieval of FI details" in {
         forAll {
-          fiDetail: FIDetail =>
+          (fiDetail: FIDetail) =>
             when(mockFinancialInstitutionsService.getFinancialInstitution(any(), any())(any(), any()))
               .thenReturn(Future.failed(new Exception("failed to read FI details")))
 
@@ -350,7 +350,7 @@ class ChangeFinancialInstitutionControllerSpec
       }
       "must redirect to details updated page when submitting answers" in {
         when(mockService.updateFinancialInstitution(any[String](), any[UserAnswers]())(any[HeaderCarrier](), any[ExecutionContext]()))
-          .thenReturn(Future.successful())
+          .thenReturn(Future.successful(()))
 
         val application = applicationBuilder(userAnswers = Some(someUserAnswers))
           .overrides(

@@ -50,13 +50,13 @@ class ChangeUserAnswersRepositorySpec
   private val userAnswers = UserAnswers("id", Json.obj("foo" -> "bar"), Instant.ofEpochSecond(1))
 
   private val mockAppConfig = mock[FrontendAppConfig]
-  when(mockAppConfig.changeAnswersCacheTtl) thenReturn 1
+  when(mockAppConfig.changeAnswersCacheTtl) thenReturn 1L
 
   when(mockAppConfig.encryptionEnabled) thenReturn true
 
   implicit val crypto: CryptoT = new CryptoProvider(Configuration("crypto.key" -> randomAesKey)).get()
 
-  override protected val repository = new ChangeUserAnswersRepository(
+  override protected val repository: ChangeUserAnswersRepository = new ChangeUserAnswersRepository(
     mongoComponent = mongoComponent,
     appConfig = mockAppConfig,
     clock = stubClock

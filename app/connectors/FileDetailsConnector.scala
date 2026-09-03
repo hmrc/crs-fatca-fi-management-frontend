@@ -17,12 +17,11 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.{FileDetailsResult, IntenalIssueError, UnExpectedResponse}
-import play.api.http.Status.{NOT_FOUND, OK}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException, StringContextOps}
-import uk.gov.hmrc.http.client.HttpClientV2
+import models.{IntenalIssueError, UnExpectedResponse}
+import play.api.http.Status.OK
 import play.api.i18n.Lang.logger
-import play.api.libs.json.{JsError, JsSuccess}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
