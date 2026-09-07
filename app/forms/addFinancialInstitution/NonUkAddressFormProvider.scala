@@ -63,7 +63,9 @@ class NonUkAddressFormProvider @Inject() extends Mappings with RegexConstants {
           value => countryList.find(_.code == value).getOrElse(throw new IllegalStateException(s"Country with code [$value] not found")),
           _.code
         )
-    )(Address.apply)(Address.unapply)
+    )(Address.apply)(
+      address => Some((address.addressLine1, address.addressLine2, address.addressLine3, address.addressLine4, address.postCode, address.country))
+    )
   )
 
 }

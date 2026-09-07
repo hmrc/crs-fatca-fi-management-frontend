@@ -6,7 +6,7 @@ import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport
 
 lazy val appName: String = "crs-fatca-fi-management-frontend"
 ThisBuild / majorVersion := 0
-ThisBuild / scalaVersion := "2.13.16"
+ThisBuild / scalaVersion := "3.3.5"
 
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
@@ -40,7 +40,9 @@ lazy val root = (project in file("."))
     ScoverageKeys.coverageHighlighting     := true,
     scalacOptions ++= Seq(
       "-feature",
-      "-Wconf:cat=deprecation:ws,cat=feature:ws,cat=optimizer:ws,src=target/.*:s"
+      "-Wconf:cat=deprecation:w",
+      "-Wconf:cat=feature:w",
+      "-Wconf:src=target/.*:s"
     ),
     libraryDependencies ++= AppDependencies(),
     retrieveManaged := true,
@@ -64,16 +66,10 @@ lazy val root = (project in file("."))
     scalafmtOnCompile      := true
   )
   .settings(
-    scalacOptions ++= Seq("-Ypatmat-exhaust-depth", "40"),
     scalacOptions ++= Seq(
-      "-Wconf:cat=unused-imports&site=.*views\\.html.*:s",
-      "-Wconf:src=.+/test/.+:s",
-      "-Wconf:cat=deprecation&msg=\\.*()\\.*:s",
-      "-Wconf:cat=unused-imports&site=<empty>:s",
-      "-Wconf:cat=unused&src=.*RoutesPrefix\\.scala:s",
-      "-Wconf:cat=unused&src=.*Routes\\.scala:s",
-      "-Wconf:cat=unused&src=.*ReverseRoutes\\.scala:s",
-      "-Wconf:cat=unused&src=.*JavaScriptReverseRoutes\\.scala:s"
+      "-Wconf:msg=unused.*&src=.*\\.scala\\.html:s",
+      "-Wconf:msg=unused.*&src=.*\\.routes:s",
+      "-Wconf:src=.+/test/.+:s"
     )
   )
 
