@@ -32,7 +32,7 @@ class HaveGIINPageSpec extends PageBehaviours {
   "cleanup" - {
     "must remove WhatIsGIINPage when answer is false" in {
       forAll(validGIIN -> "GIIN") {
-        value: String =>
+        (value: String) =>
           val userAnswers = emptyUserAnswers.withPage(WhatIsGIINPage, GIINumber(value))
 
           val result = HaveGIINPage.cleanup(Some(false), userAnswers).success.value
@@ -43,7 +43,7 @@ class HaveGIINPageSpec extends PageBehaviours {
 
     "must not remove WhatIsGIINPage when answer is true" in {
       forAll(validGIIN -> "GIIN") {
-        value: String =>
+        (value: String) =>
           val userAnswers = emptyUserAnswers.withPage(WhatIsGIINPage, GIINumber(value))
 
           val result = HaveGIINPage.cleanup(Some(true), userAnswers).success.value

@@ -51,7 +51,7 @@ class IndexControllerSpec extends SpecBase {
   when(mockAppConfig.changeIndividualDetailsUrl) thenReturn "/change-contact/individual/details"
   when(mockAppConfig.changeOrganisationDetailsUrl) thenReturn "/change-contact/organisation/details"
   when(mockAppConfig.feedbackUrl(any[RequestHeader]())) thenReturn "test"
-  when(mockAppConfig.changeAnswersCacheTtl).thenReturn(3600)
+  when(mockAppConfig.changeAnswersCacheTtl).thenReturn(3600L)
 
   when(mockFinancialInstitutionsService.getListOfFinancialInstitutions(any())(any[HeaderCarrier](), any[ExecutionContext]()))
     .thenReturn(Future.successful(testFiDetails))

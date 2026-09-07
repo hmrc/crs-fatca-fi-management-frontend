@@ -45,7 +45,7 @@ class CheckModeNavigatorSpec extends SpecBase {
         UnknownPage,
         CheckMode,
         UserAnswers("id")
-      ) mustBe routes.CheckYourAnswersController.onPageLoad
+      ) mustBe routes.CheckYourAnswersController.onPageLoad()
     }
 
     "when adding an FI" - {
@@ -385,7 +385,7 @@ class CheckModeNavigatorSpec extends SpecBase {
 
         "must navigate from NameOfFinancialInstitutionPage to ChangeFinancialInstitution" in {
           forAll {
-            fiId: String =>
+            (fiId: String) =>
               val userAnswers = emptyUserAnswers.withPage(ChangeFiDetailsInProgressId, fiId)
 
               navigator
@@ -396,7 +396,7 @@ class CheckModeNavigatorSpec extends SpecBase {
 
         "must navigate from WhatIsUniqueTaxpayerReferencePage to ChangeFinancialInstitution" in {
           forAll {
-            fiId: String =>
+            (fiId: String) =>
               val userAnswers = emptyUserAnswers
                 .withPage(ChangeFiDetailsInProgressId, fiId)
                 .withPage(WhichIdentificationNumbersPage, Set(UTR: TINType))
@@ -409,7 +409,7 @@ class CheckModeNavigatorSpec extends SpecBase {
 
         "must navigate from WhatIsGIINPage to ChangeFinancialInstitution" in {
           forAll {
-            fiId: String =>
+            (fiId: String) =>
               val userAnswers = emptyUserAnswers.withPage(ChangeFiDetailsInProgressId, fiId)
 
               navigator
@@ -420,7 +420,7 @@ class CheckModeNavigatorSpec extends SpecBase {
 
         "must navigate from FirstContactNamePage to ChangeFinancialInstitution" in {
           forAll {
-            fiId: String =>
+            (fiId: String) =>
               val userAnswers = emptyUserAnswers.withPage(ChangeFiDetailsInProgressId, fiId)
 
               navigator
@@ -431,7 +431,7 @@ class CheckModeNavigatorSpec extends SpecBase {
 
         "must navigate from FirstContactEmailPage to ChangeFinancialInstitution" in {
           forAll {
-            fiId: String =>
+            (fiId: String) =>
               val userAnswers = emptyUserAnswers.withPage(ChangeFiDetailsInProgressId, fiId)
 
               navigator
@@ -442,7 +442,7 @@ class CheckModeNavigatorSpec extends SpecBase {
 
         "must navigate from FirstContactHavePhonePage to ChangeFinancialInstitution when user answers no" in {
           forAll {
-            fiId: String =>
+            (fiId: String) =>
               val userAnswers = emptyUserAnswers
                 .withPage(ChangeFiDetailsInProgressId, fiId)
                 .withPage(FirstContactHavePhonePage, false)
@@ -455,7 +455,7 @@ class CheckModeNavigatorSpec extends SpecBase {
 
         "must navigate from FirstContactHavePhonePage to FirstContactPhoneNumber when user answers yes" in {
           forAll {
-            fiId: String =>
+            (fiId: String) =>
               val userAnswers = emptyUserAnswers
                 .withPage(ChangeFiDetailsInProgressId, fiId)
                 .withPage(FirstContactHavePhonePage, true)
@@ -468,7 +468,7 @@ class CheckModeNavigatorSpec extends SpecBase {
 
         "must navigate from FirstContactHavePhonePage to ChangeAnswersController when user answers yes + phone number is present" in {
           forAll {
-            fiId: String =>
+            (fiId: String) =>
               val userAnswers = emptyUserAnswers
                 .withPage(ChangeFiDetailsInProgressId, fiId)
                 .withPage(FirstContactHavePhonePage, true)
@@ -482,7 +482,7 @@ class CheckModeNavigatorSpec extends SpecBase {
 
         "must navigate from SecondContactExistsPage to ChangeFinancialInstitution when user answers no" in {
           forAll {
-            fiId: String =>
+            (fiId: String) =>
               val userAnswers = emptyUserAnswers
                 .withPage(ChangeFiDetailsInProgressId, fiId)
                 .withPage(SecondContactExistsPage, false)
@@ -495,7 +495,7 @@ class CheckModeNavigatorSpec extends SpecBase {
 
         "must navigate from SecondContactExistsPage to SecondContactName when user answers yes" in {
           forAll {
-            fiId: String =>
+            (fiId: String) =>
               val userAnswers = emptyUserAnswers
                 .withPage(ChangeFiDetailsInProgressId, fiId)
                 .withPage(SecondContactExistsPage, true)
@@ -534,7 +534,7 @@ class CheckModeNavigatorSpec extends SpecBase {
 
         "must navigate from SecondContactCanWePhonePage to ChangeFinancialInstitution when user answers no" in {
           forAll {
-            fiId: String =>
+            (fiId: String) =>
               val userAnswers = emptyUserAnswers
                 .withPage(ChangeFiDetailsInProgressId, fiId)
                 .withPage(SecondContactCanWePhonePage, false)
@@ -547,7 +547,7 @@ class CheckModeNavigatorSpec extends SpecBase {
 
         "must navigate from SecondContactCanWePhonePage to ChangeFinancialInstitution when user answers yes + second contact phone answer exists" in {
           forAll {
-            fiId: String =>
+            (fiId: String) =>
               val userAnswers = emptyUserAnswers
                 .withPage(ChangeFiDetailsInProgressId, fiId)
                 .withPage(SecondContactCanWePhonePage, false)
@@ -561,7 +561,7 @@ class CheckModeNavigatorSpec extends SpecBase {
 
         "must navigate from SecondContactCanWePhonePage to ChangeFinancialInstitution when user answers yes " in {
           forAll {
-            fiId: String =>
+            (fiId: String) =>
               val userAnswers = emptyUserAnswers
                 .withPage(ChangeFiDetailsInProgressId, fiId)
                 .withPage(SecondContactCanWePhonePage, true)
@@ -574,7 +574,7 @@ class CheckModeNavigatorSpec extends SpecBase {
 
         "must navigate from SecondContactPhoneNumberPage to ChangeFinancialInstitution" in {
           forAll {
-            fiId: String =>
+            (fiId: String) =>
               val userAnswers = emptyUserAnswers.withPage(ChangeFiDetailsInProgressId, fiId)
 
               navigator
