@@ -70,7 +70,7 @@ class YourFinancialInstitutionsControllerSpec extends SpecBase with MockitoSugar
 
     "must list FIs as non-registered for non-CT user" in {
       forAll {
-        fiDetail: FIDetail =>
+        (fiDetail: FIDetail) =>
           val mockFinancialInstitutionsService = mock[FinancialInstitutionsService]
           when(mockFinancialInstitutionsService.getListOfFinancialInstitutions(any())(any[HeaderCarrier](), any[ExecutionContext]()))
             .thenReturn(Future.successful(Seq(fiDetail)))

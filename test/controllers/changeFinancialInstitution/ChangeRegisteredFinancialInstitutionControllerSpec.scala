@@ -105,7 +105,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
 
         "must return OK and the correct view without the 'Confirm and send' button for a GET when ChangeFiDetailsInProgress is not set" in {
           forAll {
-            fiDetail: FIDetail =>
+            (fiDetail: FIDetail) =>
               val userAnswers = emptyUserAnswers
 
               mockSuccessfulFiRetrieval(fiDetail)
@@ -210,7 +210,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
 
         "must return INTERNAL_SERVER_ERROR when an error occurs during persistence of FI details" in {
           forAll {
-            fiDetail: FIDetail =>
+            (fiDetail: FIDetail) =>
               mockSuccessfulFiRetrieval(fiDetail)
               when(mockFinancialInstitutionUpdateService.populateAndSaveFiDetails(any(), any()))
                 .thenReturn(Future.failed(new Exception("failed to populate and save FI details")))
@@ -327,7 +327,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
 
       "must return INTERNAL_SERVER_ERROR when unable to find FI details" in {
         forAll {
-          fiDetail: FIDetail =>
+          (fiDetail: FIDetail) =>
             when(mockFinancialInstitutionsService.getFinancialInstitution(any(), any())(any(), any()))
               .thenReturn(Future.successful(None))
 
@@ -348,7 +348,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
 
       "must return INTERNAL_SERVER_ERROR when an error occurs during retrieval of FI details" in {
         forAll {
-          fiDetail: FIDetail =>
+          (fiDetail: FIDetail) =>
             when(mockFinancialInstitutionsService.getFinancialInstitution(any(), any())(any(), any()))
               .thenReturn(Future.failed(new Exception("failed to read FI details")))
 
@@ -383,7 +383,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
         when(
           mockFinancialInstitutionsService.updateFinancialInstitution(any[String], any[UserAnswers])(any[HeaderCarrier], any[ExecutionContext])
         )
-          .thenReturn(Future.successful())
+          .thenReturn(Future.successful(()))
 
         val application = createAppWithAnswers(Option(updatedAnswers))
         running(application) {
@@ -414,7 +414,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
         when(
           mockFinancialInstitutionsService.updateFinancialInstitution(any[String], any[UserAnswers])(any[HeaderCarrier], any[ExecutionContext])
         )
-          .thenReturn(Future.successful())
+          .thenReturn(Future.successful(()))
 
         val application = createAppWithAnswers(Option(updatedAnswers))
         running(application) {
@@ -442,7 +442,7 @@ class ChangeRegisteredFinancialInstitutionControllerSpec
         when(
           mockFinancialInstitutionsService.updateFinancialInstitution(any[String], any[UserAnswers])(any[HeaderCarrier], any[ExecutionContext])
         )
-          .thenReturn(Future.successful())
+          .thenReturn(Future.successful(()))
         when(mockFinancialInstitutionUpdateService.clearUserAnswers(any[UserAnswers]))
           .thenReturn(Future.failed(new Exception("failed to clear user answers data")))
 

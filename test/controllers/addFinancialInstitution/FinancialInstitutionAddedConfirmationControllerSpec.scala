@@ -47,7 +47,7 @@ class FinancialInstitutionAddedConfirmationControllerSpec extends SpecBase with 
 
     "must return OK and the correct view for a GET" in {
       forAll {
-        fiName: String =>
+        (fiName: String) =>
           val userAnswers = emptyUserAnswers.withPage(NameOfFinancialInstitutionPage, fiName).withPage(FiidPage, testFiid)
           val application = applicationBuilder(userAnswers = Option(userAnswers))
             .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
@@ -71,7 +71,7 @@ class FinancialInstitutionAddedConfirmationControllerSpec extends SpecBase with 
 
     "must return OK and the there-is-a-problem view for a GET when unable to empty user answers data" in {
       forAll {
-        fiName: String =>
+        (fiName: String) =>
           val userAnswers = emptyUserAnswers.withPage(NameOfFinancialInstitutionPage, fiName).withPage(FiidPage, testFiid)
           val application = applicationBuilder(userAnswers = Option(userAnswers))
             .overrides(bind[SessionRepository].toInstance(mockSessionRepository))

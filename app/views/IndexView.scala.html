@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
 @import components._
 @import components.index._
 @import models.IndexViewModel
@@ -39,7 +38,7 @@
     showBackLink = false
 ) {
     @heading(messages("index.heading"))
-    @{if(!details.hasFis) para(Html(messages("index.p1", addFILink)))}
+    @if(!details.hasFis) { @para(Html(messages("index.p1", addFILink)))}
     @para(Html(messages("index.p2", details.fatcaId)))
 
     @if(details.hasFis) {
