@@ -16,6 +16,7 @@
 
 package models.subscription.request
 
+import play.api.libs.functional.syntax.unlift
 import play.api.libs.json._
 
 import scala.language.implicitConversions
@@ -55,9 +56,7 @@ object OrganisationDetails {
   }
 
   implicit val writes: Writes[OrganisationDetails] =
-    (__ \ "organisation" \ "name").write[String] contramap (
-      details => details.name
-    )
+    (__ \ "organisation" \ "name").write[String] contramap unlift(OrganisationDetails.unapply)
 
 }
 
@@ -75,9 +74,7 @@ object IndividualDetails {
 
   implicit val writes: OWrites[IndividualDetails] =
     ((__ \ "individual" \ "firstName").write[String] and
-      (__ \ "individual" \ "lastName").write[String])(
-      detail => (detail.firstName, detail.lastName)
-    )
+      (__ \ "individual" \ "lastName").write[String])(unlift(IndividualDetails.unapply))
 
 }
 
@@ -100,9 +97,7 @@ object ContactInformation {
       __.write[ContactType] and
         (__ \ "email").write[String] and
         (__ \ "phone").writeNullable[String]
-    )(
-      contactInformation => (contactInformation.contactInformation, contactInformation.email, contactInformation.phone)
-    )
+    )(unlift(ContactInformation.unapply))
   }
 
 }

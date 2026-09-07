@@ -98,7 +98,7 @@ class RemoveAreYouSureControllerSpec extends SpecBase with MockitoSugar {
     "must redirect to the next page when valid data is submitted" in {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      when(mockFinancialInstitutionsService.removeFinancialInstitution(any())(any(), any())) thenReturn Future.successful(())
+      when(mockFinancialInstitutionsService.removeFinancialInstitution(any())(any(), any())) thenReturn Future.successful(HttpResponse(OK, ""))
 
       val application =
         applicationBuilder(userAnswers = Some(ua))

@@ -38,7 +38,7 @@ class WhatIsGIINFormProvider @Inject() extends Mappings with RegexConstants {
       )(
         GIINumber.apply
       )(
-        num => Some(num.value)
+        GIINumber.unapply
       )
     )
 

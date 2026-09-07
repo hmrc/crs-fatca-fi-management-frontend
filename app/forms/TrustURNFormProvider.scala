@@ -36,7 +36,7 @@ class TrustURNFormProvider @Inject() extends Mappings with RegexConstants {
       )(
         TrustUniqueReferenceNumber.apply
       )(
-        trn => Some(trn.value)
+        TrustUniqueReferenceNumber.unapply
       )
     )
 

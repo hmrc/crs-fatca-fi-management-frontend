@@ -18,6 +18,7 @@ package models.FinancialInstitutions
 
 import models.Enumerable
 import play.api.i18n.Messages
+import play.api.libs.json._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import viewmodels.govuk.checkbox._
