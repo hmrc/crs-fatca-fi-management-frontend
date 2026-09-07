@@ -38,7 +38,7 @@ class CompanyRegistrationNumberFormProvider @Inject() extends Mappings with Rege
       )(
         CompanyRegistrationNumber.apply
       )(
-        crn => Some(crn.value)
+        CompanyRegistrationNumber.unapply
       )
     )
 
