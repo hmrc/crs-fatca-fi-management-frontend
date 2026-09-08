@@ -67,12 +67,16 @@
 }
 
 @beforeContent = {
-
-    @{
-        if (showBackLink) {
-            val backLinkCssClass = if (backLink.equalsIgnoreCase("#")) "govuk-default-back-link js-visible" else "js-visible"
-            govukBackLink(BackLinkViewModel(href = backLink).withCssClass(backLinkCssClass))
-        }
+    @if(showBackLink) {
+        @govukBackLink(
+            BackLinkViewModel(href = backLink)
+                .withCssClass(
+                if (backLink.equalsIgnoreCase("#"))
+                    "govuk-default-back-link js-visible"
+                else
+                    "js-visible"
+            )
+        )
     }
 }
 
