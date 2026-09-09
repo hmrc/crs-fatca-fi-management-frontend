@@ -42,7 +42,9 @@
     @govukSummaryList(firstContactList)
     <p class="govuk-!-margin-bottom-9"></p>
 
-    @{ if (secondContactExists) subheading(messages("changeYourAnswers.subheading.SecondContact")) }
+    @if(secondContactExists){
+        @subheading(messages("changeYourAnswers.subheading.SecondContact"))
+    }
     @govukSummaryList(secondContactList)
     <p class="govuk-!-margin-bottom-9"></p>
 

@@ -38,7 +38,9 @@
     @subheading(messages("checkYourAnswers.subheading.FirstContact"))
     @govukSummaryList(firstContactList)
 
-    @{if(secondExists)subheading(messages("checkYourAnswers.subheading.SecondContact"))}
+    @if(secondExists){
+        @subheading(messages("checkYourAnswers.subheading.SecondContact"))
+    }
     @govukSummaryList(secondContactList)
 
     @subheading(messages("checkYourAnswers.submit.subheading"))
