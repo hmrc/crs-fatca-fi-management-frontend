@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,15 +39,35 @@ case class AddressResponse(
     Address(line1, line2, line3, line4, safePostcode, Country.GB)
   }
 
-  def lines: Seq[String] = Seq(Some(addressLine1), addressLine2, addressLine3, addressLine4, postCodeFormatter(postalCode), country.map(_.description)).flatten
+  val toAddressIncAllFields: AddressIncAllFields =
+    AddressIncAllFields(
+      addressLine1 = addressLine1,
+      addressLine2 = addressLine2,
+      addressLine3 = addressLine3,
+      addressLine4 = addressLine4,
+      postCode = postalCode,
+      country = Some(Country.GB.code),
+      uprn = None
+    )
 
-  def linesWithoutCountry: Seq[String] = Seq(
-    Some(addressLine1),
-    addressLine2,
-    addressLine3,
-    addressLine4,
-    postCodeFormatter(postalCode)
-  ).flatten
+  def lines: Seq[String] =
+    Seq(
+      Some(addressLine1),
+      addressLine2,
+      addressLine3,
+      addressLine4,
+      postCodeFormatter(postalCode),
+      country.map(_.description)
+    ).flatten
+
+  def linesWithoutCountry: Seq[String] =
+    Seq(
+      Some(addressLine1),
+      addressLine2,
+      addressLine3,
+      addressLine4,
+      postCodeFormatter(postalCode)
+    ).flatten
 
   private def postCodeFormatter(postcode: Option[String]): Option[String] =
     postcode match {
@@ -62,7 +82,5 @@ case class AddressResponse(
 }
 
 object AddressResponse {
-
   implicit val format: OFormat[AddressResponse] = Json.format[AddressResponse]
-
 }

@@ -17,7 +17,7 @@
 package utils
 
 import base.SpecBase
-import models.{Address, AddressLookup, AddressResponse, Country}
+import models.{Address, AddressIncAllFields, AddressLookup, AddressResponse, Country}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 
 class AddressHelperSpec extends SpecBase {
@@ -44,7 +44,7 @@ class AddressHelperSpec extends SpecBase {
     }
 
     "format the address from AddressLookup correctly" in {
-      val address = AddressLookup(Some("line1"), Some("line2"), Some("line3"), Some("line4"), "town", Some("county"), "postcode", Some(Country.GB))
+      val address = AddressLookup(uprn, Some("line1"), Some("line2"), Some("line3"), Some("line4"), "town", Some("county"), "postcode", Some(Country.GB))
       val result  = sut.formatAddress(address)
       result mustBe "line1, line2, line3, line4, town, postcode, county"
     }
@@ -64,7 +64,7 @@ class AddressHelperSpec extends SpecBase {
     }
 
     "must format AddressLookupBlock as html" in {
-      val addressLookup = AddressLookup(Some("line1"), Some("line2"), Some("line3"), Some("line4"), "town", Some("county"), "postcode", Some(Country.GB))
+      val addressLookup = AddressLookup(uprn, Some("line1"), Some("line2"), Some("line3"), Some("line4"), "town", Some("county"), "postcode", Some(Country.GB))
 
       val result = sut.formatAddressLookupBlock(addressLookup)
 
@@ -84,28 +84,194 @@ class AddressHelperSpec extends SpecBase {
 
   "AddressLookup" - {
     "toAddress must convert to Address class" in {
-      val addressLookup   = AddressLookup(Some("line1"), Some("line2"), Some("line3"), Some("line4"), "town", Some("county"), "postcode", Some(Country.GB))
+      val addressLookup = AddressLookup(uprn, Some("line1"), Some("line2"), Some("line3"), Some("line4"), "town", Some("county"), "postcode", Some(Country.GB))
       val expectedAddress = Address("line1", Some("line2"), Some("line3"), Some("line4"), Some("postcode"), Country("", "GB", "United Kingdom"))
       addressLookup.toAddress mustBe expectedAddress
     }
+
     "toAddress must populate from the town field correctly without line3" in {
-      val addressLookup   = AddressLookup(Some("line1"), Some("line2"), None, Some("line4"), "town", Some("county"), "postcode", Some(Country.GB))
+      val addressLookup   = AddressLookup(uprn, Some("line1"), Some("line2"), None, Some("line4"), "town", Some("county"), "postcode", Some(Country.GB))
       val expectedAddress = Address("line1", Some("line2"), Some("town"), Some("line4"), Some("postcode"), Country("", "GB", "United Kingdom"))
       addressLookup.toAddress mustBe expectedAddress
     }
+
     "toAddress must populate from the town field correctly without line4" in {
-      val addressLookup   = AddressLookup(Some("line1"), Some("line2"), Some("line3"), None, "town", Some("county"), "postcode", Some(Country.GB))
+      val addressLookup   = AddressLookup(uprn, Some("line1"), Some("line2"), Some("line3"), None, "town", Some("county"), "postcode", Some(Country.GB))
       val expectedAddress = Address("line1", Some("line2"), Some("line3"), Some("town"), Some("postcode"), Country("", "GB", "United Kingdom"))
       addressLookup.toAddress mustBe expectedAddress
-
     }
+
     "toAddress must populate county field if there is space" in {
-      val addressLookup   = AddressLookup(Some("line1"), Some("line2"), None, None, "town", Some("county"), "postcode", Some(Country.GB))
+      val addressLookup   = AddressLookup(uprn, Some("line1"), Some("line2"), None, None, "town", Some("county"), "postcode", Some(Country.GB))
       val expectedAddress = Address("line1", Some("line2"), Some("town"), Some("county"), Some("postcode"), Country("", "GB", "United Kingdom"))
       addressLookup.toAddress mustBe expectedAddress
-
     }
 
+    "toAddressIncAllFields must convert to AddressIncAllFields and include the uprn" in {
+      val addressLookup =
+        AddressLookup(
+          uprn,
+          Some("line1"),
+          Some("line2"),
+          Some("line3"),
+          Some("line4"),
+          "town",
+          Some("county"),
+          "postcode",
+          Some(Country.GB)
+        )
+
+      val expectedAddress =
+        AddressIncAllFields(
+          addressLine1 = "line1",
+          addressLine2 = Some("line2"),
+          addressLine3 = Some("line3"),
+          addressLine4 = Some("line4"),
+          postCode = Some("postcode"),
+          country = Some(Country.GB.code),
+          uprn = Some(uprn)
+        )
+
+      addressLookup.toAddressIncAllFields mustBe expectedAddress
+    }
+
+    "toAddressIncAllFields must populate from the town field correctly without line3" in {
+      val addressLookup =
+        AddressLookup(
+          uprn,
+          Some("line1"),
+          Some("line2"),
+          None,
+          Some("line4"),
+          "town",
+          Some("county"),
+          "postcode",
+          Some(Country.GB)
+        )
+
+      val expectedAddress =
+        AddressIncAllFields(
+          addressLine1 = "line1",
+          addressLine2 = Some("line2"),
+          addressLine3 = Some("town"),
+          addressLine4 = Some("line4"),
+          postCode = Some("postcode"),
+          country = Some(Country.GB.code),
+          uprn = Some(uprn)
+        )
+
+      addressLookup.toAddressIncAllFields mustBe expectedAddress
+    }
+
+    "toAddressIncAllFields must populate from the town field correctly without line4" in {
+      val addressLookup =
+        AddressLookup(
+          uprn,
+          Some("line1"),
+          Some("line2"),
+          Some("line3"),
+          None,
+          "town",
+          Some("county"),
+          "postcode",
+          Some(Country.GB)
+        )
+
+      val expectedAddress =
+        AddressIncAllFields(
+          addressLine1 = "line1",
+          addressLine2 = Some("line2"),
+          addressLine3 = Some("line3"),
+          addressLine4 = Some("town"),
+          postCode = Some("postcode"),
+          country = Some(Country.GB.code),
+          uprn = Some(uprn)
+        )
+
+      addressLookup.toAddressIncAllFields mustBe expectedAddress
+    }
+
+    "toAddressIncAllFields must populate county field if there is space" in {
+      val addressLookup =
+        AddressLookup(
+          uprn,
+          Some("line1"),
+          Some("line2"),
+          None,
+          None,
+          "town",
+          Some("county"),
+          "postcode",
+          Some(Country.GB)
+        )
+
+      val expectedAddress =
+        AddressIncAllFields(
+          addressLine1 = "line1",
+          addressLine2 = Some("line2"),
+          addressLine3 = Some("town"),
+          addressLine4 = Some("county"),
+          postCode = Some("postcode"),
+          country = Some(Country.GB.code),
+          uprn = Some(uprn)
+        )
+
+      addressLookup.toAddressIncAllFields mustBe expectedAddress
+    }
+  }
+
+  "Address" - {
+    "toAddressIncAllFields must convert to AddressIncAllFields without a uprn" in {
+      val address =
+        Address(
+          "line1",
+          Some("line2"),
+          Some("line3"),
+          Some("line4"),
+          Some("postcode"),
+          Country.GB
+        )
+
+      val expectedAddress =
+        AddressIncAllFields(
+          addressLine1 = "line1",
+          addressLine2 = Some("line2"),
+          addressLine3 = Some("line3"),
+          addressLine4 = Some("line4"),
+          postCode = Some("postcode"),
+          country = Some(Country.GB.code),
+          uprn = None
+        )
+
+      address.toAddressIncAllFields mustBe expectedAddress
+    }
+  }
+
+  "AddressResponse" - {
+    "toAddressIncAllFields must convert to AddressIncAllFields without a uprn" in {
+      val addressResponse =
+        AddressResponse(
+          addressLine1 = "line1",
+          addressLine2 = Some("line2"),
+          addressLine3 = Some("line3"),
+          addressLine4 = Some("line4"),
+          postalCode = Some("postcode"),
+          countryCode = "GB"
+        )
+
+      val expectedAddress =
+        AddressIncAllFields(
+          addressLine1 = "line1",
+          addressLine2 = Some("line2"),
+          addressLine3 = Some("line3"),
+          addressLine4 = Some("line4"),
+          postCode = Some("postcode"),
+          country = Some(Country.GB.code),
+          uprn = None
+        )
+
+      addressResponse.toAddressIncAllFields mustBe expectedAddress
+    }
   }
 
 }

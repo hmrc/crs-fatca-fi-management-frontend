@@ -17,7 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.FinancialInstitutions.{CreateFIDetails, FIDetail, RemoveFIDetail, SubmitFIDetailsResponse}
+import models.FinancialInstitutions.{AmendFIDetail, CreateFIDetails, FIDetail, RemoveFIDetail, SubmitFIDetailsResponse}
 import models.error.ApiError.{JsValidationError, UnexpectedResponse}
 import models.readFIs.response.ViewFIDetailsResponse
 import models.updateFi.CreateFiResponse
@@ -25,7 +25,7 @@ import play.api.http.Status.{OK, UNPROCESSABLE_ENTITY}
 import play.api.i18n.Lang.logger
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.http.HttpErrorFunctions.is5xx
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
@@ -83,12 +83,12 @@ class FinancialInstitutionsConnector @Inject() (val config: FrontendAppConfig, v
           Future.failed(UnexpectedResponse)
       }
 
-  def updateFI(fiDetails: FIDetail)(implicit
+  def updateFI(fiDetails: AmendFIDetail)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Unit] =
     (fiDetails match {
-      case _: FIDetail => httpClient.put(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/update")
+      case _: AmendFIDetail => httpClient.put(url"${config.fIManagementUrl}/crs-fatca-fi-management/financial-institutions/update")
     }).withBody(Json.toJson(fiDetails))
       .execute[HttpResponse]
       .flatMap {
