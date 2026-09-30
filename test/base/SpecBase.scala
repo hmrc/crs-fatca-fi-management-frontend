@@ -16,16 +16,16 @@
 
 package base
 
-import controllers.actions._
+import controllers.actions.*
 import models.FinancialInstitutions.TINType.UTR
-import models.FinancialInstitutions._
-import models.{Address, AddressLookup, AddressResponse, Country, GIINumber, UniqueTaxpayerReference, UserAnswers}
+import models.FinancialInstitutions.*
+import models.{Address, AddressIncAllFields, AddressLookup, AddressResponse, Country, GIINumber, UniqueTaxpayerReference, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{OptionValues, PrivateMethodTester, TryValues}
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, IsTheAddressCorrectPage, IsThisYourBusinessNamePage}
-import pages.addFinancialInstitution._
+import pages.addFinancialInstitution.*
 import play.api.Application
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
@@ -95,6 +95,19 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
        |}
        |}
        |}""".stripMargin
+
+  val testAmendFiDetail: AmendFIDetail =
+    AmendFIDetail(
+      s"$testFiid",
+      "First FI",
+      "[subscriptionId]",
+      Some(Seq(TINDetails(UTR, "123456789", "GB"))),
+      Some("689355555"),
+      IsFIUser = true,
+      AddressIncAllFields("22", Some("High Street"), Some("Dawley"), Some("Dawley"), Some("GB"), Some("TF22 2RE"), None),
+      Some(ContactDetails("Jane Doe", "janedoe@example.com", Some("0444458888"))),
+      Some(ContactDetails("John Doe", "johndoe@example.com", Some("0333458888")))
+    )
 
   val testFiDetail: FIDetail =
     FIDetail(
@@ -231,7 +244,8 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
   val testNonUKAddressResponse: AddressResponse =
     AddressResponse("value 1", Some("value 2"), Some("value 3"), Some("value 4"), Some("XX9 9XX"), "DE")
 
-  val testAddressLookup: AddressLookup = AddressLookup(Some("1 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ", Some(Country.GB))
+  val uprn: Long                       = 200000706253L
+  val testAddressLookup: AddressLookup = AddressLookup(uprn, Some("1 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ", Some(Country.GB))
 
   val userAnswersForAddFI: UserAnswers = emptyUserAnswers
     .withPage(NameOfFinancialInstitutionPage, "testfi")

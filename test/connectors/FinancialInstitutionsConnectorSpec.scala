@@ -19,12 +19,13 @@ package connectors
 import base.SpecBase
 import generators.Generators
 import helpers.WireMockServerHandler
+import models.{AddressIncAllFields, Country}
 import models.FinancialInstitutions.TINType.UTR
-import models.FinancialInstitutions._
+import models.FinancialInstitutions.*
 import models.error.ApiError.{JsValidationError, UnexpectedResponse}
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.Application
-import play.api.http.Status._
+import play.api.http.Status.*
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -48,13 +49,14 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
     TINDetails = Seq(TINDetails(UTR, "TIN", "IssuedBy")),
     GIIN = None,
     IsFIUser = true,
-    AddressDetails = AddressDetails(
-      AddressLine1 = "line 1",
-      AddressLine2 = None,
-      AddressLine3 = Some("line 3"),
-      AddressLine4 = None,
-      CountryCode = Some("GB"),
-      PostalCode = Some("AA1 1AA")
+    AddressDetails = AddressIncAllFields(
+      addressLine1 = "line 1",
+      addressLine2 = None,
+      addressLine3 = Some("line 3"),
+      addressLine4 = None,
+      postCode = Some("AA1 1AA"),
+      country = Some(Country.GB.code),
+      uprn = None
     ),
     PrimaryContactDetails = Some(
       ContactDetails(
@@ -285,7 +287,7 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
           OK,
           updateFiResponseJson
         )
-        val result = connector.updateFI(testFiDetail).futureValue
+        val result = connector.updateFI(testAmendFiDetail).futureValue
         result mustBe ()
       }
 
@@ -295,7 +297,7 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
           SERVICE_UNAVAILABLE,
           unexpectedErrorResponseJson
         )
-        val result = connector.updateFI(testFiDetail)
+        val result = connector.updateFI(testAmendFiDetail)
         result.failed.futureValue mustBe UnexpectedResponse
       }
     }

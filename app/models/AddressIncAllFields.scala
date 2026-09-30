@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package models.FinancialInstitutions
+package models
 
-import models.AddressIncAllFields
-import play.api.libs.json.*
+import play.api.libs.json.{Json, OFormat}
 
-final case class CreateFIDetails(
-  FIName: String,
-  SubscriptionID: String,
-  TINDetails: Seq[TINDetails],
-  GIIN: Option[String],
-  IsFIUser: Boolean,
-  AddressDetails: AddressIncAllFields,
-  PrimaryContactDetails: Option[ContactDetails],
-  SecondaryContactDetails: Option[ContactDetails]
+case class AddressIncAllFields(
+  addressLine1: String,
+  addressLine2: Option[String],
+  addressLine3: Option[String],
+  addressLine4: Option[String],
+  postCode: Option[String],
+  country: Option[String],
+  uprn: Option[Long]
 )
 
-object CreateFIDetails {
-  implicit val format: OFormat[CreateFIDetails] = Json.format[CreateFIDetails]
+object AddressIncAllFields {
+  implicit val format: OFormat[AddressIncAllFields] = Json.format[AddressIncAllFields]
 }

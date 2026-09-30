@@ -18,10 +18,10 @@ package services
 
 import connectors.FinancialInstitutionsConnector
 import models.FinancialInstitutions.TINType.{CRN, TURN, UTR}
-import models.FinancialInstitutions._
-import models.UserAnswers
+import models.FinancialInstitutions.*
+import models.{AddressIncAllFields, UserAnswers}
 import pages.addFinancialInstitution.IsRegisteredBusiness.{FetchedRegisteredAddressPage, ReportForRegisteredBusinessPage}
-import pages.addFinancialInstitution._
+import pages.addFinancialInstitution.*
 import pages.changeFinancialInstitution.ChangeFiDetailsInProgressId
 import pages.{CompanyRegistrationNumberPage, TrustURNPage}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -70,7 +70,7 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
   private def buildCreateFiDetailsRequest(subscriptionId: String, userAnswers: UserAnswers): CreateFIDetails =
     (for {
       fiName  <- userAnswers.get(NameOfFinancialInstitutionPage)
-      address <- extractAddress(userAnswers)
+      address <- extractAddressIncAllFields(userAnswers)
     } yield CreateFIDetails(
       FIName = fiName,
       SubscriptionID = subscriptionId,
@@ -82,12 +82,12 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
       SecondaryContactDetails = extractSecondaryContactDetails(userAnswers)
     )).getOrElse(throw new IllegalStateException("Unable to build FIDetail"))
 
-  private def buildUpdateFiDetailsRequest(subscriptionId: String, userAnswers: UserAnswers): FIDetail =
+  private def buildUpdateFiDetailsRequest(subscriptionId: String, userAnswers: UserAnswers): AmendFIDetail =
     (for {
       fiid    <- userAnswers.get(ChangeFiDetailsInProgressId)
       fiName  <- userAnswers.get(NameOfFinancialInstitutionPage)
-      address <- extractAddress(userAnswers)
-    } yield FIDetail(
+      address <- extractAddressIncAllFields(userAnswers)
+    } yield AmendFIDetail(
       FIID = fiid,
       FIName = fiName,
       SubscriptionID = subscriptionId,
@@ -142,21 +142,19 @@ class FinancialInstitutionsService @Inject() (connector: FinancialInstitutionsCo
     PhoneNumber = userAnswers.get(SecondContactPhoneNumberPage)
   )
 
-  private def extractAddress(userAnswers: UserAnswers): Option[AddressDetails] =
+  private def extractAddressIncAllFields(userAnswers: UserAnswers): Option[AddressIncAllFields] =
     userAnswers
       .get(UkAddressPage)
-      .orElse(userAnswers.get(SelectedAddressLookupPage).map(_.toAddress))
-      .orElse(userAnswers.get(FetchedRegisteredAddressPage).map(_.toAddress))
-      .map(
-        address =>
-          AddressDetails(
-            AddressLine1 = address.addressLine1,
-            AddressLine2 = address.addressLine2,
-            AddressLine3 = address.addressLine3,
-            AddressLine4 = address.addressLine4,
-            CountryCode = Some(address.country.code),
-            PostalCode = address.postCode
-          )
+      .map(_.toAddressIncAllFields)
+      .orElse(
+        userAnswers
+          .get(SelectedAddressLookupPage)
+          .map(_.toAddressIncAllFields)
+      )
+      .orElse(
+        userAnswers
+          .get(FetchedRegisteredAddressPage)
+          .map(_.toAddressIncAllFields)
       )
 
 }

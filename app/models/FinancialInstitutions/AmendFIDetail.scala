@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,13 @@
 package models.FinancialInstitutions
 
 import models.AddressIncAllFields
-import play.api.libs.json.*
+import play.api.libs.json._
 
-final case class CreateFIDetails(
+final case class AmendFIDetail(
+  FIID: String,
   FIName: String,
   SubscriptionID: String,
-  TINDetails: Seq[TINDetails],
+  TINDetails: Option[Seq[TINDetails]],
   GIIN: Option[String],
   IsFIUser: Boolean,
   AddressDetails: AddressIncAllFields,
@@ -30,6 +31,7 @@ final case class CreateFIDetails(
   SecondaryContactDetails: Option[ContactDetails]
 )
 
-object CreateFIDetails {
-  implicit val format: OFormat[CreateFIDetails] = Json.format[CreateFIDetails]
+object AmendFIDetail {
+  implicit val format: OFormat[AmendFIDetail] = Json.format[AmendFIDetail]
+
 }

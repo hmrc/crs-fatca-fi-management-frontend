@@ -51,6 +51,7 @@ class IsThisAddressControllerSpec extends SpecBase with MockitoSugar {
   )
 
   val addressLookup: AddressLookup = AddressLookup(
+    uprn,
     Some("1 address street"),
     addressLine2 = None,
     addressLine3 = None,
