@@ -123,13 +123,13 @@ class AddressHelperSpec extends SpecBase {
 
       val expectedAddress =
         AddressIncAllFields(
-          addressLine1 = "line1",
-          addressLine2 = Some("line2"),
-          addressLine3 = Some("line3"),
-          addressLine4 = Some("line4"),
-          postCode = Some("postcode"),
-          country = Some(Country.GB.code),
-          uprn = Some(uprn)
+          AddressLine1 = "line1",
+          AddressLine2 = Some("line2"),
+          AddressLine3 = Some("line3"),
+          AddressLine4 = Some("line4"),
+          PostalCode = Some("postcode"),
+          CountryCode = Some(Country.GB.code),
+          Uprn = Some(uprn)
         )
 
       addressLookup.toAddressIncAllFields mustBe expectedAddress
@@ -151,13 +151,13 @@ class AddressHelperSpec extends SpecBase {
 
       val expectedAddress =
         AddressIncAllFields(
-          addressLine1 = "line1",
-          addressLine2 = Some("line2"),
-          addressLine3 = Some("town"),
-          addressLine4 = Some("line4"),
-          postCode = Some("postcode"),
-          country = Some(Country.GB.code),
-          uprn = Some(uprn)
+          AddressLine1 = "line1",
+          AddressLine2 = Some("line2"),
+          AddressLine3 = Some("town"),
+          AddressLine4 = Some("line4"),
+          PostalCode = Some("postcode"),
+          CountryCode = Some(Country.GB.code),
+          Uprn = Some(uprn)
         )
 
       addressLookup.toAddressIncAllFields mustBe expectedAddress
@@ -179,13 +179,13 @@ class AddressHelperSpec extends SpecBase {
 
       val expectedAddress =
         AddressIncAllFields(
-          addressLine1 = "line1",
-          addressLine2 = Some("line2"),
-          addressLine3 = Some("line3"),
-          addressLine4 = Some("town"),
-          postCode = Some("postcode"),
-          country = Some(Country.GB.code),
-          uprn = Some(uprn)
+          AddressLine1 = "line1",
+          AddressLine2 = Some("line2"),
+          AddressLine3 = Some("line3"),
+          AddressLine4 = Some("town"),
+          PostalCode = Some("postcode"),
+          CountryCode = Some(Country.GB.code),
+          Uprn = Some(uprn)
         )
 
       addressLookup.toAddressIncAllFields mustBe expectedAddress
@@ -207,13 +207,13 @@ class AddressHelperSpec extends SpecBase {
 
       val expectedAddress =
         AddressIncAllFields(
-          addressLine1 = "line1",
-          addressLine2 = Some("line2"),
-          addressLine3 = Some("town"),
-          addressLine4 = Some("county"),
-          postCode = Some("postcode"),
-          country = Some(Country.GB.code),
-          uprn = Some(uprn)
+          AddressLine1 = "line1",
+          AddressLine2 = Some("line2"),
+          AddressLine3 = Some("town"),
+          AddressLine4 = Some("county"),
+          PostalCode = Some("postcode"),
+          CountryCode = Some(Country.GB.code),
+          Uprn = Some(uprn)
         )
 
       addressLookup.toAddressIncAllFields mustBe expectedAddress
@@ -234,13 +234,13 @@ class AddressHelperSpec extends SpecBase {
 
       val expectedAddress =
         AddressIncAllFields(
-          addressLine1 = "line1",
-          addressLine2 = Some("line2"),
-          addressLine3 = Some("line3"),
-          addressLine4 = Some("line4"),
-          postCode = Some("postcode"),
-          country = Some(Country.GB.code),
-          uprn = None
+          AddressLine1 = "line1",
+          AddressLine2 = Some("line2"),
+          AddressLine3 = Some("line3"),
+          AddressLine4 = Some("line4"),
+          PostalCode = Some("postcode"),
+          CountryCode = Some(Country.GB.code),
+          Uprn = None
         )
 
       address.toAddressIncAllFields mustBe expectedAddress
@@ -261,13 +261,13 @@ class AddressHelperSpec extends SpecBase {
 
       val expectedAddress =
         AddressIncAllFields(
-          addressLine1 = "line1",
-          addressLine2 = Some("line2"),
-          addressLine3 = Some("line3"),
-          addressLine4 = Some("line4"),
-          postCode = Some("postcode"),
-          country = Some(Country.GB.code),
-          uprn = None
+          AddressLine1 = "line1",
+          AddressLine2 = Some("line2"),
+          AddressLine3 = Some("line3"),
+          AddressLine4 = Some("line4"),
+          PostalCode = Some("postcode"),
+          CountryCode = Some(Country.GB.code),
+          Uprn = None
         )
 
       addressResponse.toAddressIncAllFields mustBe expectedAddress

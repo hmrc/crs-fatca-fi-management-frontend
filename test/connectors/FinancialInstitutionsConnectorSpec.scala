@@ -50,13 +50,13 @@ class FinancialInstitutionsConnectorSpec extends SpecBase with WireMockServerHan
     GIIN = None,
     IsFIUser = true,
     AddressDetails = AddressIncAllFields(
-      addressLine1 = "line 1",
-      addressLine2 = None,
-      addressLine3 = Some("line 3"),
-      addressLine4 = None,
-      postCode = Some("AA1 1AA"),
-      country = Some(Country.GB.code),
-      uprn = None
+      AddressLine1 = "line 1",
+      AddressLine2 = None,
+      AddressLine3 = Some("line 3"),
+      AddressLine4 = None,
+      PostalCode = Some("AA1 1AA"),
+      CountryCode = Some(Country.GB.code),
+      Uprn = None
     ),
     PrimaryContactDetails = Some(
       ContactDetails(

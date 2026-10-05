@@ -75,13 +75,13 @@ case class AddressLookup(
     val safePostcode = Option(postcode)
 
     AddressIncAllFields(
-      addressLine1 = line1,
-      addressLine2 = line2,
-      addressLine3 = Some(line3),
-      addressLine4 = line4,
-      postCode = safePostcode,
-      country = Some(country.getOrElse(Country.GB).code),
-      uprn = Some(uprn)
+      AddressLine1 = line1,
+      AddressLine2 = line2,
+      AddressLine3 = Some(line3),
+      AddressLine4 = line4,
+      PostalCode = safePostcode,
+      CountryCode = Some(country.getOrElse(Country.GB).code),
+      Uprn = Some(uprn)
     )
   }
 
