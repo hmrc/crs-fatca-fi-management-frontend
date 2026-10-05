@@ -29,13 +29,13 @@ case class Address(
 
   val toAddressIncAllFields: AddressIncAllFields =
     AddressIncAllFields(
-      addressLine1 = addressLine1,
-      addressLine2 = addressLine2,
-      addressLine3 = addressLine3,
-      addressLine4 = addressLine4,
-      postCode = postCode,
-      country = Some(country.code),
-      uprn = None
+      AddressLine1 = addressLine1,
+      AddressLine2 = addressLine2,
+      AddressLine3 = addressLine3,
+      AddressLine4 = addressLine4,
+      PostalCode = postCode,
+      CountryCode = Some(country.code),
+      Uprn = None
     )
 
   def lines: Seq[String] = Seq(

@@ -19,13 +19,13 @@ package models
 import play.api.libs.json.{Json, OFormat}
 
 case class AddressIncAllFields(
-  addressLine1: String,
-  addressLine2: Option[String],
-  addressLine3: Option[String],
-  addressLine4: Option[String],
-  postCode: Option[String],
-  country: Option[String],
-  uprn: Option[Long]
+  AddressLine1: String,
+  AddressLine2: Option[String],
+  AddressLine3: Option[String],
+  AddressLine4: Option[String],
+  PostalCode: Option[String],
+  CountryCode: Option[String],
+  Uprn: Option[Long] = None
 )
 
 object AddressIncAllFields {

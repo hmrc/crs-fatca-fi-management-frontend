@@ -41,13 +41,13 @@ case class AddressResponse(
 
   val toAddressIncAllFields: AddressIncAllFields =
     AddressIncAllFields(
-      addressLine1 = addressLine1,
-      addressLine2 = addressLine2,
-      addressLine3 = addressLine3,
-      addressLine4 = addressLine4,
-      postCode = postalCode,
-      country = Some(Country.GB.code),
-      uprn = None
+      AddressLine1 = addressLine1,
+      AddressLine2 = addressLine2,
+      AddressLine3 = addressLine3,
+      AddressLine4 = addressLine4,
+      PostalCode = postalCode,
+      CountryCode = Some(Country.GB.code),
+      Uprn = None
     )
 
   def lines: Seq[String] =
